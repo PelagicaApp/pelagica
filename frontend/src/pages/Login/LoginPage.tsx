@@ -66,6 +66,18 @@ const LoginPage = () => {
         isPolling
     );
 
+    const [splashScreenUrl, setSplashScreenUrl] = useState<string | null>(getServerUrl);
+
+    useEffect(() => {
+        const serverUrl = getServerUrl();
+        if (!serverUrl) {
+            setSplashScreenUrl(null);
+            return;
+        }
+        const splashUrl = new URL('/Branding/Splashscreen', serverUrl).toString();
+        setSplashScreenUrl(splashUrl);
+    }, [step]);
+
     useEffect(() => {
         if (config?.serverAddress) {
             if (!config.serverAddress.trim()) return;
@@ -210,6 +222,21 @@ const LoginPage = () => {
             title={t('title')}
             className="flex items-center justify-center h-full w-full"
             sidebar={false}
+            bgItem={
+                splashScreenUrl && branding?.SplashscreenEnabled ? (
+                    <div className="fixed top-0 left-0 w-full h-full -z-20 overflow-hidden">
+                        <div className="absolute inset-0">
+                            <img
+                                src={splashScreenUrl}
+                                alt="Splash Screen"
+                                className="w-full h-full object-cover blur-lg scale-110 opacity-40"
+                            />
+                        </div>
+                        <div className="absolute inset-0 bg-linear-to-b from-background/80 via-background/50 to-background" />
+                        <div className="absolute inset-0 bg-linear-to-t from-background via-transparent to-transparent" />
+                    </div>
+                ) : undefined
+            }
         >
             {step === 'server' && (
                 <Card className="max-w-md w-full mx-auto -translate-y-12">
