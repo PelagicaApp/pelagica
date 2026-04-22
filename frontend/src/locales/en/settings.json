@@ -4,6 +4,7 @@
     "category_homesections": "Home Sections",
     "category_itempage": "Item Page",
     "category_themes": "Themes",
+    "category_branding": "Branding",
     "saving": "Saving...",
     "save_success": "Saved",
     "save_settings": "Save Settings",
@@ -105,5 +106,8 @@
     "default_theme": "Default Theme",
     "upload_new_theme": "Upload New Theme",
     "browse_themes": "Browse Themes",
-    "no_themes_installed": "No themes installed."
+    "no_themes_installed": "No themes installed.",
+    "server_name_label": "Server Name",
+    "server_name_placeholder": "My Jellyfin Server",
+    "server_name_description": "Set a custom name for your server to be displayed in the UI. If left empty, a default name will be used."
 }

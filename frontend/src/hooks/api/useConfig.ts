@@ -204,6 +204,8 @@ export interface AppConfig {
     homeScreenSections?: HomeScreenSection[];
     /** Id of the theme that is applied for all users by default */
     serverThemeId?: string;
+    /** Custom name for the server to display in the UI */
+    serverName?: string;
 }
 
 const DEFAULT_ITEM_PAGE_SETTINGS: ItemPageSettings = {
@@ -219,6 +221,7 @@ const DEFAULT_CONFIG: AppConfig = {
     watchedStateBadgeLibrary: false,
     watchedStateBadgeGenre: false,
     watchedStateBadgeSearch: false,
+    serverName: 'Pelagica',
     homeScreenSections: [
         {
             type: 'mediaBar',

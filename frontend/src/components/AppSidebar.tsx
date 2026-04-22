@@ -57,7 +57,9 @@ const AppSidebar = () => {
                             <AvatarFallback className="rounded-lg">{'PE'}</AvatarFallback>
                         </Avatar>
                         <div className="grid flex-1 text-left text-sm leading-tight">
-                            <span className="truncate font-medium">Pelagica</span>
+                            <span className="truncate font-medium">
+                                {config?.serverName || 'Pelagica'}
+                            </span>
                             {serverDomain && (
                                 <span className="truncate text-xs font-normal text-muted-foreground">
                                     {serverDomain}

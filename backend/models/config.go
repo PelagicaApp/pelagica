@@ -1,17 +1,18 @@
 package models
 
 type AppConfig struct {
-	JsonSchema                    string 		 	   `json:"$schema,omitempty"`
-	HomeScreenSections            []HomeScreenSection  `json:"homeScreenSections,omitempty"`
-	ItemPage                      *ItemPageSettings    `json:"itemPage,omitempty"`
-	ServerAddress                 string               `json:"serverAddress,omitempty"`
-	ShowStreamystatsButton        *bool                `json:"showStreamystatsButton,omitempty"`
-	StreamystatsURL               string               `json:"streamystatsUrl,omitempty"`
-	WatchedStateBadgeHomeScreen   *bool                `json:"watchedStateBadgeHomeScreen,omitempty"`
-	WatchedStateBadgeLibrary      *bool                `json:"watchedStateBadgeLibrary,omitempty"`
-	WatchedStateBadgeGenre        *bool                `json:"watchedStateBadgeGenre,omitempty"`
-	WatchedStateBadgeSearch       *bool                `json:"watchedStateBadgeSearch,omitempty"`
-	ServerThemeId				  string               `json:"serverThemeId,omitempty"`
+	JsonSchema                  string              `json:"$schema,omitempty"`
+	HomeScreenSections          []HomeScreenSection `json:"homeScreenSections,omitempty"`
+	ItemPage                    *ItemPageSettings   `json:"itemPage,omitempty"`
+	ServerAddress               string              `json:"serverAddress,omitempty"`
+	ShowStreamystatsButton      *bool               `json:"showStreamystatsButton,omitempty"`
+	StreamystatsURL             string              `json:"streamystatsUrl,omitempty"`
+	WatchedStateBadgeHomeScreen *bool               `json:"watchedStateBadgeHomeScreen,omitempty"`
+	WatchedStateBadgeLibrary    *bool               `json:"watchedStateBadgeLibrary,omitempty"`
+	WatchedStateBadgeGenre      *bool               `json:"watchedStateBadgeGenre,omitempty"`
+	WatchedStateBadgeSearch     *bool               `json:"watchedStateBadgeSearch,omitempty"`
+	ServerThemeId               string              `json:"serverThemeId,omitempty"`
+	ServerName                  string              `json:"serverName,omitempty"`
 }
 
 type HomeScreenSection struct {
@@ -43,29 +44,29 @@ type HomeScreenSection struct {
 
 	// Recommended
 	RecommendationType RecommendationTypeFilter `json:"recommendationType,omitempty"`
-	ShowBasedOn       *bool                      `json:"showBasedOn,omitempty"`
-	ShowSimilarity    *bool                      `json:"showSimilarity,omitempty"`
+	ShowBasedOn        *bool                    `json:"showBasedOn,omitempty"`
+	ShowSimilarity     *bool                    `json:"showSimilarity,omitempty"`
 }
 
 type ItemPageSettings struct {
-	DetailBadges         []DetailBadge  `json:"detailBadges,omitempty"`
-	EpisodeDisplay       EpisodeDisplay `json:"episodeDisplay,omitempty"`
-	FavoriteButton       []BaseItemKind `json:"favoriteButton"`
-	ShowWatchlistButton  *bool          `json:"showWatchlistButton,omitempty"`
-	DeleteButton         []BaseItemKind `json:"deleteButton,omitempty"`
+	DetailBadges        []DetailBadge  `json:"detailBadges,omitempty"`
+	EpisodeDisplay      EpisodeDisplay `json:"episodeDisplay,omitempty"`
+	FavoriteButton      []BaseItemKind `json:"favoriteButton"`
+	ShowWatchlistButton *bool          `json:"showWatchlistButton,omitempty"`
+	DeleteButton        []BaseItemKind `json:"deleteButton,omitempty"`
 }
 
 type SectionItemsConfig struct {
-	Genres                     []string    `json:"genres,omitempty"`
-	Tags                       []string    `json:"tags,omitempty"`
-	Types                      []string    `json:"types,omitempty"`
-	LibraryID                  string      `json:"libraryId,omitempty"`
-	Limit                      *int        `json:"limit,omitempty"`
-	IsFavorite                 *bool       `json:"isFavorite,omitempty"`
-	IsUnplayed                 *bool       `json:"isUnplayed,omitempty"`
-	IsInKefinTweaksWatchlist   *bool       `json:"isInKefinTweaksWatchlist,omitempty"`
-	SortBy                     []ItemSortBy `json:"sortBy,omitempty"`
-	SortOrder                  string      `json:"sortOrder,omitempty"`
+	Genres                   []string     `json:"genres,omitempty"`
+	Tags                     []string     `json:"tags,omitempty"`
+	Types                    []string     `json:"types,omitempty"`
+	LibraryID                string       `json:"libraryId,omitempty"`
+	Limit                    *int         `json:"limit,omitempty"`
+	IsFavorite               *bool        `json:"isFavorite,omitempty"`
+	IsUnplayed               *bool        `json:"isUnplayed,omitempty"`
+	IsInKefinTweaksWatchlist *bool        `json:"isInKefinTweaksWatchlist,omitempty"`
+	SortBy                   []ItemSortBy `json:"sortBy,omitempty"`
+	SortOrder                string       `json:"sortOrder,omitempty"`
 }
 
 type BaseItemKind string
@@ -83,13 +84,13 @@ type ItemSortBy string
 type RecommendationTypeFilter string
 
 const (
-	SectionMediaBar        = "mediaBar"
-	SectionItems           = "items"
-	SectionRecentlyAdded   = "recentlyAdded"
-	SectionContinue        = "continueWatching"
-	SectionNextUp          = "nextUp"
-	SectionResume          = "resume"
-	SectionRecommended     = "streamystatsRecommended"
-	SectionGenres          = "genres"
-	SectionLibraries       = "libraries"
+	SectionMediaBar      = "mediaBar"
+	SectionItems         = "items"
+	SectionRecentlyAdded = "recentlyAdded"
+	SectionContinue      = "continueWatching"
+	SectionNextUp        = "nextUp"
+	SectionResume        = "resume"
+	SectionRecommended   = "streamystatsRecommended"
+	SectionGenres        = "genres"
+	SectionLibraries     = "libraries"
 )

@@ -538,6 +538,7 @@ const SettingsPage = () => {
     const [saveSuccess, setSaveSuccess] = useState(false);
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
     const [serverThemeId, setServerThemeId] = useState<string | null>(null);
+    const [serverName, setServerName] = useState<string>('');
     const { data: themes, isLoading: themesLoading } = useThemes();
     const { mutate: deleteTheme, isPending: isDeletingTheme } = useDeleteTheme();
     const [showThemeUploadDialog, setShowThemeUploadDialog] = useState(false);
@@ -568,6 +569,7 @@ const SettingsPage = () => {
         setDetailBadges(config?.itemPage?.detailBadges || []);
         setHomeScreenSections(config?.homeScreenSections || []);
         setServerThemeId(config?.serverThemeId || null);
+        setServerName(config?.serverName || '');
     }, [
         config?.serverAddress,
         config?.streamystatsUrl,
@@ -582,6 +584,7 @@ const SettingsPage = () => {
         config?.itemPage?.detailBadges,
         config?.homeScreenSections,
         config?.serverThemeId,
+        config?.serverName,
     ]);
 
     const handleUpdateConfig = async () => {
@@ -598,6 +601,7 @@ const SettingsPage = () => {
                     watchedStateBadgeGenre,
                     watchedStateBadgeSearch,
                     homeScreenSections,
+                    serverName,
                     serverThemeId: serverThemeId || undefined,
                     itemPage: {
                         ...config.itemPage,
@@ -693,8 +697,21 @@ const SettingsPage = () => {
                     <TabsTrigger value="general">{t('category_general')}</TabsTrigger>
                     <TabsTrigger value="homesections">{t('category_homesections')}</TabsTrigger>
                     <TabsTrigger value="itempage">{t('category_itempage')}</TabsTrigger>
+                    <TabsTrigger value="branding">{t('category_branding')}</TabsTrigger>
                     <TabsTrigger value="themes">{t('category_themes')}</TabsTrigger>
                 </TabsList>
+                <TabsContent value="branding" className="max-w-200">
+                    <h1 className="mb-2 mt-2 text-2xl font-bold leading-none tracking-tight">
+                        {t('category_branding')}
+                    </h1>
+                    <StringInput
+                        label={t('server_name_label')}
+                        value={serverName}
+                        onChange={setServerName}
+                        placeholder={t('server_name_placeholder')}
+                        description={t('server_name_description')}
+                    />
+                </TabsContent>
                 <TabsContent value="general" className="max-w-200">
                     <h1 className="mb-2 mt-2 text-2xl font-bold leading-none tracking-tight">
                         {t('category_general')}
