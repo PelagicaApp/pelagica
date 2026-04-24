@@ -1,0 +1,1 @@
+import{c as a}from"./index-DZV3FY4d.js";import"./videojs-CPoZw-BW.js";const t=[["path",{d:"M17 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 1-1.732",key:"1vyzll"}],["path",{d:"m22 5.5-6.419 4.179a2 2 0 0 1-2.162 0L7 5.5",key:"k7ramc"}],["rect",{x:"7",y:"3",width:"15",height:"12",rx:"2",key:"17196g"}]],o=a("mails",t);export{t as __iconNode,o as default};

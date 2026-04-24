@@ -1,0 +1,1 @@
+import{c as e}from"./index-DZV3FY4d.js";import"./videojs-CPoZw-BW.js";const t=[["rect",{width:"18",height:"18",x:"3",y:"3",rx:"2",key:"afitv7"}],["line",{x1:"10",x2:"10",y1:"15",y2:"9",key:"c1nkhi"}],["line",{x1:"14",x2:"14",y1:"15",y2:"9",key:"h65svq"}]],c=e("square-pause",t);export{t as __iconNode,c as default};

@@ -1,0 +1,1 @@
+import{c}from"./index-DZV3FY4d.js";import"./videojs-CPoZw-BW.js";const o=[["circle",{cx:"12",cy:"12",r:"10",key:"1mglay"}],["path",{d:"M12 6v6h4",key:"135r8i"}]],t=c("clock-3",o);export{o as __iconNode,t as default};

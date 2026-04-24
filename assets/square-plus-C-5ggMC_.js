@@ -1,0 +1,1 @@
+import{c as e}from"./index-DZV3FY4d.js";import"./videojs-CPoZw-BW.js";const t=[["rect",{width:"18",height:"18",x:"3",y:"3",rx:"2",key:"afitv7"}],["path",{d:"M8 12h8",key:"1wcyev"}],["path",{d:"M12 8v8",key:"napkw2"}]],o=e("square-plus",t);export{t as __iconNode,o as default};

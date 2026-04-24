@@ -1,0 +1,1 @@
+import{c as t}from"./index-DZV3FY4d.js";import"./videojs-CPoZw-BW.js";const r=[["rect",{width:"18",height:"18",x:"3",y:"3",rx:"2",key:"afitv7"}],["path",{d:"M8 8h8v8",key:"b65dnt"}],["path",{d:"m8 16 8-8",key:"13b9ih"}]],a=t("square-arrow-up-right",r);export{r as __iconNode,a as default};

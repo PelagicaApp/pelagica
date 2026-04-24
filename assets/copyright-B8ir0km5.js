@@ -1,0 +1,1 @@
+import{c}from"./index-DZV3FY4d.js";import"./videojs-CPoZw-BW.js";const o=[["circle",{cx:"12",cy:"12",r:"10",key:"1mglay"}],["path",{d:"M14.83 14.83a4 4 0 1 1 0-5.66",key:"1i56pz"}]],r=c("copyright",o);export{o as __iconNode,r as default};

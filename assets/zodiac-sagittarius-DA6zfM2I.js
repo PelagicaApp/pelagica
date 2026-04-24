@@ -1,0 +1,1 @@
+import{c as t}from"./index-DZV3FY4d.js";import"./videojs-CPoZw-BW.js";const a=[["path",{d:"M15 3h6v6",key:"1q9fwt"}],["path",{d:"M21 3 3 21",key:"1011np"}],["path",{d:"m9 9 6 6",key:"z0biqf"}]],c=t("zodiac-sagittarius",a);export{a as __iconNode,c as default};

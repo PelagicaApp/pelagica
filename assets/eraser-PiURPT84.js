@@ -1,0 +1,1 @@
+import{c as a}from"./index-DZV3FY4d.js";import"./videojs-CPoZw-BW.js";const e=[["path",{d:"M21 21H8a2 2 0 0 1-1.42-.587l-3.994-3.999a2 2 0 0 1 0-2.828l10-10a2 2 0 0 1 2.829 0l5.999 6a2 2 0 0 1 0 2.828L12.834 21",key:"g5wo59"}],["path",{d:"m5.082 11.09 8.828 8.828",key:"1wx5vj"}]],t=a("eraser",e);export{e as __iconNode,t as default};

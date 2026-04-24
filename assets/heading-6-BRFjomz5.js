@@ -1,0 +1,1 @@
+import{c as e}from"./index-DZV3FY4d.js";import"./videojs-CPoZw-BW.js";const c=[["path",{d:"M4 12h8",key:"17cfdx"}],["path",{d:"M4 18V6",key:"1rz3zl"}],["path",{d:"M12 18V6",key:"zqpxq5"}],["circle",{cx:"19",cy:"16",r:"2",key:"15mx69"}],["path",{d:"M20 10c-2 2-3 3.5-3 6",key:"f35dl0"}]],a=e("heading-6",c);export{c as __iconNode,a as default};

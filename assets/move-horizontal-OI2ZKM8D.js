@@ -1,0 +1,1 @@
+import{c as o}from"./index-DZV3FY4d.js";import"./videojs-CPoZw-BW.js";const t=[["path",{d:"m18 8 4 4-4 4",key:"1ak13k"}],["path",{d:"M2 12h20",key:"9i4pu4"}],["path",{d:"m6 8-4 4 4 4",key:"15zrgr"}]],r=o("move-horizontal",t);export{t as __iconNode,r as default};

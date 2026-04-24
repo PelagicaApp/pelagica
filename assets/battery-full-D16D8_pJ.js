@@ -1,0 +1,1 @@
+import{c as t}from"./index-DZV3FY4d.js";import"./videojs-CPoZw-BW.js";const e=[["path",{d:"M10 10v4",key:"1mb2ec"}],["path",{d:"M14 10v4",key:"1nt88p"}],["path",{d:"M22 14v-4",key:"14q9d5"}],["path",{d:"M6 10v4",key:"1n77qd"}],["rect",{x:"2",y:"6",width:"16",height:"12",rx:"2",key:"13zb55"}]],c=t("battery-full",e);export{e as __iconNode,c as default};

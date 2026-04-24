@@ -1,0 +1,1 @@
+import{c as t}from"./index-DZV3FY4d.js";import"./videojs-CPoZw-BW.js";const e=[["path",{d:"m2 8 2 2-2 2 2 2-2 2",key:"sv1b1"}],["path",{d:"m22 8-2 2 2 2-2 2 2 2",key:"101i4y"}],["rect",{width:"8",height:"14",x:"8",y:"5",rx:"1",key:"1oyrl4"}]],i=t("vibrate",e);export{e as __iconNode,i as default};

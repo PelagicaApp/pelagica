@@ -1,0 +1,1 @@
+import{c as a}from"./index-DZV3FY4d.js";import"./videojs-CPoZw-BW.js";const t=[["path",{d:"M6 22V2.8a.8.8 0 0 1 1.17-.71l11.38 5.69a.8.8 0 0 1 0 1.44L6 15.5",key:"kfjsu0"}]],i=a("flag-triangle-right",t);export{t as __iconNode,i as default};

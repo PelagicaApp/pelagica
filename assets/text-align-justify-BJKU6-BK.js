@@ -1,0 +1,1 @@
+import{c as t}from"./index-DZV3FY4d.js";import"./videojs-CPoZw-BW.js";const e=[["path",{d:"M3 5h18",key:"1u36vt"}],["path",{d:"M3 12h18",key:"1i2n21"}],["path",{d:"M3 19h18",key:"awlh7x"}]],o=t("text-align-justify",e);export{e as __iconNode,o as default};
