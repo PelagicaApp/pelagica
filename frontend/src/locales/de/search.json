@@ -1,8 +1,19 @@
 {
-    "title": "Durchsuche Medien",
-    "description": "Suche nach Filmen, Serien und anderen Medieninhalten",
-    "input_placeholder": "Medien durchsuchen...",
-    "failed_search": "Suche fehlgeschlagen",
-    "start_typing": "Gib etwas ein um zu suchen...",
-    "no_results": "Keine Ergebnisse gefunden"
+  "title": "Durchsuche Medien",
+  "description": "Suche nach Filmen, Serien und anderen Medieninhalten",
+  "input_placeholder": "Medien durchsuchen...",
+  "failed_search": "Suche fehlgeschlagen",
+  "start_typing": "Gib etwas ein um zu suchen...",
+  "no_results": "Keine Ergebnisse gefunden",
+  "no_results_description": "Versuche, den Suchbegriff oder die Filter anzupassen, um zu finden, wonach du suchst.",
+  "typefilter_all": "Alle",
+  "typefilter_movies-tv": "Filme / Serien",
+  "typefilter_music": "Musik",
+  "clear_search": "Suche löschen",
+  "unexpected_error": "Unerwarteter Fehler",
+  "error_occurred_while_searching": "Bei der Suche ist ein Fehler aufgetreten.",
+  "group_moviesTv": "Filme & Serien",
+  "group_music": "Musik",
+  "group_episodes": "Episoden",
+  "group_people": "Personen"
 }
