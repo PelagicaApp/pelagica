@@ -6,13 +6,14 @@ import { useCurrentSessionId } from './useCurrentSessionId';
 interface StartPlaybackPayload {
     itemId: string;
     positionTicks?: number;
+    playSessionId?: string;
 }
 
 export function usePlaybackStart() {
     const { data: sessionId } = useCurrentSessionId();
 
     const { mutate: startPlayback, isPending } = useMutation({
-        mutationFn: async ({ itemId, positionTicks = 0 }: StartPlaybackPayload) => {
+        mutationFn: async ({ itemId, positionTicks = 0, playSessionId }: StartPlaybackPayload) => {
             if (!itemId) throw new Error('Item ID is required');
             if (!sessionId) throw new Error('Session ID is required');
 
@@ -22,7 +23,8 @@ export function usePlaybackStart() {
             await playstateApi.reportPlaybackStart({
                 playbackStartInfo: {
                     ItemId: itemId,
-                    SessionId: sessionId,
+                    // SessionId: sessionId,
+                    PlaySessionId: playSessionId,
                     PositionTicks: positionTicks,
                 },
             });

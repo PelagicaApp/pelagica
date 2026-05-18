@@ -7,13 +7,16 @@ interface PlaybackProgress {
     itemId: string;
     positionTicks: number;
     isPaused?: boolean;
+    playSessionId?: string;
+    volumeLevel?: number;
+    isMuted?: boolean;
 }
 
 export function useReportPlaybackProgress() {
     const { data: sessionId } = useCurrentSessionId();
 
     const { mutate: reportProgress, isPending } = useMutation({
-        mutationFn: async ({ itemId, positionTicks, isPaused }: PlaybackProgress) => {
+        mutationFn: async ({ itemId, positionTicks, isPaused, playSessionId, volumeLevel, isMuted }: PlaybackProgress) => {
             if (!itemId) throw new Error('Item ID is required');
             if (!sessionId) throw new Error('Session ID is required');
 
@@ -23,9 +26,12 @@ export function useReportPlaybackProgress() {
             await playstateApi.reportPlaybackProgress({
                 playbackProgressInfo: {
                     ItemId: itemId,
-                    SessionId: sessionId,
+                    // SessionId: sessionId,
+                    PlaySessionId: playSessionId,
                     PositionTicks: positionTicks,
                     IsPaused: isPaused,
+                    VolumeLevel: volumeLevel,
+                    IsMuted: isMuted,
                 },
             });
 

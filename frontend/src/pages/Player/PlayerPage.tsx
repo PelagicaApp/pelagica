@@ -180,7 +180,7 @@ const PlayerPage = () => {
         clearPlayback();
 
         // Report playback start
-        startPlayback({ itemId, positionTicks: startTicks });
+        startPlayback({ itemId, positionTicks: startTicks, playSessionId });
 
         const reportPlayerProgress = () => {
             if (!player || player.isDisposed?.()) return;
@@ -190,6 +190,8 @@ const PlayerPage = () => {
                 if (currentTime <= PLAYBACK_PROGRESS_REPORT_MIN_PLAYTIME_SECONDS) return;
                 const positionTicks = Math.floor(currentTime * 10000000); // Convert to ticks
                 const isPaused = player.paused();
+                const volumeLevel = player.volume() * 100;
+                const isMuted = player.muted();
 
                 lastPositionRef.current = positionTicks;
 
@@ -197,6 +199,9 @@ const PlayerPage = () => {
                     itemId,
                     positionTicks,
                     isPaused,
+                    playSessionId,
+                    volumeLevel,
+                    isMuted,
                 });
             } catch (error) {
                 console.error('Error reporting progress:', error);
