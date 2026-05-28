@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { setStatsConsent } from '@/api/stats';
 
-export function useCreateTheme() {
+export function useSetStatsConsent() {
     const queryClient = useQueryClient();
 
     return useMutation({
