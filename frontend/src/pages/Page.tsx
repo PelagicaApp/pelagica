@@ -16,8 +16,6 @@ import { logout } from '@/api/logout';
 import { getApi } from '@/api/getApi';
 import FullPageError from '@/components/FullPageError';
 import { getSidebarState, saveSidebarState } from '../utils/localstorageSidebar';
-import { SidebarBrowserMockProvider } from '@/context/SidebarBrowserMockContext';
-import { SidebarBrowserDetail } from '@/components/SidebarBrowserDetail';
 
 interface PageProps {
     title?: string;
@@ -133,23 +131,22 @@ const PageContent = ({
     }
 
     return (
-        <SidebarBrowserMockProvider>
-            <SidebarProvider
-                className={`relative min-h-dvh h-dvh ${containerClassName ?? ''}`}
-                style={
-                    {
-                        '--sidebar-width': '28rem',
-                    } as CSSProperties
-                }
-                open={sidebarOpen ?? true}
-                onOpenChange={(open) => {
-                    setSidebarOpen(open);
-                    saveSidebarState(open);
-                }}
-            >
-                {background || bgItem}
-                {sidebar && <AppSidebar />}
-                <div className="relative w-full flex flex-col overflow-x-hidden overflow-y-auto h-dvh md:h-[calc(100dvh-2rem)] px-4 my-0 md:my-4 z-5 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-muted-foreground [&::-webkit-scrollbar-thumb]:rounded-full">
+        <SidebarProvider
+            className={`relative min-h-dvh h-dvh ${containerClassName ?? ''}`}
+            style={
+                {
+                    '--sidebar-width': '28rem',
+                } as CSSProperties
+            }
+            open={sidebarOpen ?? true}
+            onOpenChange={(open) => {
+                setSidebarOpen(open);
+                saveSidebarState(open);
+            }}
+        >
+            {background || bgItem}
+            {sidebar && <AppSidebar />}
+            <div className="relative w-full flex flex-col overflow-x-hidden overflow-y-auto h-dvh md:h-[calc(100dvh-2rem)] px-4 my-0 md:my-4 z-5 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-muted-foreground [&::-webkit-scrollbar-thumb]:rounded-full">
                 {sidebar && breadcrumbs ? (
                     <div className="flex items-center gap-2 mb-4">
                         <SidebarTrigger />
@@ -179,14 +176,10 @@ const PageContent = ({
                         </Button>
                     </div>
                 )}
-                <main className={`w-full ${className ?? ''}`}>
-                    {sidebar && <SidebarBrowserDetail />}
-                    {children}
-                </main>
+                <main className={`w-full ${className ?? ''}`}>{children}</main>
                 {showPlayerBar && <MusicPlayerBar />}
             </div>
-            </SidebarProvider>
-        </SidebarBrowserMockProvider>
+        </SidebarProvider>
     );
 };
 

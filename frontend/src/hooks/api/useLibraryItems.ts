@@ -16,6 +16,7 @@ export type UseLibraryItemsOptions = {
     sortOrder?: SortOrder;
     includeItemTypes?: BaseItemKind[];
     recursive?: boolean;
+    searchTerm?: string;
 };
 
 export interface LibraryItemsResponse {
@@ -28,10 +29,20 @@ export function useLibraryItems(
     options?: UseLibraryItemsOptions
 ): ReturnType<typeof useQuery<LibraryItemsResponse>> {
     return useQuery<LibraryItemsResponse>({
-        queryKey: ['libraryItems', libraryId, options?.startIndex, options?.limit, options?.sortBy],
+        queryKey: [
+            'libraryItems',
+            libraryId,
+            options?.startIndex,
+            options?.limit,
+            options?.sortBy,
+            options?.sortOrder,
+            options?.searchTerm,
+            options?.includeItemTypes,
+        ],
         queryFn: async (): Promise<LibraryItemsResponse> => {
             const api = getApi();
             const itemsApi = getItemsApi(api);
+            const searchTerm = options?.searchTerm?.trim();
             const response = await itemsApi.getItems({
                 parentId: libraryId!,
                 sortBy: options?.sortBy || ['SortName'],
@@ -41,6 +52,7 @@ export function useLibraryItems(
                 recursive: options?.recursive ?? true,
                 includeItemTypes: options?.includeItemTypes,
                 locationTypes: ['FileSystem'],
+                ...(searchTerm ? { searchTerm } : {}),
             });
             return {
                 items: response.data.Items || [],

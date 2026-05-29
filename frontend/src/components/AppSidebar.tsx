@@ -22,7 +22,6 @@ import { useEffect } from 'react';
 import { useSidebar } from '@/components/ui/sidebar';
 import { DynamicIcon, type IconName } from 'lucide-react/dynamic';
 import { SidebarBrowserMock } from '@/components/SidebarBrowserMock';
-import { useSidebarBrowserMock } from '@/context/SidebarBrowserMockContext';
 
 function serverUrlToDomain(url: string) {
     try {
@@ -66,7 +65,6 @@ export const LinkSidebarItem = ({
 
 const AppSidebar = () => {
     const { setOpen, isMobile } = useSidebar();
-    const { setSelectedItem } = useSidebarBrowserMock();
     const location = useLocation();
     const { config } = useConfig();
     const serverUrl = getServerUrl();
@@ -94,11 +92,7 @@ const AppSidebar = () => {
                         className="hover:bg-sidebar-accent cursor-pointer"
                         isActive={location.pathname === '/'}
                     >
-                        <Link
-                            to="/"
-                            onClick={() => setSelectedItem(null)}
-                            title="Home"
-                        >
+                        <Link to="/" title="Home">
                             <Avatar className="h-8 w-8 p-1 rounded-lg">
                                 <AvatarImage src={logoSrc} alt={'Pelagica logo'} />
                                 <AvatarFallback className="rounded-lg">{'PE'}</AvatarFallback>

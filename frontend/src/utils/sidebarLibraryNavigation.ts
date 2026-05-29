@@ -1,5 +1,5 @@
 import type { BaseItemDto, CollectionType } from '@jellyfin/sdk/lib/generated-client/models';
-import type { BrowserMediaCategory } from '@/context/SidebarBrowserMockContext';
+export type BrowserMediaCategory = 'music' | 'series' | 'movie';
 import { SUPPORTED_LIBRARY_COLLECTION_TYPES } from '@/utils/supportedLibraryCollectionTypes';
 
 const CATEGORY_COLLECTION_TYPES: Record<BrowserMediaCategory, CollectionType[]> = {
