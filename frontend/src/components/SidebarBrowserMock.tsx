@@ -1,6 +1,6 @@
 'use client';
 
-import { useDeferredValue, useEffect, useMemo, useState } from 'react';
+import { useDeferredValue, useEffect, useMemo } from 'react';
 import { Film, Music2, Search, Tv } from 'lucide-react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router';
 import { SidebarInput, useSidebar } from '@/components/ui/sidebar';
@@ -38,13 +38,12 @@ type SidebarBrowserMockProps = {
 
 export function SidebarBrowserMock({ className }: SidebarBrowserMockProps) {
     const { state, isMobile } = useSidebar();
-    const { category, setCategory } = useSidebarBrowser();
+    const { category, setCategory, searchQuery, setSearchQuery } = useSidebarBrowser();
     const { data: views } = useUserViews();
     const navigate = useNavigate();
     const location = useLocation();
     const [searchParams] = useSearchParams();
-    const [query, setQuery] = useState('');
-    const debouncedQuery = useDeferredValue(query.trim());
+    const debouncedQuery = useDeferredValue(searchQuery.trim());
 
     const libraryIdFromUrl = searchParams.get('library');
     const categoryFromUrl = useMemo((): BrowserMediaCategory => {
@@ -97,7 +96,7 @@ export function SidebarBrowserMock({ className }: SidebarBrowserMockProps) {
     const handleCategoryChange = (value: string) => {
         const nextCategory = value as BrowserMediaCategory;
         setCategory(nextCategory);
-        setQuery('');
+        setSearchQuery('');
         navigateToLibraryForCategory(nextCategory);
     };
 
@@ -127,8 +126,8 @@ export function SidebarBrowserMock({ className }: SidebarBrowserMockProps) {
             <div className="relative shrink-0">
                 <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2" />
                 <SidebarInput
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search library…"
                     className="bg-background pl-8"
                 />
