@@ -153,22 +153,49 @@ const MusicArtistPage = ({ item, config }: MusicArtistPageProps) => {
                         )}
                     >
                         <div className="shrink-0">
-                            <p
-                                className={cn(
-                                    'text-sm font-medium uppercase tracking-[0.2em]',
-                                    onPalette ? 'text-white/75' : 'text-primary'
-                                )}
-                            >
-                                {t('artist')}
-                            </p>
-                            <h1
-                                className={cn(
-                                    'mt-2 line-clamp-2 text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl',
-                                    onPalette && 'text-white drop-shadow-sm'
-                                )}
-                            >
-                                {item.Name}
-                            </h1>
+                            <div className="flex items-start justify-between gap-3 md:gap-4">
+                                <div className="min-w-0 flex-1 text-center md:text-left">
+                                    <p
+                                        className={cn(
+                                            'text-sm font-medium uppercase tracking-[0.2em]',
+                                            onPalette ? 'text-white/75' : 'text-primary'
+                                        )}
+                                    >
+                                        {t('artist')}
+                                    </p>
+                                    <h1
+                                        className={cn(
+                                            'mt-2 line-clamp-2 text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl',
+                                            onPalette && 'text-white drop-shadow-sm'
+                                        )}
+                                    >
+                                        {item.Name}
+                                    </h1>
+                                </div>
+
+                                <div className="flex shrink-0 items-center gap-2 self-start">
+                                    <Button
+                                        size="default"
+                                        className={cn(
+                                            'rounded-full px-4 sm:px-6',
+                                            onPalette && 'bg-white text-black hover:bg-white/90'
+                                        )}
+                                        onClick={handlePlayArtist}
+                                        disabled={loadingTracks || !tracks?.length}
+                                    >
+                                        <Play className="fill-current" />
+                                        <span className="hidden sm:inline">{t('play')}</span>
+                                    </Button>
+                                    <FavoriteButton
+                                        item={item}
+                                        size="icon"
+                                        showFavoriteButton={config.itemPage?.favoriteButton?.includes(
+                                            item.Type!
+                                        )}
+                                    />
+                                    <ItemAdminButton item={item} />
+                                </div>
+                            </div>
 
                             <div className="mt-4 flex flex-wrap items-center justify-center gap-2 md:justify-start">
                                 {loadingAlbumCount ? (
@@ -223,29 +250,6 @@ const MusicArtistPage = ({ item, config }: MusicArtistPageProps) => {
                                 </p>
                             </div>
                         )}
-
-                        <div className="mt-4 flex shrink-0 flex-wrap items-center justify-center gap-2 md:mt-auto md:justify-start md:pt-4">
-                            <Button
-                                size="lg"
-                                className={cn(
-                                    'rounded-full px-6',
-                                    onPalette && 'bg-white text-black hover:bg-white/90'
-                                )}
-                                onClick={handlePlayArtist}
-                                disabled={loadingTracks || !tracks?.length}
-                            >
-                                <Play className="fill-current" />
-                                {t('play')}
-                            </Button>
-                            <FavoriteButton
-                                item={item}
-                                size="icon"
-                                showFavoriteButton={config.itemPage?.favoriteButton?.includes(
-                                    item.Type!
-                                )}
-                            />
-                            <ItemAdminButton item={item} />
-                        </div>
                     </div>
                 </div>
             </section>
