@@ -23,6 +23,7 @@ import {
 } from '@/utils/sidebarLibraryNavigation';
 import { getIncludeItemTypesForCategory } from '@/utils/sidebarBrowseItems';
 import { SidebarBrowserListItem } from '@/components/SidebarBrowserListItem';
+import { useSidebarBrowser } from '@/context/SidebarBrowserContext';
 
 const SIDEBAR_RESULT_LIMIT = 100;
 
@@ -43,6 +44,7 @@ type SidebarBrowserMockProps = {
 
 export function SidebarBrowserMock({ className }: SidebarBrowserMockProps) {
     const { state, isMobile } = useSidebar();
+    const { category, setCategory } = useSidebarBrowser();
     const { data: views } = useUserViews();
     const navigate = useNavigate();
     const location = useLocation();
@@ -57,11 +59,12 @@ export function SidebarBrowserMock({ className }: SidebarBrowserMockProps) {
         return collectionTypeToCategory(library?.CollectionType);
     }, [location.pathname, libraryIdFromUrl, views?.Items]);
 
-    const [category, setCategory] = useState<BrowserMediaCategory | 'all'>(categoryFromUrl);
-
+    // Sync from library URL when on /library (category lives in router-level context).
     useEffect(() => {
-        setCategory(categoryFromUrl);
-    }, [categoryFromUrl]);
+        if (location.pathname === '/library') {
+            setCategory(categoryFromUrl);
+        }
+    }, [categoryFromUrl, location.pathname, setCategory]);
 
     const activeLibraryId = useMemo(() => {
         if (
