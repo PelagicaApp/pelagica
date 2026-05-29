@@ -9,30 +9,20 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-    SidebarMenuSub,
 } from '@/components/ui/sidebar';
-import { ChartLine, ChevronRight, Home, Library, Search } from 'lucide-react';
-import { Link } from 'react-router';
+import { ChartLine } from 'lucide-react';
+import { Link, useLocation } from 'react-router';
 import { NavUser } from './NavUser';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { useTranslation } from 'react-i18next';
-import { useUserViews } from '@/hooks/api/useUserViews';
-import JellyfinLibraryIcon from './JellyfinLibraryIcon';
+import { useConfig } from '@/hooks/api/useConfig';
 import { getServerUrl } from '@/utils/localstorageCredentials';
 import { useTheme } from './theme-provider';
-import { useConfig } from '@/hooks/api/useConfig';
 import { getEffectiveTheme } from '@/utils/effectiveTheme';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
-import {
-    getLibraryCollapsibleState,
-    saveLibraryCollapsibleState,
-} from '../utils/localstorageSidebar';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useSidebar } from '@/components/ui/sidebar';
-import { Button } from './ui/button';
-import { SUPPORTED_LIBRARY_COLLECTION_TYPES } from '../utils/supportedLibraryCollectionTypes';
 import { DynamicIcon, type IconName } from 'lucide-react/dynamic';
 import { SidebarBrowserMock } from '@/components/SidebarBrowserMock';
+import { useSidebarBrowserMock } from '@/context/SidebarBrowserMockContext';
 
 function serverUrlToDomain(url: string) {
     try {
@@ -76,146 +66,62 @@ export const LinkSidebarItem = ({
 
 const AppSidebar = () => {
     const { setOpen, isMobile } = useSidebar();
-    const { t } = useTranslation('sidebar');
-
-    // Mock: keep sidebar expanded on desktop so browse UI stays visible (hidden in icon mode).
-    useEffect(() => {
-        if (!isMobile) setOpen(true);
-    }, [isMobile, setOpen]);
+    const { setSelectedItem } = useSidebarBrowserMock();
+    const location = useLocation();
     const { config } = useConfig();
-    const { data: views } = useUserViews();
     const serverUrl = getServerUrl();
     const serverDomain = serverUrl ? serverUrlToDomain(serverUrl) : null;
     const { theme } = useTheme();
     const effectiveTheme = getEffectiveTheme(theme);
-    const [libraryOpen, setLibraryOpen] = useState(getLibraryCollapsibleState);
     const defaultLogo = effectiveTheme === 'dark' ? '/logo.svg' : '/logo-dark.svg';
     const configuredLogo =
         effectiveTheme === 'dark' ? config?.logoDarkUrl || '' : config?.logoLightUrl || '';
     const logoSrc = configuredLogo || defaultLogo;
 
-    const libraries =
-        views?.Items?.filter((library) =>
-            SUPPORTED_LIBRARY_COLLECTION_TYPES.includes(library.CollectionType!)
-        ) ?? [];
-
     const validLinks = config?.links?.filter((link) => link.url && link.text) ?? [];
+
+    useEffect(() => {
+        if (!isMobile) setOpen(true);
+    }, [isMobile, setOpen]);
 
     return (
         <Sidebar variant="sidebar" collapsible="icon">
-            <SidebarHeader>
+            <SidebarHeader className="pb-1">
                 <SidebarMenu>
                     <SidebarMenuButton
                         size="lg"
-                        className="cursor-default hover:bg-transparent active:bg-transparent"
+                        asChild
+                        className="hover:bg-sidebar-accent cursor-pointer"
+                        isActive={location.pathname === '/'}
                     >
-                        <Avatar className="h-8 w-8 p-1 rounded-lg">
-                            <AvatarImage src={logoSrc} alt={'Pelagica logo'} />
-                            <AvatarFallback className="rounded-lg">{'PE'}</AvatarFallback>
-                        </Avatar>
-                        <div className="grid flex-1 text-left text-sm leading-tight">
-                            <span className="truncate font-medium">
-                                {config?.serverName || 'Pelagica'}
-                            </span>
-                            {serverDomain && (
-                                <span className="truncate text-xs font-normal text-muted-foreground">
-                                    {serverDomain}
+                        <Link
+                            to="/"
+                            onClick={() => setSelectedItem(null)}
+                            title="Home"
+                        >
+                            <Avatar className="h-8 w-8 p-1 rounded-lg">
+                                <AvatarImage src={logoSrc} alt={'Pelagica logo'} />
+                                <AvatarFallback className="rounded-lg">{'PE'}</AvatarFallback>
+                            </Avatar>
+                            <div className="grid flex-1 text-left text-sm leading-tight">
+                                <span className="truncate font-medium">
+                                    {config?.serverName || 'Pelagica'}
                                 </span>
-                            )}
-                        </div>
+                                {serverDomain && (
+                                    <span className="truncate text-xs font-normal text-muted-foreground">
+                                        {serverDomain}
+                                    </span>
+                                )}
+                            </div>
+                        </Link>
                     </SidebarMenuButton>
                 </SidebarMenu>
             </SidebarHeader>
-            <SidebarContent className="gap-1 overflow-hidden">
-                <SidebarBrowserMock className="min-h-0 flex-1" />
-                <SidebarGroup className="shrink-0 py-1">
-                    <SidebarGroupLabel className="h-7">{t('navigation')}</SidebarGroupLabel>
-                    <SidebarGroupContent>
-                        <SidebarMenu>
-                            <SidebarMenuItem>
-                                <SidebarMenuButton asChild>
-                                    <Link to={'/'}>
-                                        <Home />
-                                        {t('home')}
-                                    </Link>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>
-                            <SidebarMenuItem>
-                                <Collapsible
-                                    className="group/collapsible"
-                                    open={libraryOpen}
-                                    onOpenChange={(open) => {
-                                        setLibraryOpen(open);
-                                        saveLibraryCollapsibleState(open);
-                                    }}
-                                >
-                                    <CollapsibleTrigger asChild>
-                                        <SidebarMenuButton asChild>
-                                            <div>
-                                                <Button asChild variant="ghost" className="p-0!">
-                                                    <Link to={'/library'}>
-                                                        <Library />
-                                                        {t('library')}
-                                                    </Link>
-                                                </Button>
-                                                {libraries?.length > 0 && (
-                                                    <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
-                                                )}
-                                            </div>
-                                        </SidebarMenuButton>
-                                    </CollapsibleTrigger>
-                                    {libraries?.length > 0 && (
-                                        <CollapsibleContent>
-                                            <SidebarMenuSub>
-                                                {libraries.map((library) => (
-                                                    <SidebarMenuItem key={library.Id}>
-                                                        <SidebarMenuButton asChild>
-                                                            <Link
-                                                                to={`/library?library=${library.Id}`}
-                                                            >
-                                                                <JellyfinLibraryIcon
-                                                                    libraryType={
-                                                                        library.CollectionType
-                                                                    }
-                                                                />
-                                                                {library.Name}
-                                                            </Link>
-                                                        </SidebarMenuButton>
-                                                    </SidebarMenuItem>
-                                                ))}
-                                            </SidebarMenuSub>
-                                        </CollapsibleContent>
-                                    )}
-                                </Collapsible>
-                            </SidebarMenuItem>
-                            <SidebarMenuItem>
-                                <SidebarMenuButton asChild>
-                                    <Link to={'/search'}>
-                                        <Search />
-                                        {t('search')}
-                                    </Link>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>
-                            {config && config.streamystatsUrl && config.showStreamystatsButton && (
-                                <SidebarMenuButton
-                                    className="cursor-pointer"
-                                    title="Streamystats"
-                                    onClick={() => {
-                                        window.open(config.streamystatsUrl, '_blank');
-                                    }}
-                                >
-                                    <>
-                                        <ChartLine />
-                                        Streamystats
-                                    </>
-                                </SidebarMenuButton>
-                            )}
-                        </SidebarMenu>
-                    </SidebarGroupContent>
-                </SidebarGroup>
+            <SidebarContent className="gap-0 overflow-hidden pb-1">
+                <SidebarBrowserMock className="mx-1 min-h-0 flex-1 border-0 bg-transparent p-2" />
                 {validLinks.length > 0 && (
-                    <SidebarGroup>
-                        <SidebarGroupLabel>{t('category_links')}</SidebarGroupLabel>
+                    <SidebarGroup className="shrink-0 py-1">
+                        <SidebarGroupLabel className="h-7">Links</SidebarGroupLabel>
                         <SidebarGroupContent>
                             <SidebarMenu>
                                 {validLinks.map((link, index) => (
@@ -231,7 +137,21 @@ const AppSidebar = () => {
                     </SidebarGroup>
                 )}
             </SidebarContent>
-            <SidebarFooter>
+            <SidebarFooter className="gap-1">
+                {config?.streamystatsUrl && config.showStreamystatsButton && (
+                    <SidebarMenu>
+                        <SidebarMenuItem>
+                            <SidebarMenuButton
+                                className="cursor-pointer"
+                                title="Streamystats"
+                                onClick={() => window.open(config.streamystatsUrl, '_blank')}
+                            >
+                                <ChartLine />
+                                Streamystats
+                            </SidebarMenuButton>
+                        </SidebarMenuItem>
+                    </SidebarMenu>
+                )}
                 <NavUser />
             </SidebarFooter>
         </Sidebar>

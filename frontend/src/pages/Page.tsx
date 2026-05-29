@@ -18,7 +18,6 @@ import FullPageError from '@/components/FullPageError';
 import { getSidebarState, saveSidebarState } from '../utils/localstorageSidebar';
 import { SidebarBrowserMockProvider } from '@/context/SidebarBrowserMockContext';
 import { SidebarBrowserDetail } from '@/components/SidebarBrowserDetail';
-import { SidebarBrowserHint } from '@/components/SidebarBrowserHint';
 
 interface PageProps {
     title?: string;
@@ -181,7 +180,6 @@ const PageContent = ({
                     </div>
                 )}
                 <main className={`w-full ${className ?? ''}`}>
-                    {sidebar && <SidebarBrowserHint />}
                     {sidebar && <SidebarBrowserDetail />}
                     {children}
                 </main>

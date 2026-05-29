@@ -1,7 +1,8 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Film, Music2, Search, Tv } from 'lucide-react';
+import { useLocation, useNavigate, useSearchParams } from 'react-router';
 import { SidebarInput, useSidebar } from '@/components/ui/sidebar';
 import {
     Select,
@@ -16,6 +17,12 @@ import {
     type BrowserMockItem,
     useSidebarBrowserMock,
 } from '@/context/SidebarBrowserMockContext';
+import { useUserViews } from '@/hooks/api/useUserViews';
+import {
+    buildLibrarySearchParams,
+    collectionTypeToCategory,
+    findLibraryIdForCategory,
+} from '@/utils/sidebarLibraryNavigation';
 
 const MOCK_ITEMS: BrowserMockItem[] = [
     {
@@ -159,8 +166,36 @@ type SidebarBrowserMockProps = {
 export function SidebarBrowserMock({ className }: SidebarBrowserMockProps) {
     const { state, isMobile } = useSidebar();
     const { selectedItem, setSelectedItem } = useSidebarBrowserMock();
+    const { data: views } = useUserViews();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const [searchParams] = useSearchParams();
     const [query, setQuery] = useState('');
-    const [category, setCategory] = useState<BrowserMediaCategory | 'all'>('all');
+
+    const libraryIdFromUrl = searchParams.get('library');
+    const categoryFromUrl = useMemo(() => {
+        if (location.pathname !== '/library' || !libraryIdFromUrl) return 'all' as const;
+        const library = views?.Items?.find((item) => item.Id === libraryIdFromUrl);
+        return collectionTypeToCategory(library?.CollectionType);
+    }, [location.pathname, libraryIdFromUrl, views?.Items]);
+
+    const [category, setCategory] = useState<BrowserMediaCategory | 'all'>(categoryFromUrl);
+
+    useEffect(() => {
+        setCategory(categoryFromUrl);
+    }, [categoryFromUrl]);
+
+    const navigateToLibraryForCategory = (nextCategory: BrowserMediaCategory | 'all') => {
+        const libraryId = findLibraryIdForCategory(views?.Items, nextCategory);
+        if (!libraryId) return;
+        navigate(`/library?${buildLibrarySearchParams(libraryId).toString()}`);
+    };
+
+    const handleCategoryChange = (value: BrowserMediaCategory | 'all') => {
+        setCategory(value);
+        setSelectedItem(null);
+        navigateToLibraryForCategory(value);
+    };
 
     const results = useMemo(() => {
         const normalized = query.trim().toLowerCase();
@@ -181,7 +216,7 @@ export function SidebarBrowserMock({ className }: SidebarBrowserMockProps) {
             <p className="text-muted-foreground px-3 py-6 text-center text-xs leading-relaxed">
                 Expand the sidebar
                 <span className="text-foreground block font-medium">Ctrl+B</span>
-                to try the browse mock
+                to browse
             </p>
         );
     }
@@ -189,36 +224,27 @@ export function SidebarBrowserMock({ className }: SidebarBrowserMockProps) {
     return (
         <section
             data-testid="sidebar-browser-mock"
-            className={cn(
-                'border-primary/30 bg-sidebar-accent/20 mx-2 flex min-h-[min(24rem,50dvh)] min-w-0 flex-col gap-3 rounded-lg border p-3',
-                className
-            )}
+            className={cn('flex min-h-0 min-w-0 flex-1 flex-col gap-2', className)}
         >
-            <div className="flex items-start justify-between gap-2">
-                <div>
-                    <h2 className="text-sm font-semibold leading-tight">Browse library</h2>
-                    <p className="text-muted-foreground text-xs">Search and filter mock media</p>
-                </div>
-                <span className="bg-primary text-primary-foreground shrink-0 rounded px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide">
+            <div className="flex items-center justify-between gap-2 px-0.5">
+                <h2 className="text-sm font-semibold leading-tight">Browse</h2>
+                <span className="bg-primary/15 text-primary shrink-0 rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
                     Mock
                 </span>
             </div>
 
-            <div className="relative">
+            <div className="relative shrink-0">
                 <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2" />
                 <SidebarInput
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Search music, series, movies…"
+                    placeholder="Search…"
                     className="bg-background pl-8"
                 />
             </div>
 
-            <Select
-                value={category}
-                onValueChange={(value) => setCategory(value as BrowserMediaCategory | 'all')}
-            >
-                <SelectTrigger className="bg-background w-full" size="sm">
+            <Select value={category} onValueChange={handleCategoryChange}>
+                <SelectTrigger className="bg-background w-full shrink-0" size="sm">
                     <SelectValue placeholder="Category" />
                 </SelectTrigger>
                 <SelectContent>
@@ -234,14 +260,14 @@ export function SidebarBrowserMock({ className }: SidebarBrowserMockProps) {
             </Select>
 
             <div className="flex min-h-0 flex-1 flex-col gap-1">
-                <div className="text-muted-foreground flex items-center justify-between text-xs font-medium">
+                <div className="text-muted-foreground flex shrink-0 items-center justify-between px-0.5 text-xs font-medium">
                     <span>Results</span>
                     <span className="tabular-nums">{results.length}</span>
                 </div>
                 <ul className="flex min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto pr-0.5 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-sidebar-border">
                     {results.length === 0 ? (
-                        <li className="text-muted-foreground py-8 text-center text-sm">
-                            No matches. Try another search or category.
+                        <li className="text-muted-foreground py-6 text-center text-sm">
+                            No matches.
                         </li>
                     ) : (
                         results.map((item) => {
@@ -252,14 +278,14 @@ export function SidebarBrowserMock({ className }: SidebarBrowserMockProps) {
                                         type="button"
                                         onClick={() => setSelectedItem(item)}
                                         className={cn(
-                                            'hover:bg-sidebar-accent flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-left text-sm transition-colors',
+                                            'hover:bg-sidebar-accent flex w-full items-center gap-2 rounded-md px-1.5 py-1.5 text-left text-sm transition-colors',
                                             isActive &&
                                                 'bg-sidebar-accent text-sidebar-accent-foreground ring-primary/50 ring-1'
                                         )}
                                     >
                                         <div
                                             className={cn(
-                                                'bg-gradient-to-br flex size-10 shrink-0 items-center justify-center rounded-md shadow-inner',
+                                                'bg-gradient-to-br flex size-9 shrink-0 items-center justify-center rounded-md',
                                                 item.accent
                                             )}
                                         >
