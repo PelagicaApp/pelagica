@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
-import { ImageOff, Mic2, Play } from 'lucide-react';
+import { Mic2, Play } from 'lucide-react';
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import type { AppConfig } from '@/hooks/api/useConfig';
@@ -39,7 +39,6 @@ const MusicArtistPage = ({ item, config }: MusicArtistPageProps) => {
     const { loadQueue } = useMusicPlayback();
     const { setBackground } = usePageBackground();
     const [imageError, setImageError] = useState(false);
-    const [isOverviewExpanded, setIsOverviewExpanded] = useState(false);
 
     const { data: albumCount, isLoading: loadingAlbumCount } = useArtistAlbumCount(item.Id);
     const { data: tracks, isLoading: loadingTracks } = useArtistTracks(item.Id);
@@ -101,24 +100,24 @@ const MusicArtistPage = ({ item, config }: MusicArtistPageProps) => {
 
     return (
         <div className="flex flex-col gap-10">
-            <section className="relative overflow-hidden rounded-2xl border border-border/60 bg-background/40 p-6 shadow-xl backdrop-blur-md sm:p-10">
+            <section className="relative overflow-hidden rounded-2xl border border-border/60 bg-background/40 p-6 shadow-xl backdrop-blur-md sm:p-8 md:h-80 lg:h-96">
                 <div className="pointer-events-none absolute -right-16 -top-16 size-64 rounded-full bg-primary/10 blur-3xl" />
                 <div className="pointer-events-none absolute -bottom-20 -left-10 size-72 rounded-full bg-primary/5 blur-3xl" />
 
-                <div className="relative flex flex-col gap-8 md:flex-row md:items-end">
-                    <div className="mx-auto shrink-0 md:mx-0">
+                <div className="relative flex flex-col gap-8 md:h-full md:flex-row md:items-stretch md:gap-8">
+                    <div className="mx-auto flex shrink-0 items-center justify-center md:mx-0 md:h-full md:py-1">
                         {!imageError ? (
-                            <div className="relative">
+                            <div className="relative aspect-square h-40 sm:h-52 md:h-full md:max-h-full">
                                 <img
                                     src={posterUrl}
                                     alt={item.Name || t('no_title')}
-                                    className="size-40 rounded-full object-cover shadow-2xl ring-4 ring-background/80 sm:size-52"
+                                    className="size-full rounded-full object-cover shadow-2xl ring-4 ring-background/80"
                                     onError={() => setImageError(true)}
                                 />
-                                <Skeleton className="absolute inset-0 -z-10 size-40 rounded-full sm:size-52" />
+                                <Skeleton className="absolute inset-0 -z-10 size-full rounded-full" />
                             </div>
                         ) : (
-                            <div className="flex size-40 items-center justify-center rounded-full bg-muted shadow-2xl ring-4 ring-background/80 sm:size-52">
+                            <div className="flex aspect-square h-40 items-center justify-center rounded-full bg-muted shadow-2xl ring-4 ring-background/80 sm:h-52 md:h-full md:max-h-full">
                                 {item.Name ? (
                                     <span className="text-4xl font-bold text-muted-foreground sm:text-5xl">
                                         {getArtistInitials(item.Name)}
@@ -130,64 +129,57 @@ const MusicArtistPage = ({ item, config }: MusicArtistPageProps) => {
                         )}
                     </div>
 
-                    <div className="min-w-0 flex-1 text-center md:text-left">
-                        <p className="text-sm font-medium uppercase tracking-[0.2em] text-primary">
-                            {t('artist')}
-                        </p>
-                        <h1 className="mt-2 text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-                            {item.Name}
-                        </h1>
+                    <div className="flex min-h-0 min-w-0 flex-1 flex-col text-center md:h-full md:text-left">
+                        <div className="shrink-0">
+                            <p className="text-sm font-medium uppercase tracking-[0.2em] text-primary">
+                                {t('artist')}
+                            </p>
+                            <h1 className="mt-2 line-clamp-2 text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+                                {item.Name}
+                            </h1>
 
-                        <div className="mt-4 flex flex-wrap items-center justify-center gap-2 md:justify-start">
-                            {loadingAlbumCount ? (
-                                <Skeleton className="h-7 w-24 rounded-full" />
-                            ) : (
-                                albumCountLabel && (
-                                    <Badge variant="secondary" className="rounded-full px-3 py-1">
-                                        {albumCountLabel}
-                                    </Badge>
-                                )
-                            )}
-                            {genreItems.map((genre) =>
-                                genre.id ? (
-                                    <Badge
-                                        key={genre.id}
-                                        variant="outline"
-                                        className="rounded-full"
-                                        asChild
-                                    >
-                                        <Link to={`/item/${genre.id}`}>{genre.name}</Link>
-                                    </Badge>
+                            <div className="mt-4 flex flex-wrap items-center justify-center gap-2 md:justify-start">
+                                {loadingAlbumCount ? (
+                                    <Skeleton className="h-7 w-24 rounded-full" />
                                 ) : (
-                                    <Badge key={genre.name} variant="outline" className="rounded-full">
-                                        {genre.name}
-                                    </Badge>
-                                )
-                            )}
+                                    albumCountLabel && (
+                                        <Badge variant="secondary" className="rounded-full px-3 py-1">
+                                            {albumCountLabel}
+                                        </Badge>
+                                    )
+                                )}
+                                {genreItems.map((genre) =>
+                                    genre.id ? (
+                                        <Badge
+                                            key={genre.id}
+                                            variant="outline"
+                                            className="rounded-full"
+                                            asChild
+                                        >
+                                            <Link to={`/item/${genre.id}`}>{genre.name}</Link>
+                                        </Badge>
+                                    ) : (
+                                        <Badge
+                                            key={genre.name}
+                                            variant="outline"
+                                            className="rounded-full"
+                                        >
+                                            {genre.name}
+                                        </Badge>
+                                    )
+                                )}
+                            </div>
                         </div>
 
                         {item.Overview && (
-                            <div className="mt-5 max-w-3xl">
-                                <p
-                                    className={`text-sm leading-relaxed text-muted-foreground sm:text-base ${
-                                        !isOverviewExpanded ? 'line-clamp-4' : ''
-                                    }`}
-                                >
+                            <div className="mt-4 min-h-0 flex-1 md:overflow-y-auto md:overscroll-contain md:pr-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border">
+                                <p className="text-sm leading-relaxed text-muted-foreground sm:text-base md:text-left">
                                     {item.Overview}
                                 </p>
-                                {item.Overview.length > 240 && (
-                                    <Button
-                                        variant="link"
-                                        className="h-auto p-0 text-sm"
-                                        onClick={() => setIsOverviewExpanded((expanded) => !expanded)}
-                                    >
-                                        {isOverviewExpanded ? t('show_less') : t('show_more')}
-                                    </Button>
-                                )}
                             </div>
                         )}
 
-                        <div className="mt-6 flex flex-wrap items-center justify-center gap-2 md:justify-start">
+                        <div className="mt-4 flex shrink-0 flex-wrap items-center justify-center gap-2 md:mt-auto md:justify-start md:pt-4">
                             <Button
                                 size="lg"
                                 className="rounded-full px-6"
