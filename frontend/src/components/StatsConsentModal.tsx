@@ -1,6 +1,6 @@
 import { CircleCheck } from 'lucide-react';
-import { useSetStatsConsent } from '../hooks/api/useSetStatsConsent';
-import { useStatsConsent } from '../hooks/api/useStatsConsent';
+import { useSetStatsConsent } from '../hooks/api/statsConsent/useSetStatsConsent';
+import { useStatsConsent } from '../hooks/api/statsConsent/useStatsConsent';
 import { Button } from './ui/button';
 import {
     Dialog,
