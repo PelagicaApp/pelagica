@@ -132,6 +132,7 @@ const ItemsListPage = ({
 }: ItemsListPageProps) => {
     const { t } = useTranslation(['item', 'library']);
     const pageRef = useRef<HTMLDivElement>(null);
+    const scrollAfterLoadRef = useRef(false);
     const [searchParams, setSearchParams] = useSearchParams();
     const pageParam = parseInt(searchParams.get('page') ?? '0', 10);
     const sortByParam = (searchParams.get('sortBy') as ItemSortBy) || DEFAULT_SORT_BY;
@@ -180,26 +181,31 @@ const ItemsListPage = ({
     });
 
     useEffect(() => {
+        if (!scrollAfterLoadRef.current) return;
         if (pageRef.current && !loadingItems && items?.items?.length) {
             pageRef.current.scrollIntoView({ block: 'start' });
+            scrollAfterLoadRef.current = false;
         }
     }, [items?.items, loadingItems]);
 
     const handlePageChange = (newPage: number) => {
         setPage(newPage);
         updateSearchParams(newPage);
+        scrollAfterLoadRef.current = true;
     };
 
     const handleSortChange = (newSortBy: ItemSortBy) => {
         setSortBy(newSortBy);
         setPage(0);
         updateSearchParams(0, newSortBy, sortOrder);
+        scrollAfterLoadRef.current = true;
     };
 
     const handleSortOrderChange = (newSortOrder: SortOrder) => {
         setSortOrder(newSortOrder);
         setPage(0);
         updateSearchParams(0, sortBy, newSortOrder);
+        scrollAfterLoadRef.current = true;
     };
 
     const totalPages = items?.totalCount ? Math.ceil(items.totalCount / pageSize) : 0;
