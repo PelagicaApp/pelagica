@@ -171,25 +171,8 @@ func sendPing(baseURL, instanceID, version, token string) error {
 }
 
 func RegisterStatsJob() {
-	if HasStatsConsent() != 0 {
-		fmt.Println("Stats collection skipped: user has not given consent")
-		return
-	}
-
-	instanceId, err := getInstanceId()
-	if err != nil {
-		fmt.Printf("Failed to get instance ID: %v\n", err)
-		return
-	}
-
-	err = sendPing(getPingBaseUrl(), instanceId, getVersion(), getPingToken())
-	if err != nil {
-		fmt.Printf("Failed to send stats ping: %v\n", err)
-	}
-	fmt.Printf("Stats ping sent successfully (instance ID: %s)\n", instanceId)
-
 	c := cron.New()
-	_, err = c.AddFunc("0 0 * * *", func() {
+	_, err := c.AddFunc("0 0 * * *", func() {
 		if HasStatsConsent() != 0 {
 			fmt.Println("Stats collection skipped: user has not given consent")
 			return
