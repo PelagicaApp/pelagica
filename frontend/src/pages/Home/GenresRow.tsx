@@ -6,9 +6,10 @@ import { useGenresWithItems } from '@/hooks/api/genres/useGenresWithItems';
 interface GenresRowProps {
     title?: string;
     limit?: number;
+    contentInset?: number;
 }
 
-const GenresRow = ({ title, limit }: GenresRowProps) => {
+const GenresRow = ({ title, limit, contentInset }: GenresRowProps) => {
     const { data: genres, isLoading } = useGenresWithItems({ limit });
 
     if ((!genres || genres.length === 0) && !isLoading) {
@@ -35,6 +36,7 @@ const GenresRow = ({ title, limit }: GenresRowProps) => {
                           </div>
                       ))
             }
+            contentInset={contentInset}
         />
     );
 };

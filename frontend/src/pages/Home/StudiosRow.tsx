@@ -9,6 +9,7 @@ import { useStudiosByItemCount } from '../../hooks/api/useStudiosApi';
 interface StudiosRowProps {
     title?: string;
     limit?: number;
+    contentInset?: number;
 }
 
 const StudioDisplay = ({
@@ -46,7 +47,7 @@ const StudioDisplay = ({
     );
 };
 
-const StudiosRow = ({ title, limit }: StudiosRowProps) => {
+const StudiosRow = ({ title, limit, contentInset }: StudiosRowProps) => {
     const { data: studios, isLoading } = useStudiosByItemCount(limit);
 
     if ((!studios || studios.length === 0) && !isLoading) {
@@ -66,6 +67,7 @@ const StudiosRow = ({ title, limit }: StudiosRowProps) => {
                           </div>
                       ))
             }
+            contentInset={contentInset}
         />
     );
 };

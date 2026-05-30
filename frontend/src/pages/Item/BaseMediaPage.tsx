@@ -60,7 +60,7 @@ const BaseMediaPage = ({
                 <div className="absolute bottom-0 left-0 h-full w-full px-4 bg-linear-to-t from-background to-transparent rounded-md" />
             </div>
             {topPadding && (
-                <div className="h-[calc(40dvh-2rem)] flex items-center justify-center">
+                <div className="h-[calc(45dvh-2rem)] flex items-center justify-center">
                     {showLogo && !failedLogo && (
                         <>
                             {logo || (

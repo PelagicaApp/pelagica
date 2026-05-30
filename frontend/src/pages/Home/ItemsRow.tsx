@@ -18,6 +18,7 @@ interface ItemsRowProps {
     allLink?: string;
     items?: SectionItemsConfig;
     detailFields?: DetailField[];
+    contentInset?: number;
 }
 
 function getDetailFieldsStringForItem(
@@ -94,7 +95,7 @@ function getDetailFieldsStringForItem(
     }
 }
 
-const ItemsRow = ({ title, allLink, items, detailFields }: ItemsRowProps) => {
+const ItemsRow = ({ title, allLink, items, detailFields, contentInset }: ItemsRowProps) => {
     const { t } = useTranslation('home');
     const { data: recentItems, isLoading } = useRowItems(items);
 
@@ -159,6 +160,7 @@ const ItemsRow = ({ title, allLink, items, detailFields }: ItemsRowProps) => {
                               </div>
                           ))
                 }
+                contentInset={contentInset}
             />
         )
     );

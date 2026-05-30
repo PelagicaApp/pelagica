@@ -15,6 +15,7 @@ import MusicAlbumPage from './MusicAlbumPage';
 import PlaylistPage from './PlaylistPage';
 import GenrePage from './GenrePage';
 import StudioPage from './StudioPage';
+import type { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models';
 
 const ItemPageSkeleton = memo(() => {
     return (
@@ -95,6 +96,8 @@ const ItemPageSkeleton = memo(() => {
 
 ItemPageSkeleton.displayName = 'ItemPageSkeleton';
 
+const FULL_PAGE_ITEM_TYPES: BaseItemKind[] = ['Movie', 'Series', 'Episode', 'Season', 'BoxSet'];
+
 const ItemPage = () => {
     const { t } = useTranslation('item');
     const params = useParams<{ itemId: string }>();
@@ -103,10 +106,14 @@ const ItemPage = () => {
     const { config, loading: configLoading } = useConfig();
     const { data: item, isLoading, error } = useItem(itemId, true, getUserId() || undefined);
 
+    const isFullPageItem = item && FULL_PAGE_ITEM_TYPES.includes(item.Type as BaseItemKind);
+
     return (
         <Page
             title={item ? `${item.Name}` : isLoading ? t('loading') : t('item_not_found')}
             className="flex-1 flex flex-col"
+            overlayHeader={isFullPageItem}
+            pagePadding={!isFullPageItem}
         >
             {(isLoading || configLoading) && <ItemPageSkeleton />}
             {error && <p>Error loading item details.</p>}

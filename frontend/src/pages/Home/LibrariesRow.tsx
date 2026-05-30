@@ -10,6 +10,7 @@ import { Link } from 'react-router';
 
 interface LibrariesRowProps {
     title?: string;
+    contentInset?: number;
 }
 
 const LibraryDisplay = ({ item }: { item: BaseItemDto }) => {
@@ -43,7 +44,7 @@ const LibraryDisplay = ({ item }: { item: BaseItemDto }) => {
     );
 };
 
-const LibrariesRow = ({ title }: LibrariesRowProps) => {
+const LibrariesRow = ({ title, contentInset }: LibrariesRowProps) => {
     const { data: libraries, isLoading } = useUserViews();
 
     if ((!libraries || !libraries.Items || libraries.Items?.length === 0) && !isLoading) {
@@ -67,6 +68,7 @@ const LibrariesRow = ({ title }: LibrariesRowProps) => {
                           </div>
                       ))
             }
+            contentInset={contentInset}
         />
     );
 };

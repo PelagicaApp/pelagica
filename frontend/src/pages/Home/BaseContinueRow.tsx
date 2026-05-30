@@ -16,6 +16,7 @@ interface BaseContinueRowProps {
     items: BaseItemDto[];
     isLoading: boolean;
     error: unknown;
+    contentInset?: number;
 }
 
 export function BaseContinueRow({
@@ -25,6 +26,7 @@ export function BaseContinueRow({
     items,
     isLoading,
     error,
+    contentInset,
 }: BaseContinueRowProps) {
     const { t } = useTranslation('home');
     const navigate = useNavigate();
@@ -159,6 +161,7 @@ export function BaseContinueRow({
                                   );
                               })
                     }
+                    contentInset={contentInset}
                 />
             )}
         </>

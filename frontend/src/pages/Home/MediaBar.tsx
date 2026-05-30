@@ -71,10 +71,10 @@ const MediaBar = ({
                         <>
                             <CarouselItem>
                                 <div
-                                    className={`rounded-md bg-cover bg-center flex flex-col items-start justify-end gap-4 overflow-hidden relative min-h-130 ${outerSize}`}
+                                    className={`bg-cover bg-center flex flex-col items-start justify-end gap-4 overflow-hidden relative min-h-130 ${outerSize}`}
                                 >
                                     <div className="absolute inset-0 bg-linear-to-r from-black/70 via-black/70 to-transparent pointer-events-none max-w-5xl" />
-                                    <div className="flex flex-col items-start gap-4 max-w-2xl px-6 sm:px-16 py-6 rounded relative z-10 w-full">
+                                    <div className="flex flex-col items-start gap-4 max-w-2xl px-6 sm:px-8 py-6 rounded relative z-10 w-full">
                                         <Skeleton className={`${logoSize} w-full`} />
                                         <div className="flex flex-wrap gap-2 w-full">
                                             <Skeleton className="h-6 w-20" />
@@ -94,13 +94,13 @@ const MediaBar = ({
                         mediabarItems.map((item) => (
                             <CarouselItem key={item.Id}>
                                 <div
-                                    className={`rounded-md bg-cover bg-center flex flex-col items-start justify-end gap-4 overflow-hidden relative min-h-130 ${outerSize}`}
+                                    className={`bg-cover bg-center flex flex-col items-start justify-end gap-4 overflow-hidden relative min-h-130 ${outerSize}`}
                                     style={{
                                         backgroundImage: `url('${getBackdropUrl(item.Id!)}?maxWidth=1920&quality=75')`,
                                     }}
                                 >
                                     <div className="absolute inset-0 bg-linear-to-r from-black/70 via-black/70 to-transparent pointer-events-none max-w-5xl" />
-                                    <div className="flex flex-col items-start gap-4 max-w-2xl px-6 sm:px-16 py-6 rounded relative z-10">
+                                    <div className="flex flex-col items-start gap-4 max-w-2xl px-6 sm:px-12 py-6 relative z-10">
                                         {getLogoUrl(item.Id!) && !logoErrors.has(item.Id!) ? (
                                             <img
                                                 src={getLogoUrl(item.Id!)}

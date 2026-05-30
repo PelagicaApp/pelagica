@@ -13,6 +13,8 @@ import GenresRow from './GenresRow';
 import LibrariesRow from './LibrariesRow';
 import StudiosRow from './StudiosRow';
 
+const CONTENT_INSET = 12;
+
 function getDetailFieldsForCollectionType(type: CollectionType | undefined): DetailField[] {
     switch (type) {
         case 'music':
@@ -30,8 +32,13 @@ const HomePage = () => {
     const { config } = useConfig();
 
     return (
-        <Page title={config?.serverName || 'Pelagica'} requiresAuth={true}>
-            <div className="flex flex-col gap-4">
+        <Page
+            title={config?.serverName || 'Pelagica'}
+            requiresAuth={true}
+            overlayHeader={true}
+            pagePadding={false}
+        >
+            <div className="flex flex-col gap-4 pb-4">
                 {config.homeScreenSections?.map((section, index) => {
                     if (section.enabled === false) return null;
 
@@ -42,11 +49,16 @@ const HomePage = () => {
                                     key={index}
                                     title={section.title || t('studios')}
                                     limit={section.limit}
+                                    contentInset={CONTENT_INSET}
                                 />
                             );
                         case 'libraries':
                             return (
-                                <LibrariesRow key={index} title={section.title || t('libraries')} />
+                                <LibrariesRow
+                                    key={index}
+                                    title={section.title || t('libraries')}
+                                    contentInset={CONTENT_INSET}
+                                />
                             );
 
                         case 'continueWatching':
@@ -62,6 +74,7 @@ const HomePage = () => {
                                     }
                                     limit={section.limit || 20}
                                     accurateSorting={section.accurateSorting}
+                                    contentInset={CONTENT_INSET}
                                 />
                             );
 
@@ -77,6 +90,7 @@ const HomePage = () => {
                                             : ['TimeRemaining']
                                     }
                                     limit={section.limit || 20}
+                                    contentInset={CONTENT_INSET}
                                 />
                             );
 
@@ -92,6 +106,7 @@ const HomePage = () => {
                                             : ['TimeRemaining']
                                     }
                                     limit={section.limit || 20}
+                                    contentInset={CONTENT_INSET}
                                 />
                             );
 
@@ -133,6 +148,7 @@ const HomePage = () => {
                                                             detailFields={getDetailFieldsForCollectionType(
                                                                 view.CollectionType
                                                             )}
+                                                            contentInset={CONTENT_INSET}
                                                         />
                                                     )}
                                                 </div>
@@ -156,6 +172,7 @@ const HomePage = () => {
                                             ? section.detailFields
                                             : ['ReleaseYear']
                                     }
+                                    contentInset={CONTENT_INSET}
                                 />
                             );
 
@@ -168,6 +185,7 @@ const HomePage = () => {
                                     limit={section.limit}
                                     showSimilarity={section.showSimilarity}
                                     showBasedOn={section.showBasedOn}
+                                    contentInset={CONTENT_INSET}
                                 />
                             );
 
@@ -177,6 +195,7 @@ const HomePage = () => {
                                     key={index}
                                     title={section.title || t('genres')}
                                     limit={section.limit}
+                                    contentInset={CONTENT_INSET}
                                 />
                             );
 
