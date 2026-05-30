@@ -19,6 +19,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import ItemsListPage from './ItemsListPage';
+import MoreLikeThisRow from './MoreLikeThisRow';
 
 interface MusicArtistPageProps {
     item: BaseItemDto;
@@ -262,6 +263,12 @@ const MusicArtistPage = ({ item, config }: MusicArtistPageProps) => {
                     listTitle={t('albums')}
                 />
             </section>
+
+            <MoreLikeThisRow
+                title={<h3 className="text-3xl font-bold">{t('more_like_this')}</h3>}
+                itemId={item.Id || ''}
+                squarePosters
+            />
         </div>
     );
 };

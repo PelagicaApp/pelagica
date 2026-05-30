@@ -27,7 +27,10 @@ const ScrollableSectionPoster = ({
     const { config } = useConfig();
     const [posterFailed, setPosterFailed] = useState(false);
 
-    const isSquareType = item?.Type === 'Playlist' || item?.Type === 'MusicAlbum';
+    const isSquareType =
+        item?.Type === 'Playlist' ||
+        item?.Type === 'MusicAlbum' ||
+        item?.Type === 'MusicArtist';
     const posterClasses = isSquareType
         ? 'w-36 h-36 lg:w-44 lg:h-44 2xl:w-52 2xl:h-52'
         : 'w-36 h-54 lg:w-44 lg:h-64 2xl:w-52 2xl:h-80';
