@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/robfig/cron/v3"
@@ -158,7 +159,8 @@ func sendPing(baseURL, instanceID, version, token string) error {
 	if err != nil {
 		return fmt.Errorf("invalid base URL: %w", err)
 	}
-	resp, err := http.Post(endpoint, "application/json", bytes.NewReader(payload))
+	client := &http.Client{Timeout: 10 * time.Second}
+	resp, err := client.Post(endpoint, "application/json", bytes.NewReader(payload))
 	if err != nil {
 		return fmt.Errorf("failed to send ping: %w", err)
 	}
