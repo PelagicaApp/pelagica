@@ -104,7 +104,7 @@ const PageContent = ({
             <div
                 className={cn(
                     'relative flex flex-col flex-1 overflow-x-hidden overflow-y-auto z-5 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-muted-foreground [&::-webkit-scrollbar-thumb]:rounded-full',
-                    pagePadding && 'py-4 px-12',
+                    pagePadding && 'py-4 px-4 sm:px-12',
                     !overlayHeader && 'pt-18' // Topbar has height of 14 + 4 (padding) = 18
                 )}
             >
