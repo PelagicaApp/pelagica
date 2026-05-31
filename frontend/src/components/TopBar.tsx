@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router';
 import {
+    Bookmark,
     ChartLine,
     Check,
     ChevronDown,
@@ -9,8 +10,10 @@ import {
     Fingerprint,
     Globe,
     Home,
+    House,
     Laptop,
     Library,
+    LinkIcon,
     LogOut,
     Menu,
     Moon,
@@ -582,7 +585,7 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
 
                 {/* Desktop nav */}
                 <nav className="hidden md:flex items-center gap-0.5">
-                    <DropdownMenu>
+                    {/* <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="sm">
                                 <Library className="h-4 w-4" />
@@ -603,7 +606,28 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
                                     </DropdownMenuItem>
                                 ))}
                         </DropdownMenuContent>
-                    </DropdownMenu>
+                    </DropdownMenu> */}
+
+                    {/* <Button asChild variant="ghost" size="sm">
+                        <Link to="/watchlist">
+                            <Bookmark className="h-4 w-4" />
+                            Watchlist
+                        </Link>
+                    </Button> */}
+
+                    <Button asChild variant="ghost" size="sm">
+                        <Link to="/">
+                            <House className="h-4 w-4" />
+                            Home
+                        </Link>
+                    </Button>
+
+                    <Button asChild variant="ghost" size="sm">
+                        <Link to="/library">
+                            <Library className="h-4 w-4" />
+                            Library
+                        </Link>
+                    </Button>
 
                     <Button asChild variant="ghost" size="sm">
                         <Link to="/search">
@@ -612,7 +636,34 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
                         </Link>
                     </Button>
 
-                    {config?.streamystatsUrl && config?.showStreamystatsButton && (
+                    {/* <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="sm">
+                                <LinkIcon className="h-4 w-4" />
+                                Links
+                                {validLinks.length > 0 && (
+                                    <ChevronDown className="h-3 w-3 ml-0.5 opacity-50" />
+                                )}
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start">
+                            {validLinks.length > 0 &&
+                                validLinks.map((link) => (
+                                    <DropdownMenuItem key={link.url} asChild>
+                                        <Link
+                                            to={link.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            <LinkIcon className="h-4 w-4" />
+                                            {link.text}
+                                        </Link>
+                                    </DropdownMenuItem>
+                                ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu> */}
+
+                    {/* {config?.streamystatsUrl && config?.showStreamystatsButton && (
                         <Button
                             variant="ghost"
                             size="sm"
@@ -621,7 +672,7 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
                             <ChartLine className="h-4 w-4" />
                             Streamystats
                         </Button>
-                    )}
+                    )} */}
 
                     {validLinks.map((link, i) => (
                         <Button
