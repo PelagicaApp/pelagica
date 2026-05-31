@@ -142,9 +142,9 @@ docker-compose up -d --build
 
 You can find instructions on how to build and/or publish custom themes [here](https://github.com/KartoffelChipss/pelagica-themes#readme).
 
-## Community Discord
+## Discord
 
-Join the Pelagica community on Discord for support, discussions, and updates: https://discord.gg/yCe4unuVGQ
+For discussions about Pelagica, join the [JellyfinCommunity](https://discord.gg/VKqprjh3Wr) and head to the `#pelagica` channel.
 
 ## Localization
 
