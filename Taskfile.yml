@@ -1,0 +1,51 @@
+version: '3'
+
+tasks:
+  dev:
+    desc: Start backend and frontend in parallel
+    deps:
+      - backend
+      - frontend
+
+  frontend:
+    desc: Start Vite dev server
+    deps:
+      - install-frontend
+    dir: frontend
+    cmds:
+      - pnpm run dev -- --host
+
+  backend:
+    desc: Start Go backend
+    deps:
+      - install-backend
+    dir: backend
+    env:
+      APP_VERSION: "1.1.1"
+      CONFIG_PATH: "{{.ROOT_DIR}}/dev.config.json"
+      COLLECTOR_INSTANCE_ID_FILE: "{{.ROOT_DIR}}/config/instance_id"
+      COLLECTOR_STATS_CONSENT_FILE: "{{.ROOT_DIR}}/config/stats_consent"
+      COLLECTOR_PING_BASE_URL: "http://localhost:4000"
+      COLLECTOR_PING_TOKEN: "2f64e07c-e930-463f-b118-556a741fb2aa"
+    cmds:
+      - go run main.go
+
+  install-frontend:
+    internal: true
+    dir: frontend
+    sources:
+      - package.json
+      - pnpm-lock.yaml
+    generates:
+      - node_modules/.modules.yaml
+    cmds:
+      - pnpm install
+
+  install-backend:
+    internal: true
+    dir: backend
+    sources:
+      - go.mod
+      - go.sum
+    cmds:
+      - go mod download

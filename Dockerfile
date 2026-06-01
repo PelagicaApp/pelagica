@@ -32,6 +32,9 @@ RUN CGO_ENABLED=0 \
 # Stage 3: Final image
 FROM nginx:alpine
 
+ARG APP_VERSION
+ARG COLLECTOR_PING_TOKEN
+
 # runtime essentials
 RUN apk add --no-cache ca-certificates tzdata
 
@@ -48,14 +51,19 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 # config directory (volume-friendly)
 RUN mkdir -p /config
 
+ENV APP_VERSION=$APP_VERSION
 ENV PORT=4321
 ENV ENABLE_AUTH=true
 ENV CONFIG_PATH=/config/config.json
 ENV THEMES_DIR=/config/themes
 ENV STUDIO_THUMBS=/config/studio_thumbs
-ENV BRANDING_DIR=/config/branding
 ENV DEFAULT_THEME_PATH=/default.theme.json
+ENV BRANDING_DIR=/config/branding
 ENV THEMES_REPO_BASE_URL=https://themes.pelagica.app/
+ENV COLLECTOR_PING_BASE_URL=https://stats.pelagica.app
+ENV COLLECTOR_PING_TOKEN=$COLLECTOR_PING_TOKEN
+ENV COLLECTOR_INSTANCE_ID_FILE=/config/instance_id
+ENV COLLECTOR_STATS_CONSENT_FILE=/config/stats_consent
 
 EXPOSE 80
 

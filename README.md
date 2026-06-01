@@ -142,9 +142,9 @@ docker-compose up -d --build
 
 You can find instructions on how to build and/or publish custom themes [here](https://github.com/KartoffelChipss/pelagica-themes#readme).
 
-## Community Discord
+## Discord
 
-Join the Pelagica community on Discord for support, discussions, and updates: https://discord.gg/yCe4unuVGQ
+For discussions about Pelagica, join the [JellyfinCommunity](https://discord.gg/VKqprjh3Wr) and head to the `#pelagica` channel.
 
 ## Localization
 
@@ -152,43 +152,37 @@ Pelagica supports multiple languages and depends on community contributions for 
 
 ## Development Setup
 
-### Frontend
+### Prerequisites
 
-1. **Switch to the frontend directory:**
+| Tool | Version |
+|------|---------|
+| [Go](https://go.dev/dl/) | 1.25+ |
+| [Node.js](https://nodejs.org/) | 24.16+ |
+| [pnpm](https://pnpm.io/installation) | latest |
+| [Task](https://taskfile.dev/installation/) | latest |
 
-    ```
-    cd frontend
-    ```
+### Running the dev environment
 
-2. **Install dependencies:**
+Dependencies are installed automatically on first run (and whenever `package.json`, `pnpm-lock.yaml`, `go.mod`, or `go.sum` change).
 
-    ```bash
-    pnpm install
-    ```
+```bash
+task dev
+```
 
-3. **Start development server:**
+This starts both the frontend (http://localhost:3000) and backend in parallel.
 
-    ```bash
-    pnpm dev
-    ```
+You can also run them individually:
 
-4. **Access at:** http://localhost:3000
+```bash
+task frontend   # Vite dev server only
+task backend    # Go backend only
+```
 
-### Backend
+To see all available tasks:
 
-1. **Switch to the backend directory:**
-
-    ```
-    cd backend
-    ```
-
-2. **Start the server:**
-
-    ```bash
-    CONFIG_PATH="./config.json" go run main.go
-    ```
-
-You can also use the `dev.sh` script to start both frontend and backend with hot reloading.
+```bash
+task --list
+```
 
 ## Contributing
 

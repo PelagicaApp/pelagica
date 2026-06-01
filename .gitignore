@@ -28,3 +28,5 @@ branding
 *.njsproj
 *.sln
 *.sw?
+
+.task/

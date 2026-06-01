@@ -1,4 +1,8 @@
 {
     "previous": "Zurück",
-    "next": "Weiter"
+    "next": "Weiter",
+    "stats_consent_title": "Hilf uns beim Zählen",
+    "stats_consent_message": "Wir haben keine Möglichkeit zu wissen, wie viele Menschen Pelagica nutzen, außer du sagst es uns. Durch die Teilnahme wird einmal täglich ein Ping mit deiner Version und einer zufälligen ID gesendet. Das war's. Die Ergebnisse sind öffentlich unter <anchor>stats.pelagica.app</anchor> einsehbar.",
+    "stats_consent_reject": "Nein, danke",
+    "stats_consent_accept": "Akzeptieren"
 }

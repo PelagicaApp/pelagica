@@ -60,6 +60,9 @@ jobs:
           tags: |
             ${{ env.DOCKER_IMAGE }}:${{ github.ref_name }}-${{ env.PLATFORM_PAIR }}
             ${{ env.DOCKER_IMAGE }}:latest-${{ env.PLATFORM_PAIR }}
+          build-args: |
+            APP_VERSION=${{ github.ref_name }}
+            COLLECTOR_PING_TOKEN=${{ secrets.STATS_TOKEN }}
           outputs: type=registry
           cache-from: type=gha,scope=${{ github.repository }}-${{ github.ref_name }}-${{ env.PLATFORM_PAIR }}
           cache-to: type=gha,scope=${{ github.repository }}-${{ github.ref_name }}-${{ env.PLATFORM_PAIR }}

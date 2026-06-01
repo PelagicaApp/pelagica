@@ -57,6 +57,8 @@ import { IconPicker, type IconName } from '../../components/ui/icon-picker';
 import { DynamicIcon } from 'lucide-react/dynamic';
 import { getAccessToken, getServerUrl } from '@/utils/localstorageCredentials';
 import FileDropInput from '@/components/FileDropInput';
+import { useStatsConsent } from '../../hooks/api/statsConsent/useStatsConsent';
+import { useSetStatsConsent } from '../../hooks/api/statsConsent/useSetStatsConsent';
 
 const StringInput = ({
     label,
@@ -612,6 +614,20 @@ const LinkRow = ({
     );
 };
 
+const StatsConsentSetting = () => {
+    const { t } = useTranslation('settings');
+    const { data: statsConsent } = useStatsConsent();
+    const setStatsConsent = useSetStatsConsent();
+
+    return (
+        <BooleanInput
+            label={t('usage_statistics_label')}
+            checked={statsConsent === 'granted'}
+            onChange={(checked) => setStatsConsent.mutate(checked)}
+        />
+    );
+};
+
 const SettingsPage = () => {
     const { t } = useTranslation('settings');
     const { config, loading, error } = useConfig();
@@ -1041,6 +1057,13 @@ const SettingsPage = () => {
                         checked={watchedStateBadgeSearch}
                         onChange={setWatchedStateBadgeSearch}
                     />
+                    <h2 className="mt-6 mb-2 text-xl font-semibold leading-none tracking-tight">
+                        {t('usage_statistics')}
+                    </h2>
+                    <p className="mb-2 text-sm text-muted-foreground">
+                        {t('usage_statistics_description')}
+                    </p>
+                    <StatsConsentSetting />
                 </TabsContent>
                 <TabsContent value="homesections" className="max-w-200">
                     <h1 className="mb-2 mt-2 text-2xl font-bold leading-none tracking-tight">

@@ -138,5 +138,8 @@
     "link_icon_placeholder": "Pick an icon",
     "link_icon_search_placeholder": "Search icons...",
     "section_type_studios": "Studios",
-    "show_download_button_label": "Show Download Button"
+    "show_download_button_label": "Show Download Button",
+    "usage_statistics_label": "Allow anonymous usage statistics collection",
+    "usage_statistics": "Usage Statistics",
+    "usage_statistics_description": "We have no way to know how many people use Pelagica unless you tell us. Opting in sends a daily ping with your version and a random ID. That's it."
 }

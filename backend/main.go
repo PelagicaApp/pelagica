@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"pelagica-backend/appconfig"
+	"pelagica-backend/collector"
 	"pelagica-backend/handlers"
 	"strings"
 
@@ -29,6 +30,11 @@ func main() {
 
 	handlers.InitThemeStore()
 
+	job := collector.RegisterStatsJob()
+	if job != nil {
+		defer job.Stop()
+	}
+
 	var protected fiber.Handler
 	if isAuthEnabled() {
 		protected = handlers.AuthMiddleware
@@ -53,6 +59,9 @@ func main() {
 
 	api.Get("/studios", handlers.GetStudios)
 	api.Get("/studios/:name/thumb", handlers.GetStudioThumb)
+
+	api.Get("/stats-consent", handlers.GetStatsConsent)
+	api.Post("/stats-consent", handlers.PostStatsConsent)
 
 	log.Println("Server starting on " + getPort())
 	log.Fatal(app.Listen(getPort()))
