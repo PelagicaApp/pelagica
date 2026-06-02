@@ -42,8 +42,8 @@ export function getLineState(index: number, activeIndex: number): LyricLineState
 export function getLineClassName(state: LyricLineState): string {
     return cn(
         'w-full text-left transition-all duration-300 whitespace-pre-wrap',
-        state === 'active' && 'text-xl font-semibold text-brand scale-[1.02]',
-        state === 'past' && 'text-base text-muted-foreground/50',
-        state === 'future' && 'text-base text-muted-foreground/80',
+        state === 'active' && 'text-xl font-semibold text-foreground scale-[1.02]',
+        state === 'past' && 'text-base text-muted-foreground/45',
+        state === 'future' && 'text-base text-muted-foreground/75',
     );
 }

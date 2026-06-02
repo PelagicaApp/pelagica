@@ -11,22 +11,32 @@ interface SyncedLinesProps {
 }
 
 const SyncedLines = ({ lines, currentTime, offset, onLineClick }: SyncedLinesProps) => {
-    const { activeIndex, containerRef, disableAutoScroll, enableAutoScroll, setLineRef } =
-        useSyncedLyrics({
-            lines,
-            currentTime,
-            offset,
-            enabled: true,
-        });
+    const {
+        activeIndex,
+        containerRef,
+        disableAutoScroll,
+        edgePadding,
+        enableAutoScroll,
+        scrollActiveLineIntoView,
+        setLineRef,
+    } = useSyncedLyrics({
+        lines,
+        currentTime,
+        offset,
+        enabled: true,
+    });
 
     return (
         <div
             ref={containerRef}
-            className="h-full overflow-y-auto overscroll-contain px-4 py-8"
+            className="h-full overflow-y-auto overscroll-contain scroll-smooth"
             onWheel={disableAutoScroll}
             onTouchMove={disableAutoScroll}
         >
-            <div className="flex min-h-full flex-col items-center justify-center gap-5 py-8">
+            <div
+                className="flex flex-col items-center gap-5 px-4"
+                style={{ paddingTop: edgePadding, paddingBottom: edgePadding }}
+            >
                 {lines.map((line, index) => {
                     const state = getLineState(index, activeIndex);
                     const start = line.Start ?? 0;
@@ -43,6 +53,7 @@ const SyncedLines = ({ lines, currentTime, offset, onLineClick }: SyncedLinesPro
                             onClick={() => {
                                 enableAutoScroll();
                                 onLineClick(start);
+                                requestAnimationFrame(() => scrollActiveLineIntoView('smooth'));
                             }}
                         >
                             {line.Text}
