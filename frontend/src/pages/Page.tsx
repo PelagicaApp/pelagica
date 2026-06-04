@@ -22,6 +22,7 @@ import { useSidebarBrowser } from '@/context/SidebarBrowserContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import TopBar from '@/components/TopBar';
 import { cn } from '../lib/utils';
+import AppSidebar from '@/components/AppSidebar';
 
 interface PageProps {
     title?: string;
@@ -141,25 +142,13 @@ const PageContent = ({
 
     return (
 
-        <SidebarProvider
-            className={`relative min-h-dvh h-dvh ${containerClassName ?? ''}`}
-            style={
-                {
-                    '--sidebar-width': sidebarWidth,
-                    '--sidebar-width-duration': useBrowseTransition ? '480ms' : '250ms',
-                    '--sidebar-width-ease': useBrowseTransition
-                        ? 'cubic-bezier(0.34, 1.18, 0.64, 1)'
-                        : 'cubic-bezier(0.4, 0, 0.2, 1)',
-                } as CSSProperties
-            }
-            open={sidebarOpen ?? false}
-            onOpenChange={(open) => {
-                setSidebarOpen(open);
-                saveSidebarState(open);
-            }}
-        >
-            {background || bgItem}
-            <TopBar overlay={overlayHeader} />
+        <div className={`relative flex flex-col min-h-dvh ${containerClassName ?? ''}`}>
+        {background || bgItem}
+        <TopBar overlay={overlayHeader} />
+        <div className="flex flex-row">
+            <div className="flex flex-col">
+                Maybe sidebar here?
+            </div>
             <div
                 className={cn(
                     'relative flex flex-col flex-1 overflow-x-hidden overflow-y-auto z-5 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-muted-foreground [&::-webkit-scrollbar-thumb]:rounded-full',
@@ -170,8 +159,10 @@ const PageContent = ({
                 {breadcrumbs && <div className="flex items-center gap-2 mb-4">{breadcrumbs}</div>}
                 <main className={`w-full flex-1 ${className ?? ''}`}>{children}</main>
             </div>
-            {showPlayerBar && <MusicPlayerBar />}
-        </SidebarProvider>
+        </div>
+        
+        {showPlayerBar && <MusicPlayerBar />}
+    </div>
     );
 };
 
