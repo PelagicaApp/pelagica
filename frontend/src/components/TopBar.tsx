@@ -62,7 +62,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { Label } from '@radix-ui/react-dropdown-menu';
+import { Label } from '@/components/ui/label';
 import { useCurrentUser } from '@/hooks/api/useCurrentUser';
 import { useUserViews } from '@/hooks/api/useUserViews';
 import { useConfig } from '@/hooks/api/useConfig';
