@@ -151,6 +151,7 @@ function Sidebar({
     side = 'left',
     variant = 'sidebar',
     collapsible = 'offcanvas',
+    inline = false,
     className,
     children,
     ...props
@@ -158,6 +159,7 @@ function Sidebar({
     side?: 'left' | 'right';
     variant?: 'sidebar' | 'floating' | 'inset';
     collapsible?: 'offcanvas' | 'icon' | 'none';
+    inline?: boolean;
 }) {
     const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
 
@@ -193,6 +195,41 @@ function Sidebar({
                     <div className="flex h-full w-full flex-col">{children}</div>
                 </SheetContent>
             </Sheet>
+        );
+    }
+
+    if (inline) {
+        return (
+            <div
+                className="group peer text-sidebar-foreground hidden h-full md:block"
+                data-state={state}
+                data-collapsible={state === 'collapsed' ? collapsible : ''}
+                data-variant={variant}
+                data-side={side}
+                data-slot="sidebar"
+            >
+                <div
+                    data-slot="sidebar-container"
+                    className={cn(
+                        'relative z-10 hidden h-full min-h-0 w-(--sidebar-width) shrink-0 overflow-hidden md:flex',
+                        SIDEBAR_WIDTH_TRANSITION,
+                        'group-data-[collapsible=offcanvas]:w-0',
+                        variant === 'floating' || variant === 'inset'
+                            ? 'p-4 pr-0 group-data-[collapsible=offcanvas]:p-0'
+                            : 'group-data-[side=left]:border-r group-data-[side=right]:border-l',
+                        className
+                    )}
+                    {...props}
+                >
+                    <div
+                        data-sidebar="sidebar"
+                        data-slot="sidebar-inner"
+                        className="bg-sidebar group-data-[variant=floating]:border-sidebar-border flex h-full w-full min-w-(--sidebar-width) flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:shadow-sm"
+                    >
+                        {children}
+                    </div>
+                </div>
+            </div>
         );
     }
 

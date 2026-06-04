@@ -15,6 +15,7 @@ import {
     LogOut,
     Menu,
     Moon,
+    PanelLeftIcon,
     Search,
     Settings,
     Settings2,
@@ -526,7 +527,15 @@ const UserMenu = () => {
     );
 };
 
-const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
+const TopBar = ({
+    overlay = false,
+    showSidebarTrigger = false,
+    onSidebarToggle,
+}: {
+    overlay?: boolean;
+    showSidebarTrigger?: boolean;
+    onSidebarToggle?: () => void;
+}) => {
     const { t } = useTranslation('sidebar');
     const { config } = useConfig();
     const { data: views } = useUserViews();
@@ -573,6 +582,18 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
                         : 'border-transparent'
                 )}
             >
+                {showSidebarTrigger && (
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="hidden size-9 shrink-0 md:inline-flex"
+                        onClick={onSidebarToggle}
+                        aria-label="Toggle sidebar"
+                    >
+                        <PanelLeftIcon className="h-5 w-5" />
+                    </Button>
+                )}
+
                 {/* Logo */}
                 <Link to="/" className="flex items-center gap-2 shrink-0 mr-2">
                     <Avatar className="h-7 w-7 p-0.5 rounded-md">

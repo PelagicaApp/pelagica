@@ -4,8 +4,6 @@ import {
     SIDEBAR_WIDTH_BROWSE,
     SIDEBAR_WIDTH_BROWSE_MOBILE,
     SIDEBAR_WIDTH_MOBILE,
-    SidebarProvider,
-    SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { type CSSProperties, type PropsWithChildren, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
@@ -22,7 +20,7 @@ import { useSidebarBrowser } from '@/context/SidebarBrowserContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import TopBar from '@/components/TopBar';
 import { cn } from '../lib/utils';
-import AppSidebar from '@/components/AppSidebar';
+import PageSidebar from '../components/PageSidebar';
 
 interface PageProps {
     title?: string;
@@ -139,30 +137,53 @@ const PageContent = ({
           : SIDEBAR_WIDTH;
 
     const useBrowseTransition = browseMode || browseTransitionActive;
+    const showSidebar = Boolean(user?.Id && isLoggedIn());
+    const sidebarStyle = {
+        '--sidebar-width': sidebarWidth,
+        '--sidebar-width-duration': useBrowseTransition ? '480ms' : '250ms',
+        '--sidebar-width-ease': useBrowseTransition
+            ? 'cubic-bezier(0.34, 1.18, 0.64, 1)'
+            : 'cubic-bezier(0.4, 0, 0.2, 1)',
+    } as CSSProperties;
+
+    const handleSidebarOpenChange = (open: boolean) => {
+        setSidebarOpen(open);
+        saveSidebarState(open);
+    };
 
     return (
-
-        <div className={`relative flex flex-col min-h-dvh ${containerClassName ?? ''}`}>
-        {background || bgItem}
-        <TopBar overlay={overlayHeader} />
-        <div className="flex flex-row">
-            <div className="flex flex-col">
-                Maybe sidebar here?
-            </div>
-            <div
-                className={cn(
-                    'relative flex flex-col flex-1 overflow-x-hidden overflow-y-auto z-5 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-muted-foreground [&::-webkit-scrollbar-thumb]:rounded-full',
-                    pagePadding && 'py-4 px-4 sm:px-12',
-                    !overlayHeader && 'pt-18' // Topbar has height of 14 + 4 (padding) = 18
+        <div
+            className={`relative flex min-h-dvh h-dvh w-full flex-col overflow-hidden ${containerClassName ?? ''}`}
+        >
+            {background || bgItem}
+            <TopBar
+                overlay={overlayHeader}
+                showSidebarTrigger={showSidebar}
+                onSidebarToggle={() => handleSidebarOpenChange(!(sidebarOpen ?? false))}
+            />
+            <div className="flex min-h-0 w-full flex-1 flex-row">
+                {showSidebar && (
+                    <PageSidebar
+                        open={sidebarOpen ?? false}
+                        onOpenChange={handleSidebarOpenChange}
+                        style={sidebarStyle}
+                    />
                 )}
-            >
-                {breadcrumbs && <div className="flex items-center gap-2 mb-4">{breadcrumbs}</div>}
-                <main className={`w-full flex-1 ${className ?? ''}`}>{children}</main>
+                <div
+                    className={cn(
+                        'relative flex min-h-0 w-full flex-1 flex-col overflow-x-hidden overflow-y-auto z-5 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-muted-foreground [&::-webkit-scrollbar-thumb]:rounded-full',
+                        pagePadding && 'py-4 px-4 sm:px-12',
+                        !overlayHeader && 'pt-18' // Topbar has height of 14 + 4 (padding) = 18
+                    )}
+                >
+                    {breadcrumbs && (
+                        <div className="flex items-center gap-2 mb-4">{breadcrumbs}</div>
+                    )}
+                    <main className={`w-full flex-1 ${className ?? ''}`}>{children}</main>
+                </div>
             </div>
+            {showPlayerBar && <MusicPlayerBar />}
         </div>
-        
-        {showPlayerBar && <MusicPlayerBar />}
-    </div>
     );
 };
 

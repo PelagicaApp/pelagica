@@ -91,7 +91,7 @@ const AppSidebar = () => {
     }, [browseMode, isMobile, setOpen]);
 
     return (
-        <Sidebar variant="floating" collapsible="icon">
+        <Sidebar variant="floating" collapsible="offcanvas" inline>
             <SidebarHeader className="pb-1">
                 <SidebarMenu>
                     <SidebarMenuButton
