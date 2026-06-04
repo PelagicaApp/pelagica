@@ -188,7 +188,7 @@ export function SidebarBrowser({ className, onClose }: SidebarBrowserProps) {
                     onClick={handleExitBrowseMode}
                 >
                     <ArrowLeft className="size-3.5" />
-                    {t('back')}
+                    {t('dismiss')}
                 </Button>
             </div>
 
