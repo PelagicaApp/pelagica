@@ -705,7 +705,11 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
                             variant="ghost"
                             className="justify-start"
                             onClick={() => {
-                                window.open(config.streamystatsUrl, '_blank');
+                                window.open(
+                                    config.streamystatsUrl,
+                                    '_blank',
+                                    'noopener,noreferrer'
+                                );
                                 setMobileOpen(false);
                             }}
                         >
@@ -719,7 +723,7 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
                             variant="ghost"
                             className="justify-start"
                             onClick={() => {
-                                window.open(link.url, '_blank');
+                                window.open(link.url, '_blank', 'noopener,noreferrer');
                                 setMobileOpen(false);
                             }}
                         >
