@@ -29,6 +29,12 @@ interface PageProps {
 
 const isLoggedIn = () => Boolean(localStorage.getItem('jf_token'));
 
+const DefaultPageBackground = () => (
+    <div className="fixed inset-0 -z-30 bg-background">
+        <div className="absolute inset-0 bg-muted/20" />
+    </div>
+);
+
 const PageContent = ({
     children,
     title,
@@ -111,8 +117,9 @@ const PageContent = ({
 
     return (
         <div
-            className={`relative flex min-h-dvh h-dvh w-full flex-col overflow-hidden ${containerClassName ?? ''}`}
+            className={`relative isolate flex min-h-dvh h-dvh w-full flex-col overflow-hidden bg-background ${containerClassName ?? ''}`}
         >
+            <DefaultPageBackground />
             {background || bgItem}
             <TopBar
                 overlay={overlayHeader}

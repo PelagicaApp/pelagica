@@ -110,6 +110,7 @@ const HomePage = () => {
                                     showFavoriteButton={section.showFavoriteButton}
                                     showWatchlistButton={section.showWatchlistButton}
                                     fadeTop={index != 0}
+                                    setPageBackground={index === 0}
                                 />
                             );
 

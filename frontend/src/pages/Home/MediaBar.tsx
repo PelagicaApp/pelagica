@@ -13,6 +13,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import WatchListButton from '@/components/WatchlistButton';
 import type { SectionItemsConfig } from '@/hooks/api/useConfig';
 import { useMediaBarItems } from '@/hooks/api/useMediaBarItems';
+import { usePageBackground } from '@/hooks/usePageBackground';
 import { getBackdropUrl, getLogoUrl } from '@/utils/jellyfinUrls';
 import { getEndsAt, ticksToReadableTime } from '@/utils/timeConversion';
 import { Play, Star } from 'lucide-react';
@@ -28,6 +29,7 @@ interface MediaBarProps {
     showFavoriteButton?: boolean;
     showWatchlistButton?: boolean;
     fadeTop?: boolean;
+    setPageBackground?: boolean;
 }
 
 const MediaBar = ({
@@ -38,8 +40,10 @@ const MediaBar = ({
     showFavoriteButton,
     showWatchlistButton,
     fadeTop,
+    setPageBackground = false,
 }: MediaBarProps) => {
     const { t } = useTranslation('home');
+    const { setBackground } = usePageBackground();
     const { data: mediabarItems, isLoading, isError } = useMediaBarItems(itemsConfig);
     const [logoErrors, setLogoErrors] = useState<Set<string>>(new Set());
     const [api, setApi] = useState<CarouselApi>();
@@ -53,6 +57,27 @@ const MediaBar = ({
             api.off('select', onSelect);
         };
     }, [api]);
+
+    const activeBackgroundItem = setPageBackground ? mediabarItems?.[activeIndex] : undefined;
+
+    useEffect(() => {
+        if (!activeBackgroundItem?.Id) return;
+
+        setBackground(
+            <div className="fixed top-0 left-0 h-full w-full -z-20 overflow-hidden">
+                <img
+                    src={getBackdropUrl(activeBackgroundItem.Id)}
+                    alt={`${activeBackgroundItem.Name ?? t('media')} Backdrop`}
+                    className="h-full w-full scale-110 object-cover opacity-65 blur-3xl"
+                />
+                <div className="absolute inset-0 bg-linear-to-b from-background/20 via-background/35 to-background" />
+            </div>
+        );
+
+        return () => {
+            setBackground(null);
+        };
+    }, [activeBackgroundItem?.Id, activeBackgroundItem?.Name, setBackground, t]);
 
     const handleLogoError = (itemId: string) => {
         setLogoErrors((prev) => new Set([...prev, itemId]));
@@ -81,7 +106,7 @@ const MediaBar = ({
             {title && <h2 className="text-2xl font-bold mb-3 pl-12 pt-4">{title}</h2>}
 
             <div
-                className="absolute inset-x-0 top-0 -z-10 pointer-events-none"
+                className="absolute inset-x-0 top-0 overflow-hidden rounded-b-xl -z-10 pointer-events-none"
                 style={{ height: 'calc(100% + 10rem)' }}
             >
                 {mediabarItems?.map((item, i) => (
