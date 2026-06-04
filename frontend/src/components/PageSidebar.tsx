@@ -1,22 +1,22 @@
-import { type CSSProperties } from 'react';
-import AppSidebar from '@/components/AppSidebar';
-import { SidebarProvider } from '@/components/ui/sidebar';
+import { SidebarBrowser } from '@/components/SidebarBrowser';
 
 type PageSidebarProps = {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    style: CSSProperties;
 };
 
-const PageSidebar = ({ open, onOpenChange, style }: PageSidebarProps) => (
-    <SidebarProvider
-        className="box-border hidden h-full min-h-0 w-auto shrink-0 pt-14 md:flex"
-        style={style}
-        open={open}
-        onOpenChange={onOpenChange}
+const SIDEBAR_WIDTH = 'min(28rem, calc(100vw - 6rem))';
+
+const PageSidebar = ({ open, onOpenChange }: PageSidebarProps) => (
+    <aside
+        aria-hidden={!open}
+        className="hidden min-h-0 shrink-0 overflow-hidden border-r border-border bg-background/95 transition-[width] duration-300 ease-out md:block"
+        style={{ width: open ? SIDEBAR_WIDTH : 0 }}
     >
-        <AppSidebar />
-    </SidebarProvider>
+        <div className="flex h-full w-[min(28rem,calc(100vw-6rem))] min-w-0 flex-col pt-14">
+            <SidebarBrowser className="min-h-0 flex-1 p-3" onClose={() => onOpenChange(false)} />
+        </div>
+    </aside>
 );
 
 export default PageSidebar;

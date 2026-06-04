@@ -3,9 +3,9 @@
 import { useDeferredValue, useEffect, useMemo } from 'react';
 import { ArrowLeft, Film, Music2, Search, Tv } from 'lucide-react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router';
-import { SidebarInput, useSidebar } from '@/components/ui/sidebar';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { useUserViews } from '@/hooks/api/useUserViews';
 import { useCurrentUser } from '@/hooks/api/useCurrentUser';
@@ -25,7 +25,6 @@ import {
 } from '@/utils/sidebarBrowseFilters';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { useSidebarBrowser } from '@/context/SidebarBrowserContext';
-import { readExpandedBeforeBrowse } from '@/utils/sidebarBrowserStorage';
 import { SidebarBrowserResultsList } from '@/components/SidebarBrowserResultsList';
 import { SidebarBrowseFilterTabs } from '@/components/SidebarBrowseFilterTabs';
 import { useTranslation } from 'react-i18next';
@@ -46,11 +45,11 @@ function toTabCategory(category: BrowserMediaCategory | 'all'): BrowserMediaCate
 
 type SidebarBrowserProps = {
     className?: string;
+    onClose?: () => void;
 };
 
-export function SidebarBrowser({ className }: SidebarBrowserProps) {
+export function SidebarBrowser({ className, onClose }: SidebarBrowserProps) {
     const { t } = useTranslation('sidebar');
-    const { state, isMobile, setOpen, setOpenMobile } = useSidebar();
     const {
         category,
         setCategory,
@@ -171,21 +170,8 @@ export function SidebarBrowser({ className }: SidebarBrowserProps) {
 
     const handleExitBrowseMode = () => {
         setBrowseMode(false);
-        if (isMobile) {
-            setOpenMobile(false);
-        } else {
-            setOpen(readExpandedBeforeBrowse());
-        }
+        onClose?.();
     };
-
-    if (state === 'collapsed' && !isMobile) {
-        return (
-            <p className="text-muted-foreground px-3 py-6 text-center text-xs leading-relaxed">
-                {t('expand_for_browse')}
-                <span className="text-foreground block font-medium">Ctrl+B</span>
-            </p>
-        );
-    }
 
     return (
         <section
@@ -208,7 +194,7 @@ export function SidebarBrowser({ className }: SidebarBrowserProps) {
 
             <div className="relative shrink-0">
                 <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2" />
-                <SidebarInput
+                <Input
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder={searchPlaceholder}
