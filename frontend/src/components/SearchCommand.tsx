@@ -147,7 +147,7 @@ export const SearchCommand = () => {
                                             </p>
                                             <Badge variant={'outline'} className="flex ml-2">
                                                 <JellyfinItemKindIcon kind={item.Type!} />
-                                                {item.Type === 'Audio' ? 'Song' : item.Type === 'MusicAlbum' ? 'Album' : item.Type}
+                                                {item.Type === 'Audio' ? t('song') : item.Type === 'MusicAlbum' ? t('album') : item.Type}
                                             </Badge>
                                         </div>
                                         <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">

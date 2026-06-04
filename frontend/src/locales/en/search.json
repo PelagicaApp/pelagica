@@ -15,5 +15,8 @@
     "group_moviesTv": "Movies & TV Shows",
     "group_music": "Music",
     "group_episodes": "Episodes",
-    "group_people": "People"
+    "group_people": "People",
+    "song": "Song",
+    "artist": "Artist",
+    "album": "Album"
 }
