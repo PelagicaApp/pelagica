@@ -18,21 +18,16 @@ import { useTranslation } from 'react-i18next';
 import { useConfig } from '@/hooks/api/useConfig';
 import { getServerUrl } from '@/utils/localstorageCredentials';
 import { useServerBranding } from '../../hooks/api/useServerBranding';
+import DOMPurify from 'dompurify';
 
 const Disclaimer = ({ text }: { text: string | null | undefined }) => {
     if (!text) return null;
+    const sanitized = DOMPurify.sanitize(text);
     return (
-        <p className="mt-4 text-sm text-muted-foreground text-center whitespace-pre-wrap">
-            {text
-                .split('\n')
-                .filter((line) => !!line.trim())
-                .map((line, i, arr) => (
-                    <span key={i}>
-                        {line}
-                        {i < arr.length - 1 && <br />}
-                    </span>
-                ))}
-        </p>
+        <div
+            className="mt-4 text-sm text-muted-foreground text-center [&_a]:underline [&_a]:text-primary"
+            dangerouslySetInnerHTML={{ __html: sanitized }}
+        />
     );
 };
 
