@@ -10,6 +10,10 @@ export const KeyboardShortcuts = () => {
                 e.preventDefault();
                 openSearch();
             }
+            if ((e.metaKey || e.ctrlKey) && e.key === 'm') {
+                e.preventDefault();
+                openSearch('music');
+            }
         };
 
         document.addEventListener('keydown', down);

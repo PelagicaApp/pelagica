@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/command';
 import { useSearch } from '@/context/SearchContext';
 import { useSearchItems } from '@/hooks/api/useSearchItems';
+import { useMusicPlayback } from '@/hooks/useMusicPlayback';
 import { useNavigate } from 'react-router';
 import { getImageApi } from '@jellyfin/sdk/lib/utils/api/image-api';
 import { getApi } from '@/api/getApi';
@@ -16,20 +17,24 @@ import { Calendar, Star } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import JellyfinItemKindIcon from './JellyfinItemKindIcon';
 import { Badge } from './ui/badge';
+import type { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models/base-item-kind';
 
 export const SearchCommand = () => {
     const { t } = useTranslation('search');
-    const { isOpen, closeSearch } = useSearch();
+    const { isOpen, searchMode, closeSearch } = useSearch();
     const navigate = useNavigate();
+    const { loadTrack } = useMusicPlayback();
     const [query, setQuery] = useState('');
     const [debouncedQuery, setDebouncedQuery] = useState('');
     const [, startTransition] = useTransition();
+    const itemTypes: BaseItemKind[] =
+        searchMode === 'music' ? ['MusicAlbum', 'Audio', 'MusicArtist'] : ['Movie', 'Series'];
     const {
         data: results,
         isLoading,
         error,
     } = useSearchItems(debouncedQuery, {
-        itemTypes: ['Movie', 'Series'],
+        itemTypes,
         limit: 15,
     });
 
@@ -109,12 +114,35 @@ export const SearchCommand = () => {
                                 key={item.Id}
                                 value={item.Name!}
                                 onSelect={() => {
-                                    navigate(`/item/${item.Id}`);
-                                    closeSearch();
+                                    if (item.Type === 'Audio') {
+                                        loadTrack(
+                                            {
+                                                id: item.Id || '',
+                                                title: item.Name || '',
+                                                artist:
+                                                    item.ArtistItems?.[0]?.Name ||
+                                                    item.Artists?.[0] ||
+                                                    'Unknown',
+                                                albumId: item.AlbumId || item.ParentId || '',
+                                                albumName: item.Album || '',
+                                            },
+                                            true
+                                        );
+                                        closeSearch();
+                                    } else {
+                                        navigate(`/item/${item.Id}`);
+                                        closeSearch();
+                                    }
                                 }}
                             >
                                 <div className="flex items-start gap-3 w-full">
-                                    <div className="relative w-13 h-20 overflow-hidden rounded-md shrink-0">
+                                    <div
+                                        className={`relative overflow-hidden rounded-md shrink-0 ${
+                                            item.Type === 'MusicAlbum' || item.Type === 'Audio'
+                                                ? 'w-13 h-13'
+                                                : 'w-13 h-20'
+                                        }`}
+                                    >
                                         <img
                                             src={`${posterUrls[item.Id!]}?maxWidth=96&maxHeight=144&quality=85`}
                                             alt={item.Name || ''}
@@ -130,21 +158,45 @@ export const SearchCommand = () => {
                                             </p>
                                             <Badge variant={'outline'} className="flex ml-2">
                                                 <JellyfinItemKindIcon kind={item.Type!} />
-                                                {item.Type}
+                                                {item.Type === 'Audio'
+                                                    ? t('song')
+                                                    : item.Type === 'MusicAlbum'
+                                                      ? t('album')
+                                                      : item.Type}
                                             </Badge>
                                         </div>
                                         <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
-                                            {item.ProductionYear && (
-                                                <div className="flex items-center gap-1">
-                                                    <Calendar className="h-3! w-3!" />
-                                                    <span>{item.ProductionYear}</span>
-                                                </div>
-                                            )}
-                                            {item.CommunityRating && (
-                                                <div className="flex items-center gap-1">
-                                                    <Star className="h-3! w-3!" />
-                                                    <span>{item.CommunityRating.toFixed(1)}</span>
-                                                </div>
+                                            {item.Type === 'MusicAlbum' || item.Type === 'Audio' ? (
+                                                <>
+                                                    {item.Artists && item.Artists.length > 0 && (
+                                                        <span className="line-clamp-1">
+                                                            {item.Artists.join(', ')}
+                                                        </span>
+                                                    )}
+                                                    {item.ProductionYear && (
+                                                        <div className="flex items-center gap-1">
+                                                            <Calendar className="h-3! w-3!" />
+                                                            <span>{item.ProductionYear}</span>
+                                                        </div>
+                                                    )}
+                                                </>
+                                            ) : (
+                                                <>
+                                                    {item.ProductionYear && (
+                                                        <div className="flex items-center gap-1">
+                                                            <Calendar className="h-3! w-3!" />
+                                                            <span>{item.ProductionYear}</span>
+                                                        </div>
+                                                    )}
+                                                    {item.CommunityRating && (
+                                                        <div className="flex items-center gap-1">
+                                                            <Star className="h-3! w-3!" />
+                                                            <span>
+                                                                {item.CommunityRating.toFixed(1)}
+                                                            </span>
+                                                        </div>
+                                                    )}
+                                                </>
                                             )}
                                         </div>
                                         {item.Overview && (
