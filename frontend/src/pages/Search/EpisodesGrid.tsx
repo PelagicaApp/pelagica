@@ -11,7 +11,15 @@ interface EpisodesGridProps {
 
 const EpisodeItem = ({ item }: { item: BaseItemDto }) => {
     const [posterError, setPosterError] = useState(false);
-    const posterUrl = getPrimaryImageUrl(item.Id || '', undefined, item.ImageTags?.Primary);
+    const posterUrl = getPrimaryImageUrl(
+        item.Id || '',
+        {
+            maxWidth: 416,
+            maxHeight: 234,
+        },
+        item.ImageTags?.Primary,
+        85
+    );
 
     return (
         <Link to={`/item/${item.Id}`} key={item.Id} className="p-0 m-0">
@@ -20,7 +28,7 @@ const EpisodeItem = ({ item }: { item: BaseItemDto }) => {
                     <>
                         <img
                             key={item.Id}
-                            src={`${posterUrl}?maxWidth=416&maxHeight=234&quality=85`}
+                            src={posterUrl}
                             alt={item.Name || 'No Title'}
                             className="w-full h-full object-cover rounded-md group-hover:opacity-75 transition-all group-hover:scale-105 z-10"
                             loading="lazy"

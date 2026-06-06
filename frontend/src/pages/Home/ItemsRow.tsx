@@ -102,7 +102,14 @@ const ItemsRow = ({ title, allLink, items, detailFields }: ItemsRowProps) => {
         if (!recentItems) return {};
         return recentItems.reduce(
             (acc, item) => {
-                acc[item.Id!] = getPrimaryImageUrl(item.Id!, undefined, item.ImageTags?.Primary);
+                acc[item.Id!] = getPrimaryImageUrl(
+                    item.Id!,
+                    {
+                        maxWidth: 416,
+                        maxHeight: 640,
+                    },
+                    item.ImageTags?.Primary
+                );
                 return acc;
             },
             {} as Record<string, string>
@@ -135,7 +142,7 @@ const ItemsRow = ({ title, allLink, items, detailFields }: ItemsRowProps) => {
                               <ScrollableSectionPoster
                                   key={item.Id}
                                   item={item}
-                                  posterUrl={`${posterUrls[item.Id!]}?maxWidth=416&maxHeight=640&quality=85`}
+                                  posterUrl={posterUrls[item.Id!]}
                               >
                                   <div className="flex flex-wrap items-center mt-1">
                                       {detailFields && detailFields.length > 0

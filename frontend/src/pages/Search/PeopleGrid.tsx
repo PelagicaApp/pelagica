@@ -11,7 +11,15 @@ interface PeopleGridProps {
 
 const PersonItem = ({ item }: { item: BaseItemDto }) => {
     const [posterError, setPosterError] = useState(false);
-    const posterUrl = getPrimaryImageUrl(item.Id || '', undefined, item.ImageTags?.Primary);
+    const posterUrl = getPrimaryImageUrl(
+        item.Id || '',
+        {
+            maxWidth: 300,
+            maxHeight: 300,
+        },
+        item.ImageTags?.Primary,
+        85
+    );
 
     return (
         <Link to={`/person/${item.Id}`} key={item.Id} className="p-0 m-0">
@@ -20,7 +28,7 @@ const PersonItem = ({ item }: { item: BaseItemDto }) => {
                     <>
                         <img
                             key={item.Id}
-                            src={`${posterUrl}?maxWidth=300&maxHeight=300&quality=85`}
+                            src={posterUrl}
                             alt={item.Name || 'No Title'}
                             className="w-full h-full object-cover rounded-full group-hover:opacity-75 transition-all group-hover:scale-105 z-10"
                             loading="lazy"
