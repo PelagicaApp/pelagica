@@ -1,0 +1,1 @@
+import{aP as t}from"./index-Cpmy27P9.js";import"./videojs-CPoZw-BW.js";const e=[["rect",{x:"2",y:"4",width:"20",height:"16",rx:"2",key:"izxlao"}],["path",{d:"M10 4v4",key:"pp8u80"}],["path",{d:"M2 8h20",key:"d11cs7"}],["path",{d:"M6 4v4",key:"1svtjw"}]],a=t("app-window",e);export{e as __iconNode,a as default};

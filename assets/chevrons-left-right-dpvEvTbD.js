@@ -1,1 +1,0 @@
-import{aP as t}from"./index-Bf4Lbv11.js";import"./videojs-CPoZw-BW.js";const e=[["path",{d:"m9 7-5 5 5 5",key:"j5w590"}],["path",{d:"m15 7 5 5-5 5",key:"1bl6da"}]],r=t("chevrons-left-right",e);export{e as __iconNode,r as default};

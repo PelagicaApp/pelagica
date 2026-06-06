@@ -1,0 +1,1 @@
+import{aP as e}from"./index-Cpmy27P9.js";import"./videojs-CPoZw-BW.js";const t=[["path",{d:"M12 12h.01",key:"1mp3jc"}],["path",{d:"M16 12h.01",key:"1l6xoz"}],["path",{d:"m17 7 5 5-5 5",key:"1xlxn0"}],["path",{d:"m7 7-5 5 5 5",key:"19njba"}],["path",{d:"M8 12h.01",key:"czm47f"}]],a=e("chevrons-left-right-ellipsis",t);export{t as __iconNode,a as default};

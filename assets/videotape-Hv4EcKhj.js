@@ -1,0 +1,1 @@
+import{aP as e}from"./index-Cpmy27P9.js";import"./videojs-CPoZw-BW.js";const c=[["rect",{width:"20",height:"16",x:"2",y:"4",rx:"2",key:"18n3k1"}],["path",{d:"M2 8h20",key:"d11cs7"}],["circle",{cx:"8",cy:"14",r:"2",key:"1k2qr5"}],["path",{d:"M8 12h8",key:"1wcyev"}],["circle",{cx:"16",cy:"14",r:"2",key:"14k7lr"}]],o=e("videotape",c);export{c as __iconNode,o as default};

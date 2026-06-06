@@ -1,1 +1,0 @@
-import{aP as e}from"./index-Bf4Lbv11.js";import"./videojs-CPoZw-BW.js";const c=[["circle",{cx:"12",cy:"12",r:"10",key:"1mglay"}],["path",{d:"m14 16-4-4 4-4",key:"ojs7w8"}]],t=e("circle-chevron-left",c);export{c as __iconNode,t as default};

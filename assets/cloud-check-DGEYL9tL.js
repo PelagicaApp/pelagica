@@ -1,1 +1,0 @@
-import{aP as o}from"./index-Bf4Lbv11.js";import"./videojs-CPoZw-BW.js";const c=[["path",{d:"m17 15-5.5 5.5L9 18",key:"15q87x"}],["path",{d:"M5.516 16.07A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 3.501 7.327",key:"1xtj56"}]],a=o("cloud-check",c);export{c as __iconNode,a as default};

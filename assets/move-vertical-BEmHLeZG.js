@@ -1,0 +1,1 @@
+import{aP as t}from"./index-Cpmy27P9.js";import"./videojs-CPoZw-BW.js";const e=[["path",{d:"M12 2v20",key:"t6zp3m"}],["path",{d:"m8 18 4 4 4-4",key:"bh5tu3"}],["path",{d:"m8 6 4-4 4 4",key:"ybng9g"}]],c=t("move-vertical",e);export{e as __iconNode,c as default};

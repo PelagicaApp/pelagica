@@ -1,1 +1,0 @@
-import{aP as a}from"./index-Bf4Lbv11.js";import"./videojs-CPoZw-BW.js";const o=[["path",{d:"M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z",key:"1xq2db"}]],c=a("zap",o);export{o as __iconNode,c as default};

@@ -1,1 +1,0 @@
-import{aP as e}from"./index-Bf4Lbv11.js";import"./videojs-CPoZw-BW.js";const t=[["path",{d:"M4 20h16",key:"14thso"}],["path",{d:"m6 16 6-12 6 12",key:"1b4byz"}],["path",{d:"M8 12h8",key:"1wcyev"}]],c=e("baseline",t);export{t as __iconNode,c as default};

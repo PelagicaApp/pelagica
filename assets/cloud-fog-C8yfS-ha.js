@@ -1,0 +1,1 @@
+import{aP as o}from"./index-Cpmy27P9.js";import"./videojs-CPoZw-BW.js";const t=[["path",{d:"M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242",key:"1pljnt"}],["path",{d:"M16 17H7",key:"pygtm1"}],["path",{d:"M17 21H9",key:"1u2q02"}]],d=o("cloud-fog",t);export{t as __iconNode,d as default};

@@ -1,0 +1,1 @@
+import{aP as e}from"./index-Cpmy27P9.js";import"./videojs-CPoZw-BW.js";const t=[["path",{d:"M21 5H11",key:"us1j55"}],["path",{d:"M21 12H11",key:"wd7e0v"}],["path",{d:"M21 19H11",key:"saa85w"}],["path",{d:"m3 8 4 4-4 4",key:"1a3j6y"}]],n=e("list-indent-increase",t);export{t as __iconNode,n as default};

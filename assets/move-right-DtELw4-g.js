@@ -1,1 +1,0 @@
-import{aP as o}from"./index-Bf4Lbv11.js";import"./videojs-CPoZw-BW.js";const t=[["path",{d:"M18 8L22 12L18 16",key:"1r0oui"}],["path",{d:"M2 12H22",key:"1m8cig"}]],a=o("move-right",t);export{t as __iconNode,a as default};

@@ -1,1 +1,0 @@
-import{aP as e}from"./index-Bf4Lbv11.js";import"./videojs-CPoZw-BW.js";const o=[["rect",{x:"5",y:"2",width:"14",height:"20",rx:"7",key:"11ol66"}],["path",{d:"M12 6v4",key:"16clxf"}]],r=e("mouse",o);export{o as __iconNode,r as default};

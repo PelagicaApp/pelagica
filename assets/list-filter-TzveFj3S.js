@@ -1,1 +1,0 @@
-import{aP as t}from"./index-Bf4Lbv11.js";import"./videojs-CPoZw-BW.js";const e=[["path",{d:"M2 5h20",key:"1fs1ex"}],["path",{d:"M6 12h12",key:"8npq4p"}],["path",{d:"M9 19h6",key:"456am0"}]],i=t("list-filter",e);export{e as __iconNode,i as default};

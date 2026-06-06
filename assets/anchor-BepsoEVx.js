@@ -1,0 +1,1 @@
+import{aP as c}from"./index-Cpmy27P9.js";import"./videojs-CPoZw-BW.js";const e=[["path",{d:"M12 6v16",key:"nqf5sj"}],["path",{d:"m19 13 2-1a9 9 0 0 1-18 0l2 1",key:"y7qv08"}],["path",{d:"M9 11h6",key:"1fldmi"}],["circle",{cx:"12",cy:"4",r:"2",key:"muu5ef"}]],t=c("anchor",e);export{e as __iconNode,t as default};

@@ -1,0 +1,1 @@
+import{aP as t}from"./index-Cpmy27P9.js";import"./videojs-CPoZw-BW.js";const a=[["path",{d:"M4 4v16",key:"6qkkli"}],["path",{d:"M9 4v16",key:"81ygyz"}],["path",{d:"M14 4v16",key:"12vmem"}]],y=t("tally-3",a);export{a as __iconNode,y as default};

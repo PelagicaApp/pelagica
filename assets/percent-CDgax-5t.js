@@ -1,1 +1,0 @@
-import{aP as c}from"./index-Bf4Lbv11.js";import"./videojs-CPoZw-BW.js";const e=[["line",{x1:"19",x2:"5",y1:"5",y2:"19",key:"1x9vlm"}],["circle",{cx:"6.5",cy:"6.5",r:"2.5",key:"4mh3h7"}],["circle",{cx:"17.5",cy:"17.5",r:"2.5",key:"1mdrzq"}]],t=c("percent",e);export{e as __iconNode,t as default};

@@ -1,0 +1,1 @@
+import{aP as t}from"./index-Cpmy27P9.js";import"./videojs-CPoZw-BW.js";const e=[["path",{d:"M12 6v6l4 2",key:"mmk7yg"}],["path",{d:"M20 12v5",key:"12wsvk"}],["path",{d:"M20 21h.01",key:"1p6o6n"}],["path",{d:"M21.25 8.2A10 10 0 1 0 16 21.16",key:"17fp9f"}]],c=t("clock-alert",e);export{e as __iconNode,c as default};

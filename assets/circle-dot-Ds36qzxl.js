@@ -1,0 +1,1 @@
+import{aP as c}from"./index-Cpmy27P9.js";import"./videojs-CPoZw-BW.js";const e=[["circle",{cx:"12",cy:"12",r:"10",key:"1mglay"}],["circle",{cx:"12",cy:"12",r:"1",key:"41hilf"}]],i=c("circle-dot",e);export{e as __iconNode,i as default};
