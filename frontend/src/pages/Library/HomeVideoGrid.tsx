@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState, useMemo } from 'react';
-import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
+import type { BaseItemDto, BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models';
 import { Link, useNavigate } from 'react-router';
-import { ImageOff, Play } from 'lucide-react';
+import { Eye, ImageOff, Play } from 'lucide-react';
 import { getPrimaryImageUrl } from '@/utils/jellyfinUrls';
 import { useConfig } from '@/hooks/api/useConfig';
 import WatchedStateBadge from '@/components/WatchedStateBadge';
@@ -42,6 +42,15 @@ function buildRows(items: BaseItemDto[], containerWidth: number): Row[] {
     return rows;
 }
 
+const PlayIcon = ({ itemKind }: { itemKind?: BaseItemKind }) => {
+    switch (itemKind) {
+        case 'Photo':
+            return <Eye className="w-5 h-5 text-white" />;
+        default:
+            return <Play className="w-5 h-5 text-white fill-white" />;
+    }
+}
+
 const HomeVideoItem = ({ item, height }: { item: BaseItemDto; height: number }) => {
     const { config } = useConfig();
     const navigate = useNavigate();
@@ -66,9 +75,11 @@ const HomeVideoItem = ({ item, height }: { item: BaseItemDto; height: number }) 
         item.ImageTags?.Primary
     );
 
+    const playLink = item.Type === 'Photo' ? `/photo/${item.Id}` : `/play/${item.Id}`;
+
     return (
         <Link
-            to={`/play/${item.Id}`}
+            to={playLink}
             style={{ width, height, flexShrink: 0 }}
             className="relative overflow-hidden rounded-md group"
         >
@@ -91,10 +102,10 @@ const HomeVideoItem = ({ item, height }: { item: BaseItemDto; height: number }) 
                             role="button"
                             onClick={(e) => {
                                 e.preventDefault();
-                                navigate(`/play/${item.Id}`);
+                                navigate(playLink);
                             }}
                         >
-                            <Play className="w-5 h-5 text-white fill-white" />
+                            <PlayIcon itemKind={item.Type} />
                         </div>
                     </div>
                 </>
