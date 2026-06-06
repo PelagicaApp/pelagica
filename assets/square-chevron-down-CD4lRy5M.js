@@ -1,0 +1,1 @@
+import{aP as e}from"./index-Bf4Lbv11.js";import"./videojs-CPoZw-BW.js";const o=[["rect",{width:"18",height:"18",x:"3",y:"3",rx:"2",key:"afitv7"}],["path",{d:"m16 10-4 4-4-4",key:"894hmk"}]],a=e("square-chevron-down",o);export{o as __iconNode,a as default};

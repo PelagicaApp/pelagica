@@ -1,1 +1,0 @@
-import{c as e}from"./index-K6T-jLSo.js";import"./videojs-CPoZw-BW.js";const o=[["path",{d:"m10 9-3 3 3 3",key:"1oro0q"}],["path",{d:"m14 15 3-3-3-3",key:"bz13h7"}],["rect",{x:"3",y:"3",width:"18",height:"18",rx:"2",key:"h1oib"}]],c=e("square-code",o);export{o as __iconNode,c as default};

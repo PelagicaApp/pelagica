@@ -1,0 +1,1 @@
+import{aP as e}from"./index-Bf4Lbv11.js";import"./videojs-CPoZw-BW.js";const d=[["path",{d:"M12 2v8",key:"1q4o3n"}],["path",{d:"m16 6-4 4-4-4",key:"6wukr"}],["rect",{width:"20",height:"8",x:"2",y:"14",rx:"2",key:"w68u3i"}],["path",{d:"M6 18h.01",key:"uhywen"}],["path",{d:"M10 18h.01",key:"h775k"}]],a=e("hard-drive-download",d);export{d as __iconNode,a as default};

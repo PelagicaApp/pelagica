@@ -1,1 +1,0 @@
-import{c as t}from"./index-K6T-jLSo.js";import"./videojs-CPoZw-BW.js";const o=[["path",{d:"M4 10a8 8 0 1 1 8 8H4",key:"svv66n"}],["path",{d:"m8 22-4-4 4-4",key:"6g7gki"}]],c=t("iteration-cw",o);export{o as __iconNode,c as default};

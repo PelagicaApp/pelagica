@@ -1,0 +1,1 @@
+import{aP as c}from"./index-Bf4Lbv11.js";import"./videojs-CPoZw-BW.js";const e=[["path",{d:"M12 3c7.2 0 9 1.8 9 9s-1.8 9-9 9-9-1.8-9-9 1.8-9 9-9",key:"garfkc"}]],t=c("squircle",e);export{e as __iconNode,t as default};

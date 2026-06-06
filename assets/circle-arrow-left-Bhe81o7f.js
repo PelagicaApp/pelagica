@@ -1,1 +1,0 @@
-import{c}from"./index-K6T-jLSo.js";import"./videojs-CPoZw-BW.js";const e=[["circle",{cx:"12",cy:"12",r:"10",key:"1mglay"}],["path",{d:"m12 8-4 4 4 4",key:"15vm53"}],["path",{d:"M16 12H8",key:"1fr5h0"}]],t=c("circle-arrow-left",e);export{e as __iconNode,t as default};

@@ -1,1 +1,0 @@
-import{c as e}from"./index-K6T-jLSo.js";import"./videojs-CPoZw-BW.js";const o=[["path",{d:"M3 5h8",key:"18g2rq"}],["path",{d:"M3 12h8",key:"1xfjp6"}],["path",{d:"M3 19h8",key:"fpbke4"}],["path",{d:"m15 8 3-3 3 3",key:"bc4io6"}],["path",{d:"m15 16 3 3 3-3",key:"9wmg1l"}]],h=e("list-chevrons-up-down",o);export{o as __iconNode,h as default};

@@ -1,1 +1,0 @@
-import{c as a}from"./index-K6T-jLSo.js";import"./videojs-CPoZw-BW.js";const o=[["path",{d:"M12 6a2 2 0 0 1 3.414-1.414l6 6a2 2 0 0 1 0 2.828l-6 6A2 2 0 0 1 12 18z",key:"b19h5q"}],["path",{d:"M2 6a2 2 0 0 1 3.414-1.414l6 6a2 2 0 0 1 0 2.828l-6 6A2 2 0 0 1 2 18z",key:"h7h5ge"}]],r=a("fast-forward",o);export{o as __iconNode,r as default};

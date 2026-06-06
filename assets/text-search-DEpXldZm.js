@@ -1,1 +1,0 @@
-import{c as e}from"./index-K6T-jLSo.js";import"./videojs-CPoZw-BW.js";const c=[["path",{d:"M21 5H3",key:"1fi0y6"}],["path",{d:"M10 12H3",key:"1ulcyk"}],["path",{d:"M10 19H3",key:"108z41"}],["circle",{cx:"17",cy:"15",r:"3",key:"1upz2a"}],["path",{d:"m21 19-1.9-1.9",key:"dwi7p8"}]],o=e("text-search",c);export{c as __iconNode,o as default};

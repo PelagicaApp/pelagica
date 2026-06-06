@@ -1,0 +1,1 @@
+import{aP as t}from"./index-Bf4Lbv11.js";import"./videojs-CPoZw-BW.js";const e=[["rect",{width:"18",height:"7",x:"3",y:"3",rx:"1",key:"f1a2em"}],["rect",{width:"9",height:"7",x:"3",y:"14",rx:"1",key:"jqznyg"}],["rect",{width:"5",height:"7",x:"16",y:"14",rx:"1",key:"q5h2i8"}]],r=t("layout-template",e);export{e as __iconNode,r as default};

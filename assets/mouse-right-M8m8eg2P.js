@@ -1,0 +1,1 @@
+import{aP as e}from"./index-Bf4Lbv11.js";import"./videojs-CPoZw-BW.js";const c=[["path",{d:"M12 7.318V10",key:"17s7lh"}],["path",{d:"M19 10v5a7 7 0 0 1-14 0V9c0-3.527 2.608-6.515 6-7",key:"2es5nn"}],["circle",{cx:"17",cy:"4",r:"2",key:"y5j2s2"}]],s=e("mouse-right",c);export{c as __iconNode,s as default};

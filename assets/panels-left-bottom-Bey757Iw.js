@@ -1,0 +1,1 @@
+import{aP as t}from"./index-Bf4Lbv11.js";import"./videojs-CPoZw-BW.js";const e=[["rect",{width:"18",height:"18",x:"3",y:"3",rx:"2",key:"afitv7"}],["path",{d:"M9 3v18",key:"fh3hqa"}],["path",{d:"M9 15h12",key:"5ijen5"}]],h=t("panels-left-bottom",e);export{e as __iconNode,h as default};

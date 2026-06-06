@@ -1,1 +1,0 @@
-import{c as o}from"./index-K6T-jLSo.js";import"./videojs-CPoZw-BW.js";const t=[["path",{d:"M17 7 7 17",key:"15tmo1"}],["path",{d:"M17 17H7V7",key:"1org7z"}]],a=o("arrow-down-left",t);export{t as __iconNode,a as default};

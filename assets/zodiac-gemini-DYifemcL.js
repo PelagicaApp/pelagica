@@ -1,0 +1,1 @@
+import{aP as o}from"./index-Bf4Lbv11.js";import"./videojs-CPoZw-BW.js";const e=[["path",{d:"M16 4.525v14.948",key:"bgoxo0"}],["path",{d:"M20 3A17 17 0 0 1 4 3",key:"1djemw"}],["path",{d:"M4 21a17 17 0 0 1 16 0",key:"onoyo7"}],["path",{d:"M8 4.525v14.948",key:"u5iyof"}]],t=o("zodiac-gemini",e);export{e as __iconNode,t as default};

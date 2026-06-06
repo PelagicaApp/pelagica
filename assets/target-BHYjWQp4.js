@@ -1,0 +1,1 @@
+import{aP as c}from"./index-Bf4Lbv11.js";import"./videojs-CPoZw-BW.js";const e=[["circle",{cx:"12",cy:"12",r:"10",key:"1mglay"}],["circle",{cx:"12",cy:"12",r:"6",key:"1vlfrh"}],["circle",{cx:"12",cy:"12",r:"2",key:"1c9p78"}]],o=c("target",e);export{e as __iconNode,o as default};

@@ -1,0 +1,1 @@
+import{aP as t}from"./index-Bf4Lbv11.js";import"./videojs-CPoZw-BW.js";const e=[["rect",{width:"20",height:"12",x:"2",y:"6",rx:"2",key:"9lu3g6"}]],a=t("rectangle-horizontal",e);export{e as __iconNode,a as default};

@@ -1,1 +1,0 @@
-import{c as t}from"./index-K6T-jLSo.js";import"./videojs-CPoZw-BW.js";const e=[["path",{d:"M5 3v16h16",key:"1mqmf9"}],["path",{d:"m5 19 6-6",key:"jh6hbb"}],["path",{d:"m2 6 3-3 3 3",key:"tkyvxa"}],["path",{d:"m18 16 3 3-3 3",key:"1d4glt"}]],a=t("move-3d",e);export{e as __iconNode,a as default};

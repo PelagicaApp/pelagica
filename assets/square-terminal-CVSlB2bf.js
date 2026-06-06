@@ -1,0 +1,1 @@
+import{aP as e}from"./index-Bf4Lbv11.js";import"./videojs-CPoZw-BW.js";const t=[["path",{d:"m7 11 2-2-2-2",key:"1lz0vl"}],["path",{d:"M11 13h4",key:"1p7l4v"}],["rect",{width:"18",height:"18",x:"3",y:"3",rx:"2",ry:"2",key:"1m3agn"}]],o=e("square-terminal",t);export{t as __iconNode,o as default};

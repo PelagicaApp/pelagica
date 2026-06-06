@@ -1,1 +1,0 @@
-import{c}from"./index-K6T-jLSo.js";import"./videojs-CPoZw-BW.js";const a=[["path",{d:"M9 9.003a1 1 0 0 1 1.517-.859l4.997 2.997a1 1 0 0 1 0 1.718l-4.997 2.997A1 1 0 0 1 9 14.996z",key:"kmsa83"}],["circle",{cx:"12",cy:"12",r:"10",key:"1mglay"}]],o=c("circle-play",a);export{a as __iconNode,o as default};

@@ -1,1 +1,0 @@
-import{c as e}from"./index-K6T-jLSo.js";import"./videojs-CPoZw-BW.js";const t=[["path",{d:"M4 5h16",key:"1tepv9"}],["path",{d:"M4 12h16",key:"1lakjw"}],["path",{d:"M4 19h16",key:"1djgab"}]],c=e("menu",t);export{t as __iconNode,c as default};

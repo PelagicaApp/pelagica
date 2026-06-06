@@ -1,1 +1,0 @@
-import{c as t}from"./index-K6T-jLSo.js";import"./videojs-CPoZw-BW.js";const e=[["path",{d:"M12 15V9",key:"8c7uyn"}],["path",{d:"M3 15h18",key:"5xshup"}],["path",{d:"M3 9h18",key:"1pudct"}],["rect",{width:"18",height:"18",x:"3",y:"3",rx:"2",key:"afitv7"}]],p=t("table-cells-split",e);export{e as __iconNode,p as default};

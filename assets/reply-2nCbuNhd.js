@@ -1,0 +1,1 @@
+import{aP as e}from"./index-Bf4Lbv11.js";import"./videojs-CPoZw-BW.js";const o=[["path",{d:"M20 18v-2a4 4 0 0 0-4-4H4",key:"5vmcpk"}],["path",{d:"m9 17-5-5 5-5",key:"nvlc11"}]],c=e("reply",o);export{o as __iconNode,c as default};

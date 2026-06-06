@@ -1,1 +1,0 @@
-import{c as o}from"./index-K6T-jLSo.js";import"./videojs-CPoZw-BW.js";const e=[["path",{d:"M13.433 2a1 1 0 0 1 .824.448 18 18 0 0 1 0 19.104 1 1 0 0 1-.824.448h-2.866a1 1 0 0 1-.824-.448 18 18 0 0 1 0-19.104A1 1 0 0 1 10.567 2z",key:"cq67go"}]],t=o("lens-convex",e);export{e as __iconNode,t as default};
