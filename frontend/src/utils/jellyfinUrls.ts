@@ -12,14 +12,14 @@ function resolveCredentials(): Credentials | null {
     return server && token ? { server, token } : null;
 }
 
-interface ImageSize {
+export interface ImageSize {
     width?: number;
     height?: number;
     maxWidth?: number;
     maxHeight?: number;
 }
 
-interface ItemImageOptions {
+export interface ItemImageOptions {
     index?: number;
     size?: ImageSize;
     quality?: number;

@@ -5,4 +5,6 @@ export const SUPPORTED_LIBRARY_COLLECTION_TYPES: CollectionType[] = [
     'tvshows',
     'boxsets',
     'music',
+    'musicvideos',
+    'homevideos',
 ];

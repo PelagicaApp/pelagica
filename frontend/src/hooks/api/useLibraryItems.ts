@@ -8,6 +8,7 @@ import type {
     SortOrder,
 } from '@jellyfin/sdk/lib/generated-client/models';
 import { getRetryConfig } from '@/utils/authErrorHandler';
+import { getUserId } from '../../utils/localstorageCredentials';
 
 export type UseLibraryItemsOptions = {
     limit?: number;
@@ -41,6 +42,7 @@ export function useLibraryItems(
                 recursive: options?.recursive ?? true,
                 includeItemTypes: options?.includeItemTypes,
                 locationTypes: ['FileSystem'],
+                userId: getUserId() || undefined,
             });
             return {
                 items: response.data.Items || [],

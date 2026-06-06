@@ -2,9 +2,9 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useConfig } from '@/hooks/api/useConfig';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import type { TFunction } from 'i18next';
-import { ImageOff } from 'lucide-react';
+import { ImageOff, Play } from 'lucide-react';
 import { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import WatchedStateBadge from '@/components/WatchedStateBadge';
 
 const LibraryItem = ({
@@ -13,18 +13,35 @@ const LibraryItem = ({
     t,
     posterAspectRatio = '2/3',
     detailLine,
+    isDirectPlay,
+    itemLink,
 }: {
     item: BaseItemDto;
     posterUrl: string;
     t: TFunction;
     posterAspectRatio?: string;
     detailLine?: React.ReactNode;
+    isDirectPlay?: boolean;
+    itemLink?: string;
 }) => {
     const { config } = useConfig();
+    const navigate = useNavigate();
     const [posterError, setPosterError] = useState(false);
 
+    const itemPath = itemLink || (isDirectPlay ? `/play/${item.Id}` : `/item/${item.Id}`);
+
+    const watched = item.UserData?.PlaybackPositionTicks ?? 0;
+    const runtime = item.RunTimeTicks ?? 0;
+    const progress = isDirectPlay
+        ? item.UserData?.Played && watched <= 0
+            ? 100
+            : runtime > 0
+              ? (watched / runtime) * 100
+              : 0
+        : 0;
+    
     return (
-        <Link to={`/item/${item.Id}`} key={item.Id} className="p-0 m-0">
+        <Link to={itemPath} key={item.Id} className="p-0 m-0">
             <div
                 className={`relative w-full aspect-${posterAspectRatio} overflow-hidden rounded-md group`}
             >
@@ -39,6 +56,20 @@ const LibraryItem = ({
                             onError={() => setPosterError(true)}
                         />
                         <Skeleton className="absolute bottom-0 left-0 right-0 top-0 -z-1" />
+                        {isDirectPlay && (
+                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                                <div
+                                    className="bg-black/60 rounded-full p-4 cursor-pointer hover:bg-black/75"
+                                    role="button"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        navigate(itemLink || `/play/${item.Id}`);
+                                    }}
+                                >
+                                    <Play className="w-6 h-6 text-white fill-white" />
+                                </div>
+                            </div>
+                        )}
                     </>
                 ) : (
                     <div className="w-full h-full bg-muted flex items-center justify-center rounded-md">
@@ -46,6 +77,14 @@ const LibraryItem = ({
                     </div>
                 )}
                 <WatchedStateBadge item={item} show={config?.watchedStateBadgeLibrary || false} />
+                {progress > 0 && (
+                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-700 z-20">
+                        <div
+                            style={{ width: `${progress}%` }}
+                            className="h-full bg-brand transition-[width]"
+                        />
+                    </div>
+                )}
             </div>
             <p className="mt-2 text-sm line-clamp-1 text-ellipsis break-all">
                 {item.Name || t('library:no_title')}
