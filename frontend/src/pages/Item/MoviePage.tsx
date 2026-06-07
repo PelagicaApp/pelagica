@@ -19,6 +19,7 @@ import { TrailerButton } from '../../components/TrailerButton';
 import ItemDownloadButton from '../../components/ItemDownloadButton';
 import SourcePickerButton from '@/components/SourcePickerButton';
 import ItemMetadataBadges from './ItemMetadataBadges';
+import Overview from './Overview';
 
 interface MoviePageProps {
     item: BaseItemDto;
@@ -125,10 +126,7 @@ const MoviePage = ({ item, config }: MoviePageProps) => {
                             <ItemAdminButton item={item} showSubtitlesButton={true} />
                         </div>
 
-                        {/* Overview */}
-                        <p className="text-base sm:text-lg text-foreground/90 leading-relaxed font-normal max-w-3xl mt-2 line-clamp-3">
-                            {item.Overview}
-                        </p>
+                        <Overview text={item.Overview || ''} />
 
                         <ItemMetadataBadges item={item} />
                     </div>
