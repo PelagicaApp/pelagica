@@ -108,7 +108,7 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
                         {/* Title Logo / Text */}
                         {!failedLogo && item.Id ? (
                             <img
-                                src={getLogoUrl(item.Id)}
+                                src={getLogoUrl(item.Id, undefined, item.ImageTags?.Logo)}
                                 alt={item.Name || ''}
                                 className="h-16 sm:h-24 md:h-28 max-w-[85%] object-contain object-left mb-2"
                                 onError={() => setFailedLogo(true)}
