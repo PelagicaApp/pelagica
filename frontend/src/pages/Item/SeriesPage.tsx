@@ -46,7 +46,6 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
     const [failedLogo, setFailedLogo] = useState(false);
 
     const { data: upcomingEpisodes } = useUpcomingEpisodes(item.Id || '');
-    console.log('Upcoming Episodes:', upcomingEpisodes);
 
     const effectiveSelectedSeason =
         selectedSeason ||
