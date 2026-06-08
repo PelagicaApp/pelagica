@@ -17,7 +17,6 @@ import './theme.css';
 import './i18n.ts';
 import { ScrollToTop } from './components/ScrollToTop.tsx';
 
-
 const HomePage = lazy(() => import('./pages/Home/HomePage.tsx'));
 const LoginPage = lazy(() => import('./pages/Login/LoginPage.tsx'));
 const LibraryPage = lazy(() => import('./pages/Library/LibraryPage.tsx'));
