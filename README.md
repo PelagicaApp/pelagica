@@ -4,6 +4,21 @@ Pelagica is an alternative web frontend for [Jellyfin](https://jellyfin.org) bui
 
 ![Home](./.github/assets/home.webp)
 
+## Table of Contents
+
+- [Features](#features)
+- [Demo](#demo)
+- [Docker Installation](#docker-installation)
+- [Custom Themes](#custom-themes)
+- [Discord](#discord)
+- [Localization](#localization)
+- [Development Setup](#development-setup)
+- [Contributing](#contributing)
+- [What does that name mean?](#what-does-that-name-mean)
+- [Acknowledgements](#acknowledgements)
+- [Disclaimer](#disclaimer)
+- [License](#license)
+
 ## Features
 
 - **Customizable Sections:** Tailor your homepage with sections like "Continue Watching", "Recently Added", or completely custom queries.
