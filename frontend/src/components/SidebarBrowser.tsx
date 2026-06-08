@@ -1,7 +1,7 @@
 'use client';
 
 import { useDeferredValue, useEffect, useMemo } from 'react';
-import { ArrowLeft, Film, Music2, Search, Tv } from 'lucide-react';
+import { ArrowLeft, Search } from 'lucide-react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,7 @@ import {
     buildLibrarySearchParams,
     collectionTypeToCategory,
     findLibraryIdForCategory,
+    getSupportedLibraries,
     type BrowserMediaCategory,
 } from '@/utils/sidebarLibraryNavigation';
 import {
@@ -23,21 +24,14 @@ import {
     getItemTypesForBrowseFilter,
     isGenresBrowseFilter,
 } from '@/utils/sidebarBrowseFilters';
-import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
+import type { BaseItemDto, CollectionType } from '@jellyfin/sdk/lib/generated-client/models';
 import { useSidebarBrowser } from '@/context/SidebarBrowserContext';
 import { SidebarBrowserResultsList } from '@/components/SidebarBrowserResultsList';
 import { SidebarBrowseFilterTabs } from '@/components/SidebarBrowseFilterTabs';
 import { useTranslation } from 'react-i18next';
+import JellyfinLibraryIcon from '@/components/JellyfinLibraryIcon';
 
-const CATEGORY_TABS: {
-    value: BrowserMediaCategory;
-    label: string;
-    icon: React.ReactNode;
-}[] = [
-    { value: 'music', label: 'Music', icon: <Music2 className="size-3.5" /> },
-    { value: 'series', label: 'Series', icon: <Tv className="size-3.5" /> },
-    { value: 'movie', label: 'Movies', icon: <Film className="size-3.5" /> },
-];
+const SIDEBAR_TAB_COLLECTION_TYPES: CollectionType[] = ['music', 'tvshows', 'boxsets', 'movies'];
 
 function toTabCategory(category: BrowserMediaCategory | 'all'): BrowserMediaCategory {
     return category === 'all' ? 'movie' : category;
@@ -68,6 +62,31 @@ export function SidebarBrowser({ className, onClose }: SidebarBrowserProps) {
 
     const activeCategory = toTabCategory(category);
     const showingGenres = isGenresBrowseFilter(browseFilter);
+
+    const categoryTabs = useMemo(() => {
+        const usedCategories = new Set<BrowserMediaCategory>();
+
+        return getSupportedLibraries(views?.Items).flatMap((library) => {
+            if (
+                !library.CollectionType ||
+                !SIDEBAR_TAB_COLLECTION_TYPES.includes(library.CollectionType)
+            ) {
+                return [];
+            }
+
+            const tabCategory = collectionTypeToCategory(library.CollectionType);
+            if (usedCategories.has(tabCategory)) return [];
+
+            usedCategories.add(tabCategory);
+            return [
+                {
+                    value: tabCategory,
+                    label: library.Name ?? tabCategory,
+                    libraryType: library.CollectionType,
+                },
+            ];
+        });
+    }, [views?.Items]);
 
     const libraryIdFromUrl = searchParams.get('library');
     const categoryFromUrl = useMemo((): BrowserMediaCategory => {
@@ -209,14 +228,14 @@ export function SidebarBrowser({ className, onClose }: SidebarBrowserProps) {
                     className="shrink-0 gap-0"
                 >
                     <TabsList className="h-10 w-full">
-                        {CATEGORY_TABS.map((tab) => (
+                        {categoryTabs.map((tab) => (
                             <TabsTrigger
                                 key={tab.value}
                                 value={tab.value}
                                 className="flex-1 gap-1.5 px-1 text-xs font-medium sm:px-2 sm:text-sm data-[state=active]:font-semibold"
                                 onClick={() => handleActiveTabClick(tab.value)}
                             >
-                                {tab.icon}
+                                <JellyfinLibraryIcon libraryType={tab.libraryType} />
                                 <span className="truncate">{tab.label}</span>
                             </TabsTrigger>
                         ))}
