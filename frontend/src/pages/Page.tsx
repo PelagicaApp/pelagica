@@ -147,7 +147,7 @@ const PageContent = ({
                 )}
                 <div
                     className={cn(
-                        'relative flex min-h-0 w-full flex-1 flex-col overflow-x-hidden overflow-y-auto z-5 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-muted-foreground [&::-webkit-scrollbar-thumb]:rounded-full',
+                        'relative z-5 flex min-h-0 min-w-0 flex-1 flex-col overflow-x-hidden overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-muted-foreground',
                         pagePadding && 'py-4 px-4 sm:px-12',
                         !overlayHeader && 'pt-18' // Topbar has height of 14 + 4 (padding) = 18
                     )}
@@ -156,7 +156,7 @@ const PageContent = ({
                     {breadcrumbs && (
                         <div className="flex items-center gap-2 mb-4">{breadcrumbs}</div>
                     )}
-                    <main className={`w-full flex-1 ${className ?? ''}`}>
+                    <main className={cn('min-w-0 flex-1', className)}>
                         {typeof children === 'function' ? children(pageRenderContext) : children}
                     </main>
                 </div>

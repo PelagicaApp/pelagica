@@ -82,11 +82,6 @@ function getColumnCount(width: number, collectionType: CollectionType): number {
     return breakpoints.find(([minWidth]) => width >= minWidth)?.[1] ?? 2;
 }
 
-function getPageSize(width: number, collectionType: CollectionType): number {
-    if (collectionType === 'homevideos') return HOME_VIDEO_PAGE_SIZE;
-    return getColumnCount(width, collectionType) * ITEM_ROWS;
-}
-
 function getLibraryLayout(width: number, collectionType: CollectionType): LibraryLayout {
     const columnCount = getColumnCount(width, collectionType);
     return {

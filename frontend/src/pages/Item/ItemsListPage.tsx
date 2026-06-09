@@ -11,7 +11,7 @@ import {
     Star,
     ImageOff,
 } from 'lucide-react';
-import { type ReactNode, useEffect, useRef, useState } from 'react';
+import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useSearchParams } from 'react-router';
 import ItemPagination from '@/components/ItemPagination';
@@ -35,6 +35,14 @@ function getColumnCount(width: number): number {
     if (width >= 768) return 4; // md
     if (width >= 640) return 3; // sm
     return 2;
+}
+
+function getItemsLayout(width: number) {
+    const columnCount = getColumnCount(width);
+    return {
+        columnCount,
+        pageSize: columnCount * ITEM_ROWS,
+    };
 }
 
 export interface ItemsQueryParams {
@@ -137,11 +145,16 @@ const ItemsListPage = ({
     const [page, setPage] = useState<number>(Number.isNaN(pageParam) ? 0 : pageParam);
     const [sortBy, setSortBy] = useState<ItemSortBy>(sortByParam);
     const [sortOrder, setSortOrder] = useState<SortOrder>(sortOrderParam);
-    const [pageSize, setPageSize] = useState(
-        () => getColumnCount(typeof window !== 'undefined' ? window.innerWidth : 640) * ITEM_ROWS
+    const [contentWidth, setContentWidth] = useState(() =>
+        typeof window !== 'undefined' ? window.innerWidth : 640
     );
+    const { columnCount, pageSize } = useMemo(
+        () => getItemsLayout(contentWidth),
+        [contentWidth]
+    );
+    const previousPageSizeRef = useRef(pageSize);
 
-    const updateSearchParams = (
+    const updateSearchParams = useCallback((
         nextPage: number,
         nextSortBy = sortBy,
         nextSortOrder = sortOrder
@@ -151,20 +164,32 @@ const ItemsListPage = ({
         next.set('sortBy', nextSortBy);
         next.set('sortOrder', nextSortOrder);
         setSearchParams(next);
-    };
+    }, [searchParams, setSearchParams, sortBy, sortOrder]);
 
     useEffect(() => {
-        const handleResize = () => {
-            const newPageSize = getColumnCount(window.innerWidth) * ITEM_ROWS;
-            setPageSize(newPageSize);
-            setPage(0);
-            updateSearchParams(0);
+        const pageElement = pageRef.current;
+        if (!pageElement) return;
+
+        const updateContentWidth = (width: number) => {
+            setContentWidth(Math.max(0, Math.floor(width)));
         };
 
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        updateContentWidth(pageElement.getBoundingClientRect().width);
+
+        const resizeObserver = new ResizeObserver(([entry]) => {
+            updateContentWidth(entry.contentRect.width);
+        });
+
+        resizeObserver.observe(pageElement);
+        return () => resizeObserver.disconnect();
     }, []);
+
+    useEffect(() => {
+        if (previousPageSizeRef.current === pageSize) return;
+        previousPageSizeRef.current = pageSize;
+        setPage(0);
+        updateSearchParams(0);
+    }, [pageSize, updateSearchParams]);
 
     const {
         data: items,
@@ -206,11 +231,10 @@ const ItemsListPage = ({
     };
 
     const totalPages = items?.totalCount ? Math.ceil(items.totalCount / pageSize) : 0;
-    const gridCols =
-        'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 2xl:grid-cols-9';
+    const gridStyle = { gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))` };
 
     return (
-        <div>
+        <div ref={pageRef}>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
                 <h2 className="text-2xl font-bold">{listTitle ?? item.Name}</h2>
                 <ButtonGroup>
@@ -260,7 +284,7 @@ const ItemsListPage = ({
             </div>
 
             {loadingItems && (
-                <div className={`w-full gap-4 mt-2 grid ${gridCols}`}>
+                <div className="mt-2 grid w-full gap-4" style={gridStyle}>
                     {Array.from({ length: pageSize }).map((_, i) => (
                         <div key={i} className="p-0 m-0">
                             <div
@@ -283,7 +307,7 @@ const ItemsListPage = ({
 
             {!loadingItems && !error && items && (
                 <>
-                    <ul className={`gw-full gap-4 grid ${gridCols}`}>
+                    <ul className="grid w-full gap-4" style={gridStyle}>
                         {items?.items?.map((child) => (
                             <ItemDisplay
                                 key={child.Id}
