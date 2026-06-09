@@ -1,7 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Page from '../Page';
 import { useUserViews } from '@/hooks/api/useUserViews';
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useRef } from 'react';
 import { useLibraryItems } from '@/hooks/api/useLibraryItems';
 import { useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
@@ -59,6 +59,7 @@ const ITEM_POSTER_ASPECT_RATIOS: Partial<Record<CollectionType, string>> = {
 };
 
 type GridConfig = { cols: string; breakpoints: [number, number][] };
+type LibraryLayout = { columnCount: number; pageSize: number };
 
 const DEFAULT_GRID_CONFIG: GridConfig = {
     cols: 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 2xl:grid-cols-9',
@@ -84,6 +85,14 @@ function getColumnCount(width: number, collectionType: CollectionType): number {
 function getPageSize(width: number, collectionType: CollectionType): number {
     if (collectionType === 'homevideos') return HOME_VIDEO_PAGE_SIZE;
     return getColumnCount(width, collectionType) * ITEM_ROWS;
+}
+
+function getLibraryLayout(width: number, collectionType: CollectionType): LibraryLayout {
+    const columnCount = getColumnCount(width, collectionType);
+    return {
+        columnCount,
+        pageSize: collectionType === 'homevideos' ? HOME_VIDEO_PAGE_SIZE : columnCount * ITEM_ROWS,
+    };
 }
 
 const DIRECT_PLAY_TYPES: CollectionType[] = ['musicvideos'];
@@ -120,21 +129,40 @@ const LibraryContent = ({
     onPageChange: (p: number) => void;
 }) => {
     const { t } = useTranslation(['library', 'common']);
-    const [pageSize, setPageSize] = useState(
-        () => getPageSize(typeof window !== 'undefined' ? window.innerWidth : 640, collectionType)
+    const contentRef = useRef<HTMLDivElement>(null);
+    const [contentWidth, setContentWidth] = useState(() =>
+        typeof window !== 'undefined' ? window.innerWidth : 640
     );
 
+    const { columnCount, pageSize } = useMemo(
+        () => getLibraryLayout(contentWidth, collectionType),
+        [contentWidth, collectionType]
+    );
+    const previousPageSizeRef = useRef(pageSize);
+
     useEffect(() => {
-        const handleResize = () => {
-            setPageSize((prev) => {
-                const next = getPageSize(window.innerWidth, collectionType);
-                if (next !== prev) onPageChange(0);
-                return next;
-            });
+        const contentElement = contentRef.current;
+        if (!contentElement) return;
+
+        const updateContentWidth = (width: number) => {
+            setContentWidth(Math.max(0, Math.floor(width)));
         };
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, [onPageChange, collectionType]);
+
+        updateContentWidth(contentElement.getBoundingClientRect().width);
+
+        const resizeObserver = new ResizeObserver(([entry]) => {
+            updateContentWidth(entry.contentRect.width);
+        });
+
+        resizeObserver.observe(contentElement);
+        return () => resizeObserver.disconnect();
+    }, []);
+
+    useEffect(() => {
+        if (previousPageSizeRef.current === pageSize) return;
+        previousPageSizeRef.current = pageSize;
+        onPageChange(0);
+    }, [onPageChange, pageSize]);
 
     const { data: libraryData, isLoading } = useLibraryItems(libraryId, {
         limit: pageSize,
@@ -160,15 +188,15 @@ const LibraryContent = ({
     }, [libraryData, collectionType]);
 
     const totalPages = libraryData?.totalCount ? Math.ceil(libraryData.totalCount / pageSize) : 0;
-    const gridCols = getGridConfig(collectionType).cols;
     const posterAspectRatio = ITEM_POSTER_ASPECT_RATIOS[collectionType] || DEFAULT_POSTER_ASPECT_RATIO;
     const isDirectPlay = DIRECT_PLAY_TYPES.includes(collectionType);
     const isHomeVideos = collectionType === 'homevideos';
+    const gridStyle = { gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))` };
 
     return (
-        <div className="mb-4">
+        <div ref={contentRef} className="mb-4">
             {isLoading && !isHomeVideos && (
-                <div className={`w-full gap-4 mt-2 grid ${gridCols}`}>
+                <div className="mt-2 grid w-full gap-4" style={gridStyle}>
                     {Array.from({ length: pageSize }).map((_, i) => (
                         <div key={i} className="p-0 m-0">
                             <div className={`relative w-full aspect-${posterAspectRatio} overflow-hidden rounded-md`}>
@@ -207,7 +235,7 @@ const LibraryContent = ({
                     {isHomeVideos ? (
                         <HomeVideoGrid items={libraryData.items} />
                     ) : (
-                        <div className={`w-full gap-4 mt-2 grid ${gridCols}`}>
+                        <div className="mt-2 grid w-full gap-4" style={gridStyle}>
                             {libraryData.items.map((item) => (
                                 <LibraryItem
                                     key={item.Id}
