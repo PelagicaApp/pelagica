@@ -246,16 +246,19 @@ const BaseMusicListPage = ({
                 >
                     <div className="flex justify-start items-end-safe gap-4 w-full">
                         {!failedCover ? (
-                            <img
-                                src={getPrimaryImageUrl(
-                                    item.Id!,
-                                    undefined,
-                                    item.ImageTags?.Primary
-                                )}
-                                alt={item.Name + ' Cover'}
-                                className="relative w-32 h-32 object-contain rounded-md"
-                                onError={() => setFailedCover(true)}
-                            />
+                            <div className="relative">
+                                <img
+                                    src={getPrimaryImageUrl(
+                                        item.Id!,
+                                        undefined,
+                                        item.ImageTags?.Primary
+                                    )}
+                                    alt={item.Name + ' Cover'}
+                                    className="relative w-32 h-32 object-contain rounded-md"
+                                    onError={() => setFailedCover(true)}
+                                />
+                                <div className="absolute inset-0 rounded-md pointer-events-none poster-card-outline z-20" />
+                            </div>
                         ) : (
                             <div className="relative w-32 h-32 bg-muted flex items-center justify-center rounded-md">
                                 <ImageOff className="text-muted-foreground" size={32} />
