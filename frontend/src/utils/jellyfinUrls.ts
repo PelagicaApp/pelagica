@@ -328,7 +328,7 @@ export function getSubtitleUrl(
 
         const url = new URL(creds.server);
         url.pathname = `/Videos/${itemId}/${mediaSourceId}/Subtitles/${subtitleStreamIndex}/0/Stream.${format}`;
-        url.searchParams.append('api_key', creds.token);
+        url.searchParams.append('ApiKey', creds.token);
 
         return url.toString();
     } catch {

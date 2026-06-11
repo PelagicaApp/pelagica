@@ -177,7 +177,7 @@ func extractJellyfinToken(authorizationHeader string) string {
 }
 
 func applyJellyfinAuthHeaders(req *http.Request, token string) {
-	req.Header.Set("X-Emby-Token", token)
+	req.Header.Set("ApiKey", token)
 	req.Header.Set("Authorization", `MediaBrowser Token="`+token+`"`)
 }
 
