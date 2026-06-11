@@ -24,5 +24,9 @@
     "select_theme": "Select theme",
     "server_default": "Server Default",
     "pelagica_default": "Pelagica Default",
-    "category_links": "Links"
+    "category_links": "Links",
+    "browse_library": "Browse library",
+    "libraries": "Libraries",
+    "dismiss": "Dismiss",
+    "expand_for_browse": "Expand the sidebar to browse"
 }

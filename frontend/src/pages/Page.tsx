@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
-import { type PropsWithChildren, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { type ReactNode, useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router';
 import { useCurrentUser } from '@/hooks/api/useCurrentUser';
 import { PageBackgroundProvider } from '@/context/PageBackgroundProvider';
 import { usePageBackground } from '@/hooks/usePageBackground';
@@ -9,10 +9,20 @@ import FullPageLoader from '@/components/FullPageLoader';
 import { logout } from '@/api/logout';
 import { getApi } from '@/api/getApi';
 import FullPageError from '@/components/FullPageError';
+import { getSidebarState, saveSidebarState } from '../utils/localstorageSidebar';
 import TopBar from '@/components/TopBar';
 import { cn } from '../lib/utils';
+import PageSidebar from '../components/PageSidebar';
+
+type PageRenderContext = {
+    showSidebar: boolean;
+    sidebarOpen: boolean;
+    toggleSidebar: () => void;
+    setSidebarOpen: (open: boolean) => void;
+};
 
 interface PageProps {
+    children?: ReactNode | ((context: PageRenderContext) => ReactNode);
     title?: string;
     className?: string;
     containerClassName?: string;
@@ -27,6 +37,12 @@ interface PageProps {
 
 const isLoggedIn = () => Boolean(localStorage.getItem('jf_token'));
 
+const DefaultPageBackground = () => (
+    <div className="fixed inset-0 -z-30 bg-background">
+        <div className="absolute inset-0 bg-muted/20" />
+    </div>
+);
+
 const PageContent = ({
     children,
     title,
@@ -39,18 +55,24 @@ const PageContent = ({
     breadcrumbs,
     bgItem,
     showPlayerBar = true,
-}: PropsWithChildren<PageProps>) => {
+}: PageProps) => {
     const navigate = useNavigate();
+    const location = useLocation();
     const { isLoading, isError, data: user } = useCurrentUser();
     const { background } = usePageBackground();
     const [showLoader, setShowLoader] = useState(true);
+    const [sidebarOpen, setSidebarOpen] = useState<boolean | null>(() => getSidebarState());
+    const [pageScrolled, setPageScrolled] = useState(false);
+    const closesSidebarForRoute = location.pathname === '/' || location.pathname === '/search';
 
     useEffect(() => {
         if (title) document.title = title;
     }, [title]);
 
     useEffect(() => {
-        if (requiresAuth && !isLoggedIn()) navigate('/login', { replace: true });
+        if (requiresAuth && !isLoggedIn()) {
+            navigate('/login', { replace: true });
+        }
     }, [requiresAuth, navigate]);
 
     useEffect(() => {
@@ -61,6 +83,11 @@ const PageContent = ({
             setShowLoader(false);
         };
     }, [isLoading]);
+
+    useEffect(() => {
+        if (!closesSidebarForRoute) return;
+        saveSidebarState(false);
+    }, [closesSidebarForRoute]);
 
     if (requiresAuth && isLoading && showLoader)
         return <FullPageLoader message="Loading user information..." />;
@@ -97,26 +124,56 @@ const PageContent = ({
             />
         );
 
+    const showSidebar = Boolean(user?.Id && isLoggedIn());
+
+    const handleSidebarOpenChange = (open: boolean) => {
+        setSidebarOpen(open);
+        saveSidebarState(open);
+    };
+
+    const pageRenderContext: PageRenderContext = {
+        showSidebar,
+        sidebarOpen: closesSidebarForRoute ? false : (sidebarOpen ?? false),
+        toggleSidebar: () => handleSidebarOpenChange(!(sidebarOpen ?? false)),
+        setSidebarOpen: handleSidebarOpenChange,
+    };
+
     return (
-        <div className={`relative flex flex-col min-h-dvh ${containerClassName ?? ''}`}>
+        <div
+            className={`relative isolate flex min-h-dvh h-dvh w-full flex-col overflow-hidden bg-background ${containerClassName ?? ''}`}
+        >
+            <DefaultPageBackground />
             {background || bgItem}
-            <TopBar overlay={overlayHeader} />
-            <div
-                className={cn(
-                    'relative flex flex-col flex-1 overflow-x-hidden overflow-y-auto z-5 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-muted-foreground [&::-webkit-scrollbar-thumb]:rounded-full',
-                    pagePadding && 'py-4 px-4 sm:px-12',
-                    !overlayHeader && 'pt-18' // Topbar has height of 14 + 4 (padding) = 18
+            <TopBar overlay={overlayHeader} scrolled={pageScrolled} />
+            <div className="flex min-h-0 w-full flex-1 flex-row">
+                {showSidebar && (
+                    <PageSidebar
+                        open={closesSidebarForRoute ? false : (sidebarOpen ?? false)}
+                        onOpenChange={handleSidebarOpenChange}
+                    />
                 )}
-            >
-                {breadcrumbs && <div className="flex items-center gap-2 mb-4">{breadcrumbs}</div>}
-                <main className={`w-full flex-1 ${className ?? ''}`}>{children}</main>
+                <div
+                    className={cn(
+                        'relative z-5 flex min-h-0 min-w-0 flex-1 flex-col overflow-x-hidden overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-muted-foreground',
+                        pagePadding && 'py-4 px-4 sm:px-12',
+                        !overlayHeader && 'pt-18' // Topbar has height of 14 + 4 (padding) = 18
+                    )}
+                    onScroll={(event) => setPageScrolled(event.currentTarget.scrollTop > 20)}
+                >
+                    {breadcrumbs && (
+                        <div className="flex items-center gap-2 mb-4">{breadcrumbs}</div>
+                    )}
+                    <main className={cn('min-w-0 flex-1', className)}>
+                        {typeof children === 'function' ? children(pageRenderContext) : children}
+                    </main>
+                </div>
             </div>
             {showPlayerBar && <MusicPlayerBar />}
         </div>
     );
 };
 
-const Page = (props: PropsWithChildren<PageProps>) => (
+const Page = (props: PageProps) => (
     <PageBackgroundProvider>
         <PageContent {...props} />
     </PageBackgroundProvider>

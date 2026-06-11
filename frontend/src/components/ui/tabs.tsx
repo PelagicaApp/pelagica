@@ -48,6 +48,43 @@ function TabsTrigger({
   )
 }
 
+function TabsListUnderline({
+  className,
+  ...props
+}: React.ComponentProps<typeof TabsPrimitive.List>) {
+  return (
+    <TabsPrimitive.List
+      data-slot="tabs-list-underline"
+      className={cn(
+        "inline-flex h-auto w-full items-stretch gap-0 border-b border-border bg-transparent p-0 text-muted-foreground",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function TabsTriggerUnderline({
+  className,
+  ...props
+}: React.ComponentProps<typeof TabsPrimitive.Trigger>) {
+  return (
+    <TabsPrimitive.Trigger
+      data-slot="tabs-trigger-underline"
+      className={cn(
+        "inline-flex min-w-0 flex-1 items-center justify-center gap-1 rounded-none border-0 border-b-2 border-transparent bg-transparent px-1.5 py-2 text-[11px] font-medium text-muted-foreground shadow-none transition-colors",
+        "hover:text-foreground",
+        "focus-visible:ring-ring/50 focus-visible:outline-none focus-visible:ring-[3px]",
+        "data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none",
+        "disabled:pointer-events-none disabled:opacity-50",
+        "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
 function TabsContent({
   className,
   ...props
@@ -61,4 +98,4 @@ function TabsContent({
   )
 }
 
-export { Tabs, TabsList, TabsTrigger, TabsContent }
+export { Tabs, TabsList, TabsTrigger, TabsListUnderline, TabsTriggerUnderline, TabsContent }

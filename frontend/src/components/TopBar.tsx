@@ -527,26 +527,19 @@ const UserMenu = () => {
     );
 };
 
-const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
+const TopBar = ({
+    overlay = false,
+    scrolled = false,
+}: {
+    overlay?: boolean;
+    scrolled?: boolean;
+}) => {
     const { t } = useTranslation('sidebar');
     const { config } = useConfig();
     const { data: views } = useUserViews();
     const { theme } = useTheme();
     const effectiveTheme = getEffectiveTheme(theme);
     const [mobileOpen, setMobileOpen] = useState(false);
-    const [scrolled, setScrolled] = useState(false);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 20);
-        };
-
-        handleScroll();
-
-        window.addEventListener('scroll', handleScroll);
-
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
 
     const defaultLogo = effectiveTheme === 'dark' ? '/logo.svg' : '/logo-dark.svg';
     const configuredLogo =

@@ -1,0 +1,883 @@
+{
+  "$ref": "#/definitions/AppConfig",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "AppConfig": {
+      "properties": {
+        "homeScreenSections": {
+          "description": "Sections to display on the home screen, in order",
+          "items": {
+            "$ref": "#/definitions/HomeScreenSection"
+          },
+          "type": "array"
+        },
+        "itemPage": {
+          "$ref": "#/definitions/ItemPageSettings",
+          "description": "Settings for item detail pages"
+        },
+        "links": {
+          "description": "Links to display in the UI",
+          "items": {
+            "$ref": "#/definitions/ConfigLink"
+          },
+          "type": "array"
+        },
+        "logoDarkUrl": {
+          "description": "URL for the dark mode logo",
+          "type": "string"
+        },
+        "logoLightUrl": {
+          "description": "URL for the light mode logo",
+          "type": "string"
+        },
+        "serverAddress": {
+          "description": "Optional server address to automatically choose",
+          "type": "string"
+        },
+        "serverName": {
+          "description": "Custom name for the server to display in the UI",
+          "type": "string"
+        },
+        "serverThemeId": {
+          "description": "Id of the theme that is applied for all users by default",
+          "type": "string"
+        },
+        "showStreamystatsButton": {
+          "description": "Whether to show the Streamystats button in the user menu",
+          "type": "boolean"
+        },
+        "streamystatsUrl": {
+          "description": "Optional URL for Streamystats integration",
+          "type": "string"
+        },
+        "watchedStateBadgeGenre": {
+          "description": "Whether to show the watched state badge for items on genre pages",
+          "type": "boolean"
+        },
+        "watchedStateBadgeHomeScreen": {
+          "description": "Whether to show the watched state badge for items on the home screen",
+          "type": "boolean"
+        },
+        "watchedStateBadgeLibrary": {
+          "description": "Whether to show the watched state badge for items in the library",
+          "type": "boolean"
+        },
+        "watchedStateBadgeSearch": {
+          "description": "Whether to show the watched state badge for items on search pages",
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "BaseItemKind": {
+      "anyOf": [
+        {
+          "const": "AggregateFolder",
+          "type": "string"
+        },
+        {
+          "const": "Audio",
+          "type": "string"
+        },
+        {
+          "const": "AudioBook",
+          "type": "string"
+        },
+        {
+          "const": "BasePluginFolder",
+          "type": "string"
+        },
+        {
+          "const": "Book",
+          "type": "string"
+        },
+        {
+          "const": "BoxSet",
+          "type": "string"
+        },
+        {
+          "const": "Channel",
+          "type": "string"
+        },
+        {
+          "const": "ChannelFolderItem",
+          "type": "string"
+        },
+        {
+          "const": "CollectionFolder",
+          "type": "string"
+        },
+        {
+          "const": "Episode",
+          "type": "string"
+        },
+        {
+          "const": "Folder",
+          "type": "string"
+        },
+        {
+          "const": "Genre",
+          "type": "string"
+        },
+        {
+          "const": "ManualPlaylistsFolder",
+          "type": "string"
+        },
+        {
+          "const": "Movie",
+          "type": "string"
+        },
+        {
+          "const": "LiveTvChannel",
+          "type": "string"
+        },
+        {
+          "const": "LiveTvProgram",
+          "type": "string"
+        },
+        {
+          "const": "MusicAlbum",
+          "type": "string"
+        },
+        {
+          "const": "MusicArtist",
+          "type": "string"
+        },
+        {
+          "const": "MusicGenre",
+          "type": "string"
+        },
+        {
+          "const": "MusicVideo",
+          "type": "string"
+        },
+        {
+          "const": "Person",
+          "type": "string"
+        },
+        {
+          "const": "Photo",
+          "type": "string"
+        },
+        {
+          "const": "PhotoAlbum",
+          "type": "string"
+        },
+        {
+          "const": "Playlist",
+          "type": "string"
+        },
+        {
+          "const": "PlaylistsFolder",
+          "type": "string"
+        },
+        {
+          "const": "Program",
+          "type": "string"
+        },
+        {
+          "const": "Recording",
+          "type": "string"
+        },
+        {
+          "const": "Season",
+          "type": "string"
+        },
+        {
+          "const": "Series",
+          "type": "string"
+        },
+        {
+          "const": "Studio",
+          "type": "string"
+        },
+        {
+          "const": "Trailer",
+          "type": "string"
+        },
+        {
+          "const": "TvChannel",
+          "type": "string"
+        },
+        {
+          "const": "TvProgram",
+          "type": "string"
+        },
+        {
+          "const": "UserRootFolder",
+          "type": "string"
+        },
+        {
+          "const": "UserView",
+          "type": "string"
+        },
+        {
+          "const": "Video",
+          "type": "string"
+        },
+        {
+          "const": "Year",
+          "type": "string"
+        },
+        {}
+      ],
+      "description": "The base item kind."
+    },
+    "ConfigLink": {
+      "properties": {
+        "icon": {
+          "description": "The icon to display for the link",
+          "type": "string"
+        },
+        "text": {
+          "description": "The text to display for the link",
+          "type": "string"
+        },
+        "url": {
+          "description": "The URL the link points to",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url",
+        "text",
+        "icon"
+      ],
+      "type": "object"
+    },
+    "ContinueWatchingDetailLine": {
+      "enum": [
+        "ProgressPercentage",
+        "TimeRemaining",
+        "EpisodeInfo",
+        "EndsAt",
+        "ParentTitle",
+        "None"
+      ],
+      "type": "string"
+    },
+    "ContinueWatchingSection": {
+      "properties": {
+        "accurateSorting": {
+          "description": "Whether to use more accurate sorting that may involve additional API calls",
+          "type": "boolean"
+        },
+        "detailLine": {
+          "items": {
+            "$ref": "#/definitions/ContinueWatchingDetailLine"
+          },
+          "type": "array"
+        },
+        "enabled": {
+          "description": "Whether the section is enabled. Mostly intended for testing purposes",
+          "type": "boolean"
+        },
+        "limit": {
+          "type": "number"
+        },
+        "title": {
+          "description": "The title of the section",
+          "type": "string"
+        },
+        "titleLine": {
+          "$ref": "#/definitions/ContinueWatchingTitleLine"
+        },
+        "type": {
+          "const": "continueWatching",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "ContinueWatchingTitleLine": {
+      "enum": [
+        "ItemTitle",
+        "ParentTitle",
+        "ItemTitleWithEpisodeInfo"
+      ],
+      "type": "string"
+    },
+    "DetailBadge": {
+      "enum": [
+        "ReleaseYear",
+        "ReleaseYearAndMonth",
+        "ReleaseDate",
+        "CommunityRating",
+        "PlayDuration",
+        "PlayEnd",
+        "SeasonCount",
+        "EpisodeCount",
+        "AgeRating",
+        "EpisodeNumber",
+        "Duration",
+        "VideoQuality"
+      ],
+      "type": "string"
+    },
+    "DetailField": {
+      "enum": [
+        "ReleaseYear",
+        "ReleaseYearAndMonth",
+        "ReleaseDate",
+        "CommunityRating",
+        "PlayDuration",
+        "PlayEnd",
+        "SeasonCount",
+        "EpisodeCount",
+        "AgeRating",
+        "Artist",
+        "TrackCount"
+      ],
+      "type": "string"
+    },
+    "EpisodeDisplay": {
+      "enum": [
+        "grid",
+        "row"
+      ],
+      "type": "string"
+    },
+    "GenresSection": {
+      "properties": {
+        "enabled": {
+          "description": "Whether the section is enabled. Mostly intended for testing purposes",
+          "type": "boolean"
+        },
+        "limit": {
+          "description": "Maximum number of genres to display",
+          "type": "number"
+        },
+        "title": {
+          "description": "The title of the section",
+          "type": "string"
+        },
+        "type": {
+          "const": "genres",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "HomeScreenSection": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/MediaBarSection"
+        },
+        {
+          "$ref": "#/definitions/RecentlyAddedSection"
+        },
+        {
+          "$ref": "#/definitions/ItemsSection"
+        },
+        {
+          "$ref": "#/definitions/ContinueWatchingSection"
+        },
+        {
+          "$ref": "#/definitions/RecommendedItemsSection"
+        },
+        {
+          "$ref": "#/definitions/NextUpSection"
+        },
+        {
+          "$ref": "#/definitions/ResumeSection"
+        },
+        {
+          "$ref": "#/definitions/GenresSection"
+        },
+        {
+          "$ref": "#/definitions/LibrariesSection"
+        },
+        {
+          "$ref": "#/definitions/StudiosSection"
+        }
+      ]
+    },
+    "ItemPageSettings": {
+      "properties": {
+        "detailBadges": {
+          "description": "Which badges to show on item detail pages",
+          "items": {
+            "$ref": "#/definitions/DetailBadge"
+          },
+          "type": "array"
+        },
+        "episodeDisplay": {
+          "$ref": "#/definitions/EpisodeDisplay",
+          "description": "How to display episodes on series pages"
+        },
+        "favoriteButton": {
+          "description": "The item types to show the favorite button for. Empty array means no favorite button",
+          "items": {
+            "$ref": "#/definitions/BaseItemKind"
+          },
+          "type": "array"
+        },
+        "showDownloadButton": {
+          "description": "Whether to show the download button on item pages",
+          "type": "boolean"
+        },
+        "showWatchlistButton": {
+          "description": "Whether to show the watchlist button to add items to the kefintweaks watchlist",
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "ItemSortBy": {
+      "anyOf": [
+        {
+          "const": "Default",
+          "type": "string"
+        },
+        {
+          "const": "AiredEpisodeOrder",
+          "type": "string"
+        },
+        {
+          "const": "Album",
+          "type": "string"
+        },
+        {
+          "const": "AlbumArtist",
+          "type": "string"
+        },
+        {
+          "const": "Artist",
+          "type": "string"
+        },
+        {
+          "const": "DateCreated",
+          "type": "string"
+        },
+        {
+          "const": "OfficialRating",
+          "type": "string"
+        },
+        {
+          "const": "DatePlayed",
+          "type": "string"
+        },
+        {
+          "const": "PremiereDate",
+          "type": "string"
+        },
+        {
+          "const": "StartDate",
+          "type": "string"
+        },
+        {
+          "const": "SortName",
+          "type": "string"
+        },
+        {
+          "const": "Name",
+          "type": "string"
+        },
+        {
+          "const": "Random",
+          "type": "string"
+        },
+        {
+          "const": "Runtime",
+          "type": "string"
+        },
+        {
+          "const": "CommunityRating",
+          "type": "string"
+        },
+        {
+          "const": "ProductionYear",
+          "type": "string"
+        },
+        {
+          "const": "PlayCount",
+          "type": "string"
+        },
+        {
+          "const": "CriticRating",
+          "type": "string"
+        },
+        {
+          "const": "IsFolder",
+          "type": "string"
+        },
+        {
+          "const": "IsUnplayed",
+          "type": "string"
+        },
+        {
+          "const": "IsPlayed",
+          "type": "string"
+        },
+        {
+          "const": "SeriesSortName",
+          "type": "string"
+        },
+        {
+          "const": "VideoBitRate",
+          "type": "string"
+        },
+        {
+          "const": "AirTime",
+          "type": "string"
+        },
+        {
+          "const": "Studio",
+          "type": "string"
+        },
+        {
+          "const": "IsFavoriteOrLiked",
+          "type": "string"
+        },
+        {
+          "const": "DateLastContentAdded",
+          "type": "string"
+        },
+        {
+          "const": "SeriesDatePlayed",
+          "type": "string"
+        },
+        {
+          "const": "ParentIndexNumber",
+          "type": "string"
+        },
+        {
+          "const": "IndexNumber",
+          "type": "string"
+        },
+        {}
+      ],
+      "description": "These represent sort orders."
+    },
+    "ItemsSection": {
+      "description": "A generic section displaying a grid of items",
+      "properties": {
+        "allLink": {
+          "description": "Link to show all items in this category",
+          "type": "string"
+        },
+        "detailFields": {
+          "description": "Additional detail fields to include for each item",
+          "items": {
+            "$ref": "#/definitions/DetailField"
+          },
+          "type": "array"
+        },
+        "enabled": {
+          "description": "Whether the section is enabled. Mostly intended for testing purposes",
+          "type": "boolean"
+        },
+        "items": {
+          "$ref": "#/definitions/SectionItemsConfig",
+          "description": "Configuration for which items to display"
+        },
+        "title": {
+          "description": "The title of the section",
+          "type": "string"
+        },
+        "type": {
+          "const": "items",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "LibrariesSection": {
+      "properties": {
+        "enabled": {
+          "description": "Whether the section is enabled. Mostly intended for testing purposes",
+          "type": "boolean"
+        },
+        "title": {
+          "description": "The title of the section",
+          "type": "string"
+        },
+        "type": {
+          "const": "libraries",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "MediaBarSection": {
+      "description": "A large carousel banner showcasing featured media with backdrop images",
+      "properties": {
+        "enabled": {
+          "description": "Whether the section is enabled. Mostly intended for testing purposes",
+          "type": "boolean"
+        },
+        "items": {
+          "$ref": "#/definitions/SectionItemsConfig",
+          "description": "Configuration for which items to display in the carousel"
+        },
+        "showFavoriteButton": {
+          "description": "Whether to show the favorite button on the media bar items",
+          "type": "boolean"
+        },
+        "showWatchlistButton": {
+          "description": "Whether to show the watchlist button on the media bar items",
+          "type": "boolean"
+        },
+        "size": {
+          "description": "Size of the media bar carousel",
+          "enum": [
+            "small",
+            "medium",
+            "large"
+          ],
+          "type": "string"
+        },
+        "title": {
+          "description": "The title of the section",
+          "type": "string"
+        },
+        "type": {
+          "const": "mediaBar",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "NextUpSection": {
+      "properties": {
+        "detailLine": {
+          "items": {
+            "$ref": "#/definitions/ContinueWatchingDetailLine"
+          },
+          "type": "array"
+        },
+        "enabled": {
+          "description": "Whether the section is enabled. Mostly intended for testing purposes",
+          "type": "boolean"
+        },
+        "limit": {
+          "type": "number"
+        },
+        "title": {
+          "description": "The title of the section",
+          "type": "string"
+        },
+        "titleLine": {
+          "$ref": "#/definitions/ContinueWatchingTitleLine"
+        },
+        "type": {
+          "const": "nextUp",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "RecentlyAddedSection": {
+      "description": "A section showing recently added items",
+      "properties": {
+        "enabled": {
+          "description": "Whether the section is enabled. Mostly intended for testing purposes",
+          "type": "boolean"
+        },
+        "limit": {
+          "description": "Maximum number of items to display",
+          "type": "number"
+        },
+        "title": {
+          "description": "The title of the section",
+          "type": "string"
+        },
+        "type": {
+          "const": "recentlyAdded",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "RecommendationTypeFilter": {
+      "enum": [
+        "all",
+        "Movie",
+        "Series"
+      ],
+      "type": "string"
+    },
+    "RecommendedItemsSection": {
+      "properties": {
+        "enabled": {
+          "description": "Whether the section is enabled. Mostly intended for testing purposes",
+          "type": "boolean"
+        },
+        "limit": {
+          "description": "Maximum number of items to display",
+          "type": "number"
+        },
+        "recommendationType": {
+          "$ref": "#/definitions/RecommendationTypeFilter",
+          "description": "Type of recommendations to show"
+        },
+        "showBasedOn": {
+          "description": "Whether to show what items the recommendation is based on",
+          "type": "boolean"
+        },
+        "showSimilarity": {
+          "description": "Whether to show similarity scores",
+          "type": "boolean"
+        },
+        "title": {
+          "description": "The title of the section",
+          "type": "string"
+        },
+        "type": {
+          "const": "streamystatsRecommended",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "ResumeSection": {
+      "properties": {
+        "detailLine": {
+          "items": {
+            "$ref": "#/definitions/ContinueWatchingDetailLine"
+          },
+          "type": "array"
+        },
+        "enabled": {
+          "description": "Whether the section is enabled. Mostly intended for testing purposes",
+          "type": "boolean"
+        },
+        "limit": {
+          "type": "number"
+        },
+        "title": {
+          "description": "The title of the section",
+          "type": "string"
+        },
+        "titleLine": {
+          "$ref": "#/definitions/ContinueWatchingTitleLine"
+        },
+        "type": {
+          "const": "resume",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "SectionItemsConfig": {
+      "description": "Configuration for filtering and sorting items in a section",
+      "properties": {
+        "genres": {
+          "description": "Filter by genre names",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "isFavorite": {
+          "description": "Whether to only include favorite items",
+          "type": "boolean"
+        },
+        "isInKefinTweaksWatchlist": {
+          "description": "Whether to only include items in the Kefintweaks watchlist",
+          "type": "boolean"
+        },
+        "isUnplayed": {
+          "description": "Whether to only include unplayed items",
+          "type": "boolean"
+        },
+        "libraryId": {
+          "description": "Filter items from a specific library by its ID",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Maximum number of items to display",
+          "type": "number"
+        },
+        "sortBy": {
+          "description": "How to sort the items (e.g. \"DateCreated\", \"Random\", \"CommunityRating\")",
+          "items": {
+            "$ref": "#/definitions/ItemSortBy"
+          },
+          "type": "array"
+        },
+        "sortOrder": {
+          "description": "Sort order direction",
+          "enum": [
+            "Ascending",
+            "Descending"
+          ],
+          "type": "string"
+        },
+        "tags": {
+          "description": "Filter by tag names",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "types": {
+          "description": "Filter by media types",
+          "items": {
+            "enum": [
+              "Movie",
+              "Series",
+              "BoxSet",
+              "MusicAlbum",
+              "Playlist"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "StudiosSection": {
+      "properties": {
+        "enabled": {
+          "description": "Whether the section is enabled. Mostly intended for testing purposes",
+          "type": "boolean"
+        },
+        "limit": {
+          "description": "Maximum number of studios to display",
+          "type": "number"
+        },
+        "title": {
+          "description": "The title of the section",
+          "type": "string"
+        },
+        "type": {
+          "const": "studios",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    }
+  }
+}

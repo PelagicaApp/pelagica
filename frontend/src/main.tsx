@@ -10,6 +10,7 @@ import { MusicPlaybackProvider } from './context/MusicPlaybackProvider.tsx';
 import PelagicaThemeLoader from './components/PelagicaThemeProvider.tsx';
 import { Toaster } from './components/ui/sonner.tsx';
 import StatsConsentModal from './components/StatsConsentModal.tsx';
+import { SidebarBrowserProvider } from './context/SidebarBrowserContext.tsx';
 
 import './index.css';
 import './theme.css';
@@ -36,27 +37,29 @@ createRoot(document.getElementById('root')!).render(
             <MusicPlaybackProvider>
                 <SearchProvider>
                     <BrowserRouter>
-                        <ScrollToTop />
-                        <KeyboardShortcuts />
-                        <SearchCommand />
-                        <PelagicaThemeLoader />
-                        <Toaster />
-                        <StatsConsentModal />
-                        <Suspense fallback={null}>
-                            <Routes>
-                                <Route path="/" element={<HomePage />} />
-                                <Route path="/library" element={<LibraryPage />} />
-                                <Route path="/item/:itemId" element={<ItemPage />} />
-                                <Route path="/person/:itemId" element={<PersonPage />} />
-                                <Route path="/login" element={<LoginPage />} />
-                                <Route path="/play/:itemId" element={<PlayerPage />} />
-                                <Route path="/settings" element={<SettingsPage />} />
-                                <Route path="/browse-themes" element={<ThemeBrowserPage />} />
-                                <Route path="/search" element={<SearchPage />} />
-                                <Route path="/photo/:itemId" element={<PhotoViewerPage />} />
-                                <Route path="*" element={<NotFoundPage />} />
-                            </Routes>
-                        </Suspense>
+                        <SidebarBrowserProvider>
+                            <ScrollToTop />
+                            <KeyboardShortcuts />
+                            <SearchCommand />
+                            <PelagicaThemeLoader />
+                            <Toaster />
+                            <StatsConsentModal />
+                            <Suspense fallback={null}>
+                                <Routes>
+                                    <Route path="/" element={<HomePage />} />
+                                    <Route path="/library" element={<LibraryPage />} />
+                                    <Route path="/item/:itemId" element={<ItemPage />} />
+                                    <Route path="/person/:itemId" element={<PersonPage />} />
+                                    <Route path="/login" element={<LoginPage />} />
+                                    <Route path="/play/:itemId" element={<PlayerPage />} />
+                                    <Route path="/settings" element={<SettingsPage />} />
+                                    <Route path="/browse-themes" element={<ThemeBrowserPage />} />
+                                    <Route path="/search" element={<SearchPage />} />
+                                    <Route path="/photo/:itemId" element={<PhotoViewerPage />} />
+                                    <Route path="*" element={<NotFoundPage />} />
+                                </Routes>
+                            </Suspense>
+                        </SidebarBrowserProvider>
                     </BrowserRouter>
                 </SearchProvider>
             </MusicPlaybackProvider>

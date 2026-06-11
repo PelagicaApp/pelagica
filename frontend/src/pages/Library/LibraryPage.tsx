@@ -1,7 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Page from '../Page';
 import { useUserViews } from '@/hooks/api/useUserViews';
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useRef } from 'react';
 import { useLibraryItems } from '@/hooks/api/useLibraryItems';
 import { useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
@@ -22,6 +22,7 @@ import {
     CaseSensitive,
     Clock,
     FolderOpen,
+    PanelLeftIcon,
     Star,
 } from 'lucide-react';
 import JellyfinLibraryIcon from '@/components/JellyfinLibraryIcon';
@@ -34,6 +35,7 @@ import {
 } from '@/components/ui/select';
 import type { BaseItemDto, BaseItemKind, CollectionType, ItemSortBy, SortOrder } from '@jellyfin/sdk/lib/generated-client/models';
 import { ButtonGroup } from '@/components/ui/button-group';
+import { Button } from '@/components/ui/button';
 import LibraryItem from './LibraryItem';
 import HomeVideoGrid, { TARGET_ROW_HEIGHT } from './HomeVideoGrid';
 import { SUPPORTED_LIBRARY_COLLECTION_TYPES } from '@/utils/supportedLibraryCollectionTypes';
@@ -57,6 +59,7 @@ const ITEM_POSTER_ASPECT_RATIOS: Partial<Record<CollectionType, string>> = {
 };
 
 type GridConfig = { cols: string; breakpoints: [number, number][] };
+type LibraryLayout = { columnCount: number; pageSize: number };
 
 const DEFAULT_GRID_CONFIG: GridConfig = {
     cols: 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 2xl:grid-cols-9',
@@ -79,9 +82,12 @@ function getColumnCount(width: number, collectionType: CollectionType): number {
     return breakpoints.find(([minWidth]) => width >= minWidth)?.[1] ?? 2;
 }
 
-function getPageSize(width: number, collectionType: CollectionType): number {
-    if (collectionType === 'homevideos') return HOME_VIDEO_PAGE_SIZE;
-    return getColumnCount(width, collectionType) * ITEM_ROWS;
+function getLibraryLayout(width: number, collectionType: CollectionType): LibraryLayout {
+    const columnCount = getColumnCount(width, collectionType);
+    return {
+        columnCount,
+        pageSize: collectionType === 'homevideos' ? HOME_VIDEO_PAGE_SIZE : columnCount * ITEM_ROWS,
+    };
 }
 
 const DIRECT_PLAY_TYPES: CollectionType[] = ['musicvideos'];
@@ -118,21 +124,40 @@ const LibraryContent = ({
     onPageChange: (p: number) => void;
 }) => {
     const { t } = useTranslation(['library', 'common']);
-    const [pageSize, setPageSize] = useState(
-        () => getPageSize(typeof window !== 'undefined' ? window.innerWidth : 640, collectionType)
+    const contentRef = useRef<HTMLDivElement>(null);
+    const [contentWidth, setContentWidth] = useState(() =>
+        typeof window !== 'undefined' ? window.innerWidth : 640
     );
 
+    const { columnCount, pageSize } = useMemo(
+        () => getLibraryLayout(contentWidth, collectionType),
+        [contentWidth, collectionType]
+    );
+    const previousPageSizeRef = useRef(pageSize);
+
     useEffect(() => {
-        const handleResize = () => {
-            setPageSize((prev) => {
-                const next = getPageSize(window.innerWidth, collectionType);
-                if (next !== prev) onPageChange(0);
-                return next;
-            });
+        const contentElement = contentRef.current;
+        if (!contentElement) return;
+
+        const updateContentWidth = (width: number) => {
+            setContentWidth(Math.max(0, Math.floor(width)));
         };
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, [onPageChange, collectionType]);
+
+        updateContentWidth(contentElement.getBoundingClientRect().width);
+
+        const resizeObserver = new ResizeObserver(([entry]) => {
+            updateContentWidth(entry.contentRect.width);
+        });
+
+        resizeObserver.observe(contentElement);
+        return () => resizeObserver.disconnect();
+    }, []);
+
+    useEffect(() => {
+        if (previousPageSizeRef.current === pageSize) return;
+        previousPageSizeRef.current = pageSize;
+        onPageChange(0);
+    }, [onPageChange, pageSize]);
 
     const { data: libraryData, isLoading } = useLibraryItems(libraryId, {
         limit: pageSize,
@@ -158,15 +183,15 @@ const LibraryContent = ({
     }, [libraryData, collectionType]);
 
     const totalPages = libraryData?.totalCount ? Math.ceil(libraryData.totalCount / pageSize) : 0;
-    const gridCols = getGridConfig(collectionType).cols;
     const posterAspectRatio = ITEM_POSTER_ASPECT_RATIOS[collectionType] || DEFAULT_POSTER_ASPECT_RATIO;
     const isDirectPlay = DIRECT_PLAY_TYPES.includes(collectionType);
     const isHomeVideos = collectionType === 'homevideos';
+    const gridStyle = { gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))` };
 
     return (
-        <div className="mb-4">
+        <div ref={contentRef} className="mb-4">
             {isLoading && !isHomeVideos && (
-                <div className={`w-full gap-4 mt-2 grid ${gridCols}`}>
+                <div className="mt-2 grid w-full gap-4" style={gridStyle}>
                     {Array.from({ length: pageSize }).map((_, i) => (
                         <div key={i} className="p-0 m-0">
                             <div className={`relative w-full aspect-${posterAspectRatio} overflow-hidden rounded-md`}>
@@ -205,7 +230,7 @@ const LibraryContent = ({
                     {isHomeVideos ? (
                         <HomeVideoGrid items={libraryData.items} />
                     ) : (
-                        <div className={`w-full gap-4 mt-2 grid ${gridCols}`}>
+                        <div className="mt-2 grid w-full gap-4" style={gridStyle}>
                             {libraryData.items.map((item) => (
                                 <LibraryItem
                                     key={item.Id}
@@ -294,16 +319,32 @@ const LibraryPage = () => {
 
     return (
         <Page title={t('title')} requiresAuth className="flex-1">
-            <Tabs value={activeLibraryId} onValueChange={handleLibraryChange} className="w-full">
+            {({ showSidebar, sidebarOpen, toggleSidebar }) => (
+                <Tabs value={activeLibraryId} onValueChange={handleLibraryChange} className="w-full">
                 <div className="flex flex-col sm:items-center sm:justify-between sm:flex-row gap-2">
-                    <TabsList className="max-w-full overflow-auto hidden sm:flex">
-                        {libraryItems?.map((library) => (
-                            <TabsTrigger key={library.Id} value={library.Id ?? ''}>
-                                <JellyfinLibraryIcon libraryType={library.CollectionType} />
-                                {library.Name}
-                            </TabsTrigger>
-                        ))}
-                    </TabsList>
+                    <div className="hidden min-w-0 items-center gap-2 sm:flex">
+                        {showSidebar && !sidebarOpen && (
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="hidden size-9 shrink-0 md:inline-flex"
+                                onClick={toggleSidebar}
+                                aria-label="Toggle sidebar"
+                                aria-pressed={sidebarOpen}
+                            >
+                                <PanelLeftIcon className="h-5 w-5" />
+                            </Button>
+                        )}
+
+                        <TabsList className="max-w-full overflow-auto">
+                            {libraryItems?.map((library) => (
+                                <TabsTrigger key={library.Id} value={library.Id ?? ''}>
+                                    <JellyfinLibraryIcon libraryType={library.CollectionType} />
+                                    {library.Name}
+                                </TabsTrigger>
+                            ))}
+                        </TabsList>
+                    </div>
 
                     <Select onValueChange={handleLibraryChange} value={activeLibraryId}>
                         <SelectTrigger size="sm" className="w-full sm:hidden">
@@ -366,24 +407,25 @@ const LibraryPage = () => {
                     </ButtonGroup>
                 </div>
 
-                {libraryItems?.map((library) => {
-                    if (!library.Id) return null;
+                    {libraryItems?.map((library) => {
+                        if (!library.Id) return null;
 
-                    return (
-                        <TabsContent key={library.Id} value={library.Id}>
-                            <LibraryContent
-                                key={`${library.Id}-${sortBy}-${sortOrder}`}
-                                libraryId={library.Id}
-                                sortBy={sortBy}
-                                sortOrder={sortOrder}
-                                page={page}
-                                onPageChange={handlePageChange}
-                                collectionType={library.CollectionType as CollectionType}
-                            />
-                        </TabsContent>
-                    );
-                })}
-            </Tabs>
+                        return (
+                            <TabsContent key={library.Id} value={library.Id}>
+                                <LibraryContent
+                                    key={`${library.Id}-${sortBy}-${sortOrder}`}
+                                    libraryId={library.Id}
+                                    sortBy={sortBy}
+                                    sortOrder={sortOrder}
+                                    page={page}
+                                    onPageChange={handlePageChange}
+                                    collectionType={library.CollectionType as CollectionType}
+                                />
+                            </TabsContent>
+                        );
+                    })}
+                </Tabs>
+            )}
         </Page>
     );
 };
