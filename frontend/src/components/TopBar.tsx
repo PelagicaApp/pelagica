@@ -15,6 +15,7 @@ import {
     LogOut,
     Menu,
     Moon,
+    Music,
     Search,
     Settings,
     Settings2,
@@ -558,6 +559,8 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
             SUPPORTED_LIBRARY_COLLECTION_TYPES.includes(lib.CollectionType!)
         ) ?? [];
 
+    const hasMusicLibrary = libraries.some((lib) => lib.CollectionType === 'music');
+
     const validLinks = config?.links?.filter((l) => l.url && l.text) ?? [];
 
     return (
@@ -597,6 +600,15 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
                             {t('library')}
                         </Link>
                     </Button>
+
+                    {hasMusicLibrary && (
+                        <Button asChild variant="ghost" size="sm">
+                            <Link to="/music">
+                                <Music className="h-4 w-4" />
+                                {t('music')}
+                            </Link>
+                        </Button>
+                    )}
 
                     <Button asChild variant="ghost" size="sm">
                         <Link to="/search">

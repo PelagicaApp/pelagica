@@ -35,6 +35,9 @@ export function useFavorite(itemId: string | null | undefined) {
         onSuccess: (newFavoriteState) => {
             queryClient.setQueryData(['favorite', itemId], newFavoriteState);
             queryClient.invalidateQueries({ queryKey: ['item', itemId] });
+            queryClient.invalidateQueries({ queryKey: ['favoriteAlbums'] });
+            queryClient.invalidateQueries({ queryKey: ['favoriteArtists'] });
+            queryClient.invalidateQueries({ queryKey: ['favoriteSongs'] });
         },
     });
 

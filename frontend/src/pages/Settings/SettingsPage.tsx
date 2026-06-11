@@ -1196,6 +1196,7 @@ const SettingsPage = () => {
                             { value: 'Series', label: t('series') },
                             { value: 'Episode', label: t('episode') },
                             { value: 'BoxSet', label: t('box_set') },
+                            { value: 'MusicArtist', label: t('artist') },
                             { value: 'MusicAlbum', label: t('music_album') },
                             { value: 'Playlist', label: t('playlist') },
                         ]}

@@ -157,9 +157,15 @@ interface BaseMusicListPageProps {
     item: BaseItemDto;
     config: AppConfig;
     listType: string;
+    showBackground?: boolean;
 }
 
-const BaseMusicListPage = ({ item, config, listType }: BaseMusicListPageProps) => {
+const BaseMusicListPage = ({
+    item,
+    config,
+    listType,
+    showBackground = true,
+}: BaseMusicListPageProps) => {
     const { t } = useTranslation('item');
     const { setBackground } = usePageBackground();
     const { loadQueue } = useMusicPlayback();
@@ -171,6 +177,7 @@ const BaseMusicListPage = ({ item, config, listType }: BaseMusicListPageProps) =
     const [failedCover, setFailedCover] = useState(false);
 
     useEffect(() => {
+        if (!showBackground) return;
         setBackground(
             <div className="fixed top-0 left-0 w-full h-full -z-20 overflow-hidden">
                 <div className="absolute inset-0">
@@ -189,7 +196,7 @@ const BaseMusicListPage = ({ item, config, listType }: BaseMusicListPageProps) =
         return () => {
             setBackground(null);
         };
-    }, [item.Id, item.Name, item.ImageTags, setBackground]);
+    }, [item.Id, item.Name, item.ImageTags, setBackground, showBackground]);
 
     const detailItems: string[] = [];
     if (item.PremiereDate) {
@@ -235,20 +242,23 @@ const BaseMusicListPage = ({ item, config, listType }: BaseMusicListPageProps) =
         <div className="relative h-full w-full">
             <div className={`relative z-10`}>
                 <div
-                    className={`bg-background/30 backdrop-blur-md p-4 sm:p-8 rounded-md w-full flex flex-col gap-4`}
+                    className={`bg-background/30 backdrop-blur-md p-3 rounded-md w-full flex flex-col gap-4`}
                 >
                     <div className="flex justify-start items-end-safe gap-4 w-full">
                         {!failedCover ? (
-                            <img
-                                src={getPrimaryImageUrl(
-                                    item.Id!,
-                                    undefined,
-                                    item.ImageTags?.Primary
-                                )}
-                                alt={item.Name + ' Cover'}
-                                className="relative w-32 h-32 object-contain rounded-md"
-                                onError={() => setFailedCover(true)}
-                            />
+                            <div className="relative">
+                                <img
+                                    src={getPrimaryImageUrl(
+                                        item.Id!,
+                                        undefined,
+                                        item.ImageTags?.Primary
+                                    )}
+                                    alt={item.Name + ' Cover'}
+                                    className="relative w-32 h-32 object-contain rounded-md"
+                                    onError={() => setFailedCover(true)}
+                                />
+                                <div className="absolute inset-0 rounded-md pointer-events-none poster-card-outline z-20" />
+                            </div>
                         ) : (
                             <div className="relative w-32 h-32 bg-muted flex items-center justify-center rounded-md">
                                 <ImageOff className="text-muted-foreground" size={32} />
@@ -263,7 +273,7 @@ const BaseMusicListPage = ({ item, config, listType }: BaseMusicListPageProps) =
                                         (artist) => (
                                             <Link
                                                 key={artist.Id}
-                                                to={`/item/${artist.Id}`}
+                                                to={`/music/artist/${artist.Id}`}
                                                 className="bg-accent/20 rounded-full text-sm"
                                             >
                                                 {artist.Name}
