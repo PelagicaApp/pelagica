@@ -55,7 +55,7 @@ If you want to suggest new features or report bugs, please use the [GitHub Issue
       <img src="./.github/assets/episode_page.webp" />
     </td>
     <td>
-      <img src="./.github/assets/search.webp" />
+      <img src="./.github/assets/music.webp" />
     </td>
   </tr>
 </table>
