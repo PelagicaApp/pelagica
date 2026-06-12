@@ -1,0 +1,1 @@
+import{aK as t}from"./index-COQjKplQ.js";import"./videojs-CPoZw-BW.js";const e=[["path",{d:"M12 3v18",key:"108xh3"}],["path",{d:"M3 12h18",key:"1i2n21"}],["rect",{x:"3",y:"3",width:"18",height:"18",rx:"2",key:"h1oib"}]],r=t("grid-2x2",e);export{e as __iconNode,r as default};

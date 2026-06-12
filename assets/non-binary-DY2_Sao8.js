@@ -1,1 +1,0 @@
-import{aP as e}from"./index-Cpmy27P9.js";import"./videojs-CPoZw-BW.js";const o=[["path",{d:"M12 2v10",key:"mnfbl"}],["path",{d:"m8.5 4 7 4",key:"m1xjk3"}],["path",{d:"m8.5 8 7-4",key:"t0m5j6"}],["circle",{cx:"12",cy:"17",r:"5",key:"qbz8iq"}]],c=e("non-binary",o);export{o as __iconNode,c as default};

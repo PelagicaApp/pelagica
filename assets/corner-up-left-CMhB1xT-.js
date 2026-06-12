@@ -1,0 +1,1 @@
+import{aK as e}from"./index-COQjKplQ.js";import"./videojs-CPoZw-BW.js";const o=[["path",{d:"M20 20v-7a4 4 0 0 0-4-4H4",key:"1nkjon"}],["path",{d:"M9 14 4 9l5-5",key:"102s5s"}]],a=e("corner-up-left",o);export{o as __iconNode,a as default};

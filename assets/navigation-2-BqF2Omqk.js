@@ -1,0 +1,1 @@
+import{aK as o}from"./index-COQjKplQ.js";import"./videojs-CPoZw-BW.js";const t=[["polygon",{points:"12 2 19 21 12 17 5 21 12 2",key:"x8c0qg"}]],n=o("navigation-2",t);export{t as __iconNode,n as default};

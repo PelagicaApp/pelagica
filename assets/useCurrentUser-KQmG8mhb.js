@@ -1,0 +1,1 @@
+import{u as r,g as s,a as t,v as n}from"./index-COQjKplQ.js";function i(){return r({queryKey:["currentUser"],queryFn:async()=>{const e=t();return(await n(e).getCurrentUser()).data},...s()})}export{i as u};

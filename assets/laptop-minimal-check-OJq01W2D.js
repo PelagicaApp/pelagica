@@ -1,0 +1,1 @@
+import{aK as t}from"./index-COQjKplQ.js";import"./videojs-CPoZw-BW.js";const e=[["path",{d:"M2 20h20",key:"owomy5"}],["path",{d:"m9 10 2 2 4-4",key:"1gnqz4"}],["rect",{x:"3",y:"4",width:"18",height:"12",rx:"2",key:"8ur36m"}]],c=t("laptop-minimal-check",e);export{e as __iconNode,c as default};

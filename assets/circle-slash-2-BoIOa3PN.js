@@ -1,0 +1,1 @@
+import{aK as c}from"./index-COQjKplQ.js";import"./videojs-CPoZw-BW.js";const e=[["circle",{cx:"12",cy:"12",r:"10",key:"1mglay"}],["path",{d:"M22 2 2 22",key:"y4kqgn"}]],r=c("circle-slash-2",e);export{e as __iconNode,r as default};

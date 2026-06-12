@@ -1,1 +1,0 @@
-import{aP as e}from"./index-Cpmy27P9.js";import"./videojs-CPoZw-BW.js";const a=[["path",{d:"M5 21V3",key:"clc1r8"}],["path",{d:"M12 21V9",key:"uvy0l4"}],["path",{d:"M19 21v-6",key:"tkawy9"}]],c=e("chart-no-axes-column-decreasing",a);export{a as __iconNode,c as default};

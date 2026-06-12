@@ -1,0 +1,1 @@
+import{u as t,g as r,a,b as i}from"./index-COQjKplQ.js";function u(e){return t({queryKey:["playlists",e],queryFn:async()=>{const s=a();return(await i(s).getItems({userId:e,includeItemTypes:["Playlist"],sortBy:["SortName"],sortOrder:["Ascending"],recursive:!0})).data.Items||[]},enabled:!!e,...r()})}export{u};

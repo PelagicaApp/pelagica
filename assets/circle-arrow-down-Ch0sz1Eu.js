@@ -1,1 +1,0 @@
-import{aP as c}from"./index-Cpmy27P9.js";import"./videojs-CPoZw-BW.js";const o=[["circle",{cx:"12",cy:"12",r:"10",key:"1mglay"}],["path",{d:"M12 8v8",key:"napkw2"}],["path",{d:"m8 12 4 4 4-4",key:"k98ssh"}]],a=c("circle-arrow-down",o);export{o as __iconNode,a as default};

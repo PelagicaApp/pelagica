@@ -1,0 +1,1 @@
+import{aK as a}from"./index-COQjKplQ.js";import"./videojs-CPoZw-BW.js";const e=[["path",{d:"M7 12h2l2 5 2-10h4",key:"1fxv6h"}],["rect",{x:"3",y:"3",width:"18",height:"18",rx:"2",key:"h1oib"}]],r=a("square-radical",e);export{e as __iconNode,r as default};

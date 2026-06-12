@@ -1,1 +1,0 @@
-import{aP as o}from"./index-Cpmy27P9.js";import"./videojs-CPoZw-BW.js";const t=[["path",{d:"m7 18 6-6-6-6",key:"lwmzdw"}],["path",{d:"M17 6v12",key:"1o0aio"}]],c=o("chevron-last",t);export{t as __iconNode,c as default};

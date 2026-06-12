@@ -1,0 +1,1 @@
+import{aK as t}from"./index-COQjKplQ.js";import"./videojs-CPoZw-BW.js";const e=[["path",{d:"M21 5H3",key:"1fi0y6"}],["path",{d:"M15 12H3",key:"6jk70r"}],["path",{d:"M17 19H3",key:"z6ezky"}]],r=t("text-align-start",e);export{e as __iconNode,r as default};

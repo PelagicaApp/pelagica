@@ -1,1 +1,0 @@
-import{aP as t}from"./index-Cpmy27P9.js";import"./videojs-CPoZw-BW.js";const o=[["path",{d:"M4 10a8 8 0 1 1 8 8H4",key:"svv66n"}],["path",{d:"m8 22-4-4 4-4",key:"6g7gki"}]],i=t("iteration-cw",o);export{o as __iconNode,i as default};

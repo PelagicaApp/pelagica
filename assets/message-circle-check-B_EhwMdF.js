@@ -1,0 +1,1 @@
+import{aK as e}from"./index-COQjKplQ.js";import"./videojs-CPoZw-BW.js";const a=[["path",{d:"M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719",key:"1sd12s"}],["path",{d:"m9 12 2 2 4-4",key:"dzmm74"}]],o=e("message-circle-check",a);export{a as __iconNode,o as default};

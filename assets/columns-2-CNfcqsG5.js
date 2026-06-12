@@ -1,0 +1,1 @@
+import{aK as t}from"./index-COQjKplQ.js";import"./videojs-CPoZw-BW.js";const o=[["rect",{width:"18",height:"18",x:"3",y:"3",rx:"2",key:"afitv7"}],["path",{d:"M12 3v18",key:"108xh3"}]],a=t("columns-2",o);export{o as __iconNode,a as default};

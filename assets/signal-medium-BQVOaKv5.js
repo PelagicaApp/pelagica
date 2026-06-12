@@ -1,1 +1,0 @@
-import{aP as a}from"./index-Cpmy27P9.js";import"./videojs-CPoZw-BW.js";const e=[["path",{d:"M2 20h.01",key:"4haj6o"}],["path",{d:"M7 20v-4",key:"j294jx"}],["path",{d:"M12 20v-8",key:"i3yub9"}]],i=a("signal-medium",e);export{e as __iconNode,i as default};

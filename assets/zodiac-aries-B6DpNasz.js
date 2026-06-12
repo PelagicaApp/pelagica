@@ -1,1 +1,0 @@
-import{aP as a}from"./index-Cpmy27P9.js";import"./videojs-CPoZw-BW.js";const o=[["path",{d:"M12 7.5a4.5 4.5 0 1 1 5 4.5",key:"k987hv"}],["path",{d:"M7 12a4.5 4.5 0 1 1 5-4.5V21",key:"mjup0w"}]],c=a("zodiac-aries",o);export{o as __iconNode,c as default};

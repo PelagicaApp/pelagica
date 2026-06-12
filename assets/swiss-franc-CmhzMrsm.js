@@ -1,0 +1,1 @@
+import{aK as a}from"./index-COQjKplQ.js";import"./videojs-CPoZw-BW.js";const t=[["path",{d:"M10 21V3h8",key:"br2l0g"}],["path",{d:"M6 16h9",key:"2py0wn"}],["path",{d:"M10 9.5h7",key:"13dmhz"}]],s=a("swiss-franc",t);export{t as __iconNode,s as default};

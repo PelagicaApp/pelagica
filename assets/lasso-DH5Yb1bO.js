@@ -1,0 +1,1 @@
+import{aK as a}from"./index-COQjKplQ.js";import"./videojs-CPoZw-BW.js";const c=[["path",{d:"M3.704 14.467a10 8 0 1 1 3.115 2.375",key:"wxgc5m"}],["path",{d:"M7 22a5 5 0 0 1-2-3.994",key:"1xp6a4"}],["circle",{cx:"5",cy:"16",r:"2",key:"18csp3"}]],s=a("lasso",c);export{c as __iconNode,s as default};

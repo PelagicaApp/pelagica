@@ -1,1 +1,0 @@
-import{aP as t}from"./index-Cpmy27P9.js";import"./videojs-CPoZw-BW.js";const r=[["rect",{width:"18",height:"18",x:"3",y:"3",rx:"2",key:"afitv7"}],["path",{d:"M8 8h8v8",key:"b65dnt"}],["path",{d:"m8 16 8-8",key:"13b9ih"}]],o=t("square-arrow-up-right",r);export{r as __iconNode,o as default};

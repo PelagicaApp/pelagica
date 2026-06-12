@@ -1,0 +1,1 @@
+import{aK as e}from"./index-COQjKplQ.js";import"./videojs-CPoZw-BW.js";const c=[["path",{d:"M18 6 7 17l-5-5",key:"116fxf"}],["path",{d:"m22 10-7.5 7.5L13 16",key:"ke71qq"}]],a=e("check-check",c);export{c as __iconNode,a as default};

@@ -1,1 +1,0 @@
-import{aP as c}from"./index-Cpmy27P9.js";import"./videojs-CPoZw-BW.js";const o=[["circle",{cx:"12",cy:"15",r:"6",key:"lhqcmb"}],["path",{d:"M18 3A6 6 0 0 1 6 3",key:"1p399e"}]],r=c("zodiac-taurus",o);export{o as __iconNode,r as default};

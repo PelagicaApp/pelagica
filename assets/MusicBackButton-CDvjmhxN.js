@@ -1,0 +1,1 @@
+import{c as o,j as t,L as e}from"./index-COQjKplQ.js";import r from"./arrow-left-DOxhGx7p.js";const a=()=>{const{t:s}=o("music");return t.jsxs(e,{to:"/music",className:"inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors w-fit py-2",children:[t.jsx(r,{className:"w-4 h-4"}),s("back_to_music")]})};export{a as M};
