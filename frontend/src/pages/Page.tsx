@@ -7,7 +7,6 @@ import { usePageBackground } from '@/hooks/usePageBackground';
 import MusicPlayerBar from '@/components/MusicPlayerBar';
 import FullPageLoader from '@/components/FullPageLoader';
 import { logout } from '@/api/logout';
-import { getApi } from '@/api/getApi';
 import FullPageError from '@/components/FullPageError';
 import TopBar from '@/components/TopBar';
 import { cn } from '../lib/utils';
@@ -73,7 +72,7 @@ const PageContent = ({
                 content={
                     <Button
                         onClick={() => {
-                            logout(getApi());
+                            logout();
                             navigate('/login', { replace: true });
                         }}
                     >
