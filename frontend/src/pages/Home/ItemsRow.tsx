@@ -26,16 +26,14 @@ function getDetailFieldsStringForItem(
 ): ReactNode {
     switch (detailField) {
         case 'ReleaseYear':
-            return item.PremiereDate
-                ? new Date(item.PremiereDate).getFullYear().toString()
-                : t('release_year_unknown');
+            return item.PremiereDate ? new Date(item.PremiereDate).getFullYear().toString() : '';
         case 'ReleaseYearAndMonth':
             return item.PremiereDate
                 ? new Date(item.PremiereDate).toLocaleDateString(undefined, {
                       year: 'numeric',
                       month: 'long',
                   })
-                : t('release_date_unknown');
+                : '';
         case 'ReleaseDate':
             return item.PremiereDate
                 ? new Date(item.PremiereDate).toLocaleDateString(undefined, {
@@ -43,7 +41,7 @@ function getDetailFieldsStringForItem(
                       month: 'long',
                       day: 'numeric',
                   })
-                : t('release_date_unknown');
+                : '';
         case 'CommunityRating':
             return item.CommunityRating ? (
                 <div className="flex items-center gap-1">

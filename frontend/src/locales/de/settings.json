@@ -138,5 +138,10 @@
     "link_icon_placeholder": "Symbol auswählen",
     "link_icon_search_placeholder": "Symbole durchsuchen...",
     "section_type_studios": "Studios",
-    "show_download_button_label": "Download-Button anzeigen"
+    "show_download_button_label": "Download-Button anzeigen",
+    "artist": "Interpret",
+    "xlarge": "Sehr groß",
+    "usage_statistics_label": "Anonyme Nutzungsstatistiken erlauben",
+    "usage_statistics": "Nutzungsstatistiken",
+    "usage_statistics_description": "Wir haben keine Möglichkeit zu wissen, wie viele Menschen Pelagica verwenden, wenn du es uns nicht mitteilst. Wenn du zustimmst, wird täglich ein Ping mit deiner Version und einer zufälligen ID gesendet. Mehr nicht."
 }
