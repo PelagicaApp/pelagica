@@ -7,7 +7,6 @@ import { usePageBackground } from '@/hooks/usePageBackground';
 import MusicPlayerBar from '@/components/MusicPlayerBar';
 import FullPageLoader from '@/components/FullPageLoader';
 import { logout } from '@/api/logout';
-import { getApi } from '@/api/getApi';
 import FullPageError from '@/components/FullPageError';
 import TopBar from '@/components/TopBar';
 import { cn } from '../lib/utils';
@@ -22,6 +21,7 @@ interface PageProps {
     bgItem?: React.ReactNode;
     showPlayerBar?: boolean;
     overlayHeader?: boolean;
+    showHeader?: boolean;
     pagePadding?: boolean;
 }
 
@@ -35,6 +35,7 @@ const PageContent = ({
     requiresAuth = false,
     requireAdmin = false,
     overlayHeader = false,
+    showHeader = true,
     pagePadding = true,
     breadcrumbs,
     bgItem,
@@ -73,7 +74,7 @@ const PageContent = ({
                 content={
                     <Button
                         onClick={() => {
-                            logout(getApi());
+                            logout();
                             navigate('/login', { replace: true });
                         }}
                     >
@@ -100,7 +101,7 @@ const PageContent = ({
     return (
         <div className={`relative flex flex-col min-h-dvh ${containerClassName ?? ''}`}>
             {background || bgItem}
-            <TopBar overlay={overlayHeader} />
+            {showHeader && <TopBar overlay={overlayHeader} />}
             <div
                 className={cn(
                     'relative flex flex-col flex-1 overflow-x-hidden overflow-y-auto z-5 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-muted-foreground [&::-webkit-scrollbar-thumb]:rounded-full',

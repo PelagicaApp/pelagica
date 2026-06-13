@@ -26,16 +26,14 @@ function getDetailFieldsStringForItem(
 ): ReactNode {
     switch (detailField) {
         case 'ReleaseYear':
-            return item.PremiereDate
-                ? new Date(item.PremiereDate).getFullYear().toString()
-                : t('release_year_unknown');
+            return item.PremiereDate ? new Date(item.PremiereDate).getFullYear().toString() : '';
         case 'ReleaseYearAndMonth':
             return item.PremiereDate
                 ? new Date(item.PremiereDate).toLocaleDateString(undefined, {
                       year: 'numeric',
                       month: 'long',
                   })
-                : t('release_date_unknown');
+                : '';
         case 'ReleaseDate':
             return item.PremiereDate
                 ? new Date(item.PremiereDate).toLocaleDateString(undefined, {
@@ -43,7 +41,7 @@ function getDetailFieldsStringForItem(
                       month: 'long',
                       day: 'numeric',
                   })
-                : t('release_date_unknown');
+                : '';
         case 'CommunityRating':
             return item.CommunityRating ? (
                 <div className="flex items-center gap-1">
@@ -101,14 +99,12 @@ const ItemsRow = ({ title, allLink, items, detailFields }: ItemsRowProps) => {
         if (!recentItems) return {};
         return recentItems.reduce(
             (acc, item) => {
-                acc[item.Id!] = getPrimaryImageUrl(
-                    item.Id!,
-                    {
-                        maxWidth: 416,
-                        maxHeight: 640,
-                    },
-                    item.ImageTags?.Primary
-                );
+                const isLandscape =
+                    item.Type === 'MusicVideo' || item.Type === 'Video' || item.Type === 'Photo';
+                const size = isLandscape
+                    ? { maxWidth: 640, maxHeight: 360 }
+                    : { maxWidth: 416, maxHeight: 640 };
+                acc[item.Id!] = getPrimaryImageUrl(item.Id!, size, item.ImageTags?.Primary);
                 return acc;
             },
             {} as Record<string, string>

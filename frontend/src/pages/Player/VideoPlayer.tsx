@@ -36,15 +36,6 @@ const VideoPlayer = ({
     const playerRef = useRef<VideoJsPlayer | null>(null);
     const hasSeekedRef = useRef(false);
 
-    console.log('VideoPlayer props:', {
-        src,
-        srcType,
-        poster,
-        startTicks,
-        subtitles,
-        subtitleTrackIndex,
-    });
-
     useEffect(() => {
         if (!videoRef.current) return;
 

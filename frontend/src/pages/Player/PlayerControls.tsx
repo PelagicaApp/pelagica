@@ -71,14 +71,14 @@ function getTrickplayTile(time: number, trickplay: TrickplayInfoDto) {
     const x = tileIndex % tileWidth;
     const y = Math.floor(tileIndex / tileWidth);
 
-    console.log({
-        time,
-        interval: trickplay.Interval,
-        thumbnailIndex,
-        tilesPerImage,
-        imageIndex,
-        totalImages: Math.ceil((trickplay.ThumbnailCount ?? 0) / tilesPerImage),
-    });
+    // console.log({
+    //     time,
+    //     interval: trickplay.Interval,
+    //     thumbnailIndex,
+    //     tilesPerImage,
+    //     imageIndex,
+    //     totalImages: Math.ceil((trickplay.ThumbnailCount ?? 0) / tilesPerImage),
+    // });
 
     return {
         thumbnailIndex,

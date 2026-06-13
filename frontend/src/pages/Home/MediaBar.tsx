@@ -89,7 +89,7 @@ const MediaBar = ({
                         key={item.Id}
                         className="absolute inset-0 bg-cover bg-center transition-opacity duration-700"
                         style={{
-                            backgroundImage: `url('${getBackdropUrl(item.Id!)}')`,
+                            backgroundImage: `url('${getBackdropUrl(item.Id!, { maxWidth: 2560 }, item.ImageTags?.Backdrop)}')`,
                             opacity: i === activeIndex ? 1 : 0,
                         }}
                     />
@@ -138,7 +138,11 @@ const MediaBar = ({
                                     <div className="flex flex-col items-start gap-4 max-w-2xl px-6 sm:px-12 py-6 relative z-10">
                                         {getLogoUrl(item.Id!) && !logoErrors.has(item.Id!) ? (
                                             <img
-                                                src={getLogoUrl(item.Id!)}
+                                                src={getLogoUrl(
+                                                    item.Id!,
+                                                    { maxHeight: 400 },
+                                                    item.ImageTags?.Logo
+                                                )}
                                                 alt={item.Name || 'Item Logo'}
                                                 className={`${logoSize} h-full object-contain`}
                                                 onError={() => handleLogoError(item.Id!)}

@@ -12,6 +12,7 @@ import type { CollectionType } from '@jellyfin/sdk/lib/generated-client/models';
 import GenresRow from './GenresRow';
 import LibrariesRow from './LibrariesRow';
 import StudiosRow from './StudiosRow';
+import RecentlyAddedRow from './RecentlyAddedRow';
 
 function getDetailFieldsForCollectionType(type: CollectionType | undefined): DetailField[] {
     switch (type) {
@@ -124,30 +125,14 @@ const HomePage = () => {
                                     {userViews && userViews.Items ? (
                                         <>
                                             {userViews.Items.map((view) => (
-                                                <div key={view.Id} data-library-id={view.Id}>
-                                                    {view.Id && view.Name && (
-                                                        <ItemsRow
-                                                            title={t('recently_added', {
-                                                                category: view.Name,
-                                                            })}
-                                                            items={{
-                                                                libraryId: view.Id,
-                                                                sortBy: ['DateCreated'],
-                                                                sortOrder: 'Descending',
-                                                                limit: section.limit || 10,
-                                                                types: [
-                                                                    'Movie',
-                                                                    'Series',
-                                                                    'MusicAlbum',
-                                                                ],
-                                                            }}
-                                                            allLink={`/library?library=${view.Id}&page=0&sortBy=DateCreated&sortOrder=Descending`}
-                                                            detailFields={getDetailFieldsForCollectionType(
-                                                                view.CollectionType
-                                                            )}
-                                                        />
+                                                <RecentlyAddedRow
+                                                    key={view.Id}
+                                                    view={view}
+                                                    section={section}
+                                                    detailFields={getDetailFieldsForCollectionType(
+                                                        view.CollectionType
                                                     )}
-                                                </div>
+                                                />
                                             ))}
                                         </>
                                     ) : (

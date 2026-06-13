@@ -199,6 +199,7 @@ const EpisodePage = ({ item, config }: EpisodePageProps) => {
                         </div>
                     }
                     seasonsLoading={isLoadingSeasons}
+                    seriesId={item.SeriesId || null}
                     seasonId={effectiveSelectedSeason}
                     episodeDisplay={config.itemPage?.episodeDisplay || 'row'}
                 />

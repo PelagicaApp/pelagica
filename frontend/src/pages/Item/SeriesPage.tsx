@@ -57,7 +57,7 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
         seasons && seasons.length > 0
             ? seasons.find((s) => s.IndexNumber === 1)?.Id || seasons[0]?.Id
             : undefined;
-    const { data: firstSeasonEpisodes } = useEpisodes(firstSeasonId);
+    const { data: firstSeasonEpisodes } = useEpisodes(item.Id || null, firstSeasonId);
 
     const episodeToContinue =
         firstSeasonEpisodes?.find(
@@ -82,7 +82,7 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
                                     <img
                                         src={getPrimaryImageUrl(
                                             item.Id || '',
-                                            undefined,
+                                            { width: 640, height: 960 },
                                             item.ImageTags?.Primary
                                         )}
                                         alt={item.Name + ' Primary'}
@@ -108,7 +108,7 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
                         {/* Title Logo / Text */}
                         {!failedLogo && item.Id ? (
                             <img
-                                src={getLogoUrl(item.Id, undefined, item.ImageTags?.Logo)}
+                                src={getLogoUrl(item.Id, { maxHeight: 150 }, item.ImageTags?.Logo)}
                                 alt={item.Name || ''}
                                 className="h-16 sm:h-24 md:h-28 max-w-[85%] object-contain object-left mb-2"
                                 onError={() => setFailedLogo(true)}
@@ -211,6 +211,7 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
                             </div>
                         }
                         seasonsLoading={isLoading}
+                        seriesId={item.Id || null}
                         seasonId={effectiveSelectedSeason}
                         episodeDisplay={config.itemPage?.episodeDisplay || 'row'}
                     />

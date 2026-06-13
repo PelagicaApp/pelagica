@@ -58,6 +58,7 @@ const SongDropDown = ({ track, t }: { track: BaseItemDto; t: TFunction }) => {
     const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({});
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         if (presence) setLocalPresence(presence);
     }, [presence]);
 
@@ -250,7 +251,7 @@ const BaseMusicListPage = ({
                                 <img
                                     src={getPrimaryImageUrl(
                                         item.Id!,
-                                        undefined,
+                                        { width: 300, height: 300 },
                                         item.ImageTags?.Primary
                                     )}
                                     alt={item.Name + ' Cover'}

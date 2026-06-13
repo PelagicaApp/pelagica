@@ -80,6 +80,7 @@ const LoginPage = () => {
 
     useEffect(() => {
         if (!serverUrl) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setSplashScreenUrl(null);
             return;
         }
@@ -100,6 +101,7 @@ const LoginPage = () => {
                 return;
             }
             saveServerUrl(config.serverAddress);
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setServerUrl(config.serverAddress);
             setStep('login');
             setServerCheckError(null);
@@ -158,6 +160,7 @@ const LoginPage = () => {
 
     useEffect(() => {
         if (quickConnectStatus.data?.Authenticated) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             handleQuickConnectAuthenticated();
         }
     }, [quickConnectStatus.data, handleQuickConnectAuthenticated]);
@@ -259,6 +262,7 @@ const LoginPage = () => {
                     </div>
                 ) : undefined
             }
+            showHeader={false}
         >
             {step === 'server' && (
                 <Card className="max-w-md w-full mx-auto -translate-y-12">

@@ -3,8 +3,6 @@ import { Button } from './ui/button';
 import { Film } from 'lucide-react';
 
 export const TrailerButton = ({ item }: { item: BaseItemDto }) => {
-    console.log('TrailerButton remote trailers:', item.RemoteTrailers);
-
     if (!item.RemoteTrailers || item.RemoteTrailers.length === 0) return null;
 
     const firstTrailer = item.RemoteTrailers[0];

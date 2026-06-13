@@ -46,7 +46,7 @@ const BoxSetPage = ({ item, config }: BoxSetPageProps) => {
                                     <img
                                         src={getPrimaryImageUrl(
                                             item.Id || '',
-                                            undefined,
+                                            { width: 640, height: 960 },
                                             item.ImageTags?.Primary
                                         )}
                                         alt={item.Name + ' Primary'}
@@ -71,7 +71,7 @@ const BoxSetPage = ({ item, config }: BoxSetPageProps) => {
                     <div className="flex-1 flex flex-col gap-5 w-full text-left">
                         {!failedLogo && item.Id ? (
                             <img
-                                src={getLogoUrl(item.Id, undefined, item.ImageTags?.Logo)}
+                                src={getLogoUrl(item.Id, { maxHeight: 150 }, item.ImageTags?.Logo)}
                                 alt={item.Name || ''}
                                 className="h-16 sm:h-24 md:h-28 max-w-[85%] object-contain object-left mb-2"
                                 onError={() => setFailedLogo(true)}

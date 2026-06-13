@@ -122,16 +122,18 @@ EpisodeComponent.displayName = 'EpisodeComponent';
 
 const EpisodesGrid = memo(
     ({
+        seriesId,
         seasonId,
         title,
         seasonsLoading,
     }: {
+        seriesId: string | null;
         seasonId: string;
         title?: React.ReactNode;
         seasonsLoading?: boolean;
     }) => {
         const navigate = useNavigate();
-        const { data: episodes, isLoading, error } = useEpisodes(seasonId);
+        const { data: episodes, isLoading, error } = useEpisodes(seriesId, seasonId);
 
         if (isLoading || seasonsLoading) {
             return (
@@ -170,16 +172,18 @@ EpisodesGrid.displayName = 'EpisodesGrid';
 
 const EpisodesRow = memo(
     ({
+        seriesId,
         seasonId,
         title,
         seasonsLoading,
     }: {
+        seriesId: string | null;
         seasonId: string;
         title?: React.ReactNode;
         seasonsLoading?: boolean;
     }) => {
         const navigate = useNavigate();
-        const { data: episodes, isLoading, error } = useEpisodes(seasonId);
+        const { data: episodes, isLoading, error } = useEpisodes(seriesId, seasonId);
 
         if (isLoading || seasonsLoading) {
             return (
@@ -223,19 +227,36 @@ const EpisodesRow = memo(
 EpisodesRow.displayName = 'EpisodesRow';
 
 const EpisodesDisplay = ({
+    seriesId,
     seasonId,
     title,
     seasonsLoading,
     episodeDisplay,
 }: {
+    seriesId: string | null;
     seasonId: string;
     title?: React.ReactNode;
     seasonsLoading?: boolean;
     episodeDisplay: EpisodeDisplay;
 }) => {
     if (episodeDisplay === 'grid')
-        return <EpisodesGrid seasonId={seasonId} title={title} seasonsLoading={seasonsLoading} />;
-    else return <EpisodesRow seasonId={seasonId} title={title} seasonsLoading={seasonsLoading} />;
+        return (
+            <EpisodesGrid
+                seasonId={seasonId}
+                seriesId={seriesId}
+                title={title}
+                seasonsLoading={seasonsLoading}
+            />
+        );
+    else
+        return (
+            <EpisodesRow
+                seasonId={seasonId}
+                seriesId={seriesId}
+                title={title}
+                seasonsLoading={seasonsLoading}
+            />
+        );
 };
 
 export default EpisodesDisplay;

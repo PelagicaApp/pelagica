@@ -29,7 +29,7 @@ import {
 } from '../utils/localstorageSidebar';
 import { useState } from 'react';
 import { Button } from './ui/button';
-import { SUPPORTED_LIBRARY_COLLECTION_TYPES } from '../utils/supportedLibraryCollectionTypes';
+import { SUPPORTED_LIBRARY_COLLECTION_TYPES } from '../utils/itemTypes';
 import { DynamicIcon, type IconName } from 'lucide-react/dynamic';
 
 function serverUrlToDomain(url: string) {

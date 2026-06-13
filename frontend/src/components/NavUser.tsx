@@ -32,7 +32,6 @@ import {
 import { useCurrentUser } from '@/hooks/api/useCurrentUser';
 import { Link, useNavigate } from 'react-router';
 import { logout } from '@/api/logout';
-import { getApi } from '@/api/getApi';
 import { useTheme } from './theme-provider';
 import i18n from 'i18next';
 import { useTranslation } from 'react-i18next';
@@ -559,7 +558,7 @@ export function NavUser() {
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                             onClick={() => {
-                                logout(getApi());
+                                logout();
                                 navigate('/login', { replace: true });
                             }}
                         >

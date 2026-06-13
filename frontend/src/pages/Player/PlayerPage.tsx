@@ -132,10 +132,6 @@ const PlayerPage = () => {
         };
     }, []);
 
-    useEffect(() => {
-        console.log('Subtitle track index:', subtitleTrackIndex);
-    }, [subtitleTrackIndex]);
-
     // Reset everything when navigating to a new item
     useEffect(() => {
         queueMicrotask(() => {
@@ -157,6 +153,7 @@ const PlayerPage = () => {
         // Don't enable subtitles if the audio matched preferred language
         if (resolvedAudio.matchedPreferred) return;
 
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setSubtitleTrackIndex(resolvedSubtitleTrackIndex);
     }, [resolvedSubtitleTrackIndex, resolvedAudio.matchedPreferred]);
 

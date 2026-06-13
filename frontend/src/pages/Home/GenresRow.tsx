@@ -24,7 +24,11 @@ const GenresRow = ({ title, limit }: GenresRowProps) => {
                     ? genres
                           .sort((a, b) => (b.item?.totalItems || 0) - (a.item?.totalItems || 0))
                           .map((genre) => (
-                              <GenreItem genreWithItem={genre} className="min-w-60 sm:min-w-75" />
+                              <GenreItem
+                                  key={genre.id}
+                                  genreWithItem={genre}
+                                  className="min-w-60 sm:min-w-75"
+                              />
                           ))
                     : Array.from({ length: 12 }).map((_, i) => (
                           <div

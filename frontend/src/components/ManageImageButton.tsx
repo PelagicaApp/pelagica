@@ -17,6 +17,7 @@ import { Skeleton } from './ui/skeleton';
 import { useTranslation } from 'react-i18next';
 import { useUploadItemImage } from '@/hooks/api/images/useUploadItemImage';
 import FileDropInput from './FileDropInput';
+import { getTmdbThumbnailUrl } from '../utils/tmdbThumbnails';
 
 type ManageImagesPage = 'main' | 'upload' | 'find';
 
@@ -322,6 +323,7 @@ const FindImagePage = ({
     };
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         handleSearch();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -375,7 +377,7 @@ const FindImagePage = ({
                                 )}
                                 <CardContent className="p-0 flex flex-col items-center h-full">
                                     <LazyImage
-                                        src={image.Url || ''}
+                                        src={getTmdbThumbnailUrl(image.Url || '', image.Type)}
                                         alt={`Result ${index}`}
                                         className="object-contain w-full my-auto"
                                         root={scrollContainer}

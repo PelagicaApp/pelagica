@@ -4,7 +4,7 @@ import { useItem } from '@/hooks/api/useItem';
 import MoviePage from './MoviePage';
 import SeriesPage from './SeriesPage';
 import { Skeleton } from '@/components/ui/skeleton';
-import { memo } from 'react';
+import { Fragment, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useConfig } from '@/hooks/api/useConfig';
 import EpisodePage from './EpisodePage';
@@ -67,17 +67,14 @@ const ItemPageSkeleton = memo(() => {
                                 [16, 22, 18],
                                 [20, 16, 24, 18],
                             ].map((badgeWidths, i) => (
-                                <>
-                                    <Skeleton
-                                        key={`label-${i}`}
-                                        className="h-3 w-14 rounded-md mt-1.5"
-                                    />
-                                    <div key={`badges-${i}`} className="flex flex-wrap gap-1.5">
+                                <Fragment key={i}>
+                                    <Skeleton className="h-3 w-14 rounded-md mt-1.5" />
+                                    <div className="flex flex-wrap gap-1.5">
                                         {badgeWidths.map((w, j) => (
                                             <Skeleton key={j} className={`h-6 w-${w} rounded-md`} />
                                         ))}
                                     </div>
-                                </>
+                                </Fragment>
                             ))}
                         </div>
                     </div>
