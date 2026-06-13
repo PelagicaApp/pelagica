@@ -1,1 +1,0 @@
-import{aK as t}from"./index-COQjKplQ.js";import"./videojs-CPoZw-BW.js";const o=[["path",{d:"m10 9 5-5 5 5",key:"9ctzwi"}],["path",{d:"M4 20h7a4 4 0 0 0 4-4V4",key:"1plgdj"}]],a=t("corner-right-up",o);export{o as __iconNode,a as default};

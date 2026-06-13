@@ -1,1 +1,0 @@
-import{aK as a}from"./index-COQjKplQ.js";import"./videojs-CPoZw-BW.js";const t=[["path",{d:"M5 3v14",key:"9nsxs2"}],["path",{d:"M12 3v8",key:"1h2ygw"}],["path",{d:"M19 3v18",key:"1sk56x"}]],o=a("kanban",t);export{t as __iconNode,o as default};

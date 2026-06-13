@@ -1,1 +1,0 @@
-import{aK as a}from"./index-COQjKplQ.js";import"./videojs-CPoZw-BW.js";const e=[["path",{d:"M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0",key:"1r0f0z"}],["path",{d:"M12 7v6",key:"lw1j43"}],["path",{d:"M9 10h6",key:"9gxzsh"}]],i=a("map-pin-plus-inside",e);export{e as __iconNode,i as default};

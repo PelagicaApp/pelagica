@@ -1,1 +1,0 @@
-import{aK as a}from"./index-COQjKplQ.js";import"./videojs-CPoZw-BW.js";const e=[["rect",{width:"18",height:"18",x:"3",y:"3",rx:"2",key:"afitv7"}],["path",{d:"M9 17V7h4a3 3 0 0 1 0 6H9",key:"1dfk2c"}]],i=a("square-parking",e);export{e as __iconNode,i as default};

@@ -1,1 +1,0 @@
-import{aK as e}from"./index-COQjKplQ.js";import"./videojs-CPoZw-BW.js";const t=[["path",{d:"M8 5h13",key:"1pao27"}],["path",{d:"M13 12h8",key:"h98zly"}],["path",{d:"M13 19h8",key:"c3s6r1"}],["path",{d:"M3 10a2 2 0 0 0 2 2h3",key:"1npucw"}],["path",{d:"M3 5v12a2 2 0 0 0 2 2h3",key:"x1gjn2"}]],o=e("list-tree",t);export{t as __iconNode,o as default};

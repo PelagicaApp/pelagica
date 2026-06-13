@@ -1,0 +1,1 @@
+import{t as e}from"./createLucideIcon-C8bdPDXm.js";var t=[[`path`,{d:`M11 6 8 9`,key:`7zt14w`}],[`path`,{d:`m16 7-8 8`,key:`tkgtvu`}],[`rect`,{x:`4`,y:`2`,width:`16`,height:`20`,rx:`2`,key:`1uxh74`}]],n=e(`mirror-rectangular`,t);export{t as __iconNode,n as default};

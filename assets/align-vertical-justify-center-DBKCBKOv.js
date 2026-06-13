@@ -1,0 +1,1 @@
+import{t as e}from"./createLucideIcon-C8bdPDXm.js";var t=[[`rect`,{width:`14`,height:`6`,x:`5`,y:`16`,rx:`2`,key:`1i8z2d`}],[`rect`,{width:`10`,height:`6`,x:`7`,y:`2`,rx:`2`,key:`ypihtt`}],[`path`,{d:`M2 12h20`,key:`9i4pu4`}]],n=e(`align-vertical-justify-center`,t);export{t as __iconNode,n as default};

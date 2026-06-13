@@ -1,0 +1,1 @@
+import{O as e,nt as t}from"./button-BluUKJQI.js";import{s as n,t as r}from"./getApi-TRIUpTes.js";function i(){return t({queryKey:[`currentUser`],queryFn:async()=>(await n(r()).getCurrentUser()).data,...e()})}export{i as t};

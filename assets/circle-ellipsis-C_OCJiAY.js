@@ -1,0 +1,1 @@
+import{t as e}from"./createLucideIcon-C8bdPDXm.js";var t=[[`circle`,{cx:`12`,cy:`12`,r:`10`,key:`1mglay`}],[`path`,{d:`M17 12h.01`,key:`1m0b6t`}],[`path`,{d:`M12 12h.01`,key:`1mp3jc`}],[`path`,{d:`M7 12h.01`,key:`eqddd0`}]],n=e(`circle-ellipsis`,t);export{t as __iconNode,n as default};

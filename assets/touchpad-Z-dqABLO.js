@@ -1,1 +1,0 @@
-import{aK as t}from"./index-COQjKplQ.js";import"./videojs-CPoZw-BW.js";const e=[["rect",{width:"20",height:"16",x:"2",y:"4",rx:"2",key:"18n3k1"}],["path",{d:"M2 14h20",key:"myj16y"}],["path",{d:"M12 20v-6",key:"1rm09r"}]],c=t("touchpad",e);export{e as __iconNode,c as default};

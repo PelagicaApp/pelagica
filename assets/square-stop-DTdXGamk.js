@@ -1,1 +1,0 @@
-import{aK as t}from"./index-COQjKplQ.js";import"./videojs-CPoZw-BW.js";const e=[["rect",{width:"18",height:"18",x:"3",y:"3",rx:"2",key:"afitv7"}],["rect",{x:"9",y:"9",width:"6",height:"6",rx:"1",key:"1ssd4o"}]],i=t("square-stop",e);export{e as __iconNode,i as default};

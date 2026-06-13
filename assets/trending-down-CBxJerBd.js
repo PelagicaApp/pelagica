@@ -1,1 +1,0 @@
-import{aK as t}from"./index-COQjKplQ.js";import"./videojs-CPoZw-BW.js";const n=[["path",{d:"M16 17h6v-6",key:"t6n2it"}],["path",{d:"m22 17-8.5-8.5-5 5L2 7",key:"x473p"}]],d=t("trending-down",n);export{n as __iconNode,d as default};

@@ -1,1 +1,0 @@
-import{aK as a}from"./index-COQjKplQ.js";import"./videojs-CPoZw-BW.js";const e=[["path",{d:"M6 11h8a4 4 0 0 0 0-8H9v18",key:"18ai8t"}],["path",{d:"M6 15h8",key:"1y8f6l"}]],s=a("russian-ruble",e);export{e as __iconNode,s as default};

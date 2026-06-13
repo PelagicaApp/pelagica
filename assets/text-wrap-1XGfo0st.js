@@ -1,0 +1,1 @@
+import{t as e}from"./createLucideIcon-C8bdPDXm.js";var t=[[`path`,{d:`m16 16-3 3 3 3`,key:`117b85`}],[`path`,{d:`M3 12h14.5a1 1 0 0 1 0 7H13`,key:`18xa6z`}],[`path`,{d:`M3 19h6`,key:`1ygdsz`}],[`path`,{d:`M3 5h18`,key:`1u36vt`}]],n=e(`text-wrap`,t);export{t as __iconNode,n as default};
