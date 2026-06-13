@@ -134,7 +134,6 @@ const EpisodesGrid = memo(
     }) => {
         const navigate = useNavigate();
         const { data: episodes, isLoading, error } = useEpisodes(seriesId, seasonId);
-        console.log('Episodes', episodes);
 
         if (isLoading || seasonsLoading) {
             return (

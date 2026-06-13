@@ -55,7 +55,6 @@ export const getRuntimePlaybackStats = (
         totalVideoFrames: (videoEl as any).webkitDecodedFrameCount ?? 0,
     };
 
-    console.log('Video Element Src URL: ' + srcUrl);
     const protocol = srcUrl
         ? srcUrl.startsWith('https')
             ? 'https'

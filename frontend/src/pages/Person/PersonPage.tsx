@@ -69,8 +69,6 @@ const PersonPageContent = ({ item, t }: PersonPageProps) => {
     const [isOverviewExpanded, setIsOverviewExpanded] = useState(false);
     const [primaryImageError, setPrimaryImageError] = useState(false);
 
-    console.log('PersonPage render for item:', item);
-
     useEffect(() => {
         setBackground(
             <div className="fixed top-0 left-0 w-full h-full -z-20 overflow-hidden">

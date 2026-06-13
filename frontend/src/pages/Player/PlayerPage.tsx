@@ -132,10 +132,6 @@ const PlayerPage = () => {
         };
     }, []);
 
-    useEffect(() => {
-        console.log('Subtitle track index:', subtitleTrackIndex);
-    }, [subtitleTrackIndex]);
-
     // Reset everything when navigating to a new item
     useEffect(() => {
         queueMicrotask(() => {
