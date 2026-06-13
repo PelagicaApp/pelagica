@@ -1,0 +1,1 @@
+import{O as e,nt as t}from"./button-RduvR8b9.js";import{t as n}from"./getApi-CtKT1Rmw.js";import{O as r}from"./index-Bj2MIX6X.js";function i(i){return t({queryKey:[`playlists`,i],queryFn:async()=>(await r(n()).getItems({userId:i,includeItemTypes:[`Playlist`],sortBy:[`SortName`],sortOrder:[`Ascending`],recursive:!0})).data.Items||[],enabled:!!i,...e()})}export{i as t};

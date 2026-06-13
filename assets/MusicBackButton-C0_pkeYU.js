@@ -1,0 +1,1 @@
+import{K as e,at as t,v as n}from"./button-RduvR8b9.js";import{t as r}from"./arrow-left-BayXcdcv.js";var i=t(),a=()=>{let{t}=n(`music`);return(0,i.jsxs)(e,{to:`/music`,className:`inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors w-fit py-2`,children:[(0,i.jsx)(r,{className:`w-4 h-4`}),t(`back_to_music`)]})};export{a as t};

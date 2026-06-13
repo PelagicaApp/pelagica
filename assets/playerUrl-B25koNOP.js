@@ -1,0 +1,1 @@
+function e(e,t){return t?`/play/${e}?backUrl=${encodeURIComponent(t)}`:`/play/${e}`}export{e as t};

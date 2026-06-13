@@ -1,0 +1,1 @@
+import{O as e,nt as t}from"./button-RduvR8b9.js";import{s as n,t as r}from"./getApi-CtKT1Rmw.js";function i(){return t({queryKey:[`currentUser`],queryFn:async()=>(await n(r()).getCurrentUser()).data,...e()})}export{i as t};

@@ -1,1 +1,0 @@
-import{t as e}from"./SettingsPage-DguVf6nR.js";export{e as iconsData};
