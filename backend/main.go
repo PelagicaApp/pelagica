@@ -39,6 +39,7 @@ func main() {
 	if isAuthEnabled() {
 		protected = handlers.AuthMiddleware
 	} else {
+		log.Println("WARNING: Authentication is disabled. All protected endpoints are publicly accessible.")
 		protected = func(c fiber.Ctx) error { return c.Next() }
 	}
 
