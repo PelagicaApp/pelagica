@@ -1,4 +1,8 @@
 {
-  "previous": "Précédent",
-  "next": "Suivant"
+    "previous": "Précédent",
+    "next": "Suivant",
+    "stats_consent_title": "Aidez-nous à compter",
+    "stats_consent_message": "",
+    "stats_consent_reject": "",
+    "stats_consent_accept": ""
 }
