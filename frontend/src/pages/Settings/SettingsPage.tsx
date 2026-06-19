@@ -6,8 +6,10 @@ import {
     DETAIL_BADGES,
     EPISODE_DISPLAYS,
     DETAIL_FIELDS,
+    CONTINUE_WATCHING_DETAIL_LINES,
     useConfig,
     useUpdateConfig,
+    type ContinueWatchingDetailLine,
     type DetailBadge,
     type DetailField,
     type HomeScreenSection,
@@ -324,6 +326,22 @@ const SectionEditor = ({
                                         ...editedSection,
                                         titleLine: value as any,
                                     })
+                                }
+                            />
+                            <MultiSelectInput
+                                label={t('detail_line')}
+                                options={CONTINUE_WATCHING_DETAIL_LINES.map((l) => ({
+                                    value: l,
+                                    label: l,
+                                }))}
+                                selected={
+                                    ((editedSection as any).detailLine || []) as string[]
+                                }
+                                onChange={(selected) =>
+                                    setEditedSection({
+                                        ...editedSection,
+                                        detailLine: selected as ContinueWatchingDetailLine[],
+                                    } as any)
                                 }
                             />
                         </>

@@ -86,6 +86,7 @@
     "show_favorite_button": "Favoriten-Button anzeigen",
     "show_watchlist_button": "Watchlist-Button anzeigen",
     "title_line": "Titelzeile",
+    "detail_line": "Detailzeile",
     "accurate_sorting": "Genaues Sortieren verwenden",
     "recommendation_type": "Empfehlungstyp",
     "recomm_all": "Alle",
