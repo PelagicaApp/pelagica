@@ -3,7 +3,7 @@ import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { getItemsApi } from '@jellyfin/sdk/lib/utils/api/items-api';
 import { useQuery } from '@tanstack/react-query';
 import { getRetryConfig } from '@/utils/authErrorHandler';
-import type { ItemsQueryParams, ItemsQueryResult } from '@/pages/Item/ItemsListPage';
+import type { ItemsQueryParams, ItemsQueryResult } from '@/components/ItemsListPage';
 
 export function useArtistAlbumCount(artistId: string | null | undefined) {
     return useQuery({

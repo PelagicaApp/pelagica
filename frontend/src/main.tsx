@@ -32,6 +32,7 @@ const MusicMainContent = lazy(() => import('./pages/Music/MusicMainContent.tsx')
 const MusicAlbumView = lazy(() => import('./pages/Music/MusicAlbumView.tsx'));
 const MusicPlaylistView = lazy(() => import('./pages/Music/MusicPlaylistView.tsx'));
 const MusicArtistView = lazy(() => import('./pages/Music/MusicArtistView.tsx'));
+const GenrePage = lazy(() => import('./pages/Genre/GenrePage.tsx'));
 
 const queryClient = new QueryClient();
 
@@ -53,6 +54,7 @@ createRoot(document.getElementById('root')!).render(
                                 <Route path="/library" element={<LibraryPage />} />
                                 <Route path="/item/:itemId" element={<ItemPage />} />
                                 <Route path="/person/:itemId" element={<PersonPage />} />
+                                <Route path="/genre/:itemId" element={<GenrePage />} />
                                 <Route path="/login" element={<LoginPage />} />
                                 <Route path="/play/:itemId" element={<PlayerPage />} />
                                 <Route path="/settings" element={<SettingsPage />} />

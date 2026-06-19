@@ -122,7 +122,7 @@ const MoviePage = ({ item, config }: MoviePageProps) => {
                                 item={item}
                                 showDownloadButton={config.itemPage?.showDownloadButton}
                             />
-                            <MediaInfoDialog streams={item.MediaStreams || []} />
+                            <MediaInfoDialog streams={item.MediaStreams || []} path={item.Path} />
                             <ItemAdminButton item={item} showSubtitlesButton={true} />
                         </div>
 

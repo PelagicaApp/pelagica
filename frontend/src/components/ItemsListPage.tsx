@@ -66,9 +66,11 @@ interface ItemDisplayProps {
     aspectClass: string;
     /** Optional overlay, e.g. a WatchedStateBadge */
     overlay?: ReactNode;
+    /** Override the default /item/:id link */
+    linkUrl?: string;
 }
 
-const ItemDisplay = ({ item, aspectClass, overlay }: ItemDisplayProps) => {
+const ItemDisplay = ({ item, aspectClass, overlay, linkUrl }: ItemDisplayProps) => {
     const { t } = useTranslation('item');
     const [posterError, setPosterError] = useState(false);
 
@@ -86,7 +88,7 @@ const ItemDisplay = ({ item, aspectClass, overlay }: ItemDisplayProps) => {
     const posterUrl = getPrimaryImageUrl(item.Id!, imageSize, item.ImageTags?.Primary);
 
     return (
-        <Link to={`/item/${item.Id}`} key={item.Id} className="p-0 m-0">
+        <Link to={linkUrl ?? `/item/${item.Id}`} key={item.Id} className="p-0 m-0">
             <div className={`relative w-full ${aspectClass} overflow-hidden rounded-md group`}>
                 {!posterError ? (
                     <>
@@ -131,6 +133,8 @@ export interface ItemsListPageProps {
     listTitle?: string;
     /** Optional render prop to overlay something on each poster (e.g. WatchedStateBadge) */
     renderItemOverlay?: (item: BaseItemDto) => ReactNode;
+    /** Override the default /item/:id link for each item */
+    getItemUrl?: (item: BaseItemDto) => string;
 }
 
 const ItemsListPage = ({
@@ -139,6 +143,7 @@ const ItemsListPage = ({
     itemAspectClass = 'aspect-2/3',
     listTitle,
     renderItemOverlay,
+    getItemUrl,
 }: ItemsListPageProps) => {
     const { t } = useTranslation(['item', 'library']);
     const [searchParams, setSearchParams] = useSearchParams();
@@ -290,6 +295,7 @@ const ItemsListPage = ({
                                 item={child}
                                 aspectClass={itemAspectClass}
                                 overlay={renderItemOverlay?.(child)}
+                                linkUrl={getItemUrl?.(child)}
                             />
                         ))}
                     </ul>

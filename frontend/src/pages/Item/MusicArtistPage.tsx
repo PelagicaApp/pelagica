@@ -14,7 +14,7 @@ import ItemAdminButton from '@/components/ItemAdminButton';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import ItemsListPage from './ItemsListPage';
+import ItemsListPage from '../../components/ItemsListPage';
 import MoreLikeThisRow from './MoreLikeThisRow';
 
 interface MusicArtistPageProps {
@@ -282,6 +282,7 @@ const MusicArtistPage = ({ item, config }: MusicArtistPageProps) => {
                     useItems={useArtistItems}
                     itemAspectClass="aspect-square"
                     listTitle={t('albums')}
+                    getItemUrl={(album) => `/music/album/${album.Id}`}
                 />
             </section>
 

@@ -22,7 +22,7 @@ const GenreItem = ({
 
     return (
         <Link
-            to={`/item/${genreWithItem.id}`}
+            to={`/genre/${genreWithItem.id}`}
             key={genreWithItem.id}
             className={`p-0 m-0 ${className || ''}`}
         >

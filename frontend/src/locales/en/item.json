@@ -177,5 +177,9 @@
     "download": "Download",
     "original": "Original",
     "download_original_file": "Download original file",
-    "open_in_new_tab": "Open in new tab"
+    "open_in_new_tab": "Open in new tab",
+    "favorite": "Favorite",
+    "unfavorite": "Unfavorite",
+    "add_to_watchlist": "Add to Watchlist",
+    "remove_from_watchlist": "Remove from Watchlist"
 }

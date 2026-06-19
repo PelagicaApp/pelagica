@@ -143,6 +143,7 @@ const SongDropDown = ({ track, t }: { track: BaseItemDto; t: TFunction }) => {
                 </DropdownMenuSub>
                 <MediaInfoDialog
                     streams={track.MediaStreams || []}
+                    path={track.Path}
                     trigger={
                         <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                             <Info /> {t('mediaInfo')}

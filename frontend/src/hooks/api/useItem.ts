@@ -28,6 +28,7 @@ export function useItem(
                     'ProductionLocations',
                     'RemoteTrailers',
                     'MediaSources',
+                    'Path',
                 ],
                 enableUserData,
                 userId,

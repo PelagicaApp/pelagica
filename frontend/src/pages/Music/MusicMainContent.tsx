@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router';
-import { Search, Play, X } from 'lucide-react';
+import { Search, Play, X, UserRound, Disc3 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -122,6 +122,33 @@ const SongList = ({
     );
 };
 
+const AlbumCover = ({ album }: { album: BaseItemDto }) => {
+    const [imageError, setImageError] = useState(false);
+
+    if (imageError) {
+        return (
+            <div className="relative aspect-square overflow-hidden rounded-md bg-muted flex items-center justify-center">
+                <Disc3 className="w-1/2 h-1/2 text-muted-foreground" strokeWidth={1.5} />
+            </div>
+        );
+    }
+
+    return (
+        <div className="relative aspect-square overflow-hidden rounded-md">
+            <img
+                src={getPrimaryImageUrl(album.Id || '', {
+                    width: 200,
+                    height: 200,
+                })}
+                alt={album.Name || ''}
+                className="w-full h-full object-cover group-hover:opacity-75 group-hover:scale-105 transition-all transform-gpu"
+                loading="lazy"
+                onError={() => setImageError(true)}
+            />
+        </div>
+    );
+};
+
 const AlbumsGrid = ({
     albums,
     isLoading,
@@ -157,23 +184,40 @@ const AlbumsGrid = ({
                     to={`/music/album/${album.Id}`}
                     className="group flex flex-col"
                 >
-                    <div className="relative aspect-square overflow-hidden rounded-md">
-                        <img
-                            src={getPrimaryImageUrl(album.Id || '', {
-                                width: 200,
-                                height: 200,
-                            })}
-                            alt={album.Name || ''}
-                            className="w-full h-full object-cover group-hover:opacity-75 group-hover:scale-105 transition-all transform-gpu"
-                            loading="lazy"
-                        />
-                    </div>
+                    <AlbumCover album={album} />
                     <span className="text-sm mt-2 truncate">{album.Name}</span>
                     <span className="text-xs text-muted-foreground truncate">
                         {album.ArtistItems?.[0]?.Name || album.AlbumArtist || ''}
                     </span>
                 </Link>
             ))}
+        </div>
+    );
+};
+
+const ArtistAvatar = ({ artist }: { artist: BaseItemDto }) => {
+    const [imageError, setImageError] = useState(false);
+
+    if (imageError) {
+        return (
+            <div className="relative aspect-square w-full overflow-hidden rounded-full bg-muted flex items-center justify-center">
+                <UserRound className="w-1/2 h-1/2 text-muted-foreground" strokeWidth={1.5} />
+            </div>
+        );
+    }
+
+    return (
+        <div className="relative aspect-square w-full overflow-hidden rounded-full">
+            <img
+                src={getPrimaryImageUrl(artist.Id || '', {
+                    width: 200,
+                    height: 200,
+                })}
+                alt={artist.Name || ''}
+                className="w-full h-full object-cover group-hover:opacity-75 group-hover:scale-105 transition-all transform-gpu"
+                loading="lazy"
+                onError={() => setImageError(true)}
+            />
         </div>
     );
 };
@@ -212,17 +256,7 @@ const ArtistsGrid = ({
                     to={`/music/artist/${artist.Id}`}
                     className="group flex flex-col items-center"
                 >
-                    <div className="relative aspect-square w-full overflow-hidden rounded-full">
-                        <img
-                            src={getPrimaryImageUrl(artist.Id || '', {
-                                width: 200,
-                                height: 200,
-                            })}
-                            alt={artist.Name || ''}
-                            className="w-full h-full object-cover group-hover:opacity-75 group-hover:scale-105 transition-all transform-gpu"
-                            loading="lazy"
-                        />
-                    </div>
+                    <ArtistAvatar artist={artist} />
                     <span className="text-sm mt-2 truncate text-center w-full">{artist.Name}</span>
                 </Link>
             ))}

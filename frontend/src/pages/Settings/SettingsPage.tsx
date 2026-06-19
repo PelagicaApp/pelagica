@@ -6,8 +6,10 @@ import {
     DETAIL_BADGES,
     EPISODE_DISPLAYS,
     DETAIL_FIELDS,
+    CONTINUE_WATCHING_DETAIL_LINES,
     useConfig,
     useUpdateConfig,
+    type ContinueWatchingDetailLine,
     type DetailBadge,
     type DetailField,
     type HomeScreenSection,
@@ -60,6 +62,7 @@ import { getAuthorizationHeader } from '@/api/getApi';
 import FileDropInput from '@/components/FileDropInput';
 import { useStatsConsent } from '../../hooks/api/statsConsent/useStatsConsent';
 import { useSetStatsConsent } from '../../hooks/api/statsConsent/useSetStatsConsent';
+import { useUserViews } from '../../hooks/api/useUserViews';
 
 const StringInput = ({
     label,
@@ -325,6 +328,20 @@ const SectionEditor = ({
                                     })
                                 }
                             />
+                            <MultiSelectInput
+                                label={t('detail_line')}
+                                options={CONTINUE_WATCHING_DETAIL_LINES.map((l) => ({
+                                    value: l,
+                                    label: l,
+                                }))}
+                                selected={((editedSection as any).detailLine || []) as string[]}
+                                onChange={(selected) =>
+                                    setEditedSection({
+                                        ...editedSection,
+                                        detailLine: selected as ContinueWatchingDetailLine[],
+                                    } as any)
+                                }
+                            />
                         </>
                     )}
 
@@ -450,6 +467,7 @@ const ItemsConfigEditor = ({
     onChange: (items: SectionItemsConfig) => void;
 }) => {
     const { t } = useTranslation('settings');
+    const { data: userViews } = useUserViews();
 
     const current: SectionItemsConfig = items || {};
     const sortByOptions: Option[] = [
@@ -492,11 +510,18 @@ const ItemsConfigEditor = ({
                 selected={(current.types as string[]) || []}
                 onChange={(selected) => onChange({ ...current, types: selected as any })}
             />
-            <StringInput
+            <SelectInput
                 label={t('library_id')}
-                value={current.libraryId || ''}
-                onChange={(value) => onChange({ ...current, libraryId: value || undefined })}
-                placeholder={t('library_id_placeholder')}
+                options={[
+                    { value: '__NONE__', label: t('library_id_all') },
+                    ...(userViews?.Items || [])
+                        .filter((v) => v.Id && v.Name)
+                        .map((v) => ({ value: v.Id!, label: v.Name! })),
+                ]}
+                value={current.libraryId || '__NONE__'}
+                onChange={(value) =>
+                    onChange({ ...current, libraryId: value === '__NONE__' ? undefined : value })
+                }
                 description={t('library_id_description')}
             />
             <MultiSelectInput
