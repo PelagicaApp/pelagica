@@ -1,12 +1,19 @@
-# Pelagica
+<p align="center">
+  <img height="80px" width="80px" src="https://pelagica.app/logo/logo_pride.svg" alt="Pelagica logo">
+  <h1 align="center"><b>Pelagica</b></h1>
+</p>
 
-[![Latest Release](https://img.shields.io/github/v/release/PelagicaApp/pelagica)](https://github.com/PelagicaApp/pelagica/releases/latest)
-[![License](https://img.shields.io/github/license/PelagicaApp/pelagica)](https://github.com/PelagicaApp/pelagica/blob/main/LICENSE)
-[![Docker Pulls](https://img.shields.io/docker/pulls/kartoffelchipss/pelagica)](https://hub.docker.com/r/kartoffelchipss/pelagica)
-![Stars](https://img.shields.io/github/stars/PelagicaApp/pelagica?style=flat&color=gold)
-[![Active Instances](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fstats.pelagica.app%2Fstats&label=active%20instances&query=%24.active_instances&color=brightgreen)](https://stats.pelagica.app/)
+<p align="center">
+  <a href="https://github.com/PelagicaApp/pelagica/releases/latest"><img src="https://img.shields.io/github/v/release/PelagicaApp/pelagica" alt="Latest Release"></a>
+  <a href="https://github.com/PelagicaApp/pelagica/blob/main/LICENSE"><img src="https://img.shields.io/github/license/PelagicaApp/pelagica" alt="License"></a>
+  <a href="https://hub.docker.com/r/kartoffelchipss/pelagica"><img src="https://img.shields.io/docker/pulls/kartoffelchipss/pelagica" alt="Docker Pulls"></a>
+  <img src="https://img.shields.io/github/stars/PelagicaApp/pelagica?style=flat&color=gold" alt="Stars">
+  <a href="https://stats.pelagica.app/"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fstats.pelagica.app%2Fstats&label=active%20instances&query=%24.active_instances&color=brightgreen" alt="Active Instances"></a>
+</p>
 
-Pelagica is an alternative web frontend for [Jellyfin](https://jellyfin.org) built using React. It aims to provide a fast, modern, and customizable user experience for browsing and watching your media library.
+<p align="center">Pelagica is an alternative web frontend for <a href="https://jellyfin.org">Jellyfin</a> built using React. It aims to provide a fast, modern, and customizable user experience for browsing and watching your media library.</p>
+
+<!-- p align="center">A fast, modern web frontend for Jellyfin</p> -->
 
 ![Home](./.github/assets/home.webp)
 
