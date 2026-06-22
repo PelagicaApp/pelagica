@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Installation Help
+    url: https://discord.gg/VKqprjh3Wr
+    about: Get help with installation and setup in the JellyfinCommunity server in the pelagica channel.
+  - name: General Support
+    url: https://discord.gg/VKqprjh3Wr
+    about: Get help with using Pelagica in the JellyfinCommunity server in the pelagica channel.

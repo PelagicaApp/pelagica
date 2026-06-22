@@ -13,5 +13,7 @@ export function useUserViews() {
             return response.data;
         },
         ...getRetryConfig(),
+        staleTime: 60 * 1000,
+        gcTime: 30 * 60 * 1000,
     });
 }

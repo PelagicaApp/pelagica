@@ -32,7 +32,6 @@ import {
 import { useCurrentUser } from '@/hooks/api/useCurrentUser';
 import { Link, useNavigate } from 'react-router';
 import { logout } from '@/api/logout';
-import { getApi } from '@/api/getApi';
 import { useTheme } from './theme-provider';
 import i18n from 'i18next';
 import { useTranslation } from 'react-i18next';
@@ -71,6 +70,7 @@ import {
     SelectLabel,
 } from '@/components/ui/select';
 import { useThemes } from '@/hooks/api/themes/useThemes';
+import { useQueryClient } from '@tanstack/react-query';
 
 const FlagIcon = ({ countryCode }: { countryCode: string }) => {
     const flagUrl = `https://flagcdn.com/${countryCode.toLowerCase()}.svg`;
@@ -270,6 +270,7 @@ const LanguageCombobox = ({
 export function NavUser() {
     const { t } = useTranslation('sidebar');
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
     const { isMobile } = useSidebar();
     const { theme, setTheme } = useTheme();
     const { data: user } = useCurrentUser();
@@ -559,7 +560,7 @@ export function NavUser() {
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                             onClick={() => {
-                                logout(getApi());
+                                logout(queryClient);
                                 navigate('/login', { replace: true });
                             }}
                         >

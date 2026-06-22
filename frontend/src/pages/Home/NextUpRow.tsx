@@ -9,7 +9,6 @@ interface NextUpRowProps {
     detailLine?: ContinueWatchingDetailLine[];
     limit?: number;
 }
-
 export function NextUpRow({ title, titleLine, detailLine, limit }: NextUpRowProps) {
     const { data: nextUpData, isLoading, error } = useNextUp(getUserId(), limit);
 

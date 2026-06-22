@@ -3,10 +3,10 @@ import { useItemImages, type ItemImage } from '@/hooks/api/images/useItemImages'
 import { useDeleteItemImage } from '@/hooks/api/images/useDeleteItemImage';
 import { useSearchRemoteImages } from '@/hooks/api/images/useSearchRemoteImages';
 import { useDownloadRemoteImage } from '@/hooks/api/images/useDownloadRemoteImage';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Dialog, DialogContent, DialogFooter, DialogTrigger } from './ui/dialog';
 import { Button } from './ui/button';
-import { ArrowLeft, Image, Loader2, Search, Trash2, Upload } from 'lucide-react';
+import { ArrowLeft, Image, Loader2, PackageOpen, Search, Trash2, Upload } from 'lucide-react';
 import type { BaseItemDto, ImageType } from '@jellyfin/sdk/lib/generated-client/models';
 import { getItemImageUrl } from '@/utils/jellyfinUrls';
 import { Card, CardContent } from './ui/card';
@@ -17,6 +17,7 @@ import { Skeleton } from './ui/skeleton';
 import { useTranslation } from 'react-i18next';
 import { useUploadItemImage } from '@/hooks/api/images/useUploadItemImage';
 import FileDropInput from './FileDropInput';
+import { getTmdbThumbnailUrl } from '../utils/tmdbThumbnails';
 
 type ManageImagesPage = 'main' | 'upload' | 'find';
 
@@ -121,6 +122,40 @@ const findImageSkeletonConfig: Record<
         titleWidthClassName: 'w-20',
         subtitleWidthClassName: 'w-16',
     },
+};
+
+const LazyImage = ({
+    src,
+    alt,
+    className,
+    root,
+}: {
+    src: string;
+    alt: string;
+    className?: string;
+    root: Element | null;
+}) => {
+    const imgRef = useRef<HTMLImageElement>(null);
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+        const el = imgRef.current;
+        if (!el || !root) return;
+
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsVisible(true);
+                    observer.disconnect();
+                }
+            },
+            { root, rootMargin: '200px' }
+        );
+        observer.observe(el);
+        return () => observer.disconnect();
+    }, [root]);
+
+    return <img ref={imgRef} src={isVisible ? src : undefined} alt={alt} className={className} />;
 };
 
 const FindImageResultsSkeleton = ({
@@ -274,6 +309,7 @@ const FindImagePage = ({
     const [includeAllLanguages, setIncludeAllLanguages] = useState(false);
     const [columnCount, setColumnCount] = useState(3);
     const [downloadingIndex, setDownloadingIndex] = useState<number | null>(null);
+    const [scrollContainer, setScrollContainer] = useState<HTMLDivElement | null>(null);
     const { searchImages, isSearching, results } = useSearchRemoteImages();
     const { downloadImage } = useDownloadRemoteImage();
 
@@ -287,6 +323,7 @@ const FindImagePage = ({
     };
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         handleSearch();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -308,6 +345,7 @@ const FindImagePage = ({
                         {t('results')} ({results.length})
                     </h3>
                     <div
+                        ref={setScrollContainer}
                         className={`grid grid-cols-${columnCount} gap-4 max-h-[40vh] overflow-y-auto no-scrollbar`}
                     >
                         {results.map((image, index) => (
@@ -338,10 +376,11 @@ const FindImagePage = ({
                                     </div>
                                 )}
                                 <CardContent className="p-0 flex flex-col items-center h-full">
-                                    <img
-                                        src={image.Url || ''}
+                                    <LazyImage
+                                        src={getTmdbThumbnailUrl(image.Url || '', image.Type)}
                                         alt={`Result ${index}`}
                                         className="object-contain w-full my-auto"
+                                        root={scrollContainer}
                                     />
                                     <div className="bg-secondary w-full flex flex-col justify-center text-center gap-1 p-1">
                                         {image.ProviderName && <p>{image.ProviderName}</p>}
@@ -359,7 +398,8 @@ const FindImagePage = ({
             ) : null}
 
             {results && results.length === 0 && !isSearching && (
-                <div className="flex items-center justify-center py-8 text-sm text-muted-foreground">
+                <div className="flex flex-col items-center justify-center gap-2 py-8 text-sm text-muted-foreground">
+                    <PackageOpen />
                     {t('no_results_found')}
                 </div>
             )}

@@ -17,3 +17,8 @@ export function getUnauthenticatedApi() {
 
     return createApi(server);
 }
+
+export function getAuthorizationHeader(): string {
+    const api = getApi();
+    return api.authorizationHeader;
+}

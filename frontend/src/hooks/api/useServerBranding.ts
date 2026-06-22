@@ -1,14 +1,11 @@
 import { getUnauthenticatedApi } from '@/api/getApi';
 import { getBrandingApi } from '@jellyfin/sdk/lib/utils/api/branding-api';
 import { useQuery } from '@tanstack/react-query';
-import { getServerUrl } from '../../utils/localstorageCredentials';
 
-export function useServerBranding() {
-    const server = getServerUrl();
-
+export function useServerBranding(serverUrl?: string) {
     return useQuery({
-        queryKey: ['serverBranding'],
-        enabled: !!server,
+        queryKey: ['serverBranding', serverUrl],
+        enabled: !!serverUrl,
         queryFn: async () => {
             const api = getUnauthenticatedApi();
             const brandingApi = getBrandingApi(api);

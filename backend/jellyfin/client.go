@@ -41,7 +41,7 @@ func AuthenticateByToken(c fiber.Ctx) (bool, error) {
 		return false, err
 	}
 
-	req.Header.Set("X-Emby-Token", token)
+	req.Header.Set("Authorization", token)
 
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {

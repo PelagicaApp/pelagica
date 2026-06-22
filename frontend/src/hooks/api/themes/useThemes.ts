@@ -7,5 +7,7 @@ export function useThemes() {
         queryFn: async (): Promise<ThemeSummary[]> => {
             return fetchThemes();
         },
+        staleTime: Infinity,
+        gcTime: 30 * 60 * 1000,
     });
 }

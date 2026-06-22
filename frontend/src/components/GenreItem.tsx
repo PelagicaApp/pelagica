@@ -15,11 +15,14 @@ const GenreItem = ({
     titleClassName?: string;
 }) => {
     const [posterError, setPosterError] = useState(false);
-    const posterUrl = getPrimaryImageUrl(genreWithItem.item?.Id || '');
+    const posterUrl = getPrimaryImageUrl(genreWithItem.item?.Id || '', {
+        maxWidth: 416,
+        maxHeight: 640,
+    });
 
     return (
         <Link
-            to={`/item/${genreWithItem.id}`}
+            to={`/genre/${genreWithItem.id}`}
             key={genreWithItem.id}
             className={`p-0 m-0 ${className || ''}`}
         >
@@ -27,7 +30,7 @@ const GenreItem = ({
                 {!posterError ? (
                     <>
                         <img
-                            src={`${posterUrl}?maxWidth=416&maxHeight=640&quality=85`}
+                            src={posterUrl}
                             alt={genreWithItem.item?.Name || 'No Title'}
                             className="absolute inset-0 w-full h-full object-cover transition-all group-hover:scale-105 group-hover:opacity-75 grayscale"
                             loading="lazy"
@@ -40,7 +43,6 @@ const GenreItem = ({
                         <ImageOff className="text-4xl text-muted-foreground" />
                     </div>
                 )}
-
                 <div
                     className="absolute inset-0 rounded-md z-10"
                     style={{
@@ -48,9 +50,7 @@ const GenreItem = ({
                         opacity: 0.35,
                     }}
                 />
-
                 <div className="absolute inset-0 z-20 rounded-md bg-linear-to-t from-black/80 via-black/40 to-transparent" />
-
                 <div className="absolute bottom-2 left-2 right-2 z-30">
                     <p
                         className={

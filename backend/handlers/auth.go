@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"log"
+	"log/slog"
 	"pelagica-backend/models"
 
 	"pelagica-backend/jellyfin"
@@ -13,12 +13,12 @@ func AuthMiddleware(c fiber.Ctx) error {
 	ok, err := jellyfin.AuthenticateByToken(c)
 
 	if err != nil {
-		log.Println("Authentication error:", err)
+		slog.Error("Authentication error", "error", err)
 		return c.Status(fiber.StatusForbidden).JSON(models.APIError{Error: "Jellyfin Authentication failed"})
 	}
 
 	if !ok {
-		log.Println("Authentication failed: admin access required")
+		slog.Warn("Authentication failed: admin access required")
 		return c.Status(fiber.StatusForbidden).JSON(models.APIError{Error: "Admin access required"})
 	}
 

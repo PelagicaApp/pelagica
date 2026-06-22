@@ -1,7 +1,8 @@
 import type { BaseItemKind, ItemSortBy } from '@jellyfin/sdk/lib/generated-client/models';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { RecommendationTypeFilter } from './useRecommendedItems';
-import { getAccessToken, getServerUrl } from '@/utils/localstorageCredentials';
+import { getServerUrl } from '@/utils/localstorageCredentials';
+import { getAuthorizationHeader } from '@/api/getApi';
 
 interface BaseHomeScreenSection {
     /** Whether the section is enabled. Mostly intended for testing purposes */
@@ -17,7 +18,7 @@ export interface SectionItemsConfig {
     /** Filter items from a specific library by its ID */
     libraryId?: string;
     /** Filter by media types */
-    types?: ('Movie' | 'Series' | 'BoxSet' | 'MusicAlbum' | 'Playlist')[];
+    types?: BaseItemKind[];
     /** Filter by genre names */
     genres?: string[];
     /** Filter by tag names */
@@ -34,11 +35,14 @@ export interface SectionItemsConfig {
     isUnplayed?: boolean;
 }
 
+export const MEDIABAR_SIZES = ['small', 'medium', 'large', 'xlarge'] as const;
+export type MediabarSize = (typeof MEDIABAR_SIZES)[number];
+
 /** A large carousel banner showcasing featured media with backdrop images */
 export interface MediaBarSection extends BaseHomeScreenSection {
     type: 'mediaBar';
     /** Size of the media bar carousel */
-    size?: 'small' | 'medium' | 'large';
+    size?: MediabarSize;
     /** Configuration for which items to display in the carousel */
     items?: SectionItemsConfig;
     /** Whether to show the favorite button on the media bar items */
@@ -52,6 +56,8 @@ export interface RecentlyAddedSection extends BaseHomeScreenSection {
     type: 'recentlyAdded';
     /** Maximum number of items to display */
     limit?: number;
+    /** Library IDs to show. If empty or undefined, all libraries are shown */
+    libraryIds?: string[];
 }
 
 export const DETAIL_FIELDS = [
@@ -253,7 +259,7 @@ const DEFAULT_CONFIG: AppConfig = {
     homeScreenSections: [
         {
             type: 'mediaBar',
-            size: 'medium',
+            size: 'xlarge',
             items: {
                 sortBy: ['Random'],
                 types: ['Movie', 'Series'],
@@ -352,6 +358,8 @@ export const useConfig = () => {
     const { data, isLoading, error } = useQuery({
         queryKey: CONFIG_QUERY_KEY,
         queryFn: fetchConfig,
+        staleTime: Infinity,
+        gcTime: 30 * 60 * 1000, // 30 minutes
     });
 
     return {
@@ -372,7 +380,7 @@ export const useUpdateConfig = () => {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        Authorization: getAccessToken() || '',
+                        Authorization: getAuthorizationHeader(),
                     },
                     body: JSON.stringify(newConfig),
                 }

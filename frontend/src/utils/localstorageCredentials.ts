@@ -6,6 +6,10 @@ export function getServerUrl(): string | null {
     return localStorage.getItem(STORAGE_SERVER_KEY);
 }
 
+export function saveServerUrl(serverUrl: string): void {
+    localStorage.setItem(STORAGE_SERVER_KEY, serverUrl);
+}
+
 export function getUserId(): string | null {
     return localStorage.getItem(STORAGE_USER_KEY);
 }

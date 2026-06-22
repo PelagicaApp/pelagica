@@ -28,7 +28,7 @@ jobs:
 
       - name: Build Vite app
         working-directory: frontend
-        run: pnpm build
+        run: pnpm build:demo
 
       - name: Add SPA 404 fallback
         run: cp frontend/dist/index.html frontend/dist/404.html

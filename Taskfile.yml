@@ -13,7 +13,7 @@ tasks:
       - install-frontend
     dir: frontend
     cmds:
-      - pnpm run dev -- --host
+      - pnpm exec vite --host {{if .MODE}}--mode {{.MODE}}{{end}}
 
   backend:
     desc: Start Go backend
@@ -25,8 +25,11 @@ tasks:
       CONFIG_PATH: "{{.ROOT_DIR}}/dev.config.json"
       COLLECTOR_INSTANCE_ID_FILE: "{{.ROOT_DIR}}/config/instance_id"
       COLLECTOR_STATS_CONSENT_FILE: "{{.ROOT_DIR}}/config/stats_consent"
+      LOG_FILE: "{{.ROOT_DIR}}/config/pelagica.log"
       COLLECTOR_PING_BASE_URL: "http://localhost:4000"
       COLLECTOR_PING_TOKEN: "2f64e07c-e930-463f-b118-556a741fb2aa"
+      ENABLE_AUTH: "true"
+      LOG_LEVEL: "debug"
     cmds:
       - go run main.go
 
@@ -49,3 +52,56 @@ tasks:
       - go.sum
     cmds:
       - go mod download
+
+  lint:
+    desc: Lint frontend code with ESLint
+    deps:
+      - install-frontend
+    dir: frontend
+    cmds:
+      - pnpm exec eslint .
+
+  lint:fix:
+    desc: Lint frontend code with ESLint and fix issues
+    deps:
+      - install-frontend
+    dir: frontend
+    cmds:
+      - pnpm exec eslint . --fix
+
+  format:
+    desc: Format frontend code with Prettier
+    deps:
+      - install-frontend
+    dir: frontend
+    cmds:
+      - pnpm exec prettier --write .
+
+  format:check:
+    desc: Check frontend code formatting with Prettier
+    deps:
+      - install-frontend
+    dir: frontend
+    cmds:
+      - pnpm exec prettier --check .
+
+  checkup:
+    desc: Run all checks (lint, format, and tests)
+    deps:
+      - lint
+      - format:check
+
+  docker:
+    desc: Build and run the local Docker image
+    cmds:
+      - docker compose -f docker-compose.local.yml up --build
+
+  docker:stop:
+    desc: Stop the local Docker container
+    cmds:
+      - docker compose -f docker-compose.local.yml down
+
+  stats:
+    desc: Count the amount of lines of code
+    cmds:
+      - cloc . --exclude-dir=dist,node_modules --not-match-f="(pnpm-lock|package-lock|yarn\.lock)"

@@ -9,7 +9,6 @@ interface ResumeRowProps {
     detailLine?: ContinueWatchingDetailLine[];
     limit?: number;
 }
-
 export function ResumeRow({ title, titleLine, detailLine, limit }: ResumeRowProps) {
     const { data, isLoading, error } = useResumeItems(getUserId(), limit);
 

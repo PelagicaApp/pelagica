@@ -1,7 +1,6 @@
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import BaseMediaPage from './BaseMediaPage';
-import DescriptionItem from './DescriptionItem';
-import { getPrimaryImageUrl } from '@/utils/jellyfinUrls';
+import { getPrimaryImageUrl, getLogoUrl } from '@/utils/jellyfinUrls';
 import { ImageOff } from 'lucide-react';
 import PeopleRow from './PeopleRow';
 import { useTranslation } from 'react-i18next';
@@ -19,6 +18,8 @@ import { useState } from 'react';
 import { TrailerButton } from '../../components/TrailerButton';
 import ItemDownloadButton from '../../components/ItemDownloadButton';
 import SourcePickerButton from '@/components/SourcePickerButton';
+import ItemMetadataBadges from './ItemMetadataBadges';
+import Overview from './Overview';
 
 interface MoviePageProps {
     item: BaseItemDto;
@@ -28,15 +29,8 @@ interface MoviePageProps {
 const MoviePage = ({ item, config }: MoviePageProps) => {
     const { t } = useTranslation('item');
     const [postersFailed, setPostersFailed] = useState(false);
-
-    const writers =
-        item.People?.filter((person) => person.Type === 'Writer').filter((person) => person.Name) ||
-        [];
-    const directors =
-        item.People?.filter((person) => person.Type === 'Director').filter(
-            (person) => person.Name
-        ) || [];
-    const studios = item.Studios?.filter((studio) => studio.Name) || [];
+    const [isPosterLoaded, setIsPosterLoaded] = useState(false);
+    const [failedLogo, setFailedLogo] = useState(false);
 
     const isCurrentlyPlaying =
         item.UserData?.PlaybackPositionTicks &&
@@ -45,98 +39,108 @@ const MoviePage = ({ item, config }: MoviePageProps) => {
         item.UserData.PlaybackPositionTicks < item.RunTimeTicks;
 
     return (
-        <BaseMediaPage itemId={item.Id || ''} name={item.Name || ''}>
-            <div className="flex flex-col md:flex-row gap-6 max-w-7xl">
-                {!postersFailed ? (
-                    <div className="relative w-60 min-w-60 h-90 sm:w-72 sm:min-w-72 sm:h-108 hidden sm:block">
-                        <img
-                            src={getPrimaryImageUrl(
-                                item.Id || '',
-                                undefined,
-                                item.ImageTags?.Primary
+        <BaseMediaPage
+            itemId={item.Id || ''}
+            name={item.Name || ''}
+            showLogo={false}
+            topPadding={false}
+        >
+            <div className="pt-24 sm:pt-32 pb-12 mx-auto w-full flex flex-col gap-12">
+                <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start relative z-10 w-full">
+                    {/* Left Column (Poster) */}
+                    <div className="w-48 sm:w-64 md:w-72 lg:w-80 shrink-0 mx-auto lg:mx-0">
+                        <div className="relative aspect-2/3 w-full rounded-xl overflow-hidden shadow-2xl shadow-black/85 border border-white/10 bg-muted flex items-center justify-center">
+                            {!postersFailed ? (
+                                <>
+                                    <Skeleton className="absolute inset-0 w-full h-full rounded-xl" />
+                                    <img
+                                        src={getPrimaryImageUrl(
+                                            item.Id || '',
+                                            { width: 640, height: 960 },
+                                            item.ImageTags?.Primary
+                                        )}
+                                        alt={item.Name + ' Primary'}
+                                        className={[
+                                            'object-cover rounded-xl w-full h-full relative z-10',
+                                            'transition-[filter,opacity] duration-700 ease-out',
+                                            isPosterLoaded
+                                                ? 'blur-0 opacity-100'
+                                                : 'blur-md opacity-0',
+                                        ].join(' ')}
+                                        onLoad={() => setIsPosterLoaded(true)}
+                                        onError={() => setPostersFailed(true)}
+                                    />
+                                </>
+                            ) : (
+                                <ImageOff className="text-muted-foreground w-12 h-12" />
                             )}
-                            alt={item.Name + ' Primary'}
-                            className="object-cover rounded-md w-full h-full"
-                            onError={() => setPostersFailed(true)}
-                        />
-                        <Skeleton className="absolute inset-0 w-full h-full rounded-md -z-1" />
+                        </div>
                     </div>
-                ) : (
-                    <div className="w-60 min-w-60 h-90 sm:w-72 sm:min-w-72 sm:h-108 rounded-md bg-muted flex items-center justify-center">
-                        <ImageOff className="text-muted-foreground" size={32} />
+
+                    {/* Right Column (Details) */}
+                    <div className="flex-1 flex flex-col gap-5 w-full text-left">
+                        {/* Title Logo / Text */}
+                        {!failedLogo && item.Id ? (
+                            <img
+                                src={getLogoUrl(item.Id, { maxHeight: 150 }, item.ImageTags?.Logo)}
+                                alt={item.Name || ''}
+                                className="h-16 sm:h-24 md:h-28 max-w-[85%] object-contain object-left mb-2"
+                                onError={() => setFailedLogo(true)}
+                            />
+                        ) : (
+                            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-2 text-wrap balance">
+                                {item.Name}
+                            </h1>
+                        )}
+
+                        {/* Badges */}
+                        <DetailBadges item={item} appConfig={config} />
+
+                        {/* Actions */}
+                        <div className="flex flex-wrap gap-2.5 items-center mt-2">
+                            <SourcePickerButton
+                                itemId={item.Id || ''}
+                                mediaSources={item.MediaSources}
+                                isCurrentlyPlaying={Boolean(isCurrentlyPlaying)}
+                                playLabel={t('play')}
+                                resumeLabel={t('resume')}
+                            />
+                            <TrailerButton item={item} />
+                            <FavoriteButton
+                                item={item}
+                                showFavoriteButton={
+                                    item.Type &&
+                                    config.itemPage?.favoriteButton?.includes(item.Type)
+                                }
+                            />
+                            <WatchListButton
+                                item={item}
+                                showWatchlistButton={config.itemPage?.showWatchlistButton}
+                            />
+                            <PlayStateButton itemId={item.Id || ''} userId={getUserId() || ''} />
+                            <ItemDownloadButton
+                                item={item}
+                                showDownloadButton={config.itemPage?.showDownloadButton}
+                            />
+                            <MediaInfoDialog streams={item.MediaStreams || []} path={item.Path} />
+                            <ItemAdminButton item={item} showSubtitlesButton={true} />
+                        </div>
+
+                        <Overview text={item.Overview || ''} />
+
+                        <ItemMetadataBadges item={item} />
                     </div>
-                )}
-                <div className="flex flex-col gap-3">
-                    <h2 className="text-4xl sm:text-5xl font-bold mt-2">{item.Name}</h2>
-                    <DetailBadges item={item} appConfig={config} />
-                    <div className="mt-1 flex items-center gap-2">
-                        <SourcePickerButton
-                            itemId={item.Id || ''}
-                            mediaSources={item.MediaSources}
-                            isCurrentlyPlaying={Boolean(isCurrentlyPlaying)}
-                            playLabel={t('play')}
-                            resumeLabel={t('resume')}
-                        />
-                        <TrailerButton item={item} />
-                        <FavoriteButton
-                            item={item}
-                            showFavoriteButton={
-                                item.Type && config.itemPage?.favoriteButton?.includes(item.Type)
-                            }
-                        />
-                        <WatchListButton
-                            item={item}
-                            showWatchlistButton={config.itemPage?.showWatchlistButton}
-                        />
-                        <PlayStateButton itemId={item.Id || ''} userId={getUserId() || ''} />
-                        <ItemDownloadButton
-                            item={item}
-                            showDownloadButton={config.itemPage?.showDownloadButton}
-                        />
-                        <MediaInfoDialog streams={item.MediaStreams || []} />
-                        <ItemAdminButton item={item} showSubtitlesButton={true} />
-                    </div>
-                    <p>{item.Overview}</p>
-                    <DescriptionItem
-                        label={t('genres')}
-                        items={
-                            item.GenreItems?.map((genre) => ({
-                                link: `/item/${genre.Id}`,
-                                name: genre.Name!,
-                            })) || []
-                        }
-                    />
-                    <DescriptionItem
-                        label={t('writers')}
-                        items={writers.map((person) => ({
-                            link: `/person/${person.Id}`,
-                            name: person.Name!,
-                        }))}
-                    />
-                    <DescriptionItem
-                        label={t('directors')}
-                        items={directors.map((person) => ({
-                            link: `/person/${person.Id}`,
-                            name: person.Name!,
-                        }))}
-                    />
-                    <DescriptionItem
-                        label={t('studios')}
-                        items={studios.map((studio) => ({
-                            link: `/item/${studio.Id}`,
-                            name: studio.Name!,
-                        }))}
-                    />
                 </div>
+
+                <PeopleRow
+                    title={<h3 className="text-3xl font-bold">{t('cast_and_crew')}</h3>}
+                    people={item.People || []}
+                />
+                <MoreLikeThisRow
+                    title={<h3 className="text-3xl font-bold">{t('more_like_this')}</h3>}
+                    itemId={item.Id || ''}
+                />
             </div>
-            <PeopleRow
-                title={<h3 className="text-3xl font-bold">{t('cast_and_crew')}</h3>}
-                people={item.People || []}
-            />
-            <MoreLikeThisRow
-                title={<h3 className="text-3xl font-bold">{t('more_like_this')}</h3>}
-                itemId={item.Id || ''}
-            />
         </BaseMediaPage>
     );
 };

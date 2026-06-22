@@ -104,7 +104,7 @@ const MusicPlayerBar = () => {
 
     if (isMobile && !isExpanded) {
         return (
-            <div className="p-1 sticky bottom-0 z-100">
+            <div className="p-4 sm:px-12 sticky bottom-0 z-100">
                 <div
                     className="bg-sidebar/90 border-sidebar-border flex justify-between items-center h-full w-full rounded-lg border shadow-sm p-3 backdrop-blur-lg cursor-pointer"
                     onClick={() => setIsExpanded(true)}
@@ -260,7 +260,7 @@ const MusicPlayerBar = () => {
     }
 
     return (
-        <div className="sticky bottom-0 z-100 w-full p-1">
+        <div className="sticky bottom-0 z-100 w-full p-4 sm:px-12">
             <div className="relative">
                 <div className="relative z-10 flex w-full items-center justify-between rounded-lg border border-sidebar-border bg-sidebar/90 p-3 shadow-sm backdrop-blur-lg">
                     <div className="flex flex-1 items-center gap-2">

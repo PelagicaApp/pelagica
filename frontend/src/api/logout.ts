@@ -1,9 +1,14 @@
 import { clearCredentials } from '@/utils/localstorageCredentials';
-import { clearDeviceId } from '@/utils/deviceId';
+import { getApi } from './getApi';
+import { getSessionApi } from '@jellyfin/sdk/lib/utils/api/session-api';
+import type { QueryClient } from '@tanstack/react-query';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function logout(api: any) {
-    clearCredentials();
-    clearDeviceId();
-    await api.logout();
+export async function logout(queryClient: QueryClient) {
+    try {
+        const sessionApi = getSessionApi(getApi());
+        await sessionApi.reportSessionEnded();
+    } finally {
+        clearCredentials();
+        queryClient.invalidateQueries({ queryKey: ['currentUser'] });
+    }
 }

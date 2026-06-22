@@ -23,10 +23,10 @@ export default defineConfig({
         },
     },
     build: {
-        rollupOptions: {
+        rolldownOptions: {
             output: {
-                manualChunks: {
-                    videojs: ['video.js'],
+                codeSplitting: {
+                    groups: [{ name: 'videojs', test: /\/video\.js\// }],
                 },
             },
         },

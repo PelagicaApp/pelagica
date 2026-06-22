@@ -30,3 +30,4 @@ branding
 *.sw?
 
 .task/
+/backend/cache/

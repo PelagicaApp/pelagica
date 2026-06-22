@@ -26,5 +26,6 @@
     "quick_connect_initiated": "Schnellverbindung wird initialisiert...",
     "quick_connect_failed": "Schnellverbindung fehlgeschlagen. Bitte versuche es erneut.",
     "quick_connect_approved": "Schnellverbindung genehmigt! Anmeldung läuft...",
-    "quick_connect_timeout": "Schnellverbindung Zeitüberschreitung. Bitte versuche es erneut."
+    "quick_connect_timeout": "Schnellverbindung Zeitüberschreitung. Bitte versuche es erneut.",
+    "demo_warning": "Dies ist eine Demoinstanz für Pelagica. Du kannst dich mit den vorausgefüllten Anmeldedaten einloggen oder zur Serverauswahl zurückkehren, um dich mit deinem eigenen Server zu verbinden."
 }

@@ -38,7 +38,8 @@ type HomeScreenSection struct {
 	Size                string              `json:"size,omitempty"`
 
 	// RecentlyAdded
-	Limit *int `json:"limit,omitempty"`
+	Limit      *int     `json:"limit,omitempty"`
+	LibraryIDs []string `json:"libraryIds,omitempty"`
 
 	// Items section
 	AllLink      string        `json:"allLink,omitempty"`

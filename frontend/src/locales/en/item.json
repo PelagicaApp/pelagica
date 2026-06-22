@@ -24,7 +24,6 @@
     "media_info": "Media Info",
     "select_stream": "Select Stream",
     "stream_details": "Stream Details",
-    "title": "Title",
     "codec": "Codec",
     "avc": "AVC",
     "profile": "Profile",
@@ -100,7 +99,6 @@
     "original_title": "Original Title",
     "sort_title": "Sort Title",
     "date_added": "Date Added",
-    "threed_format": "3D Format",
     "community_rating": "Community Rating",
     "critics_rating": "Critics Rating",
     "tagline": "Tagline",
@@ -115,7 +113,6 @@
     "threed_format": "3D Format",
     "basic": "Basic",
     "external_ids": "External IDs",
-    "genres": "Genres",
     "add_genre": "Add Genre",
     "tags": "Tags",
     "add_tag": "Add Tag",
@@ -130,12 +127,7 @@
     "inherit_default": "Inherit Default",
     "lock_data": "Lock Data",
     "name": "Name",
-
-
-
-
     "people": "People",
-    "studios": "Studios",
     "metadata_type": "Metadata Type",
     "anidb_id": "AniDB ID",
     "imdb_id": "IMDb ID",
@@ -144,7 +136,6 @@
     "tv_db_box_id": "TVDB Box Set ID",
     "tv_db_id": "TVDB ID",
     "tv_db_slug_id": "TVDB Slug ID",
-
     "deleteItem": "Delete Item",
     "refresh_metadata_title": "Refresh metadata",
     "refresh_metadata_description": "Choose how to refresh metadata and images for this item.",
@@ -177,5 +168,9 @@
     "download": "Download",
     "original": "Original",
     "download_original_file": "Download original file",
-    "open_in_new_tab": "Open in new tab"
+    "open_in_new_tab": "Open in new tab",
+    "favorite": "Favorite",
+    "unfavorite": "Unfavorite",
+    "add_to_watchlist": "Add to Watchlist",
+    "remove_from_watchlist": "Remove from Watchlist"
 }

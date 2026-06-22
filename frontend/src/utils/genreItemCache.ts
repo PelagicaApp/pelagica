@@ -1,19 +1,25 @@
 import type { GenreItem } from '@/hooks/api/genres/useGenresWithItems';
+import { getServerUrl } from './localstorageCredentials';
 
-const STORAGE_KEY = 'genreItemCache';
+const STORAGE_KEY_PREFIX = 'genreItemCache';
 
 type ItemMap = Record<string, GenreItem>;
 
+function getStorageKey() {
+    const serverUrl = getServerUrl() || 'default';
+    return `${STORAGE_KEY_PREFIX}_${serverUrl}`;
+}
+
 function getStoredItems(): ItemMap {
     try {
-        return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+        return JSON.parse(localStorage.getItem(getStorageKey()) || '{}');
     } catch {
         return {};
     }
 }
 
 function saveStoredItems(map: ItemMap) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(map));
+    localStorage.setItem(getStorageKey(), JSON.stringify(map));
 }
 
 export function getCachedGenreItem(genreId: string): GenreItem | undefined {

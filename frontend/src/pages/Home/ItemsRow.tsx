@@ -1,5 +1,4 @@
 import SectionScroller from '@/components/SectionScroller';
-import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { DetailField, SectionItemsConfig } from '@/hooks/api/useConfig';
 import { useRowItems } from '@/hooks/api/useRowItems';
@@ -7,7 +6,7 @@ import { Link } from 'react-router';
 import { useEffect, useMemo, type ReactNode } from 'react';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { getEndsAt, ticksToReadableTime } from '@/utils/timeConversion';
-import { Star } from 'lucide-react';
+import { ChevronRight, Star } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import ScrollableSectionPoster from '@/components/ScrollableSectionPoster';
@@ -27,16 +26,14 @@ function getDetailFieldsStringForItem(
 ): ReactNode {
     switch (detailField) {
         case 'ReleaseYear':
-            return item.PremiereDate
-                ? new Date(item.PremiereDate).getFullYear().toString()
-                : t('release_year_unknown');
+            return item.PremiereDate ? new Date(item.PremiereDate).getFullYear().toString() : '';
         case 'ReleaseYearAndMonth':
             return item.PremiereDate
                 ? new Date(item.PremiereDate).toLocaleDateString(undefined, {
                       year: 'numeric',
                       month: 'long',
                   })
-                : t('release_date_unknown');
+                : '';
         case 'ReleaseDate':
             return item.PremiereDate
                 ? new Date(item.PremiereDate).toLocaleDateString(undefined, {
@@ -44,7 +41,7 @@ function getDetailFieldsStringForItem(
                       month: 'long',
                       day: 'numeric',
                   })
-                : t('release_date_unknown');
+                : '';
         case 'CommunityRating':
             return item.CommunityRating ? (
                 <div className="flex items-center gap-1">
@@ -102,7 +99,12 @@ const ItemsRow = ({ title, allLink, items, detailFields }: ItemsRowProps) => {
         if (!recentItems) return {};
         return recentItems.reduce(
             (acc, item) => {
-                acc[item.Id!] = getPrimaryImageUrl(item.Id!, undefined, item.ImageTags?.Primary);
+                const isLandscape =
+                    item.Type === 'MusicVideo' || item.Type === 'Video' || item.Type === 'Photo';
+                const size = isLandscape
+                    ? { maxWidth: 640, maxHeight: 360 }
+                    : { maxWidth: 416, maxHeight: 640 };
+                acc[item.Id!] = getPrimaryImageUrl(item.Id!, size, item.ImageTags?.Primary);
                 return acc;
             },
             {} as Record<string, string>
@@ -119,15 +121,18 @@ const ItemsRow = ({ title, allLink, items, detailFields }: ItemsRowProps) => {
         ((recentItems && recentItems.length > 0) || isLoading) && (
             <SectionScroller
                 className="max-w-full"
-                title={<h2 className="text-2xl font-bold flex items-center gap-2">{title}</h2>}
-                additionalButtons={
-                    <>
-                        {allLink && (
-                            <Button variant={'outline'} asChild>
-                                <Link to={allLink}>{t('view_all')}</Link>
-                            </Button>
-                        )}
-                    </>
+                title={
+                    allLink ? (
+                        <Link
+                            to={allLink}
+                            className="flex items-center gap-1 group cursor-pointer w-fit transition-colors"
+                        >
+                            <h2 className="text-2xl font-bold">{title}</h2>
+                            <ChevronRight className="w-7 h-7 opacity-50 group-hover:opacity-100 transition-opacity" />
+                        </Link>
+                    ) : (
+                        <h2 className="text-2xl font-bold flex items-center gap-2">{title}</h2>
+                    )
                 }
                 items={
                     recentItems
@@ -135,7 +140,7 @@ const ItemsRow = ({ title, allLink, items, detailFields }: ItemsRowProps) => {
                               <ScrollableSectionPoster
                                   key={item.Id}
                                   item={item}
-                                  posterUrl={`${posterUrls[item.Id!]}?maxWidth=416&maxHeight=640&quality=85`}
+                                  posterUrl={posterUrls[item.Id!]}
                               >
                                   <div className="flex flex-wrap items-center mt-1">
                                       {detailFields && detailFields.length > 0
@@ -159,6 +164,7 @@ const ItemsRow = ({ title, allLink, items, detailFields }: ItemsRowProps) => {
                               </div>
                           ))
                 }
+                contentInset={true}
             />
         )
     );

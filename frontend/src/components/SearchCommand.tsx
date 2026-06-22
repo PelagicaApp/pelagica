@@ -10,14 +10,13 @@ import { useSearch } from '@/context/SearchContext';
 import { useSearchItems } from '@/hooks/api/useSearchItems';
 import { useMusicPlayback } from '@/hooks/useMusicPlayback';
 import { useNavigate } from 'react-router';
-import { getImageApi } from '@jellyfin/sdk/lib/utils/api/image-api';
-import { getApi } from '@/api/getApi';
 import { Skeleton } from './ui/skeleton';
 import { Calendar, Star } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import JellyfinItemKindIcon from './JellyfinItemKindIcon';
 import { Badge } from './ui/badge';
 import type { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models/base-item-kind';
+import { getPrimaryImageUrl } from '../utils/jellyfinUrls';
 
 export const SearchCommand = () => {
     const { t } = useTranslation('search');
@@ -61,10 +60,13 @@ export const SearchCommand = () => {
     const posterUrls = useMemo(() => {
         if (!results) return {};
         try {
-            const imageApi = getImageApi(getApi());
             return results.reduce(
                 (acc, item) => {
-                    acc[item.Id!] = imageApi.getItemImageUrl({ Id: item.Id }) || '';
+                    acc[item.Id!] =
+                        getPrimaryImageUrl(item.Id!, {
+                            maxWidth: 96,
+                            maxHeight: 144,
+                        }) || '';
                     return acc;
                 },
                 {} as Record<string, string>
@@ -144,7 +146,7 @@ export const SearchCommand = () => {
                                         }`}
                                     >
                                         <img
-                                            src={`${posterUrls[item.Id!]}?maxWidth=96&maxHeight=144&quality=85`}
+                                            src={posterUrls[item.Id!]}
                                             alt={item.Name || ''}
                                             className="w-full h-full object-cover rounded-md"
                                             loading="lazy"

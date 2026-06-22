@@ -9,17 +9,20 @@ import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { ImageOff, Play, Star } from 'lucide-react';
 import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
+import { buildPlayerUrl } from '@/utils/playerUrl';
 
 const EpisodeComponent = memo(
     ({
         episode,
         navigate,
         className,
+        backUrl,
     }: {
         episode: BaseItemDto;
         navigate: ReturnType<typeof useNavigate>;
         className?: string;
+        backUrl: string;
     }) => {
         const { t } = useTranslation('item');
         const [imageError, setImageError] = useState(false);
@@ -33,6 +36,8 @@ const EpisodeComponent = memo(
                   ? (watched / runtime) * 100
                   : 0;
 
+        console.log('Image tags: ', episode.ImageTags);
+
         return (
             <Link to={`/item/${episode.Id}`} key={episode.Id} className={'group ' + className}>
                 <div className="relative w-full aspect-video rounded-md overflow-hidden">
@@ -45,12 +50,20 @@ const EpisodeComponent = memo(
                             <img
                                 src={
                                     episode.SeriesId
-                                        ? getPrimaryImageUrl(episode.Id!, {
-                                              width: 416,
-                                          })
-                                        : getThumbUrl(episode.Id!, {
-                                              width: 416,
-                                          })
+                                        ? getPrimaryImageUrl(
+                                              episode.Id!,
+                                              {
+                                                  width: 416,
+                                              },
+                                              episode.ImageTags?.Primary
+                                          )
+                                        : getThumbUrl(
+                                              episode.Id!,
+                                              {
+                                                  width: 416,
+                                              },
+                                              episode.ImageTags?.Thumb
+                                          )
                                 }
                                 alt={episode.Name || t('no_title')}
                                 className="w-full h-full object-cover rounded-md group-hover:opacity-75 group-hover:scale-105 transition-opacity transition-transform duration-300 ease-out will-change-transform"
@@ -62,7 +75,7 @@ const EpisodeComponent = memo(
                                     role="button"
                                     onClick={(e) => {
                                         e.preventDefault();
-                                        navigate(`/play/${episode.Id}`);
+                                        navigate(buildPlayerUrl(episode.Id!, backUrl));
                                     }}
                                 >
                                     <Play className="w-6 h-6 text-white fill-white" />
@@ -73,6 +86,7 @@ const EpisodeComponent = memo(
                                     {ticksToReadableTime(episode.RunTimeTicks)}
                                 </Badge>
                             )}
+                            <div className="absolute inset-0 rounded-md pointer-events-none poster-card-outline z-20" />
                         </div>
                     )}
                     {progress > 0 && (
@@ -121,16 +135,19 @@ EpisodeComponent.displayName = 'EpisodeComponent';
 
 const EpisodesGrid = memo(
     ({
+        seriesId,
         seasonId,
         title,
         seasonsLoading,
     }: {
+        seriesId: string | null;
         seasonId: string;
         title?: React.ReactNode;
         seasonsLoading?: boolean;
     }) => {
         const navigate = useNavigate();
-        const { data: episodes, isLoading, error } = useEpisodes(seasonId);
+        const location = useLocation();
+        const { data: episodes, isLoading, error } = useEpisodes(seriesId, seasonId);
 
         if (isLoading || seasonsLoading) {
             return (
@@ -157,7 +174,12 @@ const EpisodesGrid = memo(
                 {title}
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
                     {episodes?.map((item) => (
-                        <EpisodeComponent key={item.Id} episode={item} navigate={navigate} />
+                        <EpisodeComponent
+                            key={item.Id}
+                            episode={item}
+                            navigate={navigate}
+                            backUrl={location.pathname + location.search}
+                        />
                     ))}
                 </div>
             </div>
@@ -169,16 +191,19 @@ EpisodesGrid.displayName = 'EpisodesGrid';
 
 const EpisodesRow = memo(
     ({
+        seriesId,
         seasonId,
         title,
         seasonsLoading,
     }: {
+        seriesId: string | null;
         seasonId: string;
         title?: React.ReactNode;
         seasonsLoading?: boolean;
     }) => {
         const navigate = useNavigate();
-        const { data: episodes, isLoading, error } = useEpisodes(seasonId);
+        const location = useLocation();
+        const { data: episodes, isLoading, error } = useEpisodes(seriesId, seasonId);
 
         if (isLoading || seasonsLoading) {
             return (
@@ -210,6 +235,7 @@ const EpisodesRow = memo(
                             key={item.Id}
                             episode={item}
                             navigate={navigate}
+                            backUrl={location.pathname + location.search}
                             className="w-min min-w-48 lg:min-w-64 2xl:min-w-80"
                         />
                     )) || []
@@ -222,19 +248,36 @@ const EpisodesRow = memo(
 EpisodesRow.displayName = 'EpisodesRow';
 
 const EpisodesDisplay = ({
+    seriesId,
     seasonId,
     title,
     seasonsLoading,
     episodeDisplay,
 }: {
+    seriesId: string | null;
     seasonId: string;
     title?: React.ReactNode;
     seasonsLoading?: boolean;
     episodeDisplay: EpisodeDisplay;
 }) => {
     if (episodeDisplay === 'grid')
-        return <EpisodesGrid seasonId={seasonId} title={title} seasonsLoading={seasonsLoading} />;
-    else return <EpisodesRow seasonId={seasonId} title={title} seasonsLoading={seasonsLoading} />;
+        return (
+            <EpisodesGrid
+                seasonId={seasonId}
+                seriesId={seriesId}
+                title={title}
+                seasonsLoading={seasonsLoading}
+            />
+        );
+    else
+        return (
+            <EpisodesRow
+                seasonId={seasonId}
+                seriesId={seriesId}
+                title={title}
+                seasonsLoading={seasonsLoading}
+            />
+        );
 };
 
 export default EpisodesDisplay;

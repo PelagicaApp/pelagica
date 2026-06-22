@@ -143,6 +143,7 @@ const RecommendedItemsRow = ({
                               </div>
                           ))
                 }
+                contentInset={true}
             />
         )
     );

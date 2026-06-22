@@ -26,5 +26,6 @@
     "quick_connect_initiated": "Initiating Quick Connect...",
     "quick_connect_failed": "Quick Connect failed. Please try again.",
     "quick_connect_approved": "Quick Connect approved! Logging in...",
-    "quick_connect_timeout": "Quick Connect timed out. Please try again."
+    "quick_connect_timeout": "Quick Connect timed out. Please try again.",
+    "demo_warning": "This is a demo instance for Pelagica. You can log in using the prefilled credentials, or go back to server selection to connect to your own server."
 }

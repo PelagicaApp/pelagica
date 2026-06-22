@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"fmt"
+	"log/slog"
 	"pelagica-backend/collector"
 	"pelagica-backend/models"
 
@@ -19,7 +19,7 @@ func PostStatsConsent(c fiber.Ctx) error {
 	consent := c.Query("consent", "false") == "true"
 	err := collector.WriteStatsConsent(consent)
 	if err != nil {
-		fmt.Printf("Failed to save stats consent: %v\n", err)
+		slog.Error("Failed to save stats consent", "error", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(models.APIError{Error: "Failed to save stats consent"})
 	}
 

@@ -41,6 +41,7 @@ const StudioDisplay = ({
                         onError={() => setImageError(true)}
                     />
                 )}
+                <div className="absolute inset-0 rounded-md pointer-events-none poster-card-outline z-20" />
             </div>
         </Link>
     );
@@ -66,6 +67,7 @@ const StudiosRow = ({ title, limit }: StudiosRowProps) => {
                           </div>
                       ))
             }
+            contentInset={true}
         />
     );
 };

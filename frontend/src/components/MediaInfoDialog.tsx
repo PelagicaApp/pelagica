@@ -35,7 +35,7 @@ const DetailBox = ({ label, value }: { label: string; value: string }) => {
         <div className="group">
             <h4 className="font-medium">{label}</h4>
             <div className="flex items-center gap-0.5">
-                <p className="text-sm text-muted-foreground max-w-full truncate">{value}</p>
+                <p className="text-sm text-muted-foreground max-w-full break-all">{value}</p>
                 <Button
                     variant={'ghost'}
                     size={'icon-sm'}
@@ -221,10 +221,11 @@ const MediaStreamInfo = ({ stream, t }: { stream: MediaStream; t: TFunction }) =
 
 interface MediaInfoDialogProps {
     streams: MediaStream[];
+    path?: string | null;
     trigger?: React.ReactNode;
 }
 
-const MediaInfoDialog = ({ streams, trigger }: MediaInfoDialogProps) => {
+const MediaInfoDialog = ({ streams, path, trigger }: MediaInfoDialogProps) => {
     const { t } = useTranslation('item');
     const [selectedStreamIndex, setSelectedStreamIndex] = useState<number>(0);
 
@@ -252,6 +253,7 @@ const MediaInfoDialog = ({ streams, trigger }: MediaInfoDialogProps) => {
                 <DialogHeader>
                     <DialogTitle>{t('media_info')}</DialogTitle>
                 </DialogHeader>
+                {path && <DetailBox label={t('path')} value={path} />}
                 <Select
                     onValueChange={(value) => setSelectedStreamIndex(parseInt(value, 10))}
                     value={selectedStreamIndex.toString()}

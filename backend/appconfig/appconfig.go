@@ -1,8 +1,10 @@
 package appconfig
 
 import (
+	"log/slog"
+	"time"
+
 	"github.com/gofiber/fiber/v3"
-	"github.com/gofiber/fiber/v3/middleware/logger"
 )
 
 func Setup(app *fiber.App) {
@@ -11,8 +13,16 @@ func Setup(app *fiber.App) {
 		return c.Next()
 	})
 
-	app.Use(logger.New(logger.Config{
-		Format:     "[${time}] ${status} - ${method} ${path} (${latency}) - ${ip}\n",
-		TimeFormat: "2006-01-02 15:04:05",
-	}))
+	app.Use(func(c fiber.Ctx) error {
+		start := time.Now()
+		err := c.Next()
+		slog.Debug("Request",
+			"status", c.Response().StatusCode(),
+			"method", c.Method(),
+			"path", c.Path(),
+			"latency", time.Since(start).String(),
+			"ip", c.IP(),
+		)
+		return err
+	})
 }

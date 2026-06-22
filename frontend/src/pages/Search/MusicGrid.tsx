@@ -11,7 +11,15 @@ interface MusicGridProps {
 
 const MusicItem = ({ item }: { item: BaseItemDto }) => {
     const [posterError, setPosterError] = useState(false);
-    const posterUrl = getPrimaryImageUrl(item.Id || '', undefined, item.ImageTags?.Primary);
+    const posterUrl = getPrimaryImageUrl(
+        item.Id || '',
+        {
+            maxWidth: 300,
+            maxHeight: 300,
+        },
+        item.ImageTags?.Primary,
+        85
+    );
 
     return (
         <Link to={`/item/${item.Id}`} key={item.Id} className="p-0 m-0">
@@ -20,7 +28,7 @@ const MusicItem = ({ item }: { item: BaseItemDto }) => {
                     <>
                         <img
                             key={item.Id}
-                            src={`${posterUrl}?maxWidth=300&maxHeight=300&quality=85`}
+                            src={posterUrl}
                             alt={item.Name || 'No Title'}
                             className="w-full h-full object-cover rounded-md group-hover:opacity-75 transition-all group-hover:scale-105 z-10"
                             loading="lazy"
@@ -33,6 +41,7 @@ const MusicItem = ({ item }: { item: BaseItemDto }) => {
                         <Music className="text-4xl text-muted-foreground" />
                     </div>
                 )}
+                <div className="absolute inset-0 rounded-md pointer-events-none poster-card-outline z-20" />
             </div>
             <p className="mt-2 text-sm line-clamp-1 text-ellipsis break-all">
                 {item.Name || 'No Title'}

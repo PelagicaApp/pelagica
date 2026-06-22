@@ -53,6 +53,8 @@ RUN mkdir -p /config
 
 ENV APP_VERSION=$APP_VERSION
 ENV PORT=4321
+ENV LOG_LEVEL=info
+ENV LOG_FILE=/config/logs/pelagica.log
 ENV ENABLE_AUTH=true
 ENV CONFIG_PATH=/config/config.json
 ENV THEMES_DIR=/config/themes

@@ -1,4 +1,5 @@
-import { getAccessToken, getServerUrl } from '@/utils/localstorageCredentials';
+import { getServerUrl } from '@/utils/localstorageCredentials';
+import { getAuthorizationHeader } from '@/api/getApi';
 
 export interface ThemeSummary {
     id: string;
@@ -47,7 +48,7 @@ export const createTheme = async (theme: string): Promise<{ id: string }> => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: getAccessToken() || '',
+                Authorization: getAuthorizationHeader(),
             },
             body: JSON.stringify(theme),
         }
@@ -64,7 +65,7 @@ export const deleteTheme = async (id: string): Promise<void> => {
         {
             method: 'DELETE',
             headers: {
-                Authorization: getAccessToken() || '',
+                Authorization: getAuthorizationHeader(),
             },
         }
     );
@@ -80,7 +81,7 @@ export const updateTheme = async (id: string, theme: Theme): Promise<void> => {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: getAccessToken() || '',
+                Authorization: getAuthorizationHeader(),
             },
             body: JSON.stringify(theme),
         }
@@ -96,7 +97,7 @@ export const installThemeFromRepository = async (themeId: string): Promise<void>
         {
             method: 'POST',
             headers: {
-                Authorization: getAccessToken() || '',
+                Authorization: getAuthorizationHeader(),
             },
         }
     );

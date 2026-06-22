@@ -1,5 +1,5 @@
 import { Skeleton } from '@/components/ui/skeleton';
-import { getPrimaryImageUrl } from '@/utils/jellyfinUrls';
+import { getPrimaryImageUrl, type ImageSize } from '@/utils/jellyfinUrls';
 import type { BaseItemDto, ItemSortBy, SortOrder } from '@jellyfin/sdk/lib/generated-client/models';
 import {
     ArrowDownWideNarrow,
@@ -11,7 +11,7 @@ import {
     Star,
     ImageOff,
 } from 'lucide-react';
-import { type ReactNode, useEffect, useRef, useState } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useSearchParams } from 'react-router';
 import ItemPagination from '@/components/ItemPagination';
@@ -66,20 +66,35 @@ interface ItemDisplayProps {
     aspectClass: string;
     /** Optional overlay, e.g. a WatchedStateBadge */
     overlay?: ReactNode;
+    /** Override the default /item/:id link */
+    linkUrl?: string;
 }
 
-const ItemDisplay = ({ item, aspectClass, overlay }: ItemDisplayProps) => {
+const ItemDisplay = ({ item, aspectClass, overlay, linkUrl }: ItemDisplayProps) => {
     const { t } = useTranslation('item');
     const [posterError, setPosterError] = useState(false);
 
+    const imageSize: ImageSize =
+        aspectClass === 'aspect-square'
+            ? {
+                  width: 300,
+                  height: 300,
+              }
+            : {
+                  width: 300,
+                  height: 450,
+              };
+
+    const posterUrl = getPrimaryImageUrl(item.Id!, imageSize, item.ImageTags?.Primary);
+
     return (
-        <Link to={`/item/${item.Id}`} key={item.Id} className="p-0 m-0">
+        <Link to={linkUrl ?? `/item/${item.Id}`} key={item.Id} className="p-0 m-0">
             <div className={`relative w-full ${aspectClass} overflow-hidden rounded-md group`}>
                 {!posterError ? (
                     <>
                         <img
                             key={item.Id}
-                            src={getPrimaryImageUrl(item.Id!, undefined, item.ImageTags?.Primary)}
+                            src={posterUrl}
                             alt={item.Name || t('library:no_title')}
                             className="w-full h-full object-cover rounded-md group-hover:opacity-75 transition-all group-hover:scale-105 z-10"
                             loading="lazy"
@@ -93,6 +108,7 @@ const ItemDisplay = ({ item, aspectClass, overlay }: ItemDisplayProps) => {
                     </div>
                 )}
                 {overlay}
+                <div className="absolute inset-0 rounded-md pointer-events-none poster-card-outline z-20" />
             </div>
             <p className="mt-2 text-sm line-clamp-1 text-ellipsis break-all">
                 {item.Name || t('library:no_title')}
@@ -117,6 +133,8 @@ export interface ItemsListPageProps {
     listTitle?: string;
     /** Optional render prop to overlay something on each poster (e.g. WatchedStateBadge) */
     renderItemOverlay?: (item: BaseItemDto) => ReactNode;
+    /** Override the default /item/:id link for each item */
+    getItemUrl?: (item: BaseItemDto) => string;
 }
 
 const ItemsListPage = ({
@@ -125,10 +143,9 @@ const ItemsListPage = ({
     itemAspectClass = 'aspect-2/3',
     listTitle,
     renderItemOverlay,
+    getItemUrl,
 }: ItemsListPageProps) => {
     const { t } = useTranslation(['item', 'library']);
-    const pageRef = useRef<HTMLDivElement>(null);
-    const scrollAfterLoadRef = useRef(false);
     const [searchParams, setSearchParams] = useSearchParams();
     const pageParam = parseInt(searchParams.get('page') ?? '0', 10);
     const sortByParam = (searchParams.get('sortBy') as ItemSortBy) || DEFAULT_SORT_BY;
@@ -176,32 +193,21 @@ const ItemsListPage = ({
         startIndex: page * pageSize,
     });
 
-    useEffect(() => {
-        if (!scrollAfterLoadRef.current) return;
-        if (pageRef.current && !loadingItems && items?.items?.length) {
-            pageRef.current.scrollIntoView({ block: 'start' });
-            scrollAfterLoadRef.current = false;
-        }
-    }, [items?.items, loadingItems]);
-
     const handlePageChange = (newPage: number) => {
         setPage(newPage);
         updateSearchParams(newPage);
-        scrollAfterLoadRef.current = true;
     };
 
     const handleSortChange = (newSortBy: ItemSortBy) => {
         setSortBy(newSortBy);
         setPage(0);
         updateSearchParams(0, newSortBy, sortOrder);
-        scrollAfterLoadRef.current = true;
     };
 
     const handleSortOrderChange = (newSortOrder: SortOrder) => {
         setSortOrder(newSortOrder);
         setPage(0);
         updateSearchParams(0, sortBy, newSortOrder);
-        scrollAfterLoadRef.current = true;
     };
 
     const totalPages = items?.totalCount ? Math.ceil(items.totalCount / pageSize) : 0;
@@ -209,7 +215,7 @@ const ItemsListPage = ({
         'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 2xl:grid-cols-9';
 
     return (
-        <div ref={pageRef}>
+        <div>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
                 <h2 className="text-2xl font-bold">{listTitle ?? item.Name}</h2>
                 <ButtonGroup>
@@ -289,6 +295,7 @@ const ItemsListPage = ({
                                 item={child}
                                 aspectClass={itemAspectClass}
                                 overlay={renderItemOverlay?.(child)}
+                                linkUrl={getItemUrl?.(child)}
                             />
                         ))}
                     </ul>
