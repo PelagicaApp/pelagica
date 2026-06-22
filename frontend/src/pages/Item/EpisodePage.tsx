@@ -159,7 +159,7 @@ const EpisodePage = ({ item, config }: EpisodePageProps) => {
                                 item={item}
                                 showDownloadButton={config.itemPage?.showDownloadButton}
                             />
-                            <MediaInfoDialog streams={item.MediaStreams || []} />
+                            <MediaInfoDialog streams={item.MediaStreams || []} path={item.Path} />
                             <ItemAdminButton item={item} showSubtitlesButton={true} />
                         </div>
 
@@ -199,6 +199,7 @@ const EpisodePage = ({ item, config }: EpisodePageProps) => {
                         </div>
                     }
                     seasonsLoading={isLoadingSeasons}
+                    seriesId={item.SeriesId || null}
                     seasonId={effectiveSelectedSeason}
                     episodeDisplay={config.itemPage?.episodeDisplay || 'row'}
                 />

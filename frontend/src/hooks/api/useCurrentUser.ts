@@ -13,5 +13,7 @@ export function useCurrentUser() {
             return response.data;
         },
         ...getRetryConfig(),
+        staleTime: Infinity,
+        gcTime: 30 * 60 * 1000,
     });
 }

@@ -7,7 +7,6 @@ import { usePageBackground } from '@/hooks/usePageBackground';
 import MusicPlayerBar from '@/components/MusicPlayerBar';
 import FullPageLoader from '@/components/FullPageLoader';
 import { logout } from '@/api/logout';
-import { getApi } from '@/api/getApi';
 import FullPageError from '@/components/FullPageError';
 import { getSidebarState, saveSidebarState } from '../utils/localstorageSidebar';
 import TopBar from '@/components/TopBar';
@@ -20,6 +19,7 @@ type PageRenderContext = {
     toggleSidebar: () => void;
     setSidebarOpen: (open: boolean) => void;
 };
+import { useQueryClient } from '@tanstack/react-query';
 
 interface PageProps {
     children?: ReactNode | ((context: PageRenderContext) => ReactNode);
@@ -32,6 +32,7 @@ interface PageProps {
     bgItem?: React.ReactNode;
     showPlayerBar?: boolean;
     overlayHeader?: boolean;
+    showHeader?: boolean;
     pagePadding?: boolean;
 }
 
@@ -51,6 +52,7 @@ const PageContent = ({
     requiresAuth = false,
     requireAdmin = false,
     overlayHeader = false,
+    showHeader = true,
     pagePadding = true,
     breadcrumbs,
     bgItem,
@@ -58,6 +60,7 @@ const PageContent = ({
 }: PageProps) => {
     const navigate = useNavigate();
     const location = useLocation();
+    const queryClient = useQueryClient();
     const { isLoading, isError, data: user } = useCurrentUser();
     const { background } = usePageBackground();
     const [showLoader, setShowLoader] = useState(true);
@@ -100,8 +103,9 @@ const PageContent = ({
                 content={
                     <Button
                         onClick={() => {
-                            logout(getApi());
-                            navigate('/login', { replace: true });
+                            logout(queryClient).then(() => {
+                                navigate('/login', { replace: true });
+                            });
                         }}
                     >
                         Return to login
@@ -144,7 +148,7 @@ const PageContent = ({
         >
             <DefaultPageBackground />
             {background || bgItem}
-            <TopBar overlay={overlayHeader} scrolled={pageScrolled} />
+            {showHeader && <TopBar overlay={overlayHeader} scrolled={pageScrolled} />}
             <div className="flex min-h-0 w-full flex-1 flex-row">
                 {showSidebar && (
                     <PageSidebar

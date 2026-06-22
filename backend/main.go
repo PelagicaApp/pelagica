@@ -1,11 +1,12 @@
 package main
 
 import (
-	"log"
+	"log/slog"
 	"os"
 	"pelagica-backend/appconfig"
 	"pelagica-backend/collector"
 	"pelagica-backend/handlers"
+	"pelagica-backend/logging"
 	"strings"
 
 	"github.com/gofiber/fiber/v3"
@@ -25,6 +26,8 @@ func isAuthEnabled() bool {
 }
 
 func main() {
+	logging.Setup()
+
 	app := fiber.New()
 	appconfig.Setup(app)
 
@@ -39,6 +42,7 @@ func main() {
 	if isAuthEnabled() {
 		protected = handlers.AuthMiddleware
 	} else {
+		slog.Warn("Authentication is disabled. All protected endpoints are publicly accessible.")
 		protected = func(c fiber.Ctx) error { return c.Next() }
 	}
 
@@ -63,6 +67,11 @@ func main() {
 	api.Get("/stats-consent", handlers.GetStatsConsent)
 	api.Post("/stats-consent", handlers.PostStatsConsent)
 
-	log.Println("Server starting on " + getPort())
-	log.Fatal(app.Listen(getPort()))
+	slog.Info("Server starting", "port", getPort(), "fiber", fiber.Version)
+	if err := app.Listen(getPort(), fiber.ListenConfig{
+		DisableStartupMessage: true,
+	}); err != nil {
+		slog.Error("Server failed", "error", err)
+		os.Exit(1)
+	}
 }

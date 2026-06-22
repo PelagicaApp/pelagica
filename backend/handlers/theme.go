@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
-	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"os"
@@ -44,7 +44,7 @@ func GetTheme(c fiber.Ctx) error {
 
 	theme, err := themeStore.Get(id)
 	if err != nil {
-		log.Println("Error retrieving theme:", err)
+		slog.Error("Failed to retrieve theme", "error", err)
 		return c.Status(fiber.StatusNotFound).JSON(models.APIError{Error: "Theme not found"})
 	}
 
@@ -55,22 +55,22 @@ func CreateTheme(c fiber.Ctx) error {
 	var theme models.Theme
 
 	if err := c.Bind().Body(&theme); err != nil {
-		log.Println("Error decoding theme:", err)
+		slog.Error("Failed to decode theme", "error", err)
 		return c.Status(fiber.StatusBadRequest).JSON(models.APIError{Error: "Failed to decode theme"})
 	}
 
 	if err := theme.Validate(); err != nil {
-		log.Println("Theme validation error:", err)
+		slog.Warn("Theme validation error", "error", err)
 		return c.Status(fiber.StatusBadRequest).JSON(models.APIError{Error: "Invalid theme: " + err.Error()})
 	}
 
 	id, err := themeStore.Write(uuid.New().String(), theme)
 	if err != nil {
-		log.Println("Error writing theme:", err)
+		slog.Error("Failed to write theme", "error", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(models.APIError{Error: "Failed to save theme"})
 	}
 
-	log.Printf("Theme created: %s (ID: %s)", theme.Name, id)
+	slog.Info("Theme created", "name", theme.Name, "id", id)
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"id": id})
 }
@@ -84,22 +84,22 @@ func UpdateTheme(c fiber.Ctx) error {
 	var theme models.Theme
 
 	if err := c.Bind().Body(&theme); err != nil {
-		log.Println("Error decoding theme:", err)
+		slog.Error("Failed to decode theme", "error", err)
 		return c.Status(fiber.StatusBadRequest).JSON(models.APIError{Error: "Failed to decode theme"})
 	}
 
 	if err := theme.Validate(); err != nil {
-		log.Println("Theme validation error:", err)
+		slog.Warn("Theme validation error", "error", err)
 		return c.Status(fiber.StatusBadRequest).JSON(models.APIError{Error: "Invalid theme: " + err.Error()})
 	}
 
 	_, err := themeStore.Write(id, theme)
 	if err != nil {
-		log.Println("Error updating theme:", err)
+		slog.Error("Failed to update theme", "error", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(models.APIError{Error: "Failed to update theme"})
 	}
 
-	log.Printf("Theme updated: ID %s", id)
+	slog.Info("Theme updated", "id", id)
 
 	return c.SendStatus(fiber.StatusNoContent)
 }
@@ -117,25 +117,25 @@ func InstallTheme(c fiber.Ctx) error {
 
 	repoIndexUrl, err := url.JoinPath(repoBaseUrl, "index.json")
 	if err != nil {
-		log.Println("Error constructing repo index URL:", err)
+		slog.Error("Failed to construct repo index URL", "error", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(models.APIError{Error: "Failed to construct theme repository URL"})
 	}
 
 	resp, err := http.Get(repoIndexUrl)
 	if err != nil {
-		log.Println("Error fetching theme repo:", err)
+		slog.Error("Failed to fetch theme repo", "error", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(models.APIError{Error: "Failed to fetch theme repository"})
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		log.Printf("Unexpected status code from theme repo: %d", resp.StatusCode)
+		slog.Error("Unexpected status code from theme repo", "status", resp.StatusCode)
 		return c.Status(fiber.StatusInternalServerError).JSON(models.APIError{Error: "Failed to fetch theme repository"})
 	}
 
 	var repo models.ThemeRepo
 	if err := json.NewDecoder(resp.Body).Decode(&repo); err != nil {
-		log.Println("Error decoding theme repo:", err)
+		slog.Error("Failed to decode theme repo", "error", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(models.APIError{Error: "Failed to decode theme repository"})
 	}
 
@@ -144,7 +144,7 @@ func InstallTheme(c fiber.Ctx) error {
 		if t.ID == id {
 			themeURL, err = url.JoinPath(repoBaseUrl, t.Path)
 			if err != nil {
-				log.Println("Error constructing theme URL:", err)
+				slog.Error("Failed to construct theme URL", "error", err)
 				return c.Status(fiber.StatusInternalServerError).JSON(models.APIError{Error: "Failed to construct theme URL"})
 			}
 			break
@@ -152,40 +152,40 @@ func InstallTheme(c fiber.Ctx) error {
 	}
 
 	if themeURL == "" {
-		log.Printf("Theme with ID %s not found in repository", id)
+		slog.Warn("Theme not found in repository", "id", id)
 		return c.Status(fiber.StatusNotFound).JSON(models.APIError{Error: "Theme not found in repository"})
 	}
 
 	resp, err = http.Get(themeURL)
 	if err != nil {
-		log.Println("Error fetching theme:", err)
+		slog.Error("Failed to fetch theme", "error", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(models.APIError{Error: "Failed to fetch theme"})
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		log.Printf("Unexpected status code when fetching theme: %d", resp.StatusCode)
+		slog.Error("Unexpected status code when fetching theme", "status", resp.StatusCode)
 		return c.Status(fiber.StatusInternalServerError).JSON(models.APIError{Error: "Failed to fetch theme"})
 	}
 
 	var theme models.Theme
 	if err := json.NewDecoder(resp.Body).Decode(&theme); err != nil {
-		log.Println("Error decoding theme:", err)
+		slog.Error("Failed to decode theme", "error", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(models.APIError{Error: "Failed to decode theme"})
 	}
 
 	if err := theme.Validate(); err != nil {
-		log.Println("Theme validation error:", err)
+		slog.Warn("Theme validation error", "error", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(models.APIError{Error: "Invalid theme from repository: " + err.Error()})
 	}
 
 	newID, err := themeStore.Write(id, theme)
 	if err != nil {
-		log.Println("Error saving theme:", err)
+		slog.Error("Failed to save theme", "error", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(models.APIError{Error: "Failed to save theme"})
 	}
 
-	log.Printf("Theme installed: %s (ID: %s)", theme.Name, newID)
+	slog.Info("Theme installed", "name", theme.Name, "id", newID)
 
 	return c.SendStatus(fiber.StatusNoContent)
 }
@@ -198,11 +198,11 @@ func DeleteTheme(c fiber.Ctx) error {
 
 	err := themeStore.Delete(id)
 	if err != nil {
-		log.Println("Error deleting theme:", err)
+		slog.Error("Failed to delete theme", "error", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(models.APIError{Error: "Failed to delete theme"})
 	}
 
-	log.Printf("Theme deleted: ID %s", id)
+	slog.Info("Theme deleted", "id", id)
 
 	return c.SendStatus(fiber.StatusNoContent)
 }

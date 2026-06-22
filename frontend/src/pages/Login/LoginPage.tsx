@@ -80,6 +80,7 @@ const LoginPage = () => {
 
     useEffect(() => {
         if (!serverUrl) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setSplashScreenUrl(null);
             return;
         }
@@ -100,6 +101,7 @@ const LoginPage = () => {
                 return;
             }
             saveServerUrl(config.serverAddress);
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setServerUrl(config.serverAddress);
             setStep('login');
             setServerCheckError(null);
@@ -109,7 +111,7 @@ const LoginPage = () => {
     const initiateQuickConnect = useCallback(async () => {
         setQuickConnectError(null);
         try {
-            const server = serverUrl || '';
+            const server = getServerUrl() || '';
             const result = await quickConnectInitiate.mutateAsync(server);
 
             if (result.Code && result.Secret) {
@@ -134,7 +136,7 @@ const LoginPage = () => {
         setLoggingIn(true);
 
         try {
-            const server = serverUrl || '';
+            const server = getServerUrl() || '';
             await quickConnectAuthenticate.mutateAsync({ server, secret: quickConnectSecret });
 
             console.log('Quick Connect login successful');
@@ -145,14 +147,7 @@ const LoginPage = () => {
             setQuickConnectApproved(false);
             setLoggingIn(false);
         }
-    }, [
-        quickConnectSecret,
-        quickConnectApproved,
-        serverUrl,
-        quickConnectAuthenticate,
-        navigate,
-        t,
-    ]);
+    }, [quickConnectSecret, quickConnectApproved, quickConnectAuthenticate, navigate, t]);
 
     useEffect(() => {
         if (step === 'quickconnect' && !quickConnectCode && !initiatingQuickConnectRef.current) {
@@ -165,6 +160,7 @@ const LoginPage = () => {
 
     useEffect(() => {
         if (quickConnectStatus.data?.Authenticated) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             handleQuickConnectAuthenticated();
         }
     }, [quickConnectStatus.data, handleQuickConnectAuthenticated]);
@@ -266,6 +262,7 @@ const LoginPage = () => {
                     </div>
                 ) : undefined
             }
+            showHeader={false}
         >
             {step === 'server' && (
                 <Card className="max-w-md w-full mx-auto -translate-y-12">

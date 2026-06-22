@@ -7,5 +7,7 @@ export function useStatsConsent() {
         queryFn: async (): Promise<StatsConsent> => {
             return getStatsConsent();
         },
+        staleTime: Infinity,
+        gcTime: 30 * 60 * 1000,
     });
 }

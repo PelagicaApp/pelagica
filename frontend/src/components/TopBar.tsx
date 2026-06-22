@@ -15,6 +15,7 @@ import {
     LogOut,
     Menu,
     Moon,
+    Music,
     Search,
     Settings,
     Settings2,
@@ -69,9 +70,8 @@ import { useConfig } from '@/hooks/api/useConfig';
 import { useTheme } from '@/components/theme-provider';
 import { getEffectiveTheme } from '@/utils/effectiveTheme';
 import { logout } from '@/api/logout';
-import { getApi } from '@/api/getApi';
 import { getUserProfileImageUrl } from '@/utils/jellyfinUrls';
-import { SUPPORTED_LIBRARY_COLLECTION_TYPES } from '@/utils/supportedLibraryCollectionTypes';
+import { SUPPORTED_LIBRARY_COLLECTION_TYPES } from '@/utils/itemTypes';
 import JellyfinLibraryIcon from './JellyfinLibraryIcon';
 import { DynamicIcon, type IconName } from 'lucide-react/dynamic';
 import { useTranslation } from 'react-i18next';
@@ -88,6 +88,7 @@ import {
     saveLocalTheme,
 } from '@/utils/localTheme';
 import { useThemes } from '@/hooks/api/themes/useThemes';
+import { useQueryClient } from '@tanstack/react-query';
 
 const AuthorizeQuickConnectDialog = ({
     onAuthorize,
@@ -267,6 +268,7 @@ const LanguageCombobox = ({
 const UserMenu = () => {
     const { t } = useTranslation('sidebar');
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
     const { theme, setTheme } = useTheme();
     const { data: user } = useCurrentUser();
     const updateUserConfiguration = useUpdateUserConfiguration();
@@ -515,8 +517,9 @@ const UserMenu = () => {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                     onClick={() => {
-                        logout(getApi());
-                        navigate('/login', { replace: true });
+                        logout(queryClient).then(() => {
+                            navigate('/login', { replace: true });
+                        });
                     }}
                 >
                     <LogOut />
@@ -550,6 +553,8 @@ const TopBar = ({
         views?.Items?.filter((lib) =>
             SUPPORTED_LIBRARY_COLLECTION_TYPES.includes(lib.CollectionType!)
         ) ?? [];
+
+    const hasMusicLibrary = libraries.some((lib) => lib.CollectionType === 'music');
 
     const validLinks = config?.links?.filter((l) => l.url && l.text) ?? [];
 
@@ -590,6 +595,15 @@ const TopBar = ({
                             {t('library')}
                         </Link>
                     </Button>
+
+                    {hasMusicLibrary && (
+                        <Button asChild variant="ghost" size="sm">
+                            <Link to="/music">
+                                <Music className="h-4 w-4" />
+                                {t('music')}
+                            </Link>
+                        </Button>
+                    )}
 
                     <Button asChild variant="ghost" size="sm">
                         <Link to="/search">

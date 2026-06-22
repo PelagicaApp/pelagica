@@ -1,0 +1,18 @@
+services:
+    pelagica:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: pelagica-local
+        ports:
+            - '8080:80'
+        volumes:
+            - ./config:/config
+        restart: unless-stopped
+        healthcheck:
+            test:
+                ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://localhost/health']
+            interval: 30s
+            timeout: 10s
+            retries: 3
+            start_period: 40s

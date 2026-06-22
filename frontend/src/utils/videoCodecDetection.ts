@@ -44,8 +44,6 @@ export function detectSupportedCodecs(): CodecSupport {
 
     cachedCodecSupport = support;
 
-    console.log('Detected codec support:', support);
-
     return support;
 }
 

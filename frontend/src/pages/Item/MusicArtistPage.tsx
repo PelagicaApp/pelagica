@@ -14,7 +14,7 @@ import ItemAdminButton from '@/components/ItemAdminButton';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import ItemsListPage from './ItemsListPage';
+import ItemsListPage from '../../components/ItemsListPage';
 import MoreLikeThisRow from './MoreLikeThisRow';
 
 interface MusicArtistPageProps {
@@ -146,7 +146,7 @@ const MusicArtistPage = ({ item, config }: MusicArtistPageProps) => {
 
                     <div
                         className={cn(
-                            'flex min-h-0 min-w-0 flex-1 flex-col p-6 text-center md:h-full md:p-8 md:text-left !pb-2',
+                            'flex min-h-0 min-w-0 flex-1 flex-col p-6 text-center md:h-full md:p-8 md:text-left pb-2!',
                             onPalette && 'text-white'
                         )}
                     >
@@ -282,6 +282,7 @@ const MusicArtistPage = ({ item, config }: MusicArtistPageProps) => {
                     useItems={useArtistItems}
                     itemAspectClass="aspect-square"
                     listTitle={t('albums')}
+                    getItemUrl={(album) => `/music/album/${album.Id}`}
                 />
             </section>
 

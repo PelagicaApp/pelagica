@@ -1,5 +1,6 @@
 import { getAccessToken, getServerUrl } from './localstorageCredentials';
 import { getSupportedVideoCodecs } from './videoCodecDetection';
+import type { PlayMethod } from '@/hooks/api/usePlaybackInfo';
 
 interface Credentials {
     server: string;
@@ -42,9 +43,7 @@ function buildItemImageUrl(
                 ? `/Items/${itemId}/Images/${imageType}/${index}`
                 : `/Items/${itemId}/Images/${imageType}`;
 
-        url.searchParams.append('tag', 'v1');
         url.searchParams.append('quality', quality?.toString() || '90');
-        url.searchParams.append('token', creds.token);
         if (tag) url.searchParams.set('tag', tag);
         if (size?.width) url.searchParams.append('width', size.width.toString());
         if (size?.height) url.searchParams.append('height', size.height.toString());
@@ -226,6 +225,95 @@ export function getVideoStreamUrl(
     }
 }
 
+export function getDirectStreamUrl(
+    itemId: string,
+    options: {
+        mediaSourceId?: string;
+        container?: string;
+        audioStreamIndex?: number;
+        playSessionId?: string;
+    }
+) {
+    try {
+        const creds = resolveCredentials();
+        if (!creds) return '';
+
+        const url = new URL(creds.server);
+        const container = options.container || 'mp4';
+        url.pathname = `/Videos/${itemId}/stream.${container}`;
+        url.searchParams.append('Static', 'true');
+        url.searchParams.append('MediaSourceId', options.mediaSourceId || itemId);
+        url.searchParams.append('ApiKey', creds.token);
+
+        if (options.playSessionId !== undefined)
+            url.searchParams.append('PlaySessionId', options.playSessionId);
+        if (options.audioStreamIndex !== undefined)
+            url.searchParams.append('AudioStreamIndex', options.audioStreamIndex.toString());
+
+        return url.toString();
+    } catch {
+        return '';
+    }
+}
+
+export interface PlaybackStreamResult {
+    url: string;
+    mimeType: string;
+}
+
+const BROWSER_PLAYABLE_CONTAINERS: Record<string, string> = {
+    mp4: 'video/mp4',
+    webm: 'video/webm',
+    mov: 'video/mp4',
+};
+
+export function getPlaybackStreamUrl(
+    itemId: string,
+    playMethod: PlayMethod,
+    options: {
+        playSessionId?: string;
+        audioStreamIndex?: number;
+        mediaSourceId?: string;
+        container?: string;
+        transcodingUrl?: string | null;
+    }
+): PlaybackStreamResult {
+    const creds = resolveCredentials();
+    const container = options.container?.toLowerCase();
+    const mimeType = container ? BROWSER_PLAYABLE_CONTAINERS[container] : undefined;
+
+    if ((playMethod === 'DirectPlay' || playMethod === 'DirectStream') && mimeType) {
+        return {
+            url: getDirectStreamUrl(itemId, {
+                mediaSourceId: options.mediaSourceId,
+                container,
+                audioStreamIndex: options.audioStreamIndex,
+                playSessionId: options.playSessionId,
+            }),
+            mimeType,
+        };
+    }
+
+    if (playMethod === 'Transcode' && options.transcodingUrl && creds) {
+        const base = creds.server.replace(/\/+$/, '');
+        const path = options.transcodingUrl.startsWith('/')
+            ? options.transcodingUrl
+            : `/${options.transcodingUrl}`;
+        return {
+            url: `${base}${path}`,
+            mimeType: 'application/x-mpegURL',
+        };
+    }
+
+    return {
+        url: getVideoStreamUrl(itemId, {
+            audioStreamIndex: options.audioStreamIndex,
+            playSessionId: options.playSessionId,
+        }),
+        mimeType: 'application/x-mpegURL',
+    };
+}
+
 export function getSubtitleUrl(
     itemId: string,
     mediaSourceId: string,
@@ -238,7 +326,7 @@ export function getSubtitleUrl(
 
         const url = new URL(creds.server);
         url.pathname = `/Videos/${itemId}/${mediaSourceId}/Subtitles/${subtitleStreamIndex}/0/Stream.${format}`;
-        url.searchParams.append('api_key', creds.token);
+        url.searchParams.append('ApiKey', creds.token);
 
         return url.toString();
     } catch {
@@ -269,9 +357,7 @@ export function getUserProfileImageUrl(userId: string): string {
 
         const url = new URL(creds.server);
         url.pathname = `/Users/${userId}/Images/Primary`;
-        url.searchParams.append('tag', 'v1');
         url.searchParams.append('quality', '90');
-        url.searchParams.append('token', creds.token);
 
         return url.toString();
     } catch {

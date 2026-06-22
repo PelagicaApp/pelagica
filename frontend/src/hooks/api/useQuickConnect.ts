@@ -23,7 +23,6 @@ export function useQuickConnectStatus(
         queryKey: ['quickConnectStatus', server, secret],
         queryFn: async () => {
             if (!secret) throw new Error('No secret provided');
-            console.log('Fetching quick connect status for secret:', secret);
             const api = createApi(server);
             const res = await getQuickConnectApi(api).getQuickConnectState({ secret });
             return res.data;

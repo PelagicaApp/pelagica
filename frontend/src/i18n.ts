@@ -3,10 +3,9 @@ import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import type { Resource } from 'i18next';
 
-const localeModules = import.meta.glob<{ default: Record<string, unknown> }>(
-    './locales/*//*.json',
-    { eager: true }
-);
+const localeModules = import.meta.glob<{ default: Record<string, unknown> }>('./locales/*/*.json', {
+    eager: true,
+});
 
 const resources: Resource = {};
 const namespaces = new Set<string>();

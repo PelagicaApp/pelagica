@@ -6,8 +6,8 @@ import { useParams } from 'react-router';
 import VideoPlayer, { type SubtitleTrack } from '@/pages/Player/VideoPlayer';
 import PlayerControls from '@/pages/Player/PlayerControls';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { getPrimaryImageUrl, getVideoStreamUrl, getSubtitleUrl } from '@/utils/jellyfinUrls';
-import { generateRandomId } from '@/utils/idGenerator';
+import { getPrimaryImageUrl, getSubtitleUrl, getPlaybackStreamUrl } from '@/utils/jellyfinUrls';
+import { usePlaybackInfo } from '@/hooks/api/usePlaybackInfo';
 import { useMediaSegments } from '@/hooks/api/useMediaSegments';
 import { useAdjacentItems } from '@/hooks/api/useAdjacentItems';
 import { getUserId } from '@/utils/localstorageCredentials';
@@ -84,7 +84,6 @@ const PlayerPage = () => {
     const containerRef = useRef<HTMLDivElement>(null);
     const progressReportingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const lastPositionRef = useRef<number>(0);
-    const [playSessionId, setPlaySessionId] = useState<string>(generateRandomId());
     const isAudioSwitchRef = useRef(false);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const {
@@ -97,6 +96,26 @@ const PlayerPage = () => {
         isLoading: isLoadingMediaSegments,
         error: mediaSegmentsError,
     } = useMediaSegments(itemId);
+    const {
+        data: playbackInfo,
+        isLoading: isLoadingPlaybackInfo,
+        error: playbackInfoError,
+    } = usePlaybackInfo(itemId, getUserId() || undefined, audioTrackIndex);
+
+    const playSessionId = playbackInfo?.playSessionId || '';
+
+    const streamResult = useMemo(() => {
+        if (!itemId || !playbackInfo) return null;
+
+        return getPlaybackStreamUrl(itemId, playbackInfo.playMethod, {
+            playSessionId: playbackInfo.playSessionId,
+            audioStreamIndex: audioTrackIndex,
+            mediaSourceId: playbackInfo.mediaSource.Id || undefined,
+            container: playbackInfo.mediaSource.Container?.split(',')[0] || undefined,
+            transcodingUrl: playbackInfo.mediaSource.TranscodingUrl,
+        });
+    }, [itemId, playbackInfo, audioTrackIndex]);
+
     const { reportProgress } = useReportPlaybackProgress();
     const { startPlayback } = usePlaybackStart();
     const { stopPlayback } = usePlaybackStop();
@@ -113,10 +132,6 @@ const PlayerPage = () => {
         };
     }, []);
 
-    useEffect(() => {
-        console.log('Subtitle track index:', subtitleTrackIndex);
-    }, [subtitleTrackIndex]);
-
     // Reset everything when navigating to a new item
     useEffect(() => {
         queueMicrotask(() => {
@@ -127,7 +142,6 @@ const PlayerPage = () => {
             setPlayer(null);
             setAudioTrackIndex(resolvedAudio.index);
             setSubtitleTrackIndex(resolvedSubtitleTrackIndex);
-            setPlaySessionId(generateRandomId());
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [itemId]);
@@ -139,6 +153,7 @@ const PlayerPage = () => {
         // Don't enable subtitles if the audio matched preferred language
         if (resolvedAudio.matchedPreferred) return;
 
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setSubtitleTrackIndex(resolvedSubtitleTrackIndex);
     }, [resolvedSubtitleTrackIndex, resolvedAudio.matchedPreferred]);
 
@@ -234,7 +249,6 @@ const PlayerPage = () => {
     const handleAudioTrackChange = (index: number) => {
         isAudioSwitchRef.current = true;
         hasUserSelectedAudioRef.current = true;
-        setPlaySessionId(generateRandomId());
         setAudioTrackIndex(index);
     };
 
@@ -278,24 +292,32 @@ const PlayerPage = () => {
         isLoading ||
         isLoadingMediaSegments ||
         isLoadingAdjacentItems ||
-        isLoadingUserConfiguration
+        isLoadingUserConfiguration ||
+        isLoadingPlaybackInfo
     ) {
         return <p>Loading...</p>;
     }
 
-    if (error || mediaSegmentsError || adjacentItemsError || userConfigurationError) {
+    if (
+        error ||
+        mediaSegmentsError ||
+        adjacentItemsError ||
+        userConfigurationError ||
+        playbackInfoError
+    ) {
         return (
             <p>
                 Error loading item:{' '}
                 {error?.message ||
                     mediaSegmentsError?.message ||
                     adjacentItemsError?.message ||
-                    userConfigurationError?.message}
+                    userConfigurationError?.message ||
+                    playbackInfoError?.message}
             </p>
         );
     }
 
-    if (!item) {
+    if (!item || !streamResult) {
         return <p>Item not found</p>;
     }
 
@@ -303,10 +325,8 @@ const PlayerPage = () => {
         <div ref={containerRef} className="relative w-full h-screen bg-black flex overflow-hidden">
             <VideoPlayer
                 key={itemId}
-                src={getVideoStreamUrl(itemId!, {
-                    audioStreamIndex: audioTrackIndex,
-                    playSessionId: playSessionId,
-                })}
+                src={streamResult.url}
+                srcType={streamResult.mimeType}
                 poster={posterUrl}
                 onReady={setPlayer}
                 startTicks={item.UserData?.PlaybackPositionTicks || 0}
@@ -326,10 +346,7 @@ const PlayerPage = () => {
                 mediaSegments={mediaSegments}
                 previousItem={adjacentItems?.previousItem}
                 nextItem={adjacentItems?.nextItem}
-                srcUrl={getVideoStreamUrl(itemId!, {
-                    audioStreamIndex: audioTrackIndex,
-                    playSessionId: playSessionId,
-                })}
+                srcUrl={streamResult.url}
                 containerRef={containerRef}
             />
         </div>

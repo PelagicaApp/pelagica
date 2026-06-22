@@ -33,12 +33,12 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import type { BaseItemDto, BaseItemKind, CollectionType, ItemSortBy, SortOrder } from '@jellyfin/sdk/lib/generated-client/models';
+import type { BaseItemDto, CollectionType, ItemSortBy, SortOrder } from '@jellyfin/sdk/lib/generated-client/models';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { Button } from '@/components/ui/button';
 import LibraryItem from './LibraryItem';
 import HomeVideoGrid, { TARGET_ROW_HEIGHT } from './HomeVideoGrid';
-import { SUPPORTED_LIBRARY_COLLECTION_TYPES } from '@/utils/supportedLibraryCollectionTypes';
+import { COLLECTION_ITEM_TYPES, DIRECT_PLAY_TYPES, SUPPORTED_LIBRARY_COLLECTION_TYPES } from '@/utils/itemTypes';
 import { getPrimaryImageUrl, type ImageSize } from '@/utils/jellyfinUrls';
 
 const ITEM_ROWS = 5;
@@ -89,17 +89,6 @@ function getLibraryLayout(width: number, collectionType: CollectionType): Librar
         pageSize: collectionType === 'homevideos' ? HOME_VIDEO_PAGE_SIZE : columnCount * ITEM_ROWS,
     };
 }
-
-const DIRECT_PLAY_TYPES: CollectionType[] = ['musicvideos'];
-
-const COLLECTION_ITEM_TYPES: Partial<Record<CollectionType, BaseItemKind[]>> = {
-    movies: ['Movie'],
-    tvshows: ['Series'],
-    boxsets: ['BoxSet'],
-    music: ['MusicAlbum'],
-    musicvideos: ['MusicVideo'],
-    homevideos: ['Video', 'Photo'],
-};
 
 function getDetailLine(item: BaseItemDto): string | undefined {
     if (item.Type === 'MusicAlbum') return item.AlbumArtist || undefined;

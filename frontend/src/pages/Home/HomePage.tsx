@@ -12,6 +12,7 @@ import type { CollectionType } from '@jellyfin/sdk/lib/generated-client/models';
 import GenresRow from './GenresRow';
 import LibrariesRow from './LibrariesRow';
 import StudiosRow from './StudiosRow';
+import RecentlyAddedRow from './RecentlyAddedRow';
 
 function getDetailFieldsForCollectionType(type: CollectionType | undefined): DetailField[] {
     switch (type) {
@@ -29,11 +30,16 @@ const HomePage = () => {
     const { data: userViews } = useUserViews();
     const { config } = useConfig();
 
+    const firstEnabledSection = config.homeScreenSections?.find(
+        (section) => section.enabled !== false
+    );
+    const firstSectionIsMediaBar = firstEnabledSection?.type === 'mediaBar';
+
     return (
         <Page
             title={config?.serverName || 'Pelagica'}
             requiresAuth={true}
-            overlayHeader={true}
+            overlayHeader={firstSectionIsMediaBar}
             pagePadding={false}
         >
             <div className="flex flex-col gap-4 pb-4">
@@ -106,7 +112,7 @@ const HomePage = () => {
                                     key={index}
                                     size={section.size}
                                     itemsConfig={section.items}
-                                    title={section.title}
+                                    title={index != 0 ? section.title : undefined}
                                     showFavoriteButton={section.showFavoriteButton}
                                     showWatchlistButton={section.showWatchlistButton}
                                     fadeTop={index != 0}
@@ -114,36 +120,26 @@ const HomePage = () => {
                                 />
                             );
 
-                        case 'recentlyAdded':
+                        case 'recentlyAdded': {
+                            const filteredViews =
+                                section.libraryIds && section.libraryIds.length > 0
+                                    ? userViews?.Items?.filter(
+                                          (view) => view.Id && section.libraryIds!.includes(view.Id)
+                                      )
+                                    : userViews?.Items;
                             return (
                                 <div key={index} className="flex flex-col gap-4">
-                                    {userViews && userViews.Items ? (
+                                    {userViews && filteredViews ? (
                                         <>
-                                            {userViews.Items.map((view) => (
-                                                <div key={view.Id} data-library-id={view.Id}>
-                                                    {view.Id && view.Name && (
-                                                        <ItemsRow
-                                                            title={t('recently_added', {
-                                                                category: view.Name,
-                                                            })}
-                                                            items={{
-                                                                libraryId: view.Id,
-                                                                sortBy: ['DateCreated'],
-                                                                sortOrder: 'Descending',
-                                                                limit: section.limit || 10,
-                                                                types: [
-                                                                    'Movie',
-                                                                    'Series',
-                                                                    'MusicAlbum',
-                                                                ],
-                                                            }}
-                                                            allLink={`/library?library=${view.Id}&page=0&sortBy=DateCreated&sortOrder=Descending`}
-                                                            detailFields={getDetailFieldsForCollectionType(
-                                                                view.CollectionType
-                                                            )}
-                                                        />
+                                            {filteredViews.map((view) => (
+                                                <RecentlyAddedRow
+                                                    key={view.Id}
+                                                    view={view}
+                                                    section={section}
+                                                    detailFields={getDetailFieldsForCollectionType(
+                                                        view.CollectionType
                                                     )}
-                                                </div>
+                                                />
                                             ))}
                                         </>
                                     ) : (
@@ -151,6 +147,7 @@ const HomePage = () => {
                                     )}
                                 </div>
                             );
+                        }
 
                         case 'items':
                             return (

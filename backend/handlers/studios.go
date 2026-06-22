@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"os"
@@ -177,7 +177,7 @@ func extractJellyfinToken(authorizationHeader string) string {
 }
 
 func applyJellyfinAuthHeaders(req *http.Request, token string) {
-	req.Header.Set("X-Emby-Token", token)
+	req.Header.Set("ApiKey", token)
 	req.Header.Set("Authorization", `MediaBrowser Token="`+token+`"`)
 }
 
@@ -316,7 +316,7 @@ func listStudiosFromJellyfin(jellyfinURL, token string) ([]models.StudioSummary,
 		return studios[i].Count > studios[j].Count
 	})
 
-	log.Printf("studios: aggregated %d unique studios", len(studios))
+	slog.Debug("Studios aggregated", "count", len(studios))
 
 	return studios, nil
 }
@@ -442,7 +442,7 @@ func getThumbsListWithCache() (map[string]struct{}, error) {
 	}
 	thumbsCache.mu.Unlock()
 
-	log.Printf("studios: thumbs list refreshed (%d entries)", len(thumbs))
+	slog.Debug("Studios thumbs list refreshed", "count", len(thumbs))
 
 	return thumbs, nil
 }
@@ -546,7 +546,7 @@ func GetStudios(c fiber.Ctx) error {
 
 	studios, err := getStudiosWithCache(jellyfinURL, token)
 	if err != nil {
-		log.Printf("studios: failed loading studios: %v", err)
+		slog.Error("Failed to load studios", "error", err)
 		return c.Status(fiber.StatusBadGateway).JSON(models.APIError{Error: "Failed to load studios from Jellyfin: " + err.Error()})
 	}
 
@@ -559,7 +559,7 @@ func GetStudios(c fiber.Ctx) error {
 
 	thumbs, err := getThumbsListWithCache()
 	if err != nil {
-		log.Printf("studios: failed loading thumbs list: %v", err)
+		slog.Error("Failed to load thumbs list", "error", err)
 		return c.Status(fiber.StatusBadGateway).JSON(models.APIError{Error: "Failed to load studio thumbnail metadata"})
 	}
 
@@ -601,7 +601,7 @@ func GetStudioThumb(c fiber.Ctx) error {
 
 	cacheDir, err := thumbCacheDir()
 	if err != nil {
-		log.Printf("studios: thumb cache dir unavailable: %v", err)
+		slog.Error("Thumb cache dir unavailable", "error", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(models.APIError{Error: "Thumbnail cache unavailable"})
 	}
 
@@ -613,7 +613,7 @@ func GetStudioThumb(c fiber.Ctx) error {
 		c.Set("Cache-Control", studioThumbCacheControl)
 		return c.SendFile(cachePath)
 	} else if !errors.Is(statErr, os.ErrNotExist) {
-		log.Printf("studios: thumb cache stat error for %q: %v", normalized, statErr)
+		slog.Warn("Thumb cache stat error", "studio", normalized, "error", statErr)
 	}
 
 	// Cache miss: fetch via singleflight so concurrent requests for the same
@@ -630,11 +630,11 @@ func GetStudioThumb(c fiber.Ctx) error {
 		if errors.Is(err, fiber.ErrNotFound) {
 			return c.Status(fiber.StatusNotFound).JSON(models.APIError{Error: "Studio thumbnail not found"})
 		}
-		log.Printf("studios: thumb fetch failed for %q: %v", normalized, err)
+		slog.Error("Thumb fetch failed", "studio", normalized, "error", err)
 		return c.Status(fiber.StatusBadGateway).JSON(models.APIError{Error: "Failed to fetch studio thumbnail"})
 	}
 
-	log.Printf("studios: cached thumbnail for %q", normalized)
+	slog.Debug("Cached thumbnail", "studio", normalized)
 
 	c.Set("Content-Type", studioThumbContentType)
 	c.Set("Cache-Control", studioThumbCacheControl)

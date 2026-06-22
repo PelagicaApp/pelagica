@@ -67,7 +67,7 @@ const ItemMetadataBadges = ({ item }: ItemMetadataBadgesProps) => {
                     <div className="flex flex-wrap gap-1.5">
                         {visible('genres', genres).map((genre) => (
                             <ItemBadge key={genre.Name} asChild>
-                                <Link to={`/item/${genre.Id}`}>{genre.Name}</Link>
+                                <Link to={`/genre/${genre.Id}`}>{genre.Name}</Link>
                             </ItemBadge>
                         ))}
                         {showMore('genres', genres.length)}

@@ -13,6 +13,7 @@ export interface SubtitleTrack {
 
 interface VideoPlayerProps {
     src: string;
+    srcType?: string;
     poster?: string;
     startTicks: number;
     subtitles?: SubtitleTrack[];
@@ -23,6 +24,7 @@ interface VideoPlayerProps {
 
 const VideoPlayer = ({
     src,
+    srcType = 'application/x-mpegURL',
     poster,
     startTicks,
     subtitles,
@@ -96,7 +98,7 @@ const VideoPlayer = ({
         }
 
         player.pause();
-        player.src({ src, type: 'application/x-mpegURL' });
+        player.src({ src, type: srcType });
         player.load();
 
         if (seekTo !== null) {
@@ -104,7 +106,7 @@ const VideoPlayer = ({
         }
 
         player.play()?.catch(console.error);
-    }, [src, isAudioSwitchRef]);
+    }, [src, srcType, isAudioSwitchRef]);
 
     useEffect(() => {
         if (!playerRef.current) return;

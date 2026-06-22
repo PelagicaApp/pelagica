@@ -5,7 +5,7 @@ import { useConfig } from '@/hooks/api/useConfig';
 import WatchedStateBadge from '@/components/WatchedStateBadge';
 import { GENRE_MEDIA_PARAM, parseGenreMediaCategory } from '@/utils/sidebarBrowseFilters';
 import { useSidebarBrowser } from '@/context/SidebarBrowserContext';
-import ItemsListPage from './ItemsListPage';
+import ItemsListPage from '@/components/ItemsListPage';
 
 interface GenrePageProps {
     item: BaseItemDto;

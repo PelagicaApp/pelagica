@@ -1,0 +1,97 @@
+name: Bug Report
+description: Report a bug to help us improve
+title: '[BUG] '
+labels: [bug]
+body:
+  - type: checkboxes
+    attributes:
+      label: Is there an existing bug report for this?
+      description: Please [search here](https://github.com/PelagicaApp/pelagica/issues?q=is%3Aissue) to see if someone else has already reported this bug.
+      options:
+        - label: I have searched the existing issues before opening this bug report.
+          required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the Bug
+      description: A clear and concise description of the bug.
+      placeholder: When I do X, Y happens instead of Z...
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: Steps to reproduce the behavior.
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+      placeholder: I expected...
+    validations:
+      required: true
+
+  - type: input
+    id: pelagica-version
+    attributes:
+      label: Pelagica Version
+      placeholder: e.g. 2.10.0
+    validations:
+      required: true
+
+  - type: input
+    id: jellyfin-version
+    attributes:
+      label: Jellyfin Version
+      placeholder: e.g. 10.0.0
+    validations:
+      required: false
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating System
+      options:
+        - Windows 10
+        - Windows 11
+        - macOS
+        - Linux
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser
+      placeholder: e.g. Chrome 114
+    validations:
+      required: false
+
+  - type: dropdown
+    id: docker
+    attributes:
+      label: Using Docker?
+      options:
+        - 'Yes'
+        - 'No'
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any other context or screenshots about the problem here.
+    validations:
+      required: false

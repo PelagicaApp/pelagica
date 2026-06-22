@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
-	"log"
+	"log/slog"
 	"os"
 	"path/filepath"
 
@@ -28,18 +28,18 @@ func GetConfig(c fiber.Ctx) error {
 			defaultConfig := []byte(`{}`)
 
 			if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
-				log.Println("Error creating config directory:", err)
+				slog.Error("Failed to create config directory", "error", err)
 				return c.Status(fiber.StatusInternalServerError).JSON(models.APIError{Error: "Failed to create config directory"})
 			}
 
 			if err := os.WriteFile(path, defaultConfig, 0644); err != nil {
-				log.Println("Error creating config file:", err)
+				slog.Error("Failed to create config file", "error", err)
 				return c.Status(fiber.StatusInternalServerError).JSON(models.APIError{Error: "Failed to save config"})
 			}
 
 			data = defaultConfig
 		} else {
-			log.Println("Error reading config file:", err)
+			slog.Error("Failed to read config file", "error", err)
 			return c.Status(fiber.StatusInternalServerError).JSON(models.APIError{Error: "Failed to read config file"})
 		}
 	}
@@ -53,7 +53,7 @@ func UpdateConfig(c fiber.Ctx) error {
 	var cfg models.AppConfig
 
 	if err := c.Bind().Body(&cfg); err != nil {
-		log.Println("Error decoding config:", err)
+		slog.Error("Failed to decode config", "error", err)
 		return c.Status(fiber.StatusBadRequest).JSON(models.APIError{Error: "Invalid config"})
 	}
 
@@ -71,12 +71,12 @@ func UpdateConfig(c fiber.Ctx) error {
 
 	data, err := json.MarshalIndent(cfg, "", "    ")
 	if err != nil {
-		log.Println("Error encoding config:", err)
+		slog.Error("Failed to encode config", "error", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(models.APIError{Error: "Failed to encode config"})
 	}
 
 	if err := os.WriteFile(configPath(), data, 0644); err != nil {
-		log.Println("Error writing config file:", err)
+		slog.Error("Failed to write config file", "error", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(models.APIError{Error: "Failed to save config"})
 	}
 

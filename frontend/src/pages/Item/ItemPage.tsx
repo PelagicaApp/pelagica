@@ -4,19 +4,19 @@ import { useItem } from '@/hooks/api/useItem';
 import MoviePage from './MoviePage';
 import SeriesPage from './SeriesPage';
 import { Skeleton } from '@/components/ui/skeleton';
-import { memo } from 'react';
+import { Fragment, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useConfig } from '@/hooks/api/useConfig';
 import EpisodePage from './EpisodePage';
 import SeasonPage from './SeasonPage';
 import { getUserId } from '@/utils/localstorageCredentials';
 import BoxSetPage from './BoxSetPage';
+import type { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models';
+import StudioPage from './StudioPage';
 import MusicAlbumPage from './MusicAlbumPage';
 import PlaylistPage from './PlaylistPage';
 import GenrePage from './GenrePage';
-import type { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models';
 import MusicArtistPage from './MusicArtistPage';
-import StudioPage from './StudioPage';
 
 const ItemPageSkeleton = memo(() => {
     return (
@@ -70,17 +70,14 @@ const ItemPageSkeleton = memo(() => {
                                 [16, 22, 18],
                                 [20, 16, 24, 18],
                             ].map((badgeWidths, i) => (
-                                <>
-                                    <Skeleton
-                                        key={`label-${i}`}
-                                        className="h-3 w-14 rounded-md mt-1.5"
-                                    />
-                                    <div key={`badges-${i}`} className="flex flex-wrap gap-1.5">
+                                <Fragment key={i}>
+                                    <Skeleton className="h-3 w-14 rounded-md mt-1.5" />
+                                    <div className="flex flex-wrap gap-1.5">
                                         {badgeWidths.map((w, j) => (
                                             <Skeleton key={j} className={`h-6 w-${w} rounded-md`} />
                                         ))}
                                     </div>
-                                </>
+                                </Fragment>
                             ))}
                         </div>
                     </div>
@@ -96,6 +93,10 @@ const FULL_PAGE_ITEM_TYPES: BaseItemKind[] = ['Movie', 'Series', 'Episode', 'Sea
 
 const REDIRECT_ITEM_TYPES: Partial<Record<BaseItemKind, string>> = {
     Person: '/person',
+    MusicAlbum: '/music/album',
+    MusicArtist: '/music/artist',
+    Playlist: '/music/playlist',
+    Genre: '/genre',
 };
 
 const ItemPage = () => {

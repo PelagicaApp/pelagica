@@ -22,6 +22,14 @@ import { getServerUrl } from '@/utils/localstorageCredentials';
 import { useTheme } from './theme-provider';
 import { getEffectiveTheme } from '@/utils/effectiveTheme';
 import { useEffect } from 'react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
+import {
+    getLibraryCollapsibleState,
+    saveLibraryCollapsibleState,
+} from '../utils/localstorageSidebar';
+import { useState } from 'react';
+import { Button } from './ui/button';
+import { SUPPORTED_LIBRARY_COLLECTION_TYPES } from '../utils/itemTypes';
 import { DynamicIcon, type IconName } from 'lucide-react/dynamic';
 import { SidebarBrowser } from '@/components/SidebarBrowser';
 import { SidebarNavigation } from '@/components/SidebarNavigation';

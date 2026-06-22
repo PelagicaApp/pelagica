@@ -2,7 +2,7 @@ import SectionScroller from '@/components/SectionScroller';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUserViews } from '@/hooks/api/useUserViews';
 import { getPrimaryImageUrl } from '@/utils/jellyfinUrls';
-import { SUPPORTED_LIBRARY_COLLECTION_TYPES } from '@/utils/supportedLibraryCollectionTypes';
+import { SUPPORTED_LIBRARY_COLLECTION_TYPES } from '@/utils/itemTypes';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { ImageOff } from 'lucide-react';
 import { useState } from 'react';

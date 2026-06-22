@@ -1,8 +1,9 @@
 import type { ContinueWatchingDetailLine, ContinueWatchingTitleLine } from '@/hooks/api/useConfig';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 import { getDetailLineText, getTitleLineText } from './continueWatchingLines';
+import { buildPlayerUrl } from '@/utils/playerUrl';
 import { Dot, ImageOff, Play } from 'lucide-react';
 import { getPrimaryImageUrl, getThumbUrl } from '@/utils/jellyfinUrls';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -28,6 +29,7 @@ export function BaseContinueRow({
 }: BaseContinueRowProps) {
     const { t } = useTranslation('home');
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
     const handleImageError = (itemId: string) => {
@@ -106,7 +108,13 @@ export function BaseContinueRow({
                                                       role="button"
                                                       onClick={(e) => {
                                                           e.preventDefault();
-                                                          navigate(`/play/${item.Id}`);
+                                                          navigate(
+                                                              buildPlayerUrl(
+                                                                  item.Id!,
+                                                                  location.pathname +
+                                                                      location.search
+                                                              )
+                                                          );
                                                       }}
                                                   >
                                                       <Play className="w-6 h-6 text-white fill-white" />

@@ -1,7 +1,8 @@
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { useState } from 'react';
 import { Check, ChevronDown, Play } from 'lucide-react';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
+import { buildPlayerUrl } from '@/utils/playerUrl';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -30,6 +31,7 @@ const SourcePickerButton = ({
     playLabel,
     resumeLabel,
 }: SourcePickerButtonProps) => {
+    const location = useLocation();
     const [selectedSourceId, setSelectedSourceId] = useState<string | undefined>(
         mediaSources?.[0]?.Id ?? undefined
     );
@@ -41,7 +43,12 @@ const SourcePickerButton = ({
     return (
         <ButtonGroup className="relative inline-flex">
             <Button className={hasMultipleSources ? 'rounded-r-none w-min' : 'w-min'} asChild>
-                <Link to={`/play/${selectedSource?.Id ?? itemId}`}>
+                <Link
+                    to={buildPlayerUrl(
+                        selectedSource?.Id ?? itemId,
+                        location.pathname + location.search
+                    )}
+                >
                     <Play />
                     {isCurrentlyPlaying ? resumeLabel : playLabel}
                 </Link>

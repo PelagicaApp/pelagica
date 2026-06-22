@@ -4,7 +4,8 @@ import { getPrimaryImageUrl, getLogoUrl } from '@/utils/jellyfinUrls';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { ImageOff, Play } from 'lucide-react';
 import { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
+import { buildPlayerUrl } from '@/utils/playerUrl';
 import {
     Select,
     SelectContent,
@@ -39,6 +40,7 @@ interface SeriesPageProps {
 
 const SeriesPage = ({ item, config }: SeriesPageProps) => {
     const { t } = useTranslation('item');
+    const location = useLocation();
     const [selectedSeason, setSelectedSeason] = useState<string | null>(null);
     const { data: seasons, isLoading, error } = useSeasons(item.Id || '');
     const [posterFailed, setPosterFailed] = useState(false);
@@ -57,7 +59,7 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
         seasons && seasons.length > 0
             ? seasons.find((s) => s.IndexNumber === 1)?.Id || seasons[0]?.Id
             : undefined;
-    const { data: firstSeasonEpisodes } = useEpisodes(firstSeasonId);
+    const { data: firstSeasonEpisodes } = useEpisodes(item.Id || null, firstSeasonId);
 
     const episodeToContinue =
         firstSeasonEpisodes?.find(
@@ -82,7 +84,7 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
                                     <img
                                         src={getPrimaryImageUrl(
                                             item.Id || '',
-                                            undefined,
+                                            { width: 640, height: 960 },
                                             item.ImageTags?.Primary
                                         )}
                                         alt={item.Name + ' Primary'}
@@ -108,7 +110,7 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
                         {/* Title Logo / Text */}
                         {!failedLogo && item.Id ? (
                             <img
-                                src={getLogoUrl(item.Id, undefined, item.ImageTags?.Logo)}
+                                src={getLogoUrl(item.Id, { maxHeight: 150 }, item.ImageTags?.Logo)}
                                 alt={item.Name || ''}
                                 className="h-16 sm:h-24 md:h-28 max-w-[85%] object-contain object-left mb-2"
                                 onError={() => setFailedLogo(true)}
@@ -129,7 +131,12 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
                                     className="w-fit bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-4 py-2 shadow-lg hover:scale-105 active:scale-95 transition-transform duration-200 ease-out"
                                     asChild
                                 >
-                                    <Link to={`/play/${episodeToContinue.Id}`}>
+                                    <Link
+                                        to={buildPlayerUrl(
+                                            episodeToContinue.Id!,
+                                            location.pathname + location.search
+                                        )}
+                                    >
                                         <Play />
                                         {episodeToContinue.UserData?.PlaybackPositionTicks
                                             ? t('continue_episode', {
@@ -211,6 +218,7 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
                             </div>
                         }
                         seasonsLoading={isLoading}
+                        seriesId={item.Id || null}
                         seasonId={effectiveSelectedSeason}
                         episodeDisplay={config.itemPage?.episodeDisplay || 'row'}
                     />
