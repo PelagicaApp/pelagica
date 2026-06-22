@@ -32,7 +32,6 @@
   "sleepFadeDurationUnit": "Min.",
   "sleepFadeStart": "Timer starten",
   "sleepFadeStop": "Timer stoppen",
-  "sleepFadeRunning": "Timer läuft",
   "sleepFadeBack": "Zurück zu den Presets",
   "equalizerUnavailable": "Equalizer für diesen Stream nicht verfügbar. Lautstärke-Ausblendung funktioniert weiterhin.",
   "customPresets": "Eigene",

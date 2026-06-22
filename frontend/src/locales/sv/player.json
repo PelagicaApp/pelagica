@@ -32,7 +32,6 @@
   "sleepFadeDurationUnit": "min",
   "sleepFadeStart": "Starta timer",
   "sleepFadeStop": "Stoppa timer",
-  "sleepFadeRunning": "Timer aktiv",
   "sleepFadeBack": "Tillbaka till förval",
   "equalizerUnavailable": "Equalizer otillgänglig för denna ström. Volymtoning gäller fortfarande.",
   "customPresets": "Anpassade",

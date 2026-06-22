@@ -25,7 +25,6 @@
     "sleepFadeDurationUnit": "分",
     "sleepFadeStart": "タイマー開始",
     "sleepFadeStop": "タイマー停止",
-    "sleepFadeRunning": "タイマー実行中",
     "sleepFadeBack": "プリセットに戻る",
     "equalizerUnavailable": "このストリームではイコライザーを使用できません。音量フェードは引き続き適用されます。",
     "customPresets": "カスタム",

@@ -103,10 +103,6 @@ const SleepModePanel = ({
                     )}
                 </div>
             </div>
-
-            {isRunning && (
-                <p className="text-xs text-primary">{t('sleepFadeRunning')}</p>
-            )}
         </div>
     );
 };
