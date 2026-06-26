@@ -2,7 +2,12 @@ import { useTranslation } from 'react-i18next';
 import type { Option } from '@/components/ui/multi-select';
 import type { SectionItemsConfig } from '@/hooks/api/useConfig';
 import { useUserViews } from '@/hooks/api/useUserViews';
-import { StringInput, BooleanInput, SelectInput, MultiSelectInput } from './SettingsInputs';
+import {
+    ImmediateStringInput,
+    BooleanInput,
+    SelectInput,
+    MultiSelectInput,
+} from './SettingsInputs';
 
 export const ItemsConfigEditor = ({
     items,
@@ -89,7 +94,7 @@ export const ItemsConfigEditor = ({
                 onChange={(selected) => onChange({ ...current, tags: selected })}
                 allowCustom
             />
-            <StringInput
+            <ImmediateStringInput
                 label={t('items_limit')}
                 value={String(current.limit || '')}
                 onChange={(value) =>

@@ -20,7 +20,12 @@ import {
     type RecentlyAddedSection,
 } from '@/hooks/api/useConfig';
 import { useUserViews } from '@/hooks/api/useUserViews';
-import { StringInput, BooleanInput, SelectInput, MultiSelectInput } from './SettingsInputs';
+import {
+    ImmediateStringInput,
+    BooleanInput,
+    SelectInput,
+    MultiSelectInput,
+} from './SettingsInputs';
 import { ItemsConfigEditor } from './ItemsConfigEditor';
 
 const HOMESCREEN_SECTION_TYPES = [
@@ -59,7 +64,7 @@ const RecentlyAddedConfigEditor = ({
                 onChange={(selected) => onChange({ ...section, libraryIds: selected })}
                 description={t('recently_added_libraries_description')}
             />
-            <StringInput
+            <ImmediateStringInput
                 label={t('section_limit_label')}
                 value={String(section.limit || '')}
                 onChange={(value) =>
@@ -97,7 +102,7 @@ export const SectionEditor = ({
                     <DialogTitle>{t('edit_section')}</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
-                    <StringInput
+                    <ImmediateStringInput
                         label={t('section_title_label')}
                         value={editedSection.title || ''}
                         onChange={(value) =>
@@ -124,7 +129,7 @@ export const SectionEditor = ({
                         editedSection.type !== 'mediaBar' &&
                         editedSection.type !== 'items' &&
                         editedSection.type !== 'libraries' && (
-                            <StringInput
+                            <ImmediateStringInput
                                 label={t('section_limit_label')}
                                 value={
                                     'limit' in editedSection
