@@ -30,5 +30,6 @@
     "track_count_plural": "{{count}} Tracks",
     "genres": "Genres",
     "libraries": "Libraries",
-    "studios": "Studios"
+    "studios": "Studios",
+    "section_not_found": "This section could not be found."
 }

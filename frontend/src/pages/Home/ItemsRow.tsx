@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import ScrollableSectionPoster from '@/components/ScrollableSectionPoster';
 import { getPrimaryImageUrl } from '@/utils/jellyfinUrls';
+import { buildSectionItemsLink } from '@/utils/sectionItemsLink';
 
 interface ItemsRowProps {
     title?: string;
@@ -94,6 +95,7 @@ function getDetailFieldsStringForItem(
 const ItemsRow = ({ title, allLink, items, detailFields }: ItemsRowProps) => {
     const { t } = useTranslation('home');
     const { data: recentItems, isLoading } = useRowItems(items);
+    const resolvedAllLink = allLink ?? buildSectionItemsLink(title, items);
 
     const posterUrls = useMemo(() => {
         if (!recentItems) return {};
@@ -122,9 +124,9 @@ const ItemsRow = ({ title, allLink, items, detailFields }: ItemsRowProps) => {
             <SectionScroller
                 className="max-w-full"
                 title={
-                    allLink ? (
+                    resolvedAllLink ? (
                         <Link
-                            to={allLink}
+                            to={resolvedAllLink}
                             className="flex items-center gap-1 group cursor-pointer w-fit transition-colors"
                         >
                             <h2 className="text-2xl font-bold">{title}</h2>
