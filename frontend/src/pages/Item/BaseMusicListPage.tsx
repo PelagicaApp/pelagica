@@ -3,9 +3,9 @@ import { getPrimaryImageUrl } from '@/utils/jellyfinUrls';
 import { getItemUrl } from '@/utils/itemUrl';
 import { usePageBackground } from '@/hooks/usePageBackground';
 import { Link } from 'react-router';
-import { ticksToReadableMusicTime, ticksToReadableTime } from '@/utils/timeConversion';
+import { ticksToReadableTime } from '@/utils/timeConversion';
 import { Button } from '@/components/ui/button';
-import { EllipsisVertical, ImageOff, Info, ListMusic, Play } from 'lucide-react';
+import { EllipsisVertical, ImageOff, Info, Play } from 'lucide-react';
 import FavoriteButton from '@/components/FavoriteButton';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { AppConfig } from '@/hooks/api/useConfig';
@@ -17,144 +17,35 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-    DropdownMenuSub,
-    DropdownMenuSubTrigger,
-    DropdownMenuSubContent,
-    DropdownMenuCheckboxItem,
 } from '@/components/ui/dropdown-menu';
 import MediaInfoDialog from '../../components/MediaInfoDialog';
-import type { TFunction } from 'i18next';
-import { usePlaylists } from '@/hooks/api/playlist/usePlaylists';
-import { useAddToPlaylist } from '@/hooks/api/playlist/useAddToPlaylist';
-import { useRemoveFromPlaylist } from '@/hooks/api/playlist/useRemoveFromPlaylist';
-import { useCurrentUser } from '@/hooks/api/useCurrentUser';
 import { useState, useEffect, useMemo } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
-import { usePlaylistPresence } from '@/hooks/api/playlist/usePlaylistPresence';
-import { CreatePlaylistDialog } from '@/components/CreatePlaylistDialog';
 import ItemAdminButton from '@/components/ItemAdminButton';
+import MusicAlbumTrackRow from '@/components/MusicAlbumTrackRow';
+import { toPlaybackTracks } from '@/utils/musicPlaybackTrack';
 
 const MAX_ARTISTS_DISPLAYED = 5;
 
-const SongDropDown = ({ track, t }: { track: BaseItemDto; t: TFunction }) => {
-    const { data: currentUser } = useCurrentUser();
-    const {
-        data: playlists,
-        isLoading: isLoadingPlaylists,
-        refetch: refetchPlaylists,
-    } = usePlaylists(currentUser?.Id);
-    const playlistIds = useMemo(
-        () => playlists?.map((p) => p.Id!).filter(Boolean) || [],
-        [playlists]
-    );
-    const {
-        data: presence,
-        isLoading: isCheckingPlaylists,
-        refetch,
-    } = usePlaylistPresence(track.Id, playlistIds, currentUser?.Id);
-    const addToPlaylist = useAddToPlaylist();
-    const removeFromPlaylist = useRemoveFromPlaylist();
-    const queryClient = useQueryClient();
-    const [localPresence, setLocalPresence] = useState(presence || {});
-    const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({});
-
-    useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        if (presence) setLocalPresence(presence);
-    }, [presence]);
-
-    const handlePlaylistToggle = async (playlistId: string) => {
-        if (!track.Id) return;
-
-        const currentState = localPresence[playlistId]?.present || false;
-        setLoadingStates((prev) => ({ ...prev, [playlistId]: true }));
-
-        try {
-            if (currentState) {
-                const playlistItemId = localPresence[playlistId]?.playlistItemId;
-                if (playlistItemId) {
-                    await removeFromPlaylist.mutateAsync({
-                        playlistId,
-                        entryIds: [playlistItemId],
-                    });
-                    setLocalPresence((prev) => ({
-                        ...prev,
-                        [playlistId]: { present: false, playlistItemId: null },
-                    }));
+const TrackMediaInfoButton = ({ track, t }: { track: BaseItemDto; t: (key: string) => string }) => (
+    <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+            <Button variant={'outline'} size={'icon-sm'} onClick={(e) => e.stopPropagation()}>
+                <EllipsisVertical />
+            </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+            <MediaInfoDialog
+                streams={track.MediaStreams || []}
+                path={track.Path}
+                trigger={
+                    <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                        <Info /> {t('mediaInfo')}
+                    </DropdownMenuItem>
                 }
-            } else {
-                await addToPlaylist.mutateAsync({
-                    playlistId,
-                    itemIds: [track.Id],
-                    userId: currentUser?.Id,
-                });
-                setLocalPresence((prev) => ({
-                    ...prev,
-                    [playlistId]: {
-                        present: true,
-                        playlistItemId: prev[playlistId]?.playlistItemId || null,
-                    },
-                }));
-            }
-            await queryClient.invalidateQueries({ queryKey: ['playlistPresence', track.Id] });
-            refetch();
-        } catch (error) {
-            console.error('Error toggling playlist:', error);
-        } finally {
-            setLoadingStates((prev) => ({ ...prev, [playlistId]: false }));
-        }
-    };
-
-    return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant={'outline'} size={'icon-sm'} onClick={(e) => e.stopPropagation()}>
-                    <EllipsisVertical />
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-                <DropdownMenuSub>
-                    <DropdownMenuSubTrigger>
-                        <ListMusic /> {t('add_to_playlist')}
-                    </DropdownMenuSubTrigger>
-                    <DropdownMenuSubContent>
-                        {(isLoadingPlaylists || isCheckingPlaylists) && (
-                            <DropdownMenuItem disabled>Loading...</DropdownMenuItem>
-                        )}
-                        {!isLoadingPlaylists && playlists && playlists.length === 0 && (
-                            <DropdownMenuItem disabled>No playlists found</DropdownMenuItem>
-                        )}
-                        {!isCheckingPlaylists &&
-                            playlists?.map((playlist) => (
-                                <DropdownMenuCheckboxItem
-                                    key={playlist.Id}
-                                    checked={localPresence[playlist.Id!]?.present || false}
-                                    disabled={loadingStates[playlist.Id!]}
-                                    onCheckedChange={() => handlePlaylistToggle(playlist.Id!)}
-                                    onSelect={(e) => e.preventDefault()}
-                                >
-                                    {playlist.Name}
-                                </DropdownMenuCheckboxItem>
-                            ))}
-                        <CreatePlaylistDialog
-                            userId={currentUser?.Id}
-                            onSuccess={() => refetchPlaylists()}
-                        />
-                    </DropdownMenuSubContent>
-                </DropdownMenuSub>
-                <MediaInfoDialog
-                    streams={track.MediaStreams || []}
-                    path={track.Path}
-                    trigger={
-                        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                            <Info /> {t('mediaInfo')}
-                        </DropdownMenuItem>
-                    }
-                />
-            </DropdownMenuContent>
-        </DropdownMenu>
-    );
-};
+            />
+        </DropdownMenuContent>
+    </DropdownMenu>
+);
 
 interface BaseMusicListPageProps {
     item: BaseItemDto;
@@ -178,6 +69,11 @@ const BaseMusicListPage = ({
         error: albumTracksError,
     } = useAlbumTracks(item.Id);
     const [failedCover, setFailedCover] = useState(false);
+
+    const playbackTracks = useMemo(
+        () => (albumTracks ? toPlaybackTracks(albumTracks, item) : []),
+        [albumTracks, item]
+    );
 
     useEffect(() => {
         if (!showBackground) return;
@@ -216,28 +112,14 @@ const BaseMusicListPage = ({
     }
 
     const handlePlayAlbum = () => {
-        if (albumTracks && albumTracks.length > 0) {
-            const trackQueue = albumTracks.map((track) => ({
-                id: track.Id || '',
-                title: track.Name || '',
-                artist: track.ArtistItems?.[0]?.Name || item.ArtistItems?.[0]?.Name || 'Unknown',
-                albumId: item.Id || '',
-                albumName: item.Name || '',
-            }));
-            loadQueue(trackQueue, 0, true);
+        if (playbackTracks.length > 0) {
+            loadQueue(playbackTracks, 0, true);
         }
     };
 
-    const handleTrackClick = (_: BaseItemDto, index: number) => {
-        if (albumTracks && albumTracks.length > 0) {
-            const trackQueue = albumTracks.map((t) => ({
-                id: t.Id || '',
-                title: t.Name || '',
-                artist: t.ArtistItems?.[0]?.Name || item.ArtistItems?.[0]?.Name || 'Unknown',
-                albumId: item.Id || '',
-                albumName: item.Name || '',
-            }));
-            loadQueue(trackQueue, index, true);
+    const handleTrackPlay = (index: number) => {
+        if (playbackTracks.length > 0) {
+            loadQueue(playbackTracks, index, true);
         }
     };
 
@@ -298,7 +180,6 @@ const BaseMusicListPage = ({
                             </div>
                         </div>
                     </div>
-                    {/* <p className="text-sm text-muted-foreground line-clamp-2">{item.Overview}</p> */}
                     <div className="flex flex-wrap gap-2">
                         <Button onClick={handlePlayAlbum}>
                             <Play />
@@ -347,47 +228,16 @@ const BaseMusicListPage = ({
                                     if (!track.IndexNumber) return null;
 
                                     return (
-                                        <div
+                                        <MusicAlbumTrackRow
                                             key={track.Id}
-                                            className="flex items-center p-2 px-8 hover:bg-accent/70 rounded-md group cursor-pointer"
-                                            onClick={() => handleTrackClick(track, index)}
-                                        >
-                                            {track.IndexNumber !== undefined && (
-                                                <span className="text-sm text-muted-foreground mr-8 font-mono w-4">
-                                                    <span className="group-hover:hidden">
-                                                        {track.IndexNumber}
-                                                    </span>
-                                                    <span className="hidden group-hover:inline-block">
-                                                        ▶︎
-                                                    </span>
-                                                </span>
-                                            )}
-                                            <div className="flex flex-col">
-                                                <span>{track.Name}</span>
-                                                {track.ArtistItems &&
-                                                    track.ArtistItems.length > 0 && (
-                                                        <span className="text-sm text-muted-foreground">
-                                                            {track.ArtistItems.map(
-                                                                (artist) => artist.Name
-                                                            ).join(', ')}
-                                                        </span>
-                                                    )}
-                                            </div>
-                                            {track.RunTimeTicks !== undefined &&
-                                                track.RunTimeTicks !== null && (
-                                                    <span className="text-sm text-muted-foreground ml-auto">
-                                                        {ticksToReadableMusicTime(
-                                                            track.RunTimeTicks
-                                                        )}
-                                                    </span>
-                                                )}
-                                            <div
-                                                className="ml-4"
-                                                onClick={(e) => e.stopPropagation()}
-                                            >
-                                                <SongDropDown track={track} t={t} />
-                                            </div>
-                                        </div>
+                                            track={track}
+                                            index={index}
+                                            contextTracks={playbackTracks}
+                                            onPlay={() => handleTrackPlay(index)}
+                                            trailing={
+                                                <TrackMediaInfoButton track={track} t={t} />
+                                            }
+                                        />
                                     );
                                 })}
                             </div>

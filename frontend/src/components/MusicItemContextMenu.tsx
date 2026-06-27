@@ -174,3 +174,28 @@ export function MusicAlbumContextMenuWrapper({
         </MusicItemContextMenu>
     );
 }
+
+export function MusicSongContextMenuWrapper({
+    item,
+    contextTracks,
+    startIndex = 0,
+    children,
+}: {
+    item?: BaseItemDto;
+    contextTracks?: MusicPlaybackTrack[];
+    startIndex?: number;
+    children: React.ReactNode;
+}) {
+    if (item?.Type !== 'Audio' || !item) return children;
+
+    return (
+        <MusicItemContextMenu
+            item={item}
+            kind="song"
+            contextTracks={contextTracks}
+            startIndex={startIndex}
+        >
+            {children}
+        </MusicItemContextMenu>
+    );
+}

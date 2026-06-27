@@ -1,12 +1,13 @@
-import { forwardRef } from 'react';
+import { forwardRef, type ComponentPropsWithoutRef } from 'react';
 import { Play } from 'lucide-react';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { getPrimaryImageUrl } from '@/utils/jellyfinUrls';
 import { ticksToReadableMusicTime } from '@/utils/timeConversion';
 import type { MusicPlaybackTrack } from '@/context/MusicPlaybackContext';
 import MusicItemContextMenu from '@/components/MusicItemContextMenu';
+import { cn } from '@/lib/utils';
 
-interface MusicSongRowProps {
+export interface MusicSongRowProps {
     song: BaseItemDto;
     onPlay: () => void;
     showAlbum?: boolean;
@@ -14,14 +15,18 @@ interface MusicSongRowProps {
     startIndex: number;
 }
 
-const MusicSongRowInner = forwardRef<
+const MusicSongRowTrigger = forwardRef<
     HTMLDivElement,
-    Omit<MusicSongRowProps, 'contextTracks' | 'startIndex'>
->(({ song, onPlay, showAlbum = false }, ref) => (
+    Omit<MusicSongRowProps, 'contextTracks' | 'startIndex'> & ComponentPropsWithoutRef<'div'>
+>(({ song, onPlay, showAlbum = false, className, ...props }, ref) => (
     <div
         ref={ref}
-        className="flex items-center gap-3 px-3 py-2 hover:bg-accent/50 rounded-md cursor-pointer group transition-colors"
+        className={cn(
+            'flex items-center gap-3 px-3 py-2 hover:bg-accent/50 rounded-md cursor-pointer group transition-colors',
+            className
+        )}
         onClick={onPlay}
+        {...props}
     >
         <div className="w-10 h-10 relative shrink-0">
             <img
@@ -56,7 +61,7 @@ const MusicSongRowInner = forwardRef<
         )}
     </div>
 ));
-MusicSongRowInner.displayName = 'MusicSongRowInner';
+MusicSongRowTrigger.displayName = 'MusicSongRowTrigger';
 
 const MusicSongRow = ({
     song,
@@ -64,14 +69,22 @@ const MusicSongRow = ({
     showAlbum,
     contextTracks,
     startIndex,
-}: MusicSongRowProps) => (
+    className,
+    ...props
+}: MusicSongRowProps & ComponentPropsWithoutRef<'div'>) => (
     <MusicItemContextMenu
         item={song}
         kind="song"
         contextTracks={contextTracks}
         startIndex={startIndex}
     >
-        <MusicSongRowInner song={song} onPlay={onPlay} showAlbum={showAlbum} />
+        <MusicSongRowTrigger
+            song={song}
+            onPlay={onPlay}
+            showAlbum={showAlbum}
+            className={className}
+            {...props}
+        />
     </MusicItemContextMenu>
 );
 
