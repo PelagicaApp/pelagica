@@ -4,7 +4,6 @@
     "recently_added_albums": "Kürzlich hinzugefügte Alben",
     "recently_played": "Kürzlich abgespielt",
     "frequently_played": "Häufig abgespielt",
-    "albums": "Alben",
     "artists": "Interpreten",
     "songs": "Lieder",
     "playlists": "Wiedergabelisten",
@@ -20,7 +19,6 @@
     "no_albums_found": "Keine Alben gefunden",
     "no_artists_found": "Keine Interpreten gefunden",
     "no_playlists_found": "Keine Wiedergabelisten gefunden",
-    "no_results_found": "Keine Ergebnisse gefunden",
     "untitled": "Unbenannt",
     "tracks_count": "{{count}} Titel",
     "back_to_music": "Zurück zur Musik"

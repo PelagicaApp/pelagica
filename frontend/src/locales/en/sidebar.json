@@ -3,8 +3,6 @@
     "home": "Home",
     "library": "Library",
     "music": "Music",
-    "search": "Search",
-    "language": "Language",
     "theme": "Theme",
     "light": "Light",
     "dark": "Dark",
@@ -16,7 +14,6 @@
     "subtitle_language_preference": "Subtitle Language Preference",
     "select_language": "Select language",
     "pelagica_config": "Pelagica Config",
-    "quick_connect": "Quick Connect",
     "authorize_quick_connect": "Authorize Quick Connect",
     "enter_quick_connect_code": "Enter the 6-digit code displayed on the device you want to authorize.",
     "quick_connect_authorized": "Device authorized successfully!",
@@ -24,6 +21,5 @@
     "theme_preference": "Theme Preference",
     "select_theme": "Select theme",
     "server_default": "Server Default",
-    "pelagica_default": "Pelagica Default",
-    "category_links": "Links"
+    "pelagica_default": "Pelagica Default"
 }

@@ -4,7 +4,6 @@
     "recently_added_albums": "Recently Added Albums",
     "recently_played": "Recently Played",
     "frequently_played": "Frequently Played",
-    "albums": "Albums",
     "artists": "Artists",
     "songs": "Songs",
     "playlists": "Playlists",
@@ -20,7 +19,6 @@
     "no_albums_found": "No albums found",
     "no_artists_found": "No artists found",
     "no_playlists_found": "No playlists found",
-    "no_results_found": "No results found",
     "untitled": "Untitled",
     "tracks_count": "{{count}} tracks",
     "back_to_music": "Back to Music"

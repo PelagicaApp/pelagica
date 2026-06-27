@@ -1,4 +1,20 @@
 {
     "previous": "前へ",
-    "next": "次へ"
+    "next": "次へ",
+    "loading": "読み込み中...",
+    "search": "検索",
+    "yes": "はい",
+    "no": "いいえ",
+    "genres": "ジャンル",
+    "studios": "スタジオ",
+    "resume": "再開",
+    "ends_at": "{{date}} に終了",
+    "season_count": "{{count}} シーズン",
+    "season_count_plural": "{{count}} シーズン",
+    "episode_count": "{{count}} エピソード",
+    "episode_count_plural": "{{count}} エピソード",
+    "no_title": "タイトルなし",
+    "album": "アルバム",
+    "subtitles": "字幕",
+    "language": "言語"
 }

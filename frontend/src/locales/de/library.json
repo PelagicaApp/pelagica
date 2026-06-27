@@ -7,7 +7,5 @@
     "sort_premiere_date": "Premiere Datum",
     "sort_community_rating": "Community Bewertung",
     "sort_critic_rating": "Kritiker Bewertung",
-    "sort_runtime": "Laufzeit",
-    "ascending": "Aufsteigend",
-    "descending": "Absteigend"
+    "sort_runtime": "Laufzeit"
 }

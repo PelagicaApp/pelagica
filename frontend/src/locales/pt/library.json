@@ -1,13 +1,11 @@
 {
-  "title": "Biblioteca",
-  "no_items_title": "Nenhum item encontrado",
-  "no_items_description": "Não há itens nesta biblioteca.",
-  "sort_name": "Título",
-  "sort_date_added": "Adicionado em",
-  "sort_premiere_date": "Lançado em",
-  "sort_community_rating": "Avaliação da Comunidade",
-  "sort_critic_rating": "Nota da Crítica",
-  "sort_runtime": "Duração",
-  "ascending": "Crescente",
-  "descending": "Decrescente"
+    "title": "Biblioteca",
+    "no_items_title": "Nenhum item encontrado",
+    "no_items_description": "Não há itens nesta biblioteca.",
+    "sort_name": "Título",
+    "sort_date_added": "Adicionado em",
+    "sort_premiere_date": "Lançado em",
+    "sort_community_rating": "Avaliação da Comunidade",
+    "sort_critic_rating": "Nota da Crítica",
+    "sort_runtime": "Duração"
 }

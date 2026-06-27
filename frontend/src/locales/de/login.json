@@ -17,7 +17,6 @@
     "could_not_find_server": "Es konnte kein Jellyfin-Server unter dieser Adresse gefunden werden.",
     "enter_at_least_username": "Bitte gib mindestens deinen Benutzernamen ein.",
     "login_failed": "Anmeldung fehlgeschlagen. Bitte überprüfe deine Anmeldedaten und versuche es erneut.",
-    "quick_connect": "Schnellverbindung",
     "back_to_login": "Zurück zur Anmeldung",
     "quick_connect_description": "Verwende Schnellverbindung, um dich ohne Passwort anzumelden.",
     "quick_connect_code": "Schnellverbindungscode",

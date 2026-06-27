@@ -1,13 +1,11 @@
 {
-  "title": "Bibliotek",
-  "no_items_title": "Inga objekt hittades",
-  "no_items_description": "Det finns inga objekt i det här biblioteket.",
-  "sort_name": "Namn",
-  "sort_date_added": "Datum tillagt",
-  "sort_premiere_date": "Premiärdatum",
-  "sort_community_rating": "Gemenskapsbetyg",
-  "sort_critic_rating": "Kritikerbetyg",
-  "sort_runtime": "Speltid",
-  "ascending": "Stigande",
-  "descending": "Fallande"
+    "title": "Bibliotek",
+    "no_items_title": "Inga objekt hittades",
+    "no_items_description": "Det finns inga objekt i det här biblioteket.",
+    "sort_name": "Namn",
+    "sort_date_added": "Datum tillagt",
+    "sort_premiere_date": "Premiärdatum",
+    "sort_community_rating": "Gemenskapsbetyg",
+    "sort_critic_rating": "Kritikerbetyg",
+    "sort_runtime": "Speltid"
 }

@@ -31,6 +31,7 @@ i18n.use(LanguageDetector)
         fallbackLng: 'en',
         ns: nsList,
         defaultNS: 'common',
+        fallbackNS: 'common',
         interpolation: { escapeValue: false, formatSeparator: ',' },
         react: {
             useSuspense: false,
