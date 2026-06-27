@@ -226,10 +226,7 @@ export const MusicPlaybackProvider = ({ children }: PropsWithChildren) => {
 
     const prevSleepFadeDurationMsRef = useRef(sleepFadeDurationMs);
     useEffect(() => {
-        if (
-            sleepFadeEnabled &&
-            prevSleepFadeDurationMsRef.current !== sleepFadeDurationMs
-        ) {
+        if (sleepFadeEnabled && prevSleepFadeDurationMsRef.current !== sleepFadeDurationMs) {
             setSleepFadeStartedAt(Date.now());
         }
         prevSleepFadeDurationMsRef.current = sleepFadeDurationMs;

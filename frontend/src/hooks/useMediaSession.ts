@@ -59,9 +59,7 @@ export const useMediaSession = ({
         ms.setActionHandler('seekforward', (e) => {
             const offset = e.seekOffset ?? 10;
             const maxTicks =
-                durationTicks > 0
-                    ? durationTicks
-                    : currentTimeTicks + offset * TICKS_PER_SECOND;
+                durationTicks > 0 ? durationTicks : currentTimeTicks + offset * TICKS_PER_SECOND;
             seek(Math.min(maxTicks, currentTimeTicks + offset * TICKS_PER_SECOND));
         });
 

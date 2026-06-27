@@ -35,16 +35,9 @@ const SleepModePanel = ({
     onBack,
 }: SleepModePanelProps) => {
     const { t } = useTranslation('player');
-    const durationMs = sleepFadeMinutesToMs(
-        isRunning ? activeDurationMinutes : durationMinutes
-    );
-    const remainingMs = useSleepFadeRemainingMs(
-        sleepFadeStartedAt,
-        durationMs,
-        isRunning
-    );
-    const remainingLabel =
-        remainingMs !== null ? formatSleepFadeRemaining(remainingMs) : null;
+    const durationMs = sleepFadeMinutesToMs(isRunning ? activeDurationMinutes : durationMinutes);
+    const remainingMs = useSleepFadeRemainingMs(sleepFadeStartedAt, durationMs, isRunning);
+    const remainingLabel = remainingMs !== null ? formatSleepFadeRemaining(remainingMs) : null;
     const canStart = isPlaying;
 
     return (
@@ -136,7 +129,9 @@ const SleepModePanel = ({
                     )}
                 </div>
                 {!isRunning && !canStart && (
-                    <p className="text-xs text-muted-foreground">{t('sleepFadeStartRequiresPlayback')}</p>
+                    <p className="text-xs text-muted-foreground">
+                        {t('sleepFadeStartRequiresPlayback')}
+                    </p>
                 )}
             </div>
         </div>
