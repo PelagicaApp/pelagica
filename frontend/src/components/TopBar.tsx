@@ -89,6 +89,7 @@ import {
 } from '@/utils/localTheme';
 import { useThemes } from '@/hooks/api/themes/useThemes';
 import { useQueryClient } from '@tanstack/react-query';
+import { SUPPORTED_LANGUAGES } from '../utils/supportedLanguages';
 
 const AuthorizeQuickConnectDialog = ({
     onAuthorize,
@@ -383,23 +384,14 @@ const UserMenu = () => {
                     </DropdownMenuSubTrigger>
                     <DropdownMenuPortal>
                         <DropdownMenuSubContent>
-                            {[
-                                { code: 'en', flag: 'us', label: 'English' },
-                                { code: 'de', flag: 'de', label: 'Deutsch' },
-                                { code: 'sv', flag: 'se', label: 'Svenska' },
-                                { code: 'fr', flag: 'fr', label: 'Français' },
-                                { code: 'pt', flag: 'pt', label: 'Português' },
-                                { code: 'ja', flag: 'jp', label: '日本語' },
-                            ].map(({ code, flag, label }) => (
+                            {SUPPORTED_LANGUAGES.map(({ code, Flag, label }) => (
                                 <DropdownMenuItem
                                     key={code}
                                     onClick={() => i18n.changeLanguage(code)}
                                 >
-                                    <img
-                                        src={`https://flagcdn.com/${flag}.svg`}
-                                        className="inline h-4 w-6 object-cover"
-                                        alt={flag}
-                                    />
+                                    <span className="inline-block w-6 h-4 shrink-0 overflow-hidden">
+                                        <Flag style={{ width: '100%', height: '100%' }} />
+                                    </span>
                                     {label}
                                 </DropdownMenuItem>
                             ))}
