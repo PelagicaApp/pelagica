@@ -1,0 +1,1 @@
+import{t as e}from"./createLucideIcon-C8bdPDXm.js";var t=[[`path`,{d:`M12 7.5a4.5 4.5 0 1 1 5 4.5`,key:`k987hv`}],[`path`,{d:`M7 12a4.5 4.5 0 1 1 5-4.5V21`,key:`mjup0w`}]],n=e(`zodiac-aries`,t);export{t as __iconNode,n as default};

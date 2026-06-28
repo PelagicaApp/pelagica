@@ -1,0 +1,1 @@
+import{t as e}from"./createLucideIcon-C8bdPDXm.js";var t=[[`path`,{d:`M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.7.7 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z`,key:`m0kn7k`}],[`path`,{d:`m9 11 2 2 4-4`,key:`kz4plv`}]],n=e(`message-square-check`,t);export{t as __iconNode,n as default};

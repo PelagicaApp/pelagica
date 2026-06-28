@@ -1,0 +1,1 @@
+import{t as e}from"./createLucideIcon-C8bdPDXm.js";var t=[[`path`,{d:`M15 3v18`,key:`14nvp0`}],[`path`,{d:`M3 12h18`,key:`1i2n21`}],[`path`,{d:`M9 3v18`,key:`fh3hqa`}],[`rect`,{x:`3`,y:`3`,width:`18`,height:`18`,rx:`2`,key:`h1oib`}]],n=e(`grid-3x2`,t);export{t as __iconNode,n as default};

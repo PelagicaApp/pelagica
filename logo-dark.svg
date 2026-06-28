@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 1081 1080" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+    <g transform="matrix(1,0,0,1,-1299,-7791)">
+        <g id="Pelagica-logo-Black" serif:id="Pelagica logo Black" transform="matrix(1.023539,0,0,1.023539,1299.783864,7791)">
+            <rect x="0" y="0" width="1055.163" height="1055.163" style="fill:none;"/>
+            <g transform="matrix(0.858675,-0.512521,0.512521,0.858675,-195.83597,344.95732)">
+                <g transform="matrix(0.588066,0,0,0.588066,207.994149,59.045083)">
+                    <path d="M543.455,0C843.396,0 1086.91,243.514 1086.91,543.455C1086.91,843.396 831.123,611.031 531.182,611.031C231.241,611.031 0,843.396 0,543.455C0,243.514 243.514,0 543.455,0Z" style="fill:rgb(103,103,103);stroke:rgb(82,82,82);stroke-width:83.07px;"/>
+                </g>
+                <g transform="matrix(0.93933,0,0,0.93933,10.623391,59.473426)">
+                    <path d="M475.233,489.798C475.233,489.798 426.945,615.921 486.246,713.344C540.729,802.853 490.482,887.01 475.233,959.866" style="fill:none;stroke:rgb(82,82,82);stroke-width:52.01px;"/>
+                </g>
+                <g transform="matrix(0.93933,0,0,0.93933,131.578376,45.945565)">
+                    <path d="M475.233,489.798C475.233,489.798 426.945,615.921 486.246,713.344C540.729,802.853 490.482,887.01 475.233,959.866" style="fill:none;stroke:rgb(82,82,82);stroke-width:52.01px;"/>
+                </g>
+                <g transform="matrix(0.93933,0,0,0.93933,259.69517,82.550364)">
+                    <path d="M475.233,489.798C475.233,489.798 426.945,615.921 486.246,713.344C540.729,802.853 490.482,887.01 475.233,959.866" style="fill:none;stroke:rgb(82,82,82);stroke-width:52.01px;"/>
+                </g>
+                <g transform="matrix(0.93933,0,0,0.93933,-113.514621,94.486711)">
+                    <path d="M475.233,489.798C475.233,489.798 426.945,615.921 486.246,713.344C540.729,802.853 490.482,887.01 475.233,959.866" style="fill:none;stroke:rgb(82,82,82);stroke-width:52.01px;"/>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,82 @@
+{
+    "$schema": "./config.schema.json",
+    "itemPage": {
+        "episodeDisplay": "grid",
+        "detailBadges": ["ReleaseYear", "CommunityRating", "AgeRating", "EpisodeNumber"],
+        "favoriteButton": ["Movie", "Series"],
+        "showWatchlistButton": true
+    },
+    "homeScreenSections": [
+        {
+            "type": "mediaBar",
+            "size": "medium",
+            "items": {
+                "sortBy": ["Random"],
+                "types": ["Movie", "Series"]
+            },
+            "showFavoriteButton": true,
+            "showWatchlistButton": true
+        },
+        {
+            "type": "continueWatching",
+            "titleLine": "ItemTitleWithEpisodeInfo",
+            "detailLine": ["TimeRemaining"]
+        },
+        {
+            "type": "items",
+            "title": "Favorites",
+            "items": {
+                "isFavorite": true,
+                "sortBy": ["DatePlayed"],
+                "sortOrder": "Descending",
+                "limit": 10
+            }
+        },
+        {
+            "type": "items",
+            "title": "Watchlist",
+            "items": {
+                "isInKefinTweaksWatchlist": true,
+                "sortBy": ["DatePlayed"],
+                "sortOrder": "Descending",
+                "limit": 10
+            }
+        },
+        {
+            "type": "items",
+            "title": "Top Rated Anime",
+            "items": {
+                "sortBy": ["CommunityRating"],
+                "sortOrder": "Descending",
+                "limit": 10,
+                "tags": ["Anime", "anime"]
+            },
+            "detailFields": ["CommunityRating"]
+        },
+        {
+            "type": "items",
+            "title": "Recently Released Anime",
+            "items": {
+                "sortBy": ["PremiereDate"],
+                "sortOrder": "Descending",
+                "limit": 10,
+                "tags": ["Anime", "anime"]
+            },
+            "detailFields": ["ReleaseYearAndMonth"]
+        },
+        {
+            "type": "items",
+            "title": "Recently Released Movies",
+            "items": {
+                "sortBy": ["PremiereDate"],
+                "sortOrder": "Descending",
+                "limit": 10,
+                "types": ["Movie"]
+            },
+            "detailFields": ["ReleaseYearAndMonth"]
+        },
+        {
+            "type": "recentlyAdded"
+        }
+    ]
+}

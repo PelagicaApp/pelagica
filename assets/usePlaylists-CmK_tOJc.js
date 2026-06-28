@@ -1,0 +1,1 @@
+import{A as e,it as t}from"./jellyfinUrls-CuvMMY53.js";import{t as n}from"./getApi-kZxYavaA.js";import{z as r}from"./index-QhcgWwMH.js";function i(i){return t({queryKey:[`playlists`,i],queryFn:async()=>(await r(n()).getItems({userId:i,includeItemTypes:[`Playlist`],sortBy:[`SortName`],sortOrder:[`Ascending`],recursive:!0})).data.Items||[],enabled:!!i,...e()})}export{i as t};
