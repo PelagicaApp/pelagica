@@ -8,7 +8,7 @@ import type { AppConfig } from '@/hooks/api/useConfig';
 import { getServerUrl } from '@/utils/localstorageCredentials';
 import { getAuthorizationHeader } from '@/api/getApi';
 import FileDropInput from '@/components/FileDropInput';
-import { StringInput } from '../components/SettingsInputs';
+import { StringInput, BooleanInput } from '../components/SettingsInputs';
 
 export const BrandingTab = ({
     config,
@@ -82,6 +82,13 @@ export const BrandingTab = ({
                 onChange={(value) => saveConfig((prev) => ({ ...prev, serverName: value }))}
                 placeholder={t('server_name_placeholder')}
                 description={t('server_name_description')}
+            />
+            <BooleanInput
+                label={t('show_logo_in_top_bar_label')}
+                checked={config.showLogoInTopBar !== false}
+                onChange={(checked) =>
+                    saveConfig((prev) => ({ ...prev, showLogoInTopBar: checked }))
+                }
             />
             <StringInput
                 label={t('logo_light_url_label')}

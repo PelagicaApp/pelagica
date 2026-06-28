@@ -21,6 +21,7 @@
     "streamystats_url_placeholder": "http://your-streamystats-server",
     "streamystats_description": "Um den Streamystats-Empfehlungsabschnitt auf dem Startbildschirm zu aktivieren, musst du die URL deines Streamystats-Servers angeben und die entsprechenden Startbildschirmabschnitte hinzufügen.",
     "show_streamystats_button_label": "Streamystats-Schaltfläche anzeigen",
+    "show_logo_in_top_bar_label": "Logo in der Titelleiste anzeigen",
     "episode_display_label": "Episodenanzeigestil",
     "episode_display_row": "Reihe",
     "episode_display_grid": "Gitter",

@@ -21,6 +21,7 @@
     "streamystats_url_placeholder": "http://your-streamystats-server",
     "streamystats_description": "To enable the streamystats recommendation rows on the home screen, you need to provide the URL of your Streamystats server and add the respective home screen sections.",
     "show_streamystats_button_label": "Show Streamystats Button",
+    "show_logo_in_top_bar_label": "Show Logo in Top Bar",
     "episode_display_label": "Episode Display Style",
     "episode_display_row": "Row",
     "episode_display_grid": "Grid",

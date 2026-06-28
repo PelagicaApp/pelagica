@@ -236,6 +236,8 @@ export interface AppConfig {
     logoDarkUrl?: string;
     /** Links to display in the UI */
     links?: ConfigLink[];
+    /** Whether to show the logo in the top bar */
+    showLogoInTopBar?: boolean;
 }
 
 const DEFAULT_ITEM_PAGE_SETTINGS: ItemPageSettings = {
@@ -253,6 +255,7 @@ const DEFAULT_CONFIG: AppConfig = {
     watchedStateBadgeGenre: false,
     watchedStateBadgeSearch: false,
     links: [],
+    showLogoInTopBar: true,
     serverName: 'Pelagica',
     logoLightUrl: '',
     logoDarkUrl: '',

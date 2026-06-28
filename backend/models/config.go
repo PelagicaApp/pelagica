@@ -15,6 +15,7 @@ type AppConfig struct {
 	WatchedStateBadgeSearch     *bool               `json:"watchedStateBadgeSearch,omitempty"`
 	ServerThemeId               string              `json:"serverThemeId,omitempty"`
 	ServerName                  string              `json:"serverName,omitempty"`
+	ShowLogoInTopBar             *bool               `json:"showLogoInTopBar,omitempty"`
 	Links                       []ConfigLink        `json:"links,omitempty"`
 }
 
