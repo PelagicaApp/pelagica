@@ -161,6 +161,8 @@ const HomePage = () => {
                                             ? section.detailFields
                                             : ['ReleaseYear']
                                     }
+                                    useThumbImage={section.useThumbImage}
+                                    autoPlayTrailers={section.autoPlayTrailers}
                                 />
                             );
 

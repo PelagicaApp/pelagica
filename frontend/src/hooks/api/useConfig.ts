@@ -86,6 +86,10 @@ export interface ItemsSection extends BaseHomeScreenSection {
     items?: SectionItemsConfig;
     /** Additional detail fields to include for each item */
     detailFields?: DetailField[];
+    /** Whether to use landscape thumb images instead of portrait posters */
+    useThumbImage?: boolean;
+    /** Whether to play trailers automatically on hover (requires useThumbImage) */
+    autoPlayTrailers?: boolean;
 }
 
 export const CONTINUE_WATCHING_TITLE_LINES = [
@@ -333,6 +337,8 @@ const DEFAULT_CONFIG: AppConfig = {
                 types: ['Movie'],
             },
             detailFields: ['ReleaseYearAndMonth'],
+            useThumbImage: true,
+            autoPlayTrailers: true,
         },
         {
             type: 'recentlyAdded',

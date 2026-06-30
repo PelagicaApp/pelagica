@@ -328,6 +328,31 @@ export const SectionEditor = ({
                                     } as any)
                                 }
                             />
+                            <BooleanInput
+                                label={t('use_thumb_image')}
+                                checked={(editedSection as any).useThumbImage || false}
+                                onChange={(value) =>
+                                    setEditedSection({
+                                        ...editedSection,
+                                        useThumbImage: value,
+                                        autoPlayTrailers: value
+                                            ? (editedSection as any).autoPlayTrailers
+                                            : false,
+                                    })
+                                }
+                            />
+                            {(editedSection as any).useThumbImage && (
+                                <BooleanInput
+                                    label={t('autoplay_trailers')}
+                                    checked={(editedSection as any).autoPlayTrailers || false}
+                                    onChange={(value) =>
+                                        setEditedSection({
+                                            ...editedSection,
+                                            autoPlayTrailers: value,
+                                        })
+                                    }
+                                />
+                            )}
                         </>
                     )}
                 </div>

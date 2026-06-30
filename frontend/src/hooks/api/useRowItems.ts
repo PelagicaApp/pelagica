@@ -27,6 +27,7 @@ export function useRowItems(items?: SectionItemsConfig) {
                 limit: items?.limit || 10,
                 recursive: true,
                 includeItemTypes: sectionTypes,
+                fields: ['LocalTrailerCount'],
                 genres: items?.genres,
                 tags: items?.tags,
                 isFavorite: items?.isFavorite ?? undefined,
