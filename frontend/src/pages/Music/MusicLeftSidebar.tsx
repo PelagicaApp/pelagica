@@ -1,11 +1,13 @@
 import { Link } from 'react-router';
-import { Heart, ListMusic, Mic2, Disc3, Music } from 'lucide-react';
+import { Heart, ListMusic, Mic2, Disc3 } from 'lucide-react';
 import { getPrimaryImageUrl } from '@/utils/jellyfinUrls';
 import { getItemUrl } from '@/utils/itemUrl';
 import { usePlaylists } from '@/hooks/api/playlist/usePlaylists';
 import { useCurrentUser } from '@/hooks/api/useCurrentUser';
 import { useFavoriteArtists, useFavoriteAlbums, useFavoriteSongs } from '@/hooks/api/useMusicItems';
 import { useMusicPlayback } from '@/hooks/useMusicPlayback';
+import MusicSongRow from '@/components/MusicSongRow';
+import { toPlaybackTrack } from '@/utils/musicPlaybackTrack';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslation } from 'react-i18next';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
@@ -79,32 +81,14 @@ const SidebarItem = ({
 
 const FavoriteSongItem = ({ song }: { song: BaseItemDto }) => {
     const { loadQueue } = useMusicPlayback();
+    const contextTracks = [toPlaybackTrack(song)];
 
     return (
-        <SidebarItem
-            icon={<Music className="w-4 h-4 text-muted-foreground" />}
-            imageUrl={
-                song.AlbumId
-                    ? getPrimaryImageUrl(song.AlbumId, { width: 64, height: 64 })
-                    : undefined
-            }
-            name={song.Name || 'Unknown'}
-            subtitle={song.ArtistItems?.[0]?.Name || undefined}
-            onClick={() => {
-                loadQueue(
-                    [
-                        {
-                            id: song.Id || '',
-                            title: song.Name || '',
-                            artist: song.ArtistItems?.[0]?.Name || 'Unknown',
-                            albumId: song.AlbumId || '',
-                            albumName: song.Album || '',
-                        },
-                    ],
-                    0,
-                    true
-                );
-            }}
+        <MusicSongRow
+            song={song}
+            contextTracks={contextTracks}
+            startIndex={0}
+            onPlay={() => loadQueue(contextTracks, 0, true)}
         />
     );
 };

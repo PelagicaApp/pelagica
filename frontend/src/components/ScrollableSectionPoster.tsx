@@ -5,8 +5,9 @@ import { getPrimaryImageUrl, type ImageSize } from '@/utils/jellyfinUrls';
 import { getItemUrl } from '@/utils/itemUrl';
 import { useConfig } from '@/hooks/api/useConfig';
 import WatchedStateBadge from './WatchedStateBadge';
+import MusicItemContextMenu from '@/components/MusicItemContextMenu';
+import { useState, type ReactNode } from 'react';
 import PosterTrailerVideo from './PosterTrailerVideo';
-import { useState } from 'react';
 import { Eye, ImageOff, Play } from 'lucide-react';
 
 interface ScrollableSectionPosterProps {
@@ -94,8 +95,13 @@ const ScrollableSectionPoster = ({
     const playIconClass =
         item?.Type === 'Photo' ? 'w-5 h-5 text-white' : 'w-5 h-5 text-white fill-white';
 
+    const wrapWithMenu = (content: ReactNode) => {
+        if (!item) return content;
+        return <MusicItemContextMenu item={item}>{content}</MusicItemContextMenu>;
+    };
+
     if (posterFailed) {
-        return (
+        return wrapWithMenu(
             <Link to={linkTo} key={id} className={className}>
                 <div
                     className={`relative overflow-hidden ${roundedClass} group ${posterClasses} bg-muted flex items-center justify-center`}
@@ -114,7 +120,7 @@ const ScrollableSectionPoster = ({
         );
     }
 
-    return (
+    return wrapWithMenu(
         <Link to={linkTo} key={id} className={className}>
             <div
                 className={`relative overflow-hidden ${roundedClass} group ${posterClasses}`}

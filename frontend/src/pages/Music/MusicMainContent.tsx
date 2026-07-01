@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router';
-import { Search, Play, X } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getPrimaryImageUrl } from '@/utils/jellyfinUrls';
 import { renderItemFallbackIcon } from '@/utils/itemFallbackIcon';
 import { getItemUrl } from '@/utils/itemUrl';
-import { ticksToReadableMusicTime } from '@/utils/timeConversion';
 import { useMusicPlayback } from '@/hooks/useMusicPlayback';
 import { useTranslation } from 'react-i18next';
 import {
@@ -21,55 +20,10 @@ import {
 import { usePlaylists } from '@/hooks/api/playlist/usePlaylists';
 import { useCurrentUser } from '@/hooks/api/useCurrentUser';
 import SectionScroller from '@/components/SectionScroller';
+import MusicAlbumCard from '@/components/MusicAlbumCard';
+import MusicSongRow from '@/components/MusicSongRow';
+import { toPlaybackTracks } from '@/utils/musicPlaybackTrack';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
-
-const SongRow = ({
-    song,
-    onPlay,
-    showAlbum = false,
-}: {
-    song: BaseItemDto;
-    index: number;
-    onPlay: () => void;
-    showAlbum?: boolean;
-}) => (
-    <div
-        className="flex items-center gap-3 px-3 py-2 hover:bg-accent/50 rounded-md cursor-pointer group transition-colors"
-        onClick={onPlay}
-    >
-        <div className="w-10 h-10 relative shrink-0">
-            <img
-                src={getPrimaryImageUrl(song.AlbumId || song.Id || '', {
-                    width: 80,
-                    height: 80,
-                })}
-                alt={song.Name || ''}
-                className="w-10 h-10 rounded object-cover"
-                loading="lazy"
-            />
-            <div className="absolute inset-0 bg-black/50 rounded flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                <Play className="w-4 h-4 text-white" />
-            </div>
-        </div>
-        <div className="flex flex-col min-w-0 flex-1">
-            <span className="text-sm truncate">{song.Name}</span>
-            <span className="text-xs text-muted-foreground truncate">
-                {song.ArtistItems?.map((a) => a.Name).join(', ') || 'Unknown'}
-                {showAlbum && song.Album && ` • ${song.Album}`}
-            </span>
-        </div>
-        {song.UserData?.PlayCount !== undefined && song.UserData.PlayCount > 0 && (
-            <span className="text-xs text-muted-foreground shrink-0">
-                {song.UserData.PlayCount}x
-            </span>
-        )}
-        {song.RunTimeTicks && (
-            <span className="text-xs text-muted-foreground shrink-0">
-                {ticksToReadableMusicTime(song.RunTimeTicks)}
-            </span>
-        )}
-    </div>
-);
 
 const SongList = ({
     songs,
@@ -84,15 +38,10 @@ const SongList = ({
 }) => {
     const { loadQueue } = useMusicPlayback();
 
-    const handlePlay = (songs: BaseItemDto[], index: number) => {
-        const queue = songs.map((s) => ({
-            id: s.Id || '',
-            title: s.Name || '',
-            artist: s.ArtistItems?.[0]?.Name || 'Unknown',
-            albumId: s.AlbumId || '',
-            albumName: s.Album || '',
-        }));
-        loadQueue(queue, index, true);
+    const playbackTracks = songs ? toPlaybackTracks(songs) : [];
+
+    const handlePlay = (index: number) => {
+        loadQueue(playbackTracks, index, true);
     };
 
     if (isLoading) {
@@ -112,44 +61,15 @@ const SongList = ({
     return (
         <div className="flex flex-col gap-0.5">
             {songs.map((song, index) => (
-                <SongRow
+                <MusicSongRow
                     key={song.Id}
                     song={song}
-                    index={index}
                     showAlbum={showAlbum}
-                    onPlay={() => handlePlay(songs, index)}
+                    contextTracks={playbackTracks}
+                    startIndex={index}
+                    onPlay={() => handlePlay(index)}
                 />
             ))}
-        </div>
-    );
-};
-
-const AlbumCover = ({ album }: { album: BaseItemDto }) => {
-    const [imageError, setImageError] = useState(false);
-
-    if (imageError) {
-        return (
-            <div className="relative aspect-square overflow-hidden rounded-md bg-muted flex items-center justify-center">
-                {renderItemFallbackIcon(album.Type, {
-                    className: 'w-1/2 h-1/2 text-muted-foreground',
-                    strokeWidth: 1.5,
-                })}
-            </div>
-        );
-    }
-
-    return (
-        <div className="relative aspect-square overflow-hidden rounded-md">
-            <img
-                src={getPrimaryImageUrl(album.Id || '', {
-                    width: 200,
-                    height: 200,
-                })}
-                alt={album.Name || ''}
-                className="w-full h-full object-cover group-hover:opacity-75 group-hover:scale-105 transition-all transform-gpu"
-                loading="lazy"
-                onError={() => setImageError(true)}
-            />
         </div>
     );
 };
@@ -184,17 +104,7 @@ const AlbumsGrid = ({
     return (
         <div className="grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4">
             {albums.map((album) => (
-                <Link
-                    key={album.Id}
-                    to={getItemUrl(album.Type, album.Id)}
-                    className="group flex flex-col"
-                >
-                    <AlbumCover album={album} />
-                    <span className="text-sm mt-2 truncate">{album.Name}</span>
-                    <span className="text-xs text-muted-foreground truncate">
-                        {album.ArtistItems?.[0]?.Name || album.AlbumArtist || ''}
-                    </span>
-                </Link>
+                <MusicAlbumCard key={album.Id} album={album} />
             ))}
         </div>
     );
@@ -354,15 +264,10 @@ const SearchResults = ({ searchTerm }: { searchTerm: string }) => {
     const albums = results.filter((r) => r.Type === 'MusicAlbum');
     const artists = results.filter((r) => r.Type === 'MusicArtist');
 
+    const songPlaybackTracks = toPlaybackTracks(songs);
+
     const handlePlaySong = (index: number) => {
-        const queue = songs.map((s) => ({
-            id: s.Id || '',
-            title: s.Name || '',
-            artist: s.ArtistItems?.[0]?.Name || 'Unknown',
-            albumId: s.AlbumId || '',
-            albumName: s.Album || '',
-        }));
-        loadQueue(queue, index, true);
+        loadQueue(songPlaybackTracks, index, true);
     };
 
     return (
@@ -402,26 +307,16 @@ const SearchResults = ({ searchTerm }: { searchTerm: string }) => {
                     </h3>
                     <div className="flex gap-4 overflow-x-auto">
                         {albums.map((album) => (
-                            <Link
+                            <MusicAlbumCard
                                 key={album.Id}
-                                to={getItemUrl(album.Type, album.Id)}
-                                className="flex flex-col shrink-0 group"
-                            >
-                                <img
-                                    src={getPrimaryImageUrl(album.Id || '', {
-                                        width: 200,
-                                        height: 200,
-                                    })}
-                                    alt={album.Name || ''}
-                                    className="w-32 h-32 rounded-md object-cover group-hover:opacity-75 transition-opacity"
-                                />
-                                <span className="text-sm mt-1.5 truncate max-w-32">
-                                    {album.Name}
-                                </span>
-                                <span className="text-xs text-muted-foreground truncate max-w-32">
-                                    {album.ArtistItems?.[0]?.Name}
-                                </span>
-                            </Link>
+                                album={album}
+                                className="shrink-0"
+                                posterClassName="relative w-32 h-32 overflow-hidden rounded-md"
+                                imageClassName="w-32 h-32 object-cover group-hover:opacity-75 transition-opacity"
+                                imageSize={{ width: 200, height: 200 }}
+                                titleClassName="text-sm mt-1.5 truncate max-w-32"
+                                subtitleClassName="text-xs text-muted-foreground truncate max-w-32"
+                            />
                         ))}
                     </div>
                 </div>
@@ -433,11 +328,12 @@ const SearchResults = ({ searchTerm }: { searchTerm: string }) => {
                     </h3>
                     <div className="flex flex-col gap-0.5">
                         {songs.map((song, index) => (
-                            <SongRow
+                            <MusicSongRow
                                 key={song.Id}
                                 song={song}
-                                index={index}
                                 showAlbum
+                                contextTracks={songPlaybackTracks}
+                                startIndex={index}
                                 onPlay={() => handlePlaySong(index)}
                             />
                         ))}
@@ -500,29 +396,16 @@ const MusicMainContent = () => {
                                 </h2>
                             }
                             items={recentAlbums.map((album) => (
-                                <Link
+                                <MusicAlbumCard
                                     key={album.Id}
-                                    to={getItemUrl(album.Type, album.Id)}
-                                    className="group flex flex-col shrink-0"
-                                >
-                                    <div className="relative w-36 h-36 overflow-hidden rounded-md">
-                                        <img
-                                            src={getPrimaryImageUrl(album.Id || '', {
-                                                width: 288,
-                                                height: 288,
-                                            })}
-                                            alt={album.Name || ''}
-                                            className="w-36 h-36 object-cover group-hover:opacity-75 group-hover:scale-105 transition-all transform-gpu"
-                                            loading="lazy"
-                                        />
-                                    </div>
-                                    <span className="text-sm mt-1.5 truncate max-w-36">
-                                        {album.Name}
-                                    </span>
-                                    <span className="text-xs text-muted-foreground truncate max-w-36">
-                                        {album.ArtistItems?.[0]?.Name || album.AlbumArtist || ''}
-                                    </span>
-                                </Link>
+                                    album={album}
+                                    className="shrink-0"
+                                    posterClassName="relative w-36 h-36 overflow-hidden rounded-md"
+                                    imageClassName="w-36 h-36 object-cover group-hover:opacity-75 group-hover:scale-105 transition-all transform-gpu"
+                                    imageSize={{ width: 288, height: 288 }}
+                                    titleClassName="text-sm mt-1.5 truncate max-w-36"
+                                    subtitleClassName="text-xs text-muted-foreground truncate max-w-36"
+                                />
                             ))}
                         />
                     )}

@@ -6,7 +6,9 @@ import { ImageOff, Play } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { buildPlayerUrl } from '@/utils/playerUrl';
+import { getItemUrl } from '@/utils/itemUrl';
 import WatchedStateBadge from '@/components/WatchedStateBadge';
+import MusicItemContextMenu from '@/components/MusicItemContextMenu';
 
 const LibraryItem = ({
     item,
@@ -31,7 +33,9 @@ const LibraryItem = ({
     const [posterError, setPosterError] = useState(false);
 
     const playUrl = buildPlayerUrl(item.Id!, location.pathname + location.search);
-    const itemPath = itemLink || (isDirectPlay ? playUrl : `/item/${item.Id}`);
+    const itemPath =
+        itemLink ||
+        (isDirectPlay ? playUrl : getItemUrl(item.Type, item.Id) ?? `/item/${item.Id}`);
 
     const watched = item.UserData?.PlaybackPositionTicks ?? 0;
     const runtime = item.RunTimeTicks ?? 0;
@@ -44,7 +48,8 @@ const LibraryItem = ({
         : 0;
     
     return (
-        <Link to={itemPath} key={item.Id} className="p-0 m-0">
+        <MusicItemContextMenu item={item}>
+            <Link to={itemPath} key={item.Id} className="p-0 m-0">
             <div
                 className={`relative w-full aspect-${posterAspectRatio} overflow-hidden rounded-md group`}
             >
@@ -99,6 +104,7 @@ const LibraryItem = ({
                 </span>
             </div>
         </Link>
+        </MusicItemContextMenu>
     );
 };
 

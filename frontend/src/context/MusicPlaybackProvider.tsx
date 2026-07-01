@@ -432,6 +432,38 @@ export const MusicPlaybackProvider = ({ children }: PropsWithChildren) => {
         [shuffle, shuffleArray, internalLoadTrack]
     );
 
+    const loadQueueShuffled = useCallback(
+        (tracks: MusicPlaybackTrack[], autoPlay = true) => {
+            if (tracks.length === 0) return;
+
+            originalQueueRef.current = [...tracks];
+            const shuffled = shuffleArray(tracks);
+            setQueue(shuffled);
+            setCurrentIndex(0);
+            internalLoadTrack(shuffled[0], autoPlay);
+        },
+        [shuffleArray, internalLoadTrack]
+    );
+
+    const addToQueueStart = useCallback((tracks: MusicPlaybackTrack[]) => {
+        if (tracks.length === 0) return;
+
+        setQueue((prev) => {
+            originalQueueRef.current = [...tracks, ...originalQueueRef.current];
+            return [...tracks, ...prev];
+        });
+        setCurrentIndex((prev) => (prev === -1 ? prev : prev + tracks.length));
+    }, []);
+
+    const addToQueueEnd = useCallback((tracks: MusicPlaybackTrack[]) => {
+        if (tracks.length === 0) return;
+
+        setQueue((prev) => {
+            originalQueueRef.current = [...originalQueueRef.current, ...tracks];
+            return [...prev, ...tracks];
+        });
+    }, []);
+
     const clearPlayback = useCallback(() => {
         if (currentTrack) {
             stopPlayback({
@@ -512,6 +544,9 @@ export const MusicPlaybackProvider = ({ children }: PropsWithChildren) => {
         clearPlayback,
         loadTrack,
         loadQueue,
+        loadQueueShuffled,
+        addToQueueStart,
+        addToQueueEnd,
     };
 
     return <MusicPlaybackContext.Provider value={value}>{children}</MusicPlaybackContext.Provider>;
