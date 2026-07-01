@@ -17,47 +17,17 @@ import { useAlbumTracks } from '@/hooks/api/useAlbumTracks';
 import { AddToPlaylistDialog } from '@/components/AddToPlaylistDialog';
 import type { MusicPlaybackTrack } from '@/context/MusicPlaybackContext';
 import {
+    resolveMusicContextMenuActions,
+    type MusicContextMenuActions,
+    type MusicItemContextMenuProps,
+} from '@/components/musicItemContextMenu';
+import {
     getMusicContextKind,
     isCollectionScope,
     toPlaybackTrack,
     toPlaybackTracks,
     type MusicContextMenuScope,
 } from '@/utils/musicPlaybackTrack';
-
-export interface MusicContextMenuActions {
-    playNow?: boolean;
-    shuffle?: boolean;
-    queueStart?: boolean;
-    queueEnd?: boolean;
-    playlist?: boolean;
-    favorite?: boolean;
-}
-
-export const DEFAULT_MUSIC_CONTEXT_MENU_ACTIONS: Required<MusicContextMenuActions> = {
-    playNow: true,
-    shuffle: true,
-    queueStart: true,
-    queueEnd: true,
-    playlist: true,
-    favorite: true,
-};
-
-export interface MusicItemContextMenuProps {
-    item: BaseItemDto;
-    children: ReactNode;
-    /** Override scope inferred from `item.Type`. */
-    scope?: MusicContextMenuScope;
-    /** Tracks surrounding the selected item when playing from a list. */
-    contextTracks?: MusicPlaybackTrack[];
-    /** Index of `item` within `contextTracks` for play-now. */
-    startIndex?: number;
-    /** Toggle individual menu actions. Defaults to all enabled. */
-    actions?: MusicContextMenuActions;
-}
-
-function resolveActions(actions?: MusicContextMenuActions): Required<MusicContextMenuActions> {
-    return { ...DEFAULT_MUSIC_CONTEXT_MENU_ACTIONS, ...actions };
-}
 
 const MusicItemContextMenu = ({
     item,
@@ -68,7 +38,7 @@ const MusicItemContextMenu = ({
     actions,
 }: MusicItemContextMenuProps) => {
     const resolvedScope = scope ?? getMusicContextKind(item.Type);
-    const resolvedActions = resolveActions(actions);
+    const resolvedActions = resolveMusicContextMenuActions(actions);
 
     if (!resolvedScope) {
         return children;
