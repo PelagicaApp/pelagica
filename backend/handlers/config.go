@@ -44,9 +44,23 @@ func GetConfig(c fiber.Ctx) error {
 		}
 	}
 
+	var cfg models.AppConfig
+	if err := json.Unmarshal(data, &cfg); err != nil {
+		slog.Error("Failed to parse config file", "error", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(models.APIError{Error: "Failed to parse config file"})
+	}
+
+	cfg.ServerAddress = os.Getenv("SERVER_ADDRESS")
+
+	out, err := json.MarshalIndent(cfg, "", "    ")
+	if err != nil {
+		slog.Error("Failed to encode config", "error", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(models.APIError{Error: "Failed to encode config"})
+	}
+
 	return c.Status(fiber.StatusOK).
 		Type("json").
-		Send(data)
+		Send(out)
 }
 
 func UpdateConfig(c fiber.Ctx) error {
@@ -68,6 +82,9 @@ func UpdateConfig(c fiber.Ctx) error {
 			cfg.ItemPage.DetailBadges = []models.DetailBadge{}
 		}
 	}
+
+	// ServerAddress is controlled exclusively via the SERVER_ADDRESS env var, never persisted.
+	cfg.ServerAddress = ""
 
 	data, err := json.MarshalIndent(cfg, "", "    ")
 	if err != nil {

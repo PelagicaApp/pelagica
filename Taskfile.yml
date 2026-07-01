@@ -30,6 +30,7 @@ tasks:
       COLLECTOR_PING_TOKEN: "2f64e07c-e930-463f-b118-556a741fb2aa"
       ENABLE_AUTH: "true"
       LOG_LEVEL: "debug"
+      SERVER_ADDRESS: "https://jellyfin.jan.run"
     cmds:
       - go run main.go
 
