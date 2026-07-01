@@ -45,8 +45,9 @@ type HomeScreenSection struct {
 	LibraryIDs []string `json:"libraryIds,omitempty"`
 
 	// Items section
-	AllLink      string        `json:"allLink,omitempty"`
-	DetailFields []DetailField `json:"detailFields,omitempty"`
+	AllLink       string        `json:"allLink,omitempty"`
+	DetailFields  []DetailField `json:"detailFields,omitempty"`
+	UseThumbImage *bool         `json:"useThumbImage,omitempty"`
 
 	// Continue / Resume / NextUp
 	DetailLine []ContinueWatchingDetailLine `json:"detailLine,omitempty"`
