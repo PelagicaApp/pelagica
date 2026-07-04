@@ -21,5 +21,13 @@
     "no_playlists_found": "No playlists found",
     "untitled": "Untitled",
     "tracks_count": "{{count}} tracks",
-    "back_to_music": "Back to Music"
+    "back_to_music": "Back to Music",
+    "play_now": "Play now",
+    "shuffle_now": "Shuffle now",
+    "add_to": "Add to...",
+    "queue_start": "Start of queue",
+    "queue_end": "End of queue",
+    "playlist": "Playlist",
+    "search_playlists": "Search playlists...",
+    "create_and_add": "Create & Add"
 }

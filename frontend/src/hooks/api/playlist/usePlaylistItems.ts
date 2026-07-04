@@ -16,6 +16,8 @@ export function usePlaylistItems(
             const response = await playlistsApi.getPlaylistItems({
                 playlistId: playlistId!,
                 userId: userId!,
+                fields: ['MediaSources', 'MediaStreams'],
+                enableUserData: true,
             });
             return response.data.Items || [];
         },

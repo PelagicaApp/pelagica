@@ -57,6 +57,9 @@ export interface MusicPlaybackContextType {
     clearPlayback: () => void;
     loadTrack: (track: MusicPlaybackTrack, autoPlay?: boolean) => void;
     loadQueue: (tracks: MusicPlaybackTrack[], startIndex?: number, autoPlay?: boolean) => void;
+    loadQueueShuffled: (tracks: MusicPlaybackTrack[], autoPlay?: boolean) => void;
+    addToQueueStart: (tracks: MusicPlaybackTrack[]) => void;
+    addToQueueEnd: (tracks: MusicPlaybackTrack[]) => void;
 }
 
 export const MusicPlaybackContext = createContext<MusicPlaybackContextType | undefined>(undefined);

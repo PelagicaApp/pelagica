@@ -12,13 +12,19 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Plus } from 'lucide-react';
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
+import { ContextMenuItem } from '@/components/ui/context-menu';
 
 interface CreatePlaylistDialogProps {
     userId?: string;
     onSuccess?: () => void;
+    menuVariant?: 'dropdown' | 'context';
 }
 
-export function CreatePlaylistDialog({ userId, onSuccess }: CreatePlaylistDialogProps) {
+export function CreatePlaylistDialog({
+    userId,
+    onSuccess,
+    menuVariant = 'dropdown',
+}: CreatePlaylistDialogProps) {
     const { t } = useTranslation('item');
     const createPlaylist = useCreatePlaylist();
     const [playlistName, setPlaylistName] = useState('');
@@ -48,12 +54,14 @@ export function CreatePlaylistDialog({ userId, onSuccess }: CreatePlaylistDialog
         }
     };
 
+    const MenuItem = menuVariant === 'context' ? ContextMenuItem : DropdownMenuItem;
+
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                <MenuItem onSelect={(e) => e.preventDefault()}>
                     <Plus /> {t('new_playlist')}
-                </DropdownMenuItem>
+                </MenuItem>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
