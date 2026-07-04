@@ -110,6 +110,8 @@ export function usePlaybackInfo(
         },
         enabled: !!itemId,
         staleTime: 30_000,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
         ...getRetryConfig(),
     });
 }
