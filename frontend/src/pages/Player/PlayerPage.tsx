@@ -6,6 +6,7 @@ import { useCloseLiveStream } from '@/hooks/api/useCloseLiveStream';
 import { useParams } from 'react-router';
 import VideoPlayer, { type SubtitleTrack } from '@/pages/Player/VideoPlayer';
 import PlayerControls from '@/pages/Player/PlayerControls';
+import PlayerLoading from '@/pages/Player/PlayerLoading';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { getPrimaryImageUrl, getSubtitleUrl, getPlaybackStreamUrl } from '@/utils/jellyfinUrls';
 import { usePlaybackInfo } from '@/hooks/api/usePlaybackInfo';
@@ -316,7 +317,7 @@ const PlayerPage = () => {
         isLoadingUserConfiguration ||
         isLoadingPlaybackInfo
     ) {
-        return <p>Loading...</p>;
+        return <PlayerLoading />;
     }
 
     if (
