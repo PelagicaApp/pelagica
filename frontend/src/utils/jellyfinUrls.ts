@@ -195,6 +195,7 @@ export function getVideoStreamUrl(
     options: {
         playSessionId?: string;
         audioStreamIndex?: number;
+        mediaSourceId?: string;
     }
 ) {
     try {
@@ -203,7 +204,7 @@ export function getVideoStreamUrl(
 
         const url = new URL(creds.server);
         url.pathname = `/videos/${itemId}/master.m3u8`;
-        url.searchParams.append('MediaSourceId', itemId);
+        url.searchParams.append('MediaSourceId', options.mediaSourceId || itemId);
         url.searchParams.append('ApiKey', creds.token);
         url.searchParams.append('VideoCodec', getSupportedVideoCodecs());
         url.searchParams.append('AudioCodec', 'aac');
@@ -313,6 +314,7 @@ export function getPlaybackStreamUrl(
         url: getVideoStreamUrl(itemId, {
             audioStreamIndex: options.audioStreamIndex,
             playSessionId: options.playSessionId,
+            mediaSourceId: options.mediaSourceId,
         }),
         mimeType: 'application/x-mpegURL',
     };

@@ -11,9 +11,10 @@ export interface PlaybackDecision {
     playMethod: PlayMethod;
     mediaSource: MediaSourceInfo;
     playSessionId: string;
+    liveStreamId?: string;
 }
 
-function buildDeviceProfile() {
+function buildDeviceProfile(options?: { liveTvContainer?: boolean }) {
     const codecs = detectSupportedCodecs();
 
     const videoCodecs: string[] = [];
@@ -34,7 +35,7 @@ function buildDeviceProfile() {
 
     const transcodingProfiles = [
         {
-            Container: 'mp4',
+            Container: 'ts',
             Type: 'Video' as const,
             VideoCodec: videoCodecs.join(','),
             AudioCodec: 'aac',
@@ -45,6 +46,20 @@ function buildDeviceProfile() {
             EnableAudioVbrEncoding: true,
         },
     ];
+
+    if (!options?.liveTvContainer) {
+        transcodingProfiles.unshift({
+            Container: 'mp4',
+            Type: 'Video' as const,
+            VideoCodec: videoCodecs.join(','),
+            AudioCodec: 'aac',
+            Protocol: 'hls' as const,
+            Context: 'Streaming' as const,
+            MinSegments: 2,
+            BreakOnNonKeyFrames: true,
+            EnableAudioVbrEncoding: true,
+        });
+    }
 
     return {
         MaxStreamingBitrate: 80_000_000,
@@ -95,7 +110,30 @@ export function usePlaybackInfo(
                 throw new Error('No media sources available');
             }
 
-            const source = mediaSources[0];
+            let source = mediaSources[0];
+            let liveStreamId: string | undefined;
+
+            // live TV channels return a placeholder MediaSource that must be "opened" (starting the tuner stream) before it has a usable playback URL
+            if (source.RequiresOpening) {
+                const openResponse = await mediaInfoApi.openLiveStream({
+                    openLiveStreamDto: {
+                        OpenToken: source.OpenToken,
+                        UserId: userId,
+                        PlaySessionId: playSessionId,
+                        ItemId: itemId,
+                        AudioStreamIndex: audioStreamIndex,
+                        MaxStreamingBitrate: 80_000_000,
+                        EnableDirectPlay: true,
+                        EnableDirectStream: true,
+                        DeviceProfile: buildDeviceProfile({ liveTvContainer: true }),
+                    },
+                });
+
+                if (openResponse.data.MediaSource) {
+                    source = openResponse.data.MediaSource;
+                    liveStreamId = source.LiveStreamId || undefined;
+                }
+            }
 
             let playMethod: PlayMethod;
             if (source.SupportsDirectPlay) {
@@ -106,7 +144,7 @@ export function usePlaybackInfo(
                 playMethod = 'Transcode';
             }
 
-            return { playMethod, mediaSource: source, playSessionId };
+            return { playMethod, mediaSource: source, playSessionId, liveStreamId };
         },
         enabled: !!itemId,
         staleTime: 30_000,
