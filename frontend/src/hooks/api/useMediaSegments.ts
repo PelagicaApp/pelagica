@@ -17,5 +17,7 @@ export function useMediaSegments(itemId: string | null | undefined) {
         },
         enabled: !!itemId,
         ...getRetryConfig(),
+        staleTime: 5 * 60 * 1000,
+        refetchOnWindowFocus: false,
     });
 }

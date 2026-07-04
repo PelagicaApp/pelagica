@@ -30,5 +30,6 @@ export function usePlayerItem(
         ...getRetryConfig(),
         staleTime: 5 * 60 * 1000,
         gcTime: 30 * 60 * 1000,
+        refetchOnWindowFocus: false,
     });
 }

@@ -26,5 +26,7 @@ export function useUserConfiguration(userId: string | null | undefined) {
         },
         enabled: !!userId,
         ...getRetryConfig(),
+        staleTime: 5 * 60 * 1000,
+        refetchOnWindowFocus: false,
     });
 }

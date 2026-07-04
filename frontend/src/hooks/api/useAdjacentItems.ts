@@ -39,5 +39,7 @@ export function useAdjacentItems(
         },
         enabled: !!currentItem?.Id && !!currentItem?.SeriesId && !!userId,
         ...getRetryConfig(),
+        staleTime: 5 * 60 * 1000,
+        refetchOnWindowFocus: false,
     });
 }
