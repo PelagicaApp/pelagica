@@ -80,8 +80,6 @@ export const TrailerButton = ({ item }: { item: BaseItemDto }) => {
         }) ?? [])
     );
 
-    console.log('trailers', trailers);
-
     const playableTrailers = trailers.filter(
         (trailer): trailer is PlayableTrailer => trailer !== null
     );
