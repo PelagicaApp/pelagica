@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 import {
     ChartLine,
     Check,
@@ -525,6 +525,12 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
     const { theme } = useTheme();
     const effectiveTheme = getEffectiveTheme(theme);
     const [scrolled, setScrolled] = useState(false);
+    const location = useLocation();
+
+    function isActive(path: string) {
+        if (path === '/') return location.pathname === '/';
+        return location.pathname.startsWith(path);
+    }
 
     useEffect(() => {
         const handleScroll = () => {
@@ -580,14 +586,18 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
 
                     {/* Desktop nav */}
                     <nav className="hidden md:flex items-center gap-0.5">
-                        <Button asChild variant="ghost" size="sm">
+                        <Button asChild variant={isActive('/') ? 'secondary' : 'ghost'} size="sm">
                             <Link to="/">
                                 <House className="h-4 w-4" />
                                 {t('home')}
                             </Link>
                         </Button>
 
-                        <Button asChild variant="ghost" size="sm">
+                        <Button
+                            asChild
+                            variant={isActive('/library') ? 'secondary' : 'ghost'}
+                            size="sm"
+                        >
                             <Link to="/library">
                                 <Library className="h-4 w-4" />
                                 {t('library')}
@@ -595,7 +605,11 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
                         </Button>
 
                         {hasMusicLibrary && (
-                            <Button asChild variant="ghost" size="sm">
+                            <Button
+                                asChild
+                                variant={isActive('/music') ? 'secondary' : 'ghost'}
+                                size="sm"
+                            >
                                 <Link to="/music">
                                     <Music className="h-4 w-4" />
                                     {t('music')}
@@ -603,7 +617,11 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
                             </Button>
                         )}
 
-                        <Button asChild variant="ghost" size="sm">
+                        <Button
+                            asChild
+                            variant={isActive('/search') ? 'secondary' : 'ghost'}
+                            size="sm"
+                        >
                             <Link to="/search">
                                 <Search className="h-4 w-4" />
                                 {t('search')}
@@ -649,27 +667,47 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
 
                     {/* Mobile nav */}
                     <nav className="flex md:hidden items-center gap-0.5">
-                        <Button asChild variant="ghost" size="icon" className="h-8 w-8">
+                        <Button
+                            asChild
+                            variant={isActive('/') ? 'secondary' : 'ghost'}
+                            size="icon"
+                            className="h-8 w-8"
+                        >
                             <Link to="/">
                                 <House className="h-4 w-4" />
                             </Link>
                         </Button>
 
-                        <Button asChild variant="ghost" size="icon" className="h-8 w-8">
+                        <Button
+                            asChild
+                            variant={isActive('/library') ? 'secondary' : 'ghost'}
+                            size="icon"
+                            className="h-8 w-8"
+                        >
                             <Link to="/library">
                                 <Library className="h-4 w-4" />
                             </Link>
                         </Button>
 
                         {hasMusicLibrary && (
-                            <Button asChild variant="ghost" size="icon" className="h-8 w-8">
+                            <Button
+                                asChild
+                                variant={isActive('/music') ? 'secondary' : 'ghost'}
+                                size="icon"
+                                className="h-8 w-8"
+                            >
                                 <Link to="/music">
                                     <Music className="h-4 w-4" />
                                 </Link>
                             </Button>
                         )}
 
-                        <Button asChild variant="ghost" size="icon" className="h-8 w-8">
+                        <Button
+                            asChild
+                            variant={isActive('/search') ? 'secondary' : 'ghost'}
+                            size="icon"
+                            className="h-8 w-8"
+                        >
                             <Link to="/search">
                                 <Search className="h-4 w-4" />
                             </Link>
