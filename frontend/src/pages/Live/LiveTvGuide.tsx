@@ -246,7 +246,7 @@ const LiveTvGuide = ({ searchTerm, categoryOptions }: LiveTvGuideProps) => {
                     ))}
                 </div>
             ) : (
-                <div ref={scrollRef} className="rounded-xl overflow-auto max-h-[75vh]">
+                <div ref={scrollRef} className="overflow-x-auto">
                     <div className="relative" style={{ width: CHANNEL_COL_WIDTH + GUIDE_WIDTH }}>
                         <div className="flex sticky top-0 z-40 bg-background/95 backdrop-blur-sm">
                             <div
@@ -308,7 +308,7 @@ const LiveTvGuide = ({ searchTerm, categoryOptions }: LiveTvGuideProps) => {
                                     >
                                         {showNowLine && (
                                             <div
-                                                className="absolute top-0 bottom-0 w-px bg-primary z-10 pointer-events-none"
+                                                className="absolute -top-1 -bottom-1 w-px bg-primary z-10 pointer-events-none"
                                                 style={{ left: nowOffsetPx }}
                                             />
                                         )}
