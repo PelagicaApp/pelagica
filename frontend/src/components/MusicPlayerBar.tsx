@@ -1,5 +1,6 @@
 import {
     ChevronDown,
+    ListMusic,
     Pause,
     Play,
     Repeat2,
@@ -25,6 +26,8 @@ import LyricsInlinePanel from '@/features/lyrics/shell/LyricsInlinePanel';
 import { cn } from '@/lib/utils';
 import { lyricsPanelWidthClass } from '@/features/lyrics/constants';
 import EqualizerPopover from '@/features/equalizer/EqualizerPopover';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import MusicQueueSidebar from '@/pages/Music/MusicQueueSidebar';
 
 const formatTime = (timeTicks: number) => {
     const timeSeconds = timeTicks / 10000000;
@@ -138,6 +141,23 @@ const MusicPlayerBar = () => {
                             </span>
                         </div>
                     </div>
+                    {/* Queue toggle */}
+                    <Sheet>
+                        <SheetTrigger asChild>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                }}
+                            >
+                                <ListMusic className="h-5 w-5" />
+                            </Button>
+                        </SheetTrigger>
+                        <SheetContent side="right" className="p-0 min-w-70 sm:max-w-sm">
+                            <MusicQueueSidebar />
+                        </SheetContent>
+                    </Sheet>
                     <Button
                         variant="ghost"
                         size="icon"
@@ -163,9 +183,22 @@ const MusicPlayerBar = () => {
                     <span className="text-sm font-medium">
                         {showLyricsInline ? t('lyrics') : t('nowPlaying')}
                     </span>
-                    <Button variant="ghost" size="icon" onClick={clearPlayback}>
-                        <XIcon />
-                    </Button>
+                    <div className="flex items-center gap-1">
+                        {/* Queue toggle */}
+                        <Sheet>
+                            <SheetTrigger asChild>
+                                <Button variant="ghost" size="icon">
+                                    <ListMusic className="h-5 w-5" />
+                                </Button>
+                            </SheetTrigger>
+                            <SheetContent side="right" className="p-0 min-w-70 sm:max-w-sm">
+                                <MusicQueueSidebar />
+                            </SheetContent>
+                        </Sheet>
+                        <Button variant="ghost" size="icon" onClick={clearPlayback}>
+                            <XIcon />
+                        </Button>
+                    </div>
                 </div>
 
                 <div className="flex min-h-0 flex-1 flex-col p-6 gap-6">
