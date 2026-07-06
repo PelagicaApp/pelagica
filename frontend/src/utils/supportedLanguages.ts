@@ -1,5 +1,5 @@
 import type { FlagComponent } from 'country-flag-icons/react/3x2';
-import { US, DE, SE, FR, PT, JP } from 'country-flag-icons/react/3x2';
+import { US, DE, SE, FR, PT, JP, VN } from 'country-flag-icons/react/3x2';
 
 interface SupportedLanguage {
     code: string;
@@ -14,4 +14,5 @@ export const SUPPORTED_LANGUAGES: SupportedLanguage[] = [
     { code: 'fr', Flag: FR, label: 'Français' },
     { code: 'pt', Flag: PT, label: 'Português' },
     { code: 'ja', Flag: JP, label: '日本語' },
+    { code: 'vi', Flag: VN, label: 'Tiếng Việt' },
 ];
