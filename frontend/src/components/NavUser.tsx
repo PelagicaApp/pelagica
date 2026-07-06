@@ -443,6 +443,10 @@ export function NavUser() {
                                     <FlagIcon countryCode="jp" />
                                     日本語
                                 </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => i18n.changeLanguage('vi')}>
+                                    <FlagIcon countryCode="vn" />
+                                    Tiếng Việt
+                                </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
                         <Dialog>
