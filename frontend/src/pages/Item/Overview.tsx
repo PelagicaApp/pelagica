@@ -1,5 +1,6 @@
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import DOMPurify from 'dompurify';
 
 interface OverviewProps {
     text: string;
@@ -20,6 +21,15 @@ const Overview = ({ text, lines = 3, className }: OverviewProps) => {
         setPrevLines(lines);
         setExpanded(false);
     }
+
+    const sanitizedHtml = useMemo(
+        () =>
+            DOMPurify.sanitize(text, {
+                ALLOWED_TAGS: ['br'],
+                ALLOWED_ATTR: [],
+            }),
+        [text]
+    );
 
     // Measure if text is clamped on mount and when props changes
     useLayoutEffect(() => {
@@ -44,9 +54,8 @@ const Overview = ({ text, lines = 3, className }: OverviewProps) => {
                         : undefined
                 }
                 className={`text-base sm:text-lg text-foreground/90 leading-relaxed font-normal ${className ?? ''}`}
-            >
-                {text}
-            </p>
+                dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
+            />
             {isClamped && (
                 <button
                     onClick={() => setExpanded((p) => !p)}
