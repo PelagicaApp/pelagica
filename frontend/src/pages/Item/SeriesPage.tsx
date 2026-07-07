@@ -72,7 +72,9 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
             name={item.Name || ''}
             showLogo={false}
             topPadding={false}
-            hasLocalTrailers={(item.LocalTrailerCount ?? 0) > 0}
+            hasLocalTrailers={
+                (item.LocalTrailerCount ?? 0) > 0 && !!config.itemPage?.autoPlayTrailers
+            }
         >
             <div className="pt-24 sm:pt-32 pb-12 mx-auto w-full flex flex-col gap-12">
                 <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start relative z-10 w-full">

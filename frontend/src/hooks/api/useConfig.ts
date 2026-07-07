@@ -202,6 +202,8 @@ export interface ItemPageSettings {
     showDownloadButton?: boolean;
     /** Whether to show the watchlist button to add items to the kefintweaks watchlist */
     showWatchlistButton?: boolean;
+    /** Whether to autoplay a local trailer as a background video on item detail pages */
+    autoPlayTrailers?: boolean;
 }
 
 export interface ConfigLink {
@@ -254,6 +256,7 @@ const DEFAULT_ITEM_PAGE_SETTINGS: ItemPageSettings = {
     favoriteButton: ['Movie', 'Series'],
     showWatchlistButton: true,
     showDownloadButton: true,
+    autoPlayTrailers: false,
 };
 
 const DEFAULT_CONFIG: AppConfig = {

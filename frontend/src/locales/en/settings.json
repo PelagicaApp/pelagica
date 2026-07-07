@@ -24,6 +24,7 @@
     "episode_display_grid": "Grid",
     "episode_display_description": "Choose how episodes are displayed on series detail pages.",
     "show_watchlist_button_label": "Show Watchlist Button",
+    "auto_play_trailers_label": "Autoplay Trailer on Item Page",
     "favorite_button_types_label": "Favorite Button Item Types",
     "favorite_button_types_description": "Select the item types for which the favorite button should be displayed.",
     "detail_badges_label": "Detail Badges",
