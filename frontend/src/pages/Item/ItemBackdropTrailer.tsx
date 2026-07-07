@@ -1,21 +1,30 @@
 import { useLocalTrailers } from '@/hooks/api/useLocalTrailers';
 import { getDirectStreamUrl } from '@/utils/jellyfinUrls';
-import { Volume2, VolumeOff } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
-
-interface ItemBackdropTrailerProps {
-    itemId: string;
-    enabled: boolean;
-}
+import { Maximize, Minimize, Volume2, VolumeOff } from 'lucide-react';
+import { useEffect, useState, type RefObject } from 'react';
 
 const START_DELAY_MS = 3000;
 
-const ItemBackdropTrailer = ({ itemId, enabled }: ItemBackdropTrailerProps) => {
+interface ItemBackdropTrailerVideoProps {
+    itemId: string;
+    enabled: boolean;
+    videoRef: RefObject<HTMLVideoElement | null>;
+    muted: boolean;
+    isFullscreen: boolean;
+    onReadyChange: (ready: boolean) => void;
+}
+
+export const ItemBackdropTrailerVideo = ({
+    itemId,
+    enabled,
+    videoRef,
+    muted,
+    isFullscreen,
+    onReadyChange,
+}: ItemBackdropTrailerVideoProps) => {
     const { data: localTrailers } = useLocalTrailers(itemId, enabled);
     const firstTrailer = localTrailers?.[0];
-    const videoRef = useRef<HTMLVideoElement>(null);
     const [canPlay, setCanPlay] = useState(false);
-    const [muted, setMuted] = useState(true);
     const [shouldPlay, setShouldPlay] = useState(false);
 
     const trailerUrl = firstTrailer?.Id
@@ -40,40 +49,69 @@ const ItemBackdropTrailer = ({ itemId, enabled }: ItemBackdropTrailerProps) => {
         video.play().catch(() => {
             if (!video.muted) {
                 video.muted = true;
-                setMuted(true);
                 video.play().catch(() => {});
             }
         });
-    }, [shouldPlay, muted]);
+    }, [shouldPlay, muted, videoRef]);
+
+    useEffect(() => {
+        onReadyChange(canPlay && shouldPlay && !!trailerUrl);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [canPlay, shouldPlay, trailerUrl]);
 
     if (!enabled || !trailerUrl || !shouldPlay) return null;
 
-    const MuteIcon = muted ? VolumeOff : Volume2;
-
     return (
-        <>
-            <video
-                ref={videoRef}
-                src={trailerUrl}
-                muted={muted}
-                loop
-                autoPlay
-                playsInline
-                onCanPlay={() => setCanPlay(true)}
-                className="absolute inset-0 h-full w-full object-cover transition-opacity duration-700"
-                style={{ opacity: canPlay ? 1 : 0 }}
-            />
-            {canPlay && (
-                <button
-                    type="button"
-                    onClick={() => setMuted((m) => !m)}
-                    className="absolute bottom-4 right-4 z-20 bg-black/60 hover:bg-black/80 rounded-full p-2 pointer-events-auto transition-colors"
-                >
-                    <MuteIcon className="w-4 h-4 text-white" />
-                </button>
-            )}
-        </>
+        <video
+            ref={videoRef}
+            src={trailerUrl}
+            muted={muted}
+            controls={isFullscreen}
+            loop
+            autoPlay
+            playsInline
+            onCanPlay={() => setCanPlay(true)}
+            className={[
+                'absolute inset-0 h-full w-full transition-opacity duration-700',
+                isFullscreen ? 'object-contain' : 'object-cover',
+            ].join(' ')}
+            style={{ opacity: canPlay ? 1 : 0 }}
+        />
     );
 };
 
-export default ItemBackdropTrailer;
+interface ItemBackdropTrailerControlsProps {
+    muted: boolean;
+    onMutedChange: (muted: boolean) => void;
+    isFullscreen: boolean;
+    onFullscreenToggle: () => void;
+}
+
+export const ItemBackdropTrailerControls = ({
+    muted,
+    onMutedChange,
+    isFullscreen,
+    onFullscreenToggle,
+}: ItemBackdropTrailerControlsProps) => {
+    const MuteIcon = muted ? VolumeOff : Volume2;
+    const FullscreenIcon = isFullscreen ? Minimize : Maximize;
+
+    return (
+        <div className="absolute bottom-4 right-4 flex gap-2 pointer-events-auto">
+            <button
+                type="button"
+                onClick={() => onMutedChange(!muted)}
+                className="bg-black/60 hover:bg-black/80 rounded-full p-2 transition-colors"
+            >
+                <MuteIcon className="w-4 h-4 text-white" />
+            </button>
+            <button
+                type="button"
+                onClick={onFullscreenToggle}
+                className="bg-black/60 hover:bg-black/80 rounded-full p-2 transition-colors"
+            >
+                <FullscreenIcon className="w-4 h-4 text-white" />
+            </button>
+        </div>
+    );
+};
