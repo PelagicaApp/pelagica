@@ -793,14 +793,11 @@ const PlayerControls = ({
                                 </Link>
                             </Button>
                         )}
-                        {isLive ? (
+                        {/* Live indicator only: non-live time is redundant (already shown below progress bar) */}
+                        {isLive && (
                             <div className="flex items-center gap-1.5 text-sm ml-2">
                                 <Dot className="text-red-500 -mx-1" size={32} />
                                 {t('live')}
-                            </div>
-                        ) : (
-                            <div className="text-sm ml-2">
-                                {formatPlayTime(clampedCurrentTime)} / {formatPlayTime(duration)}
                             </div>
                         )}
                     </div>
