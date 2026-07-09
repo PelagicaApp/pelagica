@@ -124,14 +124,18 @@ const PlayerControls = ({
 }: PlayerControlsProps) => {
     const { t } = useTranslation('player');
     const [isPlaying, setIsPlaying] = useState(false);
+    const [playbackRate, setPlaybackRate] = useState(1);
     const [currentTime, setCurrentTime] = useState(0);
-    const [duration, setDuration] = useState(0);
+    const [duration, setDuration] = useState(() => {
+        return item.RunTimeTicks ? ticksToSeconds(item.RunTimeTicks) : 0;
+    });
     const [bufferedTime, setBufferedTime] = useState(0);
     const [volume, setVolume] = useState(() => {
         const saved = localStorage.getItem('playerVolume');
         return saved ? parseFloat(saved) : 1;
     });
     const [isMuted, setIsMuted] = useState(false);
+    const [showVolumeBar, setShowVolumeBar] = useState(false);
     const [hoverTime, setHoverTime] = useState<number | null>(null);
     const [hoverPosition, setHoverPosition] = useState<number>(0);
     const [showControls, setShowControls] = useState(true);
@@ -193,13 +197,17 @@ const PlayerControls = ({
     const markItemAsCompleted = useCallback(
         (itemId: string | undefined) => {
             if (!itemId) return;
+            const playerDuration = player && !player.isDisposed?.() ? player.duration() : 0;
+            const finalTicks = playerDuration && playerDuration > 0 && playerDuration !== Infinity && !isNaN(playerDuration)
+                ? Math.floor(playerDuration * 10000000)
+                : (item.RunTimeTicks || 0);
             reportProgress({
                 itemId,
-                positionTicks: item.RunTimeTicks || 0,
+                positionTicks: finalTicks,
                 isPaused: true,
             });
         },
-        [item.RunTimeTicks, reportProgress]
+        [item.RunTimeTicks, player, reportProgress]
     );
 
     useEffect(() => {
@@ -221,7 +229,18 @@ const PlayerControls = ({
 
         const updatePlayState = () => setIsPlaying(!player.paused());
         const updateTime = () => setCurrentTime(player.currentTime() || 0);
-        const updateDuration = () => setDuration(player.duration() || 0);
+        const updateDuration = () => {
+            const playerDuration = player.duration();
+            if (playerDuration && playerDuration > 0 && playerDuration !== Infinity && !isNaN(playerDuration)) {
+                setDuration(playerDuration);
+            } else if (item.RunTimeTicks) {
+                setDuration(ticksToSeconds(item.RunTimeTicks));
+            } else {
+                setDuration(playerDuration || 0);
+            }
+            // Ensure playback rate is synced after video load/stream switch
+            player.playbackRate(playbackRate);
+        };
         const updateMuted = () => setIsMuted(player.muted() || false);
         const updateBuffered = () => {
             const buffered = player.buffered();
@@ -234,6 +253,10 @@ const PlayerControls = ({
             if (!nextItem) return;
             markItemAsCompleted(item.Id);
             navigate(buildPlayerUrl(nextItem.Id!, backUrl ?? undefined));
+        };
+
+        const handleRateChange = () => {
+            setPlaybackRate(player.playbackRate() || 1);
         };
 
         // PiP event listeners
@@ -250,9 +273,11 @@ const PlayerControls = ({
         player.on('timeupdate', updateTime);
         player.on('timeupdate', updateBuffered);
         player.on('loadedmetadata', updateDuration);
+        player.on('durationchange', updateDuration);
         player.on('progress', updateBuffered);
         player.on('volumechange', updateMuted);
         player.on('ended', handleEnded);
+        player.on('ratechange', handleRateChange);
 
         return () => {
             player.off('play', updatePlayState);
@@ -260,9 +285,11 @@ const PlayerControls = ({
             player.off('timeupdate', updateTime);
             player.off('timeupdate', updateBuffered);
             player.off('loadedmetadata', updateDuration);
+            player.off('durationchange', updateDuration);
             player.off('progress', updateBuffered);
             player.off('volumechange', updateMuted);
             player.off('ended', handleEnded);
+            player.off('ratechange', handleRateChange);
 
             if (videoEl) {
                 videoEl.removeEventListener('enterpictureinpicture', handleEnterPiP);
@@ -275,9 +302,11 @@ const PlayerControls = ({
         nextItem,
         dismissedNextItemPrompt,
         item.Id,
+        item.RunTimeTicks,
         navigate,
         markItemAsCompleted,
         backUrl,
+        playbackRate,
     ]);
 
     const togglePlay = useCallback(() => {
@@ -755,6 +784,11 @@ const PlayerControls = ({
                             })()}
                     </div>
                 )}
+                {/* Time display below progress bar: current time on the left, duration on the right */}
+                <div className="flex justify-between items-center text-xs text-gray-400 mt-1.5 px-0.5 font-medium select-none pointer-events-none">
+                    <span className="tabular-nums">{formatPlayTime(clampedCurrentTime)}</span>
+                    <span className="tabular-nums">{formatPlayTime(duration)}</span>
+                </div>
 
                 {/* Controls */}
                 <div className="flex items-center justify-between text-white gap-4">
@@ -881,22 +915,81 @@ const PlayerControls = ({
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         )}
-                        <Button
-                            variant={'ghost'}
-                            size={'icon-lg'}
-                            onClick={toggleMute}
-                            className="cursor-pointer"
+                        {/* Volume control: hover/touch to slide out the volume bar; click icon to toggle mute when bar is visible */}
+                        <div
+                            className="flex items-center h-10"
+                            onMouseEnter={() => setShowVolumeBar(true)}
+                            onMouseLeave={() => setShowVolumeBar(false)}
                         >
-                            {isMuted ? <VolumeX /> : <Volume2 />}
-                        </Button>
-                        <Slider
-                            min={0}
-                            max={1}
-                            step={0.1}
-                            value={isMuted ? [0] : [volume]}
-                            onValueChange={handleVolumeChange}
-                            className="w-25 cursor-pointer mr-2"
-                        />
+                            <Button
+                                variant={'ghost'}
+                                size={'icon-lg'}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (showVolumeBar) {
+                                        toggleMute();
+                                    } else {
+                                        setShowVolumeBar(true);
+                                    }
+                                }}
+                                className="cursor-pointer"
+                            >
+                                {isMuted ? <VolumeX /> : <Volume2 />}
+                            </Button>
+                            <div
+                                className={`flex items-center transition-all duration-300 ease-in-out ${
+                                    showVolumeBar
+                                        ? 'w-24 opacity-100 ml-2'
+                                        : 'w-0 opacity-0 overflow-hidden pointer-events-none'
+                                }`}
+                            >
+                                <Slider
+                                    min={0}
+                                    max={1}
+                                    step={0.1}
+                                    value={isMuted ? [0] : [volume]}
+                                    onValueChange={handleVolumeChange}
+                                    className="w-24 cursor-pointer mr-2"
+                                />
+                            </div>
+                        </div>
+                        {/* Playback speed control */}
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button
+                                    variant={'ghost'}
+                                    size={'icon-lg'}
+                                    className="cursor-pointer text-sm font-semibold select-none"
+                                    title="Playback speed"
+                                >
+                                    <span className="text-[13px]">{playbackRate}x</span>
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent container={container} className="w-40 z-50">
+                                <DropdownMenuLabel>Playback Speed</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuRadioGroup
+                                    value={playbackRate.toString()}
+                                    onValueChange={(val) => setPlaybackRate(parseFloat(val))}
+                                >
+                                    <DropdownMenuRadioItem value="0.5">0.5x</DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="0.75">
+                                        0.75x
+                                    </DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="1">
+                                        1.0x (Normal)
+                                    </DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="1.25">
+                                        1.25x
+                                    </DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="1.5">1.5x</DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="1.75">
+                                        1.75x
+                                    </DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="2">2.0x</DropdownMenuRadioItem>
+                                </DropdownMenuRadioGroup>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                         {document.pictureInPictureEnabled && (
                             <Button
                                 variant={'ghost'}

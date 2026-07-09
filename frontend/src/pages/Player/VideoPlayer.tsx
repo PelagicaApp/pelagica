@@ -47,7 +47,7 @@ const VideoPlayer = ({
             responsive: false,
             fluid: false,
             html5: {
-                nativeControlsForTouch: true,
+                nativeControlsForTouch: false,
                 hls: { overrideNative: true },
                 nativeTextTracks: false, // Force video.js to render text tracks
             },
@@ -164,6 +164,8 @@ const VideoPlayer = ({
                 ref={videoRef}
                 className="video-js vjs-default-skin"
                 data-testid="video-player"
+                playsInline
+                webkit-playsinline="true"
                 style={{ maxWidth: '100%', maxHeight: '100%', width: '100%', height: '100%' }}
             >
                 <track kind="captions" srcLang="en" label="English" />

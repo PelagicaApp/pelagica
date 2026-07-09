@@ -83,6 +83,7 @@ const PlayerPage = () => {
     const [subtitleTrackIndex, setSubtitleTrackIndex] = useState<number | null>(
         resolvedSubtitleTrackIndex
     );
+    const [shouldRotate, setShouldRotate] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
     const progressReportingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const lastPositionRef = useRef<number>(0);
@@ -130,13 +131,68 @@ const PlayerPage = () => {
     }, [playbackInfo?.liveStreamId]);
 
     useEffect(() => {
+        const checkOrientation = () => {
+            const isFS = !!(
+                document.fullscreenElement ||
+                (document as any).webkitFullscreenElement ||
+                (document as any).mozFullscreenElement ||
+                (document as any).msFullscreenElement
+            );
+            if (isFS && window.innerHeight > window.innerWidth) {
+                setShouldRotate(true);
+            } else {
+                setShouldRotate(false);
+            }
+        };
+
+
         const handleFullscreenChange = () => {
-            setIsFullscreen(!!document.fullscreenElement);
+            const isFS = !!(
+                document.fullscreenElement ||
+                (document as any).webkitFullscreenElement ||
+                (document as any).mozFullscreenElement ||
+                (document as any).msFullscreenElement
+            );
+            setIsFullscreen(isFS);
+
+            if (isFS) {
+                // Try Screen Orientation API to lock landscape; fall back to CSS rotation
+                if (screen.orientation && (screen.orientation as any).lock) {
+                    (screen.orientation as any).lock('landscape').catch((err: any) => {
+                        console.warn('Could not lock screen orientation, falling back to CSS rotation:', err);
+                        checkOrientation();
+                    });
+                } else {
+                    checkOrientation();
+                }
+            } else {
+                setShouldRotate(false);
+                if (screen.orientation && (screen.orientation as any).unlock) {
+                    try {
+                        (screen.orientation as any).unlock();
+                    } catch (err: any) {
+                        console.warn('Could not unlock screen orientation:', err);
+                    }
+                }
+            }
         };
 
         document.addEventListener('fullscreenchange', handleFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+        document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+        document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+
+        window.addEventListener('resize', checkOrientation);
+        window.addEventListener('orientationchange', checkOrientation);
+
         return () => {
             document.removeEventListener('fullscreenchange', handleFullscreenChange);
+            document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+            document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
+            document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
+
+            window.removeEventListener('resize', checkOrientation);
+            window.removeEventListener('orientationchange', checkOrientation);
         };
     }, []);
 
@@ -344,7 +400,23 @@ const PlayerPage = () => {
     }
 
     return (
-        <div ref={containerRef} className="relative w-full h-screen bg-black flex overflow-hidden">
+        <div
+            ref={containerRef}
+            className={`bg-black flex overflow-hidden ${
+                shouldRotate ? 'fixed inset-0 z-[9999]' : 'relative w-full h-screen'
+            }`}
+            style={
+                shouldRotate
+                    ? {
+                          width: '100vh',
+                          height: '100vw',
+                          top: '50%',
+                          left: '50%',
+                          transform: 'translate(-50%, -50%) rotate(90deg)',
+                      }
+                    : undefined
+            }
+        >
             <VideoPlayer
                 key={itemId}
                 src={streamResult.url}
