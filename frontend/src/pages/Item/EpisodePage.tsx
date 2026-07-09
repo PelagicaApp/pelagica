@@ -1,7 +1,7 @@
 import type { AppConfig } from '@/hooks/api/useConfig';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import BaseMediaPage from './BaseMediaPage';
-import { Dot, ImageOff } from 'lucide-react';
+import { Dot, ImageOff, Play } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { getPrimaryImageUrl, getThumbUrl } from '@/utils/jellyfinUrls';
 import DetailBadges from './DetailBadges';
@@ -27,13 +27,15 @@ import SourcePickerButton from '@/components/SourcePickerButton';
 import { Link } from 'react-router';
 import { Skeleton } from '@/components/ui/skeleton';
 import Overview from './Overview';
+import ItemBackButton from './ItemBackButton';
 
 interface EpisodePageProps {
     item: BaseItemDto;
     config: AppConfig;
+    onBack?: () => void;
 }
 
-const EpisodePage = ({ item, config }: EpisodePageProps) => {
+const EpisodePage = ({ item, config, onBack }: EpisodePageProps) => {
     const { t } = useTranslation('item');
     const [imageError, setImageError] = useState<boolean>(false);
     const [isImageLoaded, setIsImageLoaded] = useState<boolean>(false);
@@ -65,11 +67,11 @@ const EpisodePage = ({ item, config }: EpisodePageProps) => {
                 <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start relative z-10 w-full">
                     {/* Left Column (Thumbnail) */}
                     <div className="w-full sm:w-72 md:w-96 lg:w-120 shrink-0 mx-auto lg:mx-0">
-                        <div className="relative w-full aspect-video rounded-xl overflow-hidden shadow-2xl shadow-black/85 border border-white/10 bg-muted flex items-center justify-center">
+                        <div className="relative w-full aspect-video rounded-xl overflow-hidden shadow-2xl shadow-black/85 border border-white/10 bg-muted flex items-center justify-center group">
                             {imageError ? (
                                 <ImageOff className="w-12 h-12 text-muted-foreground" />
                             ) : (
-                                <>
+                                <Link to={`/play/${item.Id}`} className="block w-full h-full relative cursor-pointer z-10">
                                     <Skeleton className="absolute inset-0 w-full h-full rounded-xl" />
                                     <img
                                         src={
@@ -96,7 +98,13 @@ const EpisodePage = ({ item, config }: EpisodePageProps) => {
                                         onLoad={() => setIsImageLoaded(true)}
                                         onError={() => setImageError(true)}
                                     />
-                                </>
+                                    {/* 半透明大播放按钮 */}
+                                    <div className="absolute inset-0 bg-black/15 md:bg-black/25 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-20">
+                                        <div className="h-16 w-16 bg-white/25 md:bg-white/20 hover:bg-white/35 backdrop-blur-md border border-white/30 rounded-full flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 shadow-xl">
+                                            <Play className="h-8 w-8 text-white fill-white ml-1" />
+                                        </div>
+                                    </div>
+                                </Link>
                             )}
                             {progress > 0 && (
                                 <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-700 z-20">
@@ -106,6 +114,7 @@ const EpisodePage = ({ item, config }: EpisodePageProps) => {
                                     />
                                 </div>
                             )}
+                            {onBack && <ItemBackButton onClick={onBack} />}
                         </div>
                     </div>
 

@@ -1,4 +1,4 @@
-import { Navigate, useParams } from 'react-router';
+import { Navigate, useParams, useNavigate } from 'react-router';
 import Page from '../Page';
 import { useItem } from '@/hooks/api/useItem';
 import MoviePage from './MoviePage';
@@ -99,9 +99,59 @@ const ItemPage = () => {
     const { t } = useTranslation('item');
     const params = useParams<{ itemId: string }>();
     const itemId = params.itemId;
+    const navigate = useNavigate();
 
     const { config, loading: configLoading } = useConfig();
     const { data: item, isLoading, error } = useItem(itemId, true, getUserId() || undefined);
+
+    /**
+     * 智能返回导航：优先使用浏览器历史后退；
+     * 无历史时根据 item 类型回退到对应的上级页面（剧集→季→剧集→库等）。
+     */
+    const handleBack = () => {
+        if (window.history.state && window.history.state.idx > 0) {
+            navigate(-1);
+            return;
+        }
+
+        if (!item) {
+            navigate(-1);
+            return;
+        }
+
+        switch (item.Type) {
+            case 'Episode':
+                if (item.ParentId) {
+                    navigate(`/item/${item.ParentId}`);
+                } else if (item.SeriesId) {
+                    navigate(`/item/${item.SeriesId}`);
+                } else {
+                    navigate('/');
+                }
+                break;
+            case 'Season':
+                if (item.SeriesId) {
+                    navigate(`/item/${item.SeriesId}`);
+                } else if (item.ParentId) {
+                    navigate(`/item/${item.ParentId}`);
+                } else {
+                    navigate('/');
+                }
+                break;
+            case 'Movie':
+            case 'Series':
+            case 'BoxSet':
+                if (item.ParentId) {
+                    navigate(`/library?library=${item.ParentId}`);
+                } else {
+                    navigate('/library');
+                }
+                break;
+            default:
+                navigate(-1);
+                break;
+        }
+    };
 
     const redirectPath =
         item?.Type && REDIRECT_ITEM_TYPES[item.Type]
@@ -114,7 +164,7 @@ const ItemPage = () => {
     return (
         <Page
             title={item ? `${item.Name}` : isLoading ? t('loading') : t('item_not_found')}
-            className="flex-1 flex flex-col"
+            className="flex-1 flex flex-col relative"
             overlayHeader={isFullPageItem}
             pagePadding={!isFullPageItem}
         >
@@ -124,15 +174,15 @@ const ItemPage = () => {
                 (() => {
                     switch (item.Type) {
                         case 'Movie':
-                            return <MoviePage item={item} config={config} />;
+                            return <MoviePage item={item} config={config} onBack={handleBack} />;
                         case 'Series':
-                            return <SeriesPage item={item} config={config} />;
+                            return <SeriesPage item={item} config={config} onBack={handleBack} />;
                         case 'Episode':
-                            return <EpisodePage item={item} config={config} />;
+                            return <EpisodePage item={item} config={config} onBack={handleBack} />;
                         case 'Season':
-                            return <SeasonPage item={item} config={config} />;
+                            return <SeasonPage item={item} config={config} onBack={handleBack} />;
                         case 'BoxSet':
-                            return <BoxSetPage item={item} config={config} />;
+                            return <BoxSetPage item={item} config={config} onBack={handleBack} />;
                         case 'Studio':
                             return <StudioPage item={item} />;
                         default:

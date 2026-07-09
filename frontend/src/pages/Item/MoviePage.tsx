@@ -1,7 +1,7 @@
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import BaseMediaPage from './BaseMediaPage';
 import { getPrimaryImageUrl, getLogoUrl } from '@/utils/jellyfinUrls';
-import { ImageOff } from 'lucide-react';
+import { ImageOff, Play } from 'lucide-react';
 import PeopleRow from './PeopleRow';
 import { useTranslation } from 'react-i18next';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -20,17 +20,30 @@ import ItemDownloadButton from '../../components/ItemDownloadButton';
 import SourcePickerButton from '@/components/SourcePickerButton';
 import ItemMetadataBadges from './ItemMetadataBadges';
 import Overview from './Overview';
+import { Link } from 'react-router';
+import ItemBackButton from './ItemBackButton';
 
 interface MoviePageProps {
     item: BaseItemDto;
     config: AppConfig;
+    onBack?: () => void;
 }
 
-const MoviePage = ({ item, config }: MoviePageProps) => {
+const MoviePage = ({ item, config, onBack }: MoviePageProps) => {
     const { t } = useTranslation('item');
     const [postersFailed, setPostersFailed] = useState(false);
     const [isPosterLoaded, setIsPosterLoaded] = useState(false);
     const [failedLogo, setFailedLogo] = useState(false);
+    const [customAspectRatio, setCustomAspectRatio] = useState<number | null>(null);
+    const [prevItemId, setPrevItemId] = useState<string | undefined>(item.Id);
+
+    // 切换 item 时重置自定义宽高比，避免上一张图的 ratio 残留
+    if (item.Id !== prevItemId) {
+        setPrevItemId(item.Id);
+        setCustomAspectRatio(null);
+    }
+
+    const currentAspectRatio = customAspectRatio ?? item.PrimaryImageAspectRatio ?? (2 / 3);
 
     const isCurrentlyPlaying =
         item.UserData?.PlaybackPositionTicks &&
@@ -46,35 +59,51 @@ const MoviePage = ({ item, config }: MoviePageProps) => {
             topPadding={false}
         >
             <div className="pt-24 sm:pt-32 pb-12 mx-auto w-full flex flex-col gap-12">
-                <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start relative z-10 w-full">
+                <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-stretch lg:items-start relative z-10 w-full">
                     {/* Left Column (Poster) */}
-                    <div className="w-48 sm:w-64 md:w-72 lg:w-80 shrink-0 mx-auto lg:mx-0">
-                        <div className="relative aspect-2/3 w-full rounded-xl overflow-hidden shadow-2xl shadow-black/85 border border-white/10 bg-muted flex items-center justify-center">
-                            {!postersFailed ? (
-                                <>
-                                    <Skeleton className="absolute inset-0 w-full h-full rounded-xl" />
-                                    <img
-                                        src={getPrimaryImageUrl(
-                                            item.Id || '',
-                                            { width: 640, height: 960 },
-                                            item.ImageTags?.Primary
-                                        )}
-                                        alt={item.Name + ' Primary'}
-                                        className={[
-                                            'object-cover rounded-xl w-full h-full relative z-10',
-                                            'transition-[filter,opacity] duration-700 ease-out',
-                                            isPosterLoaded
-                                                ? 'blur-0 opacity-100'
-                                                : 'blur-md opacity-0',
-                                        ].join(' ')}
-                                        onLoad={() => setIsPosterLoaded(true)}
-                                        onError={() => setPostersFailed(true)}
-                                    />
-                                </>
-                            ) : (
+                    <div
+                        className="relative -mx-4 sm:mx-auto lg:mx-0 w-[calc(100%+2rem)] sm:w-full sm:max-w-[24rem] lg:max-w-[30rem] xl:max-w-[36rem] shadow-lg overflow-hidden group shrink-0 bg-black/30"
+                        style={{ aspectRatio: currentAspectRatio }}
+                    >
+                        {!postersFailed ? (
+                            <Link to={`/play/${item.Id}`} className="block w-full h-full relative cursor-pointer z-10">
+                                <Skeleton className="absolute inset-0 w-full h-full" />
+                                <img
+                                    src={getPrimaryImageUrl(
+                                        item.Id || '',
+                                        undefined,
+                                        item.ImageTags?.Primary
+                                    )}
+                                    alt={item.Name + ' Primary'}
+                                    className={[
+                                        'object-cover w-full h-full relative z-10 bg-black/20',
+                                        'transition-[filter,opacity] duration-700 ease-out',
+                                        isPosterLoaded
+                                            ? 'blur-0 opacity-100'
+                                            : 'blur-md opacity-0',
+                                    ].join(' ')}
+                                    onLoad={(e) => {
+                                        setIsPosterLoaded(true);
+                                        const img = e.currentTarget;
+                                        if (img.naturalWidth && img.naturalHeight) {
+                                            setCustomAspectRatio(img.naturalWidth / img.naturalHeight);
+                                        }
+                                    }}
+                                    onError={() => setPostersFailed(true)}
+                                />
+                                {/* 半透明大播放按钮 */}
+                                <div className="absolute inset-0 bg-black/15 md:bg-black/25 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-20">
+                                    <div className="h-16 w-16 bg-white/25 md:bg-white/20 hover:bg-white/35 backdrop-blur-md border border-white/30 rounded-full flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 shadow-xl">
+                                        <Play className="h-8 w-8 text-white fill-white ml-1" />
+                                    </div>
+                                </div>
+                            </Link>
+                        ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-muted">
                                 <ImageOff className="text-muted-foreground w-12 h-12" />
-                            )}
-                        </div>
+                            </div>
+                        )}
+                        {onBack && <ItemBackButton onClick={onBack} />}
                     </div>
 
                     {/* Right Column (Details) */}
