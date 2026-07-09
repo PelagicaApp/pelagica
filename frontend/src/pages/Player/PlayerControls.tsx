@@ -756,6 +756,14 @@ const PlayerControls = ({
                     </div>
                 )}
 
+                {/* Time display below progress bar: current time on the left, duration on the right */}
+                {!isLive && (
+                    <div className="flex justify-between items-center text-xs text-gray-400 mt-1.5 px-0.5 font-medium select-none pointer-events-none">
+                        <span className="tabular-nums">{formatPlayTime(clampedCurrentTime)}</span>
+                        <span className="tabular-nums">{formatPlayTime(duration)}</span>
+                    </div>
+                )}
+
                 {/* Controls */}
                 <div className="flex items-center justify-between text-white gap-4">
                     <div className="flex items-center gap-2">
@@ -793,14 +801,11 @@ const PlayerControls = ({
                                 </Link>
                             </Button>
                         )}
-                        {isLive ? (
+                        {/* Live indicator only: non-live time is redundant (already shown below progress bar) */}
+                        {isLive && (
                             <div className="flex items-center gap-1.5 text-sm ml-2">
                                 <Dot className="text-red-500 -mx-1" size={32} />
                                 {t('live')}
-                            </div>
-                        ) : (
-                            <div className="text-sm ml-2">
-                                {formatPlayTime(clampedCurrentTime)} / {formatPlayTime(duration)}
                             </div>
                         )}
                     </div>
