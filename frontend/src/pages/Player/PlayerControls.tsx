@@ -148,12 +148,14 @@ const PlayerControls = ({
     const [container, setContainer] = useState<HTMLElement | null>(null);
     const { data: session } = useSession(item.Id, showStats);
 
+    // 优先使用浏览器历史后退，避免 navigate(backUrl) 产生 PUSH 导致详情页↔播放页死循环
     const handleBack = () => {
-        if (backUrl) {
-            navigate(backUrl);
-        } else {
+        if (window.history.state && window.history.state.idx > 0) {
             navigate(-1);
+            return;
         }
+        // 无浏览器历史时，用 backUrl 或首页作为兜底
+        navigate(backUrl || '/');
     };
 
     useEffect(() => {
