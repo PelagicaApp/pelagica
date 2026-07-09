@@ -145,7 +145,6 @@ const PlayerPage = () => {
             }
         };
 
-
         const handleFullscreenChange = () => {
             const isFS = !!(
                 document.fullscreenElement ||
@@ -159,7 +158,10 @@ const PlayerPage = () => {
                 // Try Screen Orientation API to lock landscape; fall back to CSS rotation
                 if (screen.orientation && (screen.orientation as any).lock) {
                     (screen.orientation as any).lock('landscape').catch((err: any) => {
-                        console.warn('Could not lock screen orientation, falling back to CSS rotation:', err);
+                        console.warn(
+                            'Could not lock screen orientation, falling back to CSS rotation:',
+                            err
+                        );
                         checkOrientation();
                     });
                 } else {

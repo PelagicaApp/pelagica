@@ -198,9 +198,13 @@ const PlayerControls = ({
         (itemId: string | undefined) => {
             if (!itemId) return;
             const playerDuration = player && !player.isDisposed?.() ? player.duration() : 0;
-            const finalTicks = playerDuration && playerDuration > 0 && playerDuration !== Infinity && !isNaN(playerDuration)
-                ? Math.floor(playerDuration * 10000000)
-                : (item.RunTimeTicks || 0);
+            const finalTicks =
+                playerDuration &&
+                playerDuration > 0 &&
+                playerDuration !== Infinity &&
+                !isNaN(playerDuration)
+                    ? Math.floor(playerDuration * 10000000)
+                    : item.RunTimeTicks || 0;
             reportProgress({
                 itemId,
                 positionTicks: finalTicks,
@@ -231,7 +235,12 @@ const PlayerControls = ({
         const updateTime = () => setCurrentTime(player.currentTime() || 0);
         const updateDuration = () => {
             const playerDuration = player.duration();
-            if (playerDuration && playerDuration > 0 && playerDuration !== Infinity && !isNaN(playerDuration)) {
+            if (
+                playerDuration &&
+                playerDuration > 0 &&
+                playerDuration !== Infinity &&
+                !isNaN(playerDuration)
+            ) {
                 setDuration(playerDuration);
             } else if (item.RunTimeTicks) {
                 setDuration(ticksToSeconds(item.RunTimeTicks));
