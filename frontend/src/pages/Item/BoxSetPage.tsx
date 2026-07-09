@@ -37,7 +37,7 @@ const BoxSetPage = ({ item, config, onBack }: BoxSetPageProps) => {
         setCustomAspectRatio(null);
     }
 
-    const currentAspectRatio = customAspectRatio ?? item.PrimaryImageAspectRatio ?? (2 / 3);
+    const currentAspectRatio = customAspectRatio ?? item.PrimaryImageAspectRatio ?? 2 / 3;
 
     return (
         <BaseMediaPage
@@ -66,15 +66,15 @@ const BoxSetPage = ({ item, config, onBack }: BoxSetPageProps) => {
                                     className={[
                                         'object-cover w-full h-full relative z-10 bg-black/20',
                                         'transition-[filter,opacity] duration-700 ease-out',
-                                        isPosterLoaded
-                                            ? 'blur-0 opacity-100'
-                                            : 'blur-md opacity-0',
+                                        isPosterLoaded ? 'blur-0 opacity-100' : 'blur-md opacity-0',
                                     ].join(' ')}
                                     onLoad={(e) => {
                                         setIsPosterLoaded(true);
                                         const img = e.currentTarget;
                                         if (img.naturalWidth && img.naturalHeight) {
-                                            setCustomAspectRatio(img.naturalWidth / img.naturalHeight);
+                                            setCustomAspectRatio(
+                                                img.naturalWidth / img.naturalHeight
+                                            );
                                         }
                                     }}
                                     onError={() => setPrimaryImageError(true)}

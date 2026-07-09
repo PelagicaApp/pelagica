@@ -71,7 +71,10 @@ const EpisodePage = ({ item, config, onBack }: EpisodePageProps) => {
                             {imageError ? (
                                 <ImageOff className="w-12 h-12 text-muted-foreground" />
                             ) : (
-                                <Link to={`/play/${item.Id}`} className="block w-full h-full relative cursor-pointer z-10">
+                                <Link
+                                    to={`/play/${item.Id}`}
+                                    className="block w-full h-full relative cursor-pointer z-10"
+                                >
                                     <Skeleton className="absolute inset-0 w-full h-full rounded-xl" />
                                     <img
                                         src={
