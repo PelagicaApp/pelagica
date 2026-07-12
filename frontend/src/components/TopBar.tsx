@@ -541,7 +541,6 @@ const UserMenu = () => {
                                 </DropdownMenuSubContent>
                             </DropdownMenuPortal>
                         </DropdownMenuSub>
-                        <DropdownMenuSeparator />
                     </>
                 )}
 
