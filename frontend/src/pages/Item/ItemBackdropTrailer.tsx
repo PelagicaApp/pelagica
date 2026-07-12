@@ -97,7 +97,7 @@ export const ItemBackdropTrailerControls = ({
     const FullscreenIcon = isFullscreen ? Minimize : Maximize;
 
     return (
-        <div className="absolute bottom-4 right-4 flex gap-2 pointer-events-auto">
+        <div className="absolute top-4 right-4 flex gap-2 pointer-events-auto">
             <button
                 type="button"
                 onClick={() => onMutedChange(!muted)}
