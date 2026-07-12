@@ -33,6 +33,16 @@ export const GeneralTab = ({
                 {t('category_general')}
             </h1>
             <h2 className="mt-6 mb-2 text-xl font-semibold leading-none tracking-tight">
+                {t('seer_integration')}
+            </h2>
+            <p className="mb-2 text-sm text-muted-foreground">{t('seer_description')}</p>
+            <StringInput
+                label={t('seer_url_label')}
+                value={config.seerUrl || ''}
+                onChange={(value) => saveConfig((prev) => ({ ...prev, seerUrl: value }))}
+                placeholder={t('seer_url_placeholder')}
+            />
+            <h2 className="mt-6 mb-2 text-xl font-semibold leading-none tracking-tight">
                 Streamystats
             </h2>
             <p className="mb-2 text-sm text-muted-foreground">{t('streamystats_description')}</p>

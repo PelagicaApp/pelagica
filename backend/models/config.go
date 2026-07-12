@@ -9,6 +9,7 @@ type AppConfig struct {
 	LogoDarkURL                 string              `json:"logoDarkUrl,omitempty"`
 	ShowStreamystatsButton      *bool               `json:"showStreamystatsButton,omitempty"`
 	StreamystatsURL             string              `json:"streamystatsUrl,omitempty"`
+	SeerURL                     string              `json:"seerUrl,omitempty"`
 	WatchedStateBadgeHomeScreen *bool               `json:"watchedStateBadgeHomeScreen,omitempty"`
 	WatchedStateBadgeLibrary    *bool               `json:"watchedStateBadgeLibrary,omitempty"`
 	WatchedStateBadgeGenre      *bool               `json:"watchedStateBadgeGenre,omitempty"`

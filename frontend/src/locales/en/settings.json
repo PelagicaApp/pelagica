@@ -141,5 +141,9 @@
     "usage_statistics_description": "We have no way to know how many people use Pelagica unless you tell us. Opting in sends a daily ping with your version and a random ID. That's it.",
     "login_page": "Login Page",
     "login_page_description": "Configure the behavior of the login page. This only takes effect when a server address is enforced via the SERVER_ADDRESS environment variable.",
-    "hide_back_to_server_button_label": "Hide \"Back to Server\" Button"
+    "hide_back_to_server_button_label": "Hide \"Back to Server\" Button",
+    "seer_integration": "Seer Integration",
+    "seer_description": "Access Seer-powered recommendations, search for titles, and send media requests straight from Pelagica.",
+    "seer_url_label": "Seer URL",
+    "seer_url_placeholder": "http://your-seer-server"
 }
