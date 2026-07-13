@@ -698,7 +698,7 @@ const PlayerControls = ({
                         />
                         {/* current progress */}
                         <div
-                            className="absolute top-1 left-0 h-1 bg-brand rounded pointer-events-none z-15"
+                            className="absolute top-1 left-0 h-1 bg-brand rounded pointer-events-none z-15 transition-[width] duration-250 ease-linear"
                             style={{ width: `${progressPercentage}%` }}
                         />
                         {/* Hover preview */}
