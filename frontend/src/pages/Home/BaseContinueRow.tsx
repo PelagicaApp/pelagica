@@ -5,7 +5,7 @@ import { Link, useLocation, useNavigate } from 'react-router';
 import { getDetailLineText, getTitleLineText } from './continueWatchingLines';
 import { buildPlayerUrl } from '@/utils/playerUrl';
 import { Dot, ImageOff, Play } from 'lucide-react';
-import { getPrimaryImageUrl, getThumbUrl } from '@/utils/jellyfinUrls';
+import { getPrimaryImageUrl, getThumbUrl, getBackdropUrl } from '@/utils/jellyfinUrls';
 import { Skeleton } from '@/components/ui/skeleton';
 import SectionScroller from '@/components/SectionScroller';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
@@ -19,6 +19,7 @@ interface BaseContinueRowProps {
     isLoading: boolean;
     error: unknown;
 }
+type ImageState = 'thumb' | 'backdrop' | 'primary' | 'failed';
 
 export function BaseContinueRow({
     title,
@@ -32,9 +33,48 @@ export function BaseContinueRow({
     const navigate = useNavigate();
     const location = useLocation();
 
-    const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
-    const handleImageError = (itemId: string) => {
-        setImageErrors((prev) => ({ ...prev, [itemId]: true }));
+    const [imageStates, setImageStates] = useState<Record<string, ImageState>>({});
+
+    const handleImageError = (item: BaseItemDto) => {
+        const id = item.Id;
+        if (!id) return;
+
+        const state = imageStates[id] ?? 'thumb';
+
+        switch (state) {
+            case 'thumb':
+                if (item.BackdropImageTags?.length) {
+                    setImageStates((prev) => ({
+                        ...prev,
+                        [id]: 'backdrop',
+                    }));
+                    return;
+                }
+
+                if (item.ImageTags?.Primary) {
+                    setImageStates((prev) => ({
+                        ...prev,
+                        [id]: 'primary',
+                    }));
+                    return;
+                }
+                break;
+
+            case 'backdrop':
+                if (item.ImageTags?.Primary) {
+                    setImageStates((prev) => ({
+                        ...prev,
+                        [id]: 'primary',
+                    }));
+                    return;
+                }
+                break;
+        }
+
+        setImageStates((prev) => ({
+            ...prev,
+            [id]: 'failed',
+        }));
     };
 
     return (
@@ -60,6 +100,37 @@ export function BaseContinueRow({
                                   const runtime = item.RunTimeTicks ?? 0;
                                   const progress = runtime > 0 ? (watched / runtime) * 100 : 0;
 
+                                  const currentState =
+                                      imageStates[item.Id!] ??
+                                      (item.ImageTags?.Thumb
+                                          ? 'thumb'
+                                          : item.BackdropImageTags?.length
+                                            ? 'backdrop'
+                                              : item.ImageTags?.Primary
+                                              ? 'primary'
+                                            : 'failed');
+
+                                  const imageSrc =
+                                      currentState === 'thumb'
+                                          ? getThumbUrl(
+                                                item.Id!,
+                                                { width: 416 },
+                                                item.ImageTags?.Thumb
+                                            )
+                                          : currentState === 'backdrop'
+                                            ? getBackdropUrl(
+                                                  item.Id!,
+                                                  { width: 416 },
+                                                  item.BackdropImageTags?.[0]
+                                              )
+                                            : currentState === 'primary'
+                                              ? getPrimaryImageUrl(
+                                                    item.Id!,
+                                                    { width: 416 },
+                                                    item.ImageTags?.Primary
+                                                )
+                                              : '';
+
                                   return (
                                       <GeneralItemContextMenu
                                           key={item.Id}
@@ -74,32 +145,16 @@ export function BaseContinueRow({
                                               className="group w-min min-w-48 lg:min-w-64 2xl:min-w-80"
                                           >
                                               <div className="relative w-full aspect-video rounded-md overflow-hidden">
-                                                  {imageErrors[item.Id!] ? (
+                                                  {currentState === 'failed' ? (
                                                       <div className="w-full h-full bg-muted flex items-center justify-center rounded-md">
                                                           <ImageOff className="w-12 h-12 text-muted-foreground" />
                                                       </div>
                                                   ) : (
                                                       <img
-                                                          src={
-                                                              item.SeriesId
-                                                                  ? getPrimaryImageUrl(
-                                                                        item.Id!,
-                                                                        {
-                                                                            width: 416,
-                                                                        },
-                                                                        item.ImageTags?.Primary
-                                                                    )
-                                                                  : getThumbUrl(
-                                                                        item.Id!,
-                                                                        {
-                                                                            width: 416,
-                                                                        },
-                                                                        item.ImageTags?.Thumb
-                                                                    )
-                                                          }
+                                                          src={imageSrc}
                                                           alt={item.Name || t('no_title')}
                                                           className="w-full h-full object-cover rounded-md group-hover:opacity-75 transition-all group-hover:scale-105"
-                                                          onError={() => handleImageError(item.Id!)}
+                                                          onError={() => handleImageError(item)}
                                                       />
                                                   )}
                                                   {progress > 0 && (
