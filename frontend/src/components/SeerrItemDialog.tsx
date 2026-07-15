@@ -1,7 +1,16 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { Check, Clapperboard, Clock, Download, ExternalLink, ImageOff } from 'lucide-react';
+import {
+    Check,
+    Clapperboard,
+    Clock,
+    Download,
+    ExternalLink,
+    Film,
+    ImageOff,
+    TvMinimalPlay,
+} from 'lucide-react';
 import {
     Dialog,
     DialogContent,
@@ -17,7 +26,7 @@ import { useConfig } from '@/hooks/api/useConfig';
 import { useSeerrItemDetails } from '@/hooks/api/useSeerrItemDetails';
 import { useRequestSeerrItem } from '@/hooks/api/useRequestSeerrItem';
 import { getSeerrItemBackdropUrl, getSeerrItemPosterUrl, getSeerrItemUrl } from '@/utils/seerUrls';
-import { SeerrMediaStatus, SeerrRequestStatus } from '@/api/seerr/types';
+import { SeerrMediaStatus, SeerrRequestStatus, type SeerrMediaType } from '@/api/seerr/types';
 import type { SeerrDialogItem } from '@/context/SeerrItemDialogContext';
 
 interface SeerrItemDialogProps {
@@ -25,6 +34,19 @@ interface SeerrItemDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
 }
+
+const ItemTypeBadge = ({ mediaType }: { mediaType: SeerrMediaType }) => {
+    const { t } = useTranslation('search');
+    console.log('mediaType', mediaType);
+    const label = mediaType === 'movie' ? t('seerr_movie') : t('seerr_tv_show');
+    const icon = mediaType === 'movie' ? <Clapperboard /> : <TvMinimalPlay />;
+    return (
+        <Badge variant="outline">
+            {icon}
+            {label}
+        </Badge>
+    );
+};
 
 const mediaStatusBadge = (
     status: SeerrMediaStatus | undefined,
@@ -251,6 +273,7 @@ const SeerrItemDialog = ({ item, open, onOpenChange }: SeerrItemDialogProps) => 
                                     )}
                                     {details.genres && details.genres.length > 0 && (
                                         <div className="flex flex-wrap gap-2">
+                                            <ItemTypeBadge mediaType={details.mediaType} />
                                             {details.genres.map((genre) => (
                                                 <Badge key={genre.id} variant="outline">
                                                     {genre.name}
@@ -265,7 +288,7 @@ const SeerrItemDialog = ({ item, open, onOpenChange }: SeerrItemDialogProps) => 
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                             >
-                                                <Clapperboard />
+                                                <Film />
                                                 {t('seerr_watch_trailer')}
                                             </a>
                                         </Button>

@@ -47,5 +47,7 @@
     "seerr_request_success": "Request submitted",
     "seerr_request_failed": "Failed to submit request",
     "seerr_loading_details": "Loading details...",
-    "seerr_failed_to_load": "Failed to load details"
+    "seerr_failed_to_load": "Failed to load details",
+    "seerr_movie": "Movie",
+    "seerr_tv_show": "TV Show"
 }
