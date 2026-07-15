@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { Clapperboard, Download, ExternalLink, ImageOff } from 'lucide-react';
+import { Check, Clapperboard, Clock, Download, ExternalLink, ImageOff } from 'lucide-react';
 import {
     Dialog,
     DialogContent,
@@ -27,13 +27,33 @@ interface SeerrItemDialogProps {
 const statusBadge = (status: SeerrMediaStatus | undefined, t: (key: string) => string) => {
     switch (status) {
         case SeerrMediaStatus.AVAILABLE:
-            return <Badge variant="default">{t('seerr_status_available')}</Badge>;
+            return (
+                <Badge variant="default">
+                    <Check />
+                    {t('seerr_status_available')}
+                </Badge>
+            );
         case SeerrMediaStatus.PARTIALLY_AVAILABLE:
-            return <Badge variant="secondary">{t('seerr_status_partially_available')}</Badge>;
+            return (
+                <Badge variant="secondary">
+                    <Check />
+                    {t('seerr_status_partially_available')}
+                </Badge>
+            );
         case SeerrMediaStatus.PROCESSING:
-            return <Badge variant="secondary">{t('seerr_status_processing')}</Badge>;
+            return (
+                <Badge variant="secondary">
+                    <Clock />
+                    {t('seerr_status_processing')}
+                </Badge>
+            );
         case SeerrMediaStatus.PENDING:
-            return <Badge variant="secondary">{t('seerr_status_pending')}</Badge>;
+            return (
+                <Badge variant="secondary">
+                    <Clock />
+                    {t('seerr_status_pending')}
+                </Badge>
+            );
         default:
             return null;
     }

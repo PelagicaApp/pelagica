@@ -29,6 +29,7 @@
     "seerr_status_partially_available": "Partially Available",
     "seerr_status_processing": "Processing",
     "seerr_status_pending": "Pending",
+    "seerr_status_unavailable": "Not Available",
     "seerr_request": "Request",
     "seerr_requesting": "Requesting...",
     "seerr_open_in_seerr": "Open in Seerr",

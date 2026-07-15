@@ -4,6 +4,7 @@ import { getSeerrItemPosterUrl } from '@/utils/seerUrls';
 import { ImageOff } from 'lucide-react';
 import { useState } from 'react';
 import { useSeerrItemClick } from '@/hooks/useSeerrItemClick';
+import SeerrStatusBadge from '@/components/SeerrStatusBadge';
 
 interface SeerrSearchGridProps {
     items: SeerrSearchResultItem[];
@@ -35,6 +36,10 @@ const SeerrSearchGridItem = ({ item }: { item: SeerrSearchResultItem }) => {
                 )}
                 <Skeleton className="absolute bottom-0 left-0 right-0 top-0 -z-1" />
                 <div className="absolute inset-0 rounded-md pointer-events-none poster-card-outline z-20" />
+                <SeerrStatusBadge
+                    mediaInfo={item.mediaInfo}
+                    className="absolute top-1.5 left-1.5 z-30"
+                />
             </div>
             <p className="mt-2 text-sm line-clamp-1 text-ellipsis break-all">{item.title}</p>
             <p className="text-xs text-muted-foreground">

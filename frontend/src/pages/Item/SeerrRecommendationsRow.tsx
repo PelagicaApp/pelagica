@@ -8,6 +8,7 @@ import { memo, useMemo, useState } from 'react';
 import type React from 'react';
 import { getSeerrItemPosterUrl } from '../../utils/seerUrls';
 import { useSeerrItemClick } from '@/hooks/useSeerrItemClick';
+import SeerrStatusBadge from '@/components/SeerrStatusBadge';
 
 interface SeerrRecommendationsRowProps {
     title?: React.ReactNode;
@@ -61,6 +62,7 @@ const SeerrRecommendationPoster = ({
                         <ImageOff className="text-muted-foreground" size={32} />
                     </div>
                 )}
+                <SeerrStatusBadge mediaInfo={mediaInfo} className="absolute top-1.5 left-1.5" />
             </div>
             <p className="mt-2 text-sm line-clamp-1 text-ellipsis break-all max-w-36 lg:max-w-44 2xl:max-w-52">
                 {title}
