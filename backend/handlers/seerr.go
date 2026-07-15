@@ -246,7 +246,8 @@ func GetSeerSearch(c fiber.Ctx) error {
 	if query == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(models.APIError{Error: "Query is required"})
 	}
-	return proxySeerRequest(c, "/api/v1/search?query="+url.QueryEscape(query))
+	encodedQuery := strings.ReplaceAll(url.QueryEscape(query), "+", "%20")
+	return proxySeerRequest(c, "/api/v1/search?query="+encodedQuery)
 }
 
 type seerrStatusResponse struct {
