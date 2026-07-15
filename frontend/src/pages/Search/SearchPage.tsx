@@ -42,6 +42,7 @@ import { getUserId } from '@/utils/localstorageCredentials';
 import { useConfig } from '@/hooks/api/useConfig';
 import { useSeerrLoginStatus } from '@/hooks/api/useSeerrLoginStatus';
 import { useSeerrSearch } from '@/hooks/api/useSeerrSearch';
+import { SeerrMediaStatus } from '@/api/seerr/types';
 
 const ITEM_TYPE_GROUPS = {
     episodes: ['Episode'] as BaseItemKind[],
@@ -103,6 +104,9 @@ const SearchPage = () => {
     const showSeerrResults = !!config?.seerrUrl && isSeerrLoggedIn && typeFilter !== 'music';
     const { data: seerrResults, isLoading: isLoadingSeerrResults } = useSeerrSearch(
         showSeerrResults ? debouncedQuery : undefined
+    );
+    const visibleSeerrResults = seerrResults?.filter(
+        (item) => item.mediaInfo?.status !== SeerrMediaStatus.AVAILABLE
     );
 
     useEffect(() => {
@@ -242,7 +246,7 @@ const SearchPage = () => {
                 })}
             {showSeerrResults &&
             debouncedQuery &&
-            (isLoadingSeerrResults || seerrResults?.length) ? (
+            (isLoadingSeerrResults || visibleSeerrResults?.length) ? (
                 <div className="mt-4">
                     <h2 className="text-2xl font-bold mb-2">{t('group_seerr')}</h2>
                     {isLoadingSeerrResults ? (
@@ -256,7 +260,7 @@ const SearchPage = () => {
                             ))}
                         </div>
                     ) : (
-                        <SeerrSearchGrid items={seerrResults || []} />
+                        <SeerrSearchGrid items={visibleSeerrResults || []} />
                     )}
                 </div>
             ) : null}
