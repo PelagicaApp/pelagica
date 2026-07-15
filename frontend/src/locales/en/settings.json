@@ -147,7 +147,7 @@
     "login_page": "Login Page",
     "login_page_description": "Configure the behavior of the login page. This only takes effect when a server address is enforced via the SERVER_ADDRESS environment variable.",
     "hide_back_to_server_button_label": "Hide \"Back to Server\" Button",
-    "seer_integration": "Seerr Integration",
+    "seerr_integration": "Seerr Integration",
     "seerr_description": "Access Seerr-powered recommendations, search for titles, and send media requests straight from Pelagica.",
     "seerr_url_label": "Seerr URL",
     "seerr_url_placeholder": "http://your-seerr-server"
