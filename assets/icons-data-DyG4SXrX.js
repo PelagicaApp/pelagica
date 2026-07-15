@@ -1,0 +1,1 @@
+import{t as e}from"./SettingsPage-B0FOL4qj.js";export{e as iconsData};

@@ -1,1 +1,0 @@
-import{t as e}from"./SettingsPage-Drbs69-Z.js";export{e as iconsData};
