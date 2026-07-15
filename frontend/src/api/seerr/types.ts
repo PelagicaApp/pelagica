@@ -93,6 +93,7 @@ export interface SeerrMovieDetailsResponse {
     title: string;
     overview?: string;
     posterPath?: string;
+    backdropPath?: string;
     releaseDate?: string;
     mediaInfo?: SeerrMediaInfo;
     genres?: SeerrGenre[];
@@ -104,6 +105,7 @@ export interface SeerrTvDetailsResponse {
     name: string;
     overview?: string;
     posterPath?: string;
+    backdropPath?: string;
     firstAirDate?: string;
     mediaInfo?: SeerrMediaInfo;
     genres?: SeerrGenre[];
@@ -116,6 +118,7 @@ export interface SeerrItemDetails {
     title: string;
     overview?: string;
     posterPath?: string;
+    backdropPath?: string;
     releaseDate?: string;
     mediaInfo?: SeerrMediaInfo;
     genres?: SeerrGenre[];
