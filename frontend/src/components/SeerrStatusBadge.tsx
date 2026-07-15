@@ -9,14 +9,23 @@ interface SeerrStatusBadgeProps {
 }
 
 const SeerrStatusBadge = ({ mediaInfo, className }: SeerrStatusBadgeProps) => {
-    const { t } = useTranslation('search');
+    const { t } = useTranslation('seerr');
     const status = mediaInfo?.status;
 
     const baseClassName =
         'flex items-center justify-center w-6 h-6 rounded-full shadow-sm [&>svg]:size-3.5';
 
-    if (status === SeerrMediaStatus.AVAILABLE || status === SeerrMediaStatus.PARTIALLY_AVAILABLE) {
+    if (status === SeerrMediaStatus.AVAILABLE) {
         return null;
+    }
+
+    if (status === SeerrMediaStatus.PARTIALLY_AVAILABLE) {
+        const title = t('seerr_status_partially_available');
+        return (
+            <div className={cn(baseClassName, 'bg-blue-500 text-white', className)} title={title}>
+                <Download aria-label={title} className="[clip-path:inset(0_0_0_50%)]" />
+            </div>
+        );
     }
 
     if (status === SeerrMediaStatus.PENDING || status === SeerrMediaStatus.PROCESSING) {
