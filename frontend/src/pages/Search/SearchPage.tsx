@@ -256,7 +256,7 @@ const SearchPage = () => {
                             ))}
                         </div>
                     ) : (
-                        <SeerrSearchGrid items={seerrResults || []} seerrUrl={config!.seerrUrl!} />
+                        <SeerrSearchGrid items={seerrResults || []} />
                     )}
                 </div>
             ) : null}

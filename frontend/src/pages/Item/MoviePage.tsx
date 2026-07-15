@@ -149,7 +149,6 @@ const MoviePage = ({ item, config }: MoviePageProps) => {
                         title={<h3 className="text-3xl font-bold">{t('recommendations')}</h3>}
                         tmdbId={item.ProviderIds.Tmdb}
                         mediaType="movie"
-                        seerrUrl={config.seerrUrl}
                     />
                 )}
             </div>

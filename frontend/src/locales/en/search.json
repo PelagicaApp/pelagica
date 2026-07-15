@@ -24,5 +24,17 @@
     "itemtype_series": "TV Show",
     "itemtype_musicartist": "Artist",
     "itemtype_audio": "Audio",
-    "itemtype_musicalbum": "Album"
+    "itemtype_musicalbum": "Album",
+    "seerr_status_available": "Available",
+    "seerr_status_partially_available": "Partially Available",
+    "seerr_status_processing": "Processing",
+    "seerr_status_pending": "Pending",
+    "seerr_request": "Request",
+    "seerr_requesting": "Requesting...",
+    "seerr_open_in_seerr": "Open in Seerr",
+    "seerr_watch_trailer": "Watch Trailer",
+    "seerr_request_success": "Request submitted",
+    "seerr_request_failed": "Failed to submit request",
+    "seerr_loading_details": "Loading details...",
+    "seerr_failed_to_load": "Failed to load details"
 }

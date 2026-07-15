@@ -2,17 +2,17 @@ import SectionScroller from '@/components/SectionScroller';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useSeerrRecommendations } from '@/hooks/api/useSeerrRecommendations';
 import { useSeerrLoginStatus } from '@/hooks/api/useSeerrLoginStatus';
-import type { SeerrMediaType } from '@/api/seerr/types';
+import type { SeerrMediaInfo, SeerrMediaType } from '@/api/seerr/types';
 import { ImageOff } from 'lucide-react';
 import { memo, useMemo, useState } from 'react';
 import type React from 'react';
-import { getSeerrItemPosterUrl, getSeerrItemUrl } from '../../utils/seerUrls';
+import { getSeerrItemPosterUrl } from '../../utils/seerUrls';
+import { useSeerrItemClick } from '@/hooks/useSeerrItemClick';
 
 interface SeerrRecommendationsRowProps {
     title?: React.ReactNode;
     tmdbId: string;
     mediaType: SeerrMediaType;
-    seerrUrl: string;
 }
 
 const skeletonItems = Array.from({ length: 5 }, (_, index) => (
@@ -24,28 +24,28 @@ const skeletonItems = Array.from({ length: 5 }, (_, index) => (
 ));
 
 const SeerrRecommendationPoster = ({
-    seerrUrl,
     tmdbId,
     mediaType,
     title,
     posterPath,
     year,
+    mediaInfo,
 }: {
-    seerrUrl: string;
     tmdbId: number;
     mediaType: SeerrMediaType;
     title: string;
     posterPath?: string;
     year?: string;
+    mediaInfo?: SeerrMediaInfo;
 }) => {
     const [posterFailed, setPosterFailed] = useState(false);
+    const handleClick = useSeerrItemClick();
 
     return (
-        <a
-            href={getSeerrItemUrl({ seerrUrl, tmdbId, mediaType })}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-36 lg:w-44 2xl:w-52 shrink-0"
+        <button
+            type="button"
+            onClick={() => handleClick({ id: tmdbId, mediaType, mediaInfo })}
+            className="w-36 lg:w-44 2xl:w-52 shrink-0 text-left"
         >
             <div className="relative overflow-hidden rounded-md group w-36 h-54 lg:w-44 lg:h-64 2xl:w-52 2xl:h-80 bg-muted">
                 {posterPath && !posterFailed ? (
@@ -66,12 +66,12 @@ const SeerrRecommendationPoster = ({
                 {title}
             </p>
             {year && <span className="text-xs text-muted-foreground mt-1">{year}</span>}
-        </a>
+        </button>
     );
 };
 
 const SeerrRecommendationsRow: React.FC<SeerrRecommendationsRowProps> = memo(
-    ({ title, tmdbId, mediaType, seerrUrl }) => {
+    ({ title, tmdbId, mediaType }) => {
         const { data: isLoggedIn, isLoading: isLoadingLoginStatus } = useSeerrLoginStatus();
         const { data: recommendations, isLoading } = useSeerrRecommendations(
             mediaType,
@@ -83,7 +83,6 @@ const SeerrRecommendationsRow: React.FC<SeerrRecommendationsRowProps> = memo(
             return recommendations.map((item) => (
                 <SeerrRecommendationPoster
                     key={item.id}
-                    seerrUrl={seerrUrl}
                     tmdbId={item.id}
                     mediaType={mediaType}
                     title={item.title}
@@ -93,9 +92,10 @@ const SeerrRecommendationsRow: React.FC<SeerrRecommendationsRowProps> = memo(
                             ? new Date(item.releaseDate).getFullYear().toString()
                             : undefined
                     }
+                    mediaInfo={item.mediaInfo}
                 />
             ));
-        }, [recommendations, seerrUrl, mediaType]);
+        }, [recommendations, mediaType]);
 
         if (isLoadingLoginStatus || !isLoggedIn) {
             return null;

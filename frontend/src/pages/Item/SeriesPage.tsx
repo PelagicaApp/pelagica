@@ -247,7 +247,6 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
                         title={<h3 className="text-3xl font-bold">{t('recommendations')}</h3>}
                         tmdbId={item.ProviderIds.Tmdb}
                         mediaType="tv"
-                        seerrUrl={config.seerrUrl}
                     />
                 )}
             </div>

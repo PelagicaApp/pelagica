@@ -1,30 +1,20 @@
 import { Skeleton } from '@/components/ui/skeleton';
 import type { SeerrSearchResultItem } from '@/api/seerr/types';
-import { getSeerrItemPosterUrl, getSeerrItemUrl } from '@/utils/seerUrls';
+import { getSeerrItemPosterUrl } from '@/utils/seerUrls';
 import { ImageOff } from 'lucide-react';
 import { useState } from 'react';
+import { useSeerrItemClick } from '@/hooks/useSeerrItemClick';
 
 interface SeerrSearchGridProps {
     items: SeerrSearchResultItem[];
-    seerrUrl: string;
 }
 
-const SeerrSearchGridItem = ({
-    item,
-    seerrUrl,
-}: {
-    item: SeerrSearchResultItem;
-    seerrUrl: string;
-}) => {
+const SeerrSearchGridItem = ({ item }: { item: SeerrSearchResultItem }) => {
     const [posterFailed, setPosterFailed] = useState(false);
+    const handleClick = useSeerrItemClick();
 
     return (
-        <a
-            href={getSeerrItemUrl({ seerrUrl, tmdbId: item.id, mediaType: item.mediaType })}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-0 m-0"
-        >
+        <button type="button" onClick={() => handleClick(item)} className="p-0 m-0 text-left">
             <div className="relative w-full aspect-2/3 overflow-hidden rounded-md group bg-muted">
                 {item.posterPath && !posterFailed ? (
                     <img
@@ -46,18 +36,14 @@ const SeerrSearchGridItem = ({
             <p className="text-xs text-muted-foreground">
                 {item.releaseDate ? new Date(item.releaseDate).getFullYear() : ''}
             </p>
-        </a>
+        </button>
     );
 };
 
-const SeerrSearchGrid = ({ items, seerrUrl }: SeerrSearchGridProps) => (
+const SeerrSearchGrid = ({ items }: SeerrSearchGridProps) => (
     <div className="w-full gap-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 2xl:grid-cols-9">
         {items.map((item) => (
-            <SeerrSearchGridItem
-                key={`${item.mediaType}-${item.id}`}
-                item={item}
-                seerrUrl={seerrUrl}
-            />
+            <SeerrSearchGridItem key={`${item.mediaType}-${item.id}`} item={item} />
         ))}
     </div>
 );

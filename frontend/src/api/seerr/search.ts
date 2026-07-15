@@ -17,5 +17,6 @@ export async function searchSeerr(query: string): Promise<SeerrSearchResultItem[
             title: result.mediaType === 'movie' ? result.title || '' : result.name || '',
             posterPath: result.posterPath,
             releaseDate: result.mediaType === 'movie' ? result.releaseDate : result.firstAirDate,
+            mediaInfo: result.mediaInfo,
         }));
 }

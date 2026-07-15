@@ -21,6 +21,7 @@ export async function getSeerrMovieRecommendations(
         title: movie.title,
         posterPath: movie.posterPath,
         releaseDate: movie.releaseDate,
+        mediaInfo: movie.mediaInfo,
     }));
 }
 
@@ -37,6 +38,7 @@ export async function getSeerrTvRecommendations(tvId: string): Promise<SeerrReco
         title: show.name,
         posterPath: show.posterPath,
         releaseDate: show.firstAirDate,
+        mediaInfo: show.mediaInfo,
     }));
 }
 

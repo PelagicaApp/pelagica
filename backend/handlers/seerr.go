@@ -184,6 +184,51 @@ func GetSeerTvRecommendations(c fiber.Ctx) error {
 	return proxySeerRequest(c, "/api/v1/tv/"+tvId+"/recommendations")
 }
 
+func GetSeerMovieDetails(c fiber.Ctx) error {
+	tmdbId := c.Params("tmdbId")
+	return proxySeerRequest(c, "/api/v1/movie/"+tmdbId)
+}
+
+func GetSeerTvDetails(c fiber.Ctx) error {
+	tvId := c.Params("tvId")
+	return proxySeerRequest(c, "/api/v1/tv/"+tvId)
+}
+
+func PostSeerRequest(c fiber.Ctx) error {
+	body := c.Body()
+
+	seerURL, err := getSeerURL(c)
+	if err != nil {
+		return c.Status(fiber.StatusBadGateway).JSON(models.APIError{Error: "Seer not configured"})
+	}
+
+	req, err := http.NewRequest(http.MethodPost, seerURL+"/api/v1/request", bytes.NewReader(body))
+	if err != nil {
+		slog.Error("Failed to build Seer request", "error", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(models.APIError{Error: "Failed to build Seer request"})
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	if session := c.Cookies(seerSessionCookieName); session != "" {
+		req.AddCookie(&http.Cookie{Name: "connect.sid", Value: session})
+	}
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		slog.Error("Seer request failed", "error", err)
+		return c.Status(fiber.StatusBadGateway).JSON(models.APIError{Error: "Failed to reach Seer"})
+	}
+	defer resp.Body.Close()
+
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		slog.Error("Failed to read Seer response", "error", err)
+		return c.Status(fiber.StatusBadGateway).JSON(models.APIError{Error: "Failed to read Seer response"})
+	}
+
+	return c.Status(resp.StatusCode).Type("json").Send(respBody)
+}
+
 func GetSeerSearch(c fiber.Ctx) error {
 	query := c.Query("query")
 	if query == "" {
