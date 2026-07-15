@@ -45,5 +45,6 @@ export async function getSeerrItemDetails(
         mediaInfo: data.mediaInfo,
         genres: data.genres,
         relatedVideos: data.relatedVideos,
+        seasons: data.seasons,
     };
 }

@@ -8,9 +8,40 @@ export const SeerrMediaStatus = {
 
 export type SeerrMediaStatus = (typeof SeerrMediaStatus)[keyof typeof SeerrMediaStatus];
 
+export interface SeerrMediaInfoSeason {
+    seasonNumber: number;
+    status: SeerrMediaStatus;
+}
+
+export const SeerrRequestStatus = {
+    PENDING: 1,
+    APPROVED: 2,
+    DECLINED: 3,
+} as const;
+
+export type SeerrRequestStatus = (typeof SeerrRequestStatus)[keyof typeof SeerrRequestStatus];
+
+export interface SeerrMediaRequestSeason {
+    seasonNumber: number;
+}
+
+export interface SeerrMediaRequest {
+    id: number;
+    status: SeerrRequestStatus;
+    seasons?: SeerrMediaRequestSeason[];
+}
+
 export interface SeerrMediaInfo {
     status: SeerrMediaStatus;
     jellyfinMediaId?: string;
+    seasons?: SeerrMediaInfoSeason[];
+    requests?: SeerrMediaRequest[];
+}
+
+export interface SeerrSeason {
+    seasonNumber: number;
+    name?: string;
+    episodeCount?: number;
 }
 
 export interface SeerrGenre {
@@ -110,6 +141,7 @@ export interface SeerrTvDetailsResponse {
     mediaInfo?: SeerrMediaInfo;
     genres?: SeerrGenre[];
     relatedVideos?: SeerrRelatedVideo[];
+    seasons?: SeerrSeason[];
 }
 
 export interface SeerrItemDetails {
@@ -123,6 +155,7 @@ export interface SeerrItemDetails {
     mediaInfo?: SeerrMediaInfo;
     genres?: SeerrGenre[];
     relatedVideos?: SeerrRelatedVideo[];
+    seasons?: SeerrSeason[];
 }
 
 export interface SeerrRequestPayload {
