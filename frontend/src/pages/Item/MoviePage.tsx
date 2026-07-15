@@ -129,10 +129,7 @@ const MoviePage = ({ item, config }: MoviePageProps) => {
                             />
                             <MediaInfoDialog streams={item.MediaStreams || []} path={item.Path} />
                             {config.seerrUrl && item.ProviderIds?.Tmdb && (
-                                <SeerrItemButton
-                                    tmdbId={item.ProviderIds.Tmdb}
-                                    mediaType="movie"
-                                />
+                                <SeerrItemButton tmdbId={item.ProviderIds.Tmdb} mediaType="movie" />
                             )}
                             <ItemAdminButton item={item} showSubtitlesButton={true} />
                         </div>
