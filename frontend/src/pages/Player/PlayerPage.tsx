@@ -5,8 +5,10 @@ import { usePlaybackStop } from '@/hooks/api/usePlaybackStop';
 import { useCloseLiveStream } from '@/hooks/api/useCloseLiveStream';
 import { useParams } from 'react-router';
 import VideoPlayer, { type SubtitleTrack } from '@/pages/Player/VideoPlayer';
+import MpvVideoPlayer from '@/pages/Player/MpvVideoPlayer';
 import PlayerControls from '@/pages/Player/PlayerControls';
 import PlayerLoading from '@/pages/Player/PlayerLoading';
+import { isTauri, isMacOS } from '@/utils/isTauri';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { getPrimaryImageUrl, getSubtitleUrl, getPlaybackStreamUrl } from '@/utils/jellyfinUrls';
 import { usePlaybackInfo } from '@/hooks/api/usePlaybackInfo';
@@ -341,6 +343,17 @@ const PlayerPage = () => {
 
     if (!item || !streamResult) {
         return <p>Item not found</p>;
+    }
+
+    if (isTauri() && !isMacOS()) {
+        return (
+            <MpvVideoPlayer
+                key={itemId}
+                src={streamResult.url}
+                title={item.Name || undefined}
+                startTicks={startTicks}
+            />
+        );
     }
 
     return (
