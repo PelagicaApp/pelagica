@@ -424,6 +424,8 @@ const PlayerControls = ({
             ? `${item.SeriesName} - S${item.ParentIndexNumber}E${item.IndexNumber} - ${item.Name}`
             : item.Name;
 
+    const isLive = item.Type === 'TvChannel';
+
     const audioStreams = item.MediaStreams?.filter((s) => s.Type === 'Audio') || [];
     const subtitleStreams = item.MediaStreams?.filter((s) => s.Type === 'Subtitle') || [];
 
@@ -571,6 +573,12 @@ const PlayerControls = ({
                                     {stats.playbackInfo.protocol}
                                 </span>
                             </p>
+                            <p>
+                                <span>Live</span>{' '}
+                                <span className="text-muted-foreground">
+                                    {stats.playbackInfo.live ? 'Yes' : 'No'}
+                                </span>
+                            </p>
                         </div>
                         <h4 className="mb-1 mt-3">Video Info</h4>
                         <div className="ml-2">
@@ -665,85 +673,88 @@ const PlayerControls = ({
                 onMouseLeave={handleMouseLeave}
             >
                 {/* Progress bar */}
-                <div
-                    ref={progressRef}
-                    className="w-full h-3 rounded cursor-pointer mb-4 transition-all relative"
-                    onClick={handleProgressClick}
-                    onMouseMove={handleProgressHover}
-                    onMouseLeave={handleProgressLeave}
-                >
-                    {/* Actually visible bar that's smaller for better asthetics */}
-                    <div className="absolute top-1 left-0 w-full h-1 bg-gray-600 rounded pointer-events-none z-0" />
-                    {/* buffered progress */}
+                {!isLive && (
                     <div
-                        className="absolute top-1 left-0 h-1 bg-gray-500 rounded pointer-events-none z-5"
-                        style={{ width: `${bufferedPercentage}%` }}
-                    />
-                    {/** Bar that shows the hovered time */}
-                    <div
-                        className="absolute top-1 left-0 h-1 bg-white/20 rounded pointer-events-none z-10"
-                        style={{
-                            width: hoverTime !== null ? `${(hoverTime / duration) * 100}%` : '0%',
-                        }}
-                    />
-                    {/* current progress */}
-                    <div
-                        className="absolute top-1 left-0 h-1 bg-brand rounded pointer-events-none z-15"
-                        style={{ width: `${progressPercentage}%` }}
-                    />
-                    {/* Hover preview */}
-                    {hoverTime !== null &&
-                        item.Trickplay &&
-                        (() => {
-                            const trickplayInfo = getPrimaryTrickplayInfo(item.Trickplay);
-                            if (!trickplayInfo || hoverTime === null) return null;
+                        ref={progressRef}
+                        className="w-full h-3 rounded cursor-pointer mb-4 transition-all relative"
+                        onClick={handleProgressClick}
+                        onMouseMove={handleProgressHover}
+                        onMouseLeave={handleProgressLeave}
+                    >
+                        {/* Actually visible bar that's smaller for better asthetics */}
+                        <div className="absolute top-1 left-0 w-full h-1 bg-gray-600 rounded pointer-events-none z-0" />
+                        {/* buffered progress */}
+                        <div
+                            className="absolute top-1 left-0 h-1 bg-gray-500 rounded pointer-events-none z-5"
+                            style={{ width: `${bufferedPercentage}%` }}
+                        />
+                        {/** Bar that shows the hovered time */}
+                        <div
+                            className="absolute top-1 left-0 h-1 bg-white/20 rounded pointer-events-none z-10"
+                            style={{
+                                width:
+                                    hoverTime !== null ? `${(hoverTime / duration) * 100}%` : '0%',
+                            }}
+                        />
+                        {/* current progress */}
+                        <div
+                            className="absolute top-1 left-0 h-1 bg-brand rounded pointer-events-none z-15 transition-[width] duration-250 ease-linear"
+                            style={{ width: `${progressPercentage}%` }}
+                        />
+                        {/* Hover preview */}
+                        {hoverTime !== null &&
+                            item.Trickplay &&
+                            (() => {
+                                const trickplayInfo = getPrimaryTrickplayInfo(item.Trickplay);
+                                if (!trickplayInfo || hoverTime === null) return null;
 
-                            const { imageIndex, x, y, width, height } = getTrickplayTile(
-                                hoverTime,
-                                trickplayInfo
-                            );
+                                const { imageIndex, x, y, width, height } = getTrickplayTile(
+                                    hoverTime,
+                                    trickplayInfo
+                                );
 
-                            const previewWidth = width || 320;
-                            const halfWidth = previewWidth / 2;
-                            const clampedPosition = Math.max(
-                                halfWidth,
-                                Math.min(hoverPosition, window.innerWidth - halfWidth)
-                            );
+                                const previewWidth = width || 320;
+                                const halfWidth = previewWidth / 2;
+                                const clampedPosition = Math.max(
+                                    halfWidth,
+                                    Math.min(hoverPosition, window.innerWidth - halfWidth)
+                                );
 
-                            return (
-                                <div
-                                    className="absolute bottom-4 -translate-x-1/2 text-white pointer-events-none z-40 flex flex-col items-center"
-                                    style={{ left: `${clampedPosition}px` }}
-                                >
+                                return (
                                     <div
-                                        className="relative overflow-hidden rounded-md mb-1"
-                                        style={{
-                                            width: width,
-                                            height: height,
-                                        }}
+                                        className="absolute bottom-4 -translate-x-1/2 text-white pointer-events-none z-40 flex flex-col items-center"
+                                        style={{ left: `${clampedPosition}px` }}
                                     >
-                                        <img
-                                            src={getTrickplayImageUrl(
-                                                item.Id!,
-                                                width || 320,
-                                                imageIndex
-                                            )}
+                                        <div
+                                            className="relative overflow-hidden rounded-md mb-1"
                                             style={{
-                                                position: 'absolute',
-                                                left: -x * (width || 0),
-                                                top: -y * (height || 0),
-                                                maxWidth: 'none',
+                                                width: width,
+                                                height: height,
                                             }}
-                                            draggable={false}
-                                        />
+                                        >
+                                            <img
+                                                src={getTrickplayImageUrl(
+                                                    item.Id!,
+                                                    width || 320,
+                                                    imageIndex
+                                                )}
+                                                style={{
+                                                    position: 'absolute',
+                                                    left: -x * (width || 0),
+                                                    top: -y * (height || 0),
+                                                    maxWidth: 'none',
+                                                }}
+                                                draggable={false}
+                                            />
+                                        </div>
+                                        <div className="text-center bg-black/90 p-1 px-2 rounded-md w-min">
+                                            {formatPlayTime(hoverTime)}
+                                        </div>
                                     </div>
-                                    <div className="text-center bg-black/90 p-1 px-2 rounded-md w-min">
-                                        {formatPlayTime(hoverTime)}
-                                    </div>
-                                </div>
-                            );
-                        })()}
-                </div>
+                                );
+                            })()}
+                    </div>
+                )}
 
                 {/* Controls */}
                 <div className="flex items-center justify-between text-white gap-4">
@@ -782,9 +793,16 @@ const PlayerControls = ({
                                 </Link>
                             </Button>
                         )}
-                        <div className="text-sm ml-2">
-                            {formatPlayTime(clampedCurrentTime)} / {formatPlayTime(duration)}
-                        </div>
+                        {isLive ? (
+                            <div className="flex items-center gap-1.5 text-sm ml-2">
+                                <Dot className="text-red-500 -mx-1" size={32} />
+                                {t('live')}
+                            </div>
+                        ) : (
+                            <div className="text-sm ml-2">
+                                {formatPlayTime(clampedCurrentTime)} / {formatPlayTime(duration)}
+                            </div>
+                        )}
                     </div>
 
                     <div className="flex items-center gap-2">

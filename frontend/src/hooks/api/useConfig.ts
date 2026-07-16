@@ -160,6 +160,16 @@ export interface StudiosSection extends BaseHomeScreenSection {
     limit?: number;
 }
 
+export const SEERR_DISCOVER_VARIANTS = ['trending', 'popularMovies', 'popularSeries'] as const;
+export type SeerrDiscoverVariant = (typeof SEERR_DISCOVER_VARIANTS)[number];
+
+/** A section showing a Seerr discovery list (trending, popular movies, popular series) */
+export interface SeerrDiscoverSection extends BaseHomeScreenSection {
+    type: 'seerrDiscover';
+    /** Which Seerr discovery list to show */
+    variant?: SeerrDiscoverVariant;
+}
+
 export type HomeScreenSection =
     | MediaBarSection
     | RecentlyAddedSection
@@ -170,7 +180,8 @@ export type HomeScreenSection =
     | ResumeSection
     | GenresSection
     | LibrariesSection
-    | StudiosSection;
+    | StudiosSection
+    | SeerrDiscoverSection;
 
 export const EPISODE_DISPLAYS = ['grid', 'row'] as const;
 export type EpisodeDisplay = (typeof EPISODE_DISPLAYS)[number];
@@ -202,6 +213,8 @@ export interface ItemPageSettings {
     showDownloadButton?: boolean;
     /** Whether to show the watchlist button to add items to the kefintweaks watchlist */
     showWatchlistButton?: boolean;
+    /** Whether to autoplay a local trailer as a background video on item detail pages */
+    autoPlayTrailers?: boolean;
 }
 
 export interface ConfigLink {
@@ -218,6 +231,8 @@ export interface AppConfig {
     serverAddress?: string;
     /** Optional URL for Streamystats integration */
     streamystatsUrl?: string;
+    /** Optional URL for Seer integration */
+    seerrUrl?: string;
     /** Whether to show the Streamystats button in the user menu */
     showStreamystatsButton?: boolean;
     /** Whether to show the watched state badge for items on the home screen */
@@ -254,6 +269,7 @@ const DEFAULT_ITEM_PAGE_SETTINGS: ItemPageSettings = {
     favoriteButton: ['Movie', 'Series'],
     showWatchlistButton: true,
     showDownloadButton: true,
+    autoPlayTrailers: false,
 };
 
 const DEFAULT_CONFIG: AppConfig = {

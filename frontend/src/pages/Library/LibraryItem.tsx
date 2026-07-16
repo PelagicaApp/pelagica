@@ -8,13 +8,14 @@ import { Link, useLocation, useNavigate } from 'react-router';
 import { buildPlayerUrl } from '@/utils/playerUrl';
 import { getItemUrl } from '@/utils/itemUrl';
 import WatchedStateBadge from '@/components/WatchedStateBadge';
-import MusicItemContextMenu from '@/components/MusicItemContextMenu';
+import ItemContextMenu from '@/components/ItemContextMenu';
 
 const LibraryItem = ({
     item,
     posterUrl,
     t,
     posterAspectRatio = '2/3',
+    posterFit = 'cover',
     detailLine,
     isDirectPlay,
     itemLink,
@@ -23,6 +24,7 @@ const LibraryItem = ({
     posterUrl: string;
     t: TFunction;
     posterAspectRatio?: string;
+    posterFit?: 'cover' | 'contain';
     detailLine?: React.ReactNode;
     isDirectPlay?: boolean;
     itemLink?: string;
@@ -48,7 +50,7 @@ const LibraryItem = ({
         : 0;
     
     return (
-        <MusicItemContextMenu item={item}>
+        <ItemContextMenu item={item}>
             <Link to={itemPath} key={item.Id} className="p-0 m-0">
             <div
                 className={`relative w-full aspect-${posterAspectRatio} overflow-hidden rounded-md group`}
@@ -59,7 +61,7 @@ const LibraryItem = ({
                             key={item.Id}
                             src={posterUrl}
                             alt={item.Name || t('library:no_title')}
-                            className="w-full h-full object-cover rounded-md group-hover:opacity-75 transition-all group-hover:scale-105 z-10"
+                            className={`w-full h-full object-${posterFit} rounded-md group-hover:opacity-75 transition-all group-hover:scale-105 z-10`}
                             loading="lazy"
                             onError={() => setPosterError(true)}
                         />
@@ -104,7 +106,7 @@ const LibraryItem = ({
                 </span>
             </div>
         </Link>
-        </MusicItemContextMenu>
+        </ItemContextMenu>
     );
 };
 

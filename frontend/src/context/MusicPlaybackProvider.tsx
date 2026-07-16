@@ -535,6 +535,7 @@ export const MusicPlaybackProvider = ({ children }: PropsWithChildren) => {
         queue,
         setQueue,
         currentIndex,
+        setCurrentIndex,
         play,
         pause,
         togglePlayPause,

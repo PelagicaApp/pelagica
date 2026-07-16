@@ -3,6 +3,7 @@
     "home": "Home",
     "library": "Library",
     "music": "Music",
+    "live": "Live",
     "theme": "Theme",
     "light": "Light",
     "dark": "Dark",
@@ -21,5 +22,19 @@
     "theme_preference": "Theme Preference",
     "select_theme": "Select theme",
     "server_default": "Server Default",
-    "pelagica_default": "Pelagica Default"
+    "pelagica_default": "Pelagica Default",
+    "seerr_not_connected": "Not logged in to Seerr",
+    "seerr_connected": "Seerr",
+    "seerr_login_action": "Log in",
+    "seerr_logout_action": "Log out of Seerr",
+    "seerr_login_title": "Log in to Seerr",
+    "seerr_login_description": "Enter your Jellyfin password to connect Seerr and enable personalized recommendations.",
+    "seerr_login_success": "Logged in to Seerr!",
+    "seerr_login_failed": "Failed to log in to Seerr. Please check your password and try again.",
+    "seerr_logout_success": "Logged out of Seerr.",
+    "username": "Username",
+    "password": "Password",
+    "login": "Login",
+    "logging_in": "Logging in...",
+    "seerr_open": "Open Seerr"
 }

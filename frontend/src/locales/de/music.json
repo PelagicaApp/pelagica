@@ -13,6 +13,7 @@
     "queue": "Warteschlange",
     "queue_count": "Warteschlange ({{count}})",
     "queue_empty": "Warteschlange ist leer",
+    "remove_from_queue": "Aus Warteschlange entfernen",
     "no_playlists": "Keine Wiedergabelisten",
     "no_favorites": "Keine Favoriten",
     "no_songs_found": "Keine Lieder gefunden",

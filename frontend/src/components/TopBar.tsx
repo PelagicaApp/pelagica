@@ -6,11 +6,13 @@ import {
     ChevronDown,
     ChevronsUpDown,
     DotIcon,
+    ExternalLink,
     Fingerprint,
     Globe,
     House,
     Laptop,
     Library,
+    LogIn,
     LogOut,
     Moon,
     Music,
@@ -18,7 +20,9 @@ import {
     Settings,
     Settings2,
     Sun,
+    Telescope,
     TriangleAlert,
+    Tv,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -74,6 +78,10 @@ import { useTranslation } from 'react-i18next';
 import i18n from 'i18next';
 import { useUpdateUserConfiguration } from '@/hooks/api/playbackPreferences/useUpdateUserConfiguration';
 import { useAuthorizeQuickConnect } from '@/hooks/api/useQuickConnect';
+import { useSeerrLoginStatus } from '@/hooks/api/useSeerrLoginStatus';
+import { useSeerrLogout } from '@/hooks/api/useSeerrLogout';
+import { SeerrLoginDialog } from '@/components/SeerrLoginDialog';
+import { toast } from 'sonner';
 import { iso6392 } from 'iso-639-2';
 import { cn } from '@/lib/utils';
 import {
@@ -279,6 +287,9 @@ const UserMenu = () => {
         getLocalTheme() ?? LOCAL_THEME_SERVER_DEFAULT
     );
     const { data: themes, isLoading: isLoadingThemes } = useThemes();
+    const { config } = useConfig();
+    const { data: isSeerrLoggedIn } = useSeerrLoginStatus();
+    const seerrLogout = useSeerrLogout();
 
     const onAuthorizeQuickConnect = (code: string) => {
         setQuickConnectLoading(true);
@@ -483,6 +494,68 @@ const UserMenu = () => {
 
                 <DropdownMenuSeparator />
 
+                {config?.seerrUrl && (
+                    <>
+                        <DropdownMenuSub>
+                            <DropdownMenuSubTrigger
+                                className={
+                                    isSeerrLoggedIn === false
+                                        ? 'text-amber-500 focus:text-amber-500 data-[state=open]:text-amber-500'
+                                        : undefined
+                                }
+                            >
+                                {isSeerrLoggedIn === false ? (
+                                    <TriangleAlert className="text-amber-500" />
+                                ) : (
+                                    <Telescope className="text-muted-foreground" />
+                                )}
+                                {isSeerrLoggedIn === false
+                                    ? t('seerr_not_connected')
+                                    : t('seerr_connected')}
+                            </DropdownMenuSubTrigger>
+                            <DropdownMenuPortal>
+                                <DropdownMenuSubContent>
+                                    <DropdownMenuItem asChild>
+                                        <a
+                                            href={config.seerrUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex items-center gap-2"
+                                        >
+                                            <ExternalLink />
+                                            {t('seerr_open')}
+                                        </a>
+                                    </DropdownMenuItem>
+                                    {isSeerrLoggedIn === false ? (
+                                        <SeerrLoginDialog
+                                            trigger={
+                                                <DropdownMenuItem
+                                                    onSelect={(e) => e.preventDefault()}
+                                                >
+                                                    <LogIn className="text-muted-foreground" />
+                                                    {t('seerr_login_action')}
+                                                </DropdownMenuItem>
+                                            }
+                                        />
+                                    ) : (
+                                        <DropdownMenuItem
+                                            onClick={() =>
+                                                seerrLogout.mutate(undefined, {
+                                                    onSuccess: () =>
+                                                        toast.success(t('seerr_logout_success')),
+                                                })
+                                            }
+                                        >
+                                            <LogOut className="text-muted-foreground" />
+                                            {t('seerr_logout_action')}
+                                        </DropdownMenuItem>
+                                    )}
+                                </DropdownMenuSubContent>
+                            </DropdownMenuPortal>
+                        </DropdownMenuSub>
+                    </>
+                )}
+
                 <AuthorizeQuickConnectDialog
                     onAuthorize={onAuthorizeQuickConnect}
                     isLoading={quickConnectLoading}
@@ -549,6 +622,7 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
         ) ?? [];
 
     const hasMusicLibrary = libraries.some((lib) => lib.CollectionType === 'music');
+    const hasLiveTvLibrary = views?.Items?.some((lib) => lib.CollectionType === 'livetv') ?? false;
 
     const validLinks = config?.links?.filter((l) => l.url && l.text) ?? [];
 
@@ -599,6 +673,15 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
                                 <Link to="/music">
                                     <Music className="h-4 w-4" />
                                     {t('music')}
+                                </Link>
+                            </Button>
+                        )}
+
+                        {hasLiveTvLibrary && (
+                            <Button asChild variant="ghost" size="sm">
+                                <Link to="/live">
+                                    <Tv className="h-4 w-4" />
+                                    {t('live')}
                                 </Link>
                             </Button>
                         )}
@@ -665,6 +748,14 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
                             <Button asChild variant="ghost" size="icon" className="h-8 w-8">
                                 <Link to="/music">
                                     <Music className="h-4 w-4" />
+                                </Link>
+                            </Button>
+                        )}
+
+                        {hasLiveTvLibrary && (
+                            <Button asChild variant="ghost" size="icon" className="h-8 w-8">
+                                <Link to="/live">
+                                    <Tv className="h-4 w-4" />
                                 </Link>
                             </Button>
                         )}

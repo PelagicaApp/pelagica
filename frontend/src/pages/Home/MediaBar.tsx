@@ -91,6 +91,10 @@ const MediaBar = ({
                 ? 'max-h-48 sm:max-h-72'
                 : 'max-h-30 sm:max-h-50';
 
+    if (!mediabarItems?.length) {
+        return <div className="py-8"></div>;
+    }
+
     return (
         <div className={`${className} relative`}>
             {title && <h2 className="text-2xl font-bold mb-3 pl-12 pt-4">{title}</h2>}

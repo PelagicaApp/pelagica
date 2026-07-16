@@ -65,6 +65,19 @@ func main() {
 	api.Get("/stats-consent", handlers.GetStatsConsent)
 	api.Post("/stats-consent", handlers.PostStatsConsent)
 
+	api.Post("/seerr/login", handlers.SeerLogin)
+	api.Post("/seerr/logout", handlers.SeerLogout)
+	api.Get("/seerr/movie/:tmdbId/recommendations", handlers.GetSeerMovieRecommendations)
+	api.Get("/seerr/tv/:tvId/recommendations", handlers.GetSeerTvRecommendations)
+	api.Get("/seerr/movie/:tmdbId", handlers.GetSeerMovieDetails)
+	api.Get("/seerr/tv/:tvId", handlers.GetSeerTvDetails)
+	api.Post("/seerr/request", handlers.PostSeerRequest)
+	api.Get("/seerr/search", handlers.GetSeerSearch)
+	api.Get("/seerr/status", handlers.GetSeerrStatus)
+	api.Get("/seerr/discover/trending", handlers.GetSeerDiscoverTrending)
+	api.Get("/seerr/discover/movies", handlers.GetSeerDiscoverMovies)
+	api.Get("/seerr/discover/tv", handlers.GetSeerDiscoverTv)
+
 	slog.Info("Server starting", "port", getPort(), "fiber", fiber.Version)
 	if err := app.Listen(getPort(), fiber.ListenConfig{
 		DisableStartupMessage: true,

@@ -2,9 +2,11 @@
 import { useReportPlaybackProgress } from '@/hooks/api/usePlaybackProgress';
 import { usePlaybackStart } from '@/hooks/api/usePlaybackStart';
 import { usePlaybackStop } from '@/hooks/api/usePlaybackStop';
+import { useCloseLiveStream } from '@/hooks/api/useCloseLiveStream';
 import { useParams } from 'react-router';
 import VideoPlayer, { type SubtitleTrack } from '@/pages/Player/VideoPlayer';
 import PlayerControls from '@/pages/Player/PlayerControls';
+import PlayerLoading from '@/pages/Player/PlayerLoading';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { getPrimaryImageUrl, getSubtitleUrl, getPlaybackStreamUrl } from '@/utils/jellyfinUrls';
 import { usePlaybackInfo } from '@/hooks/api/usePlaybackInfo';
@@ -84,6 +86,7 @@ const PlayerPage = () => {
     const containerRef = useRef<HTMLDivElement>(null);
     const progressReportingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const lastPositionRef = useRef<number>(0);
+    const liveStreamIdRef = useRef<string | undefined>(undefined);
     const isAudioSwitchRef = useRef(false);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const {
@@ -119,7 +122,12 @@ const PlayerPage = () => {
     const { reportProgress } = useReportPlaybackProgress();
     const { startPlayback } = usePlaybackStart();
     const { stopPlayback } = usePlaybackStop();
+    const { closeLiveStream } = useCloseLiveStream();
     const { clearPlayback } = useMusicPlayback();
+
+    useEffect(() => {
+        liveStreamIdRef.current = playbackInfo?.liveStreamId;
+    }, [playbackInfo?.liveStreamId]);
 
     useEffect(() => {
         const handleFullscreenChange = () => {
@@ -238,9 +246,23 @@ const PlayerPage = () => {
 
             // Here we need the last know position since the player might be already in the shadow realm
             stopPlayback({ itemId, positionTicks: lastPositionRef.current });
+
+            if (liveStreamIdRef.current) {
+                closeLiveStream(liveStreamIdRef.current);
+                liveStreamIdRef.current = undefined;
+            }
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [itemId, player, reportProgress, startPlayback, startTicks, stopPlayback, clearPlayback]);
+    }, [
+        itemId,
+        player,
+        reportProgress,
+        startPlayback,
+        startTicks,
+        stopPlayback,
+        closeLiveStream,
+        clearPlayback,
+    ]);
 
     useEffect(() => {
         lastPositionRef.current = startTicks;
@@ -295,7 +317,7 @@ const PlayerPage = () => {
         isLoadingUserConfiguration ||
         isLoadingPlaybackInfo
     ) {
-        return <p>Loading...</p>;
+        return <PlayerLoading />;
     }
 
     if (

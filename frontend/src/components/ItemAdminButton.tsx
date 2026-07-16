@@ -10,10 +10,7 @@ import { Captions, EllipsisVertical, Image, RotateCcw, Trash2, PencilLine } from
 import { useTranslation } from 'react-i18next';
 import { useCurrentUser } from '@/hooks/api/useCurrentUser';
 import { useRef } from 'react';
-import ManageImageButton from './ManageImageButton';
-import RefreshItemMetadataButton from './RefreshItemMetadataButton';
-import EditItemMetadataButton from './EditItemMetadataButton';
-import MediaDeleteButton from './MediaDeleteButton';
+import { useAdminItemDialogs } from '../context/AdminItemDialogsContext';
 import SubtitleDownloadDialog from '../pages/Item/SubtitleDownloadDialog';
 
 const ItemAdminButton = ({
@@ -25,11 +22,8 @@ const ItemAdminButton = ({
 }) => {
     const { t } = useTranslation('item');
     const { data: currentUser } = useCurrentUser();
-    const manageImagesTriggerRef = useRef<HTMLButtonElement>(null);
-    const refreshMetadataTriggerRef = useRef<HTMLButtonElement>(null);
-    const deleteTriggerRef = useRef<HTMLButtonElement>(null);
+    const { openDialog } = useAdminItemDialogs();
     const subtitlesTriggerRef = useRef<HTMLButtonElement>(null);
-    const editMetadataTriggerRef = useRef<HTMLButtonElement>(null);
 
     if (currentUser?.Policy?.IsAdministrator !== true) return null;
 
@@ -52,35 +46,19 @@ const ItemAdminButton = ({
                             {t('subtitles')}
                         </DropdownMenuItem>
                     )}
-                    <DropdownMenuItem
-                        onClick={() => {
-                            setTimeout(() => manageImagesTriggerRef.current?.click(), 0);
-                        }}
-                    >
+                    <DropdownMenuItem onClick={() => openDialog(item, 'manageImages')}>
                         <Image />
                         {t('manage_images')}
                     </DropdownMenuItem>
-                    <DropdownMenuItem
-                        onClick={() => {
-                            setTimeout(() => refreshMetadataTriggerRef.current?.click(), 0);
-                        }}
-                    >
+                    <DropdownMenuItem onClick={() => openDialog(item, 'refreshMetadata')}>
                         <RotateCcw />
                         {t('refreshMetadata')}
                     </DropdownMenuItem>
-                    <DropdownMenuItem
-                        onClick={() => {
-                            setTimeout(() => editMetadataTriggerRef.current?.click(), 0);
-                        }}
-                    >
+                    <DropdownMenuItem onClick={() => openDialog(item, 'editMetadata')}>
                         <PencilLine />
                         {t('editMetadata')}
                     </DropdownMenuItem>
-                    <DropdownMenuItem
-                        onClick={() => {
-                            setTimeout(() => deleteTriggerRef.current?.click(), 0);
-                        }}
-                    >
+                    <DropdownMenuItem onClick={() => openDialog(item, 'delete')}>
                         <Trash2 />
                         {t('deleteItem')}
                     </DropdownMenuItem>
@@ -92,16 +70,6 @@ const ItemAdminButton = ({
                     item={item}
                     trigger={<button ref={subtitlesTriggerRef} />}
                 />
-                <ManageImageButton item={item} trigger={<button ref={manageImagesTriggerRef} />} />
-                <RefreshItemMetadataButton
-                    item={item}
-                    trigger={<button ref={refreshMetadataTriggerRef} />}
-                />
-                <EditItemMetadataButton
-                    item={item}
-                    trigger={<button ref={editMetadataTriggerRef} />}
-                />
-                <MediaDeleteButton item={item} trigger={<button ref={deleteTriggerRef} />} />
             </div>
         </>
     );

@@ -11,6 +11,7 @@ import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { buildPlayerUrl } from '@/utils/playerUrl';
+import GeneralItemContextMenu from '../../components/GeneraItemContextMenu';
 
 const EpisodeComponent = memo(
     ({
@@ -37,94 +38,96 @@ const EpisodeComponent = memo(
                   : 0;
 
         return (
-            <Link to={`/item/${episode.Id}`} key={episode.Id} className={'group ' + className}>
-                <div className="relative w-full aspect-video rounded-md overflow-hidden">
-                    {imageError ? (
-                        <div className="w-full h-full bg-muted flex items-center justify-center rounded-md">
-                            <ImageOff className="w-12 h-12 text-muted-foreground" />
-                        </div>
-                    ) : (
-                        <div className="relative">
-                            <img
-                                src={
-                                    episode.SeriesId
-                                        ? getPrimaryImageUrl(
-                                              episode.Id!,
-                                              {
-                                                  width: 416,
-                                              },
-                                              episode.ImageTags?.Primary
-                                          )
-                                        : getThumbUrl(
-                                              episode.Id!,
-                                              {
-                                                  width: 416,
-                                              },
-                                              episode.ImageTags?.Thumb
-                                          )
-                                }
-                                alt={episode.Name || t('no_title')}
-                                className="w-full h-full object-cover rounded-md group-hover:opacity-75 group-hover:scale-105 transition-opacity transition-transform duration-300 ease-out will-change-transform"
-                                onError={() => setImageError(true)}
-                            />
-                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                <div
-                                    className="bg-black/60 rounded-full p-4 cursor-pointer hover:bg-black/75"
-                                    role="button"
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        navigate(buildPlayerUrl(episode.Id!, backUrl));
-                                    }}
-                                >
-                                    <Play className="w-6 h-6 text-white fill-white" />
-                                </div>
+            <GeneralItemContextMenu item={episode} playLink={buildPlayerUrl(episode.Id!, backUrl)}>
+                <Link to={`/item/${episode.Id}`} key={episode.Id} className={'group ' + className}>
+                    <div className="relative w-full aspect-video rounded-md overflow-hidden">
+                        {imageError ? (
+                            <div className="w-full h-full bg-muted flex items-center justify-center rounded-md">
+                                <ImageOff className="w-12 h-12 text-muted-foreground" />
                             </div>
-                            {episode.RunTimeTicks && (
-                                <Badge className="absolute top-2 right-2 bg-black/70 text-white">
-                                    {ticksToReadableTime(episode.RunTimeTicks)}
-                                </Badge>
-                            )}
-                            <div className="absolute inset-0 rounded-md pointer-events-none poster-card-outline z-20" />
-                        </div>
-                    )}
-                    {progress > 0 && (
-                        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-700">
-                            <div
-                                style={{ width: `${progress}%` }}
-                                className="h-full bg-brand transition-width"
-                            />
-                        </div>
-                    )}
-                </div>
-                <p className="mt-2 text-md line-clamp-1 text-ellipsis break-all">
-                    {episode.Name || t('no_title')}
-                </p>
-                <p className="mt-1 text-sm line-clamp-2 text-ellipsis text-muted-foreground">
-                    {episode.Overview}
-                </p>
-                <div className="flex flex-wrap items-center gap-2 mt-2">
-                    {episode.IndexNumber !== undefined && (
-                        <Badge variant={'outline'}>
-                            S{episode.ParentIndexNumber} E{episode.IndexNumber}
-                        </Badge>
-                    )}
-                    {episode.CommunityRating !== undefined && (
-                        <Badge variant={'outline'}>
-                            <Star size={14} />
-                            {episode.CommunityRating?.toFixed(1)}
-                        </Badge>
-                    )}
-                    {episode.PremiereDate && (
-                        <Badge variant={'outline'}>
-                            {new Date(episode.PremiereDate).toLocaleDateString(undefined, {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                            })}
-                        </Badge>
-                    )}
-                </div>
-            </Link>
+                        ) : (
+                            <div className="relative w-full h-full">
+                                <img
+                                    src={
+                                        episode.SeriesId
+                                            ? getPrimaryImageUrl(
+                                                  episode.Id!,
+                                                  {
+                                                      width: 416,
+                                                  },
+                                                  episode.ImageTags?.Primary
+                                              )
+                                            : getThumbUrl(
+                                                  episode.Id!,
+                                                  {
+                                                      width: 416,
+                                                  },
+                                                  episode.ImageTags?.Thumb
+                                              )
+                                    }
+                                    alt={episode.Name || t('no_title')}
+                                    className="w-full h-full object-cover rounded-md group-hover:opacity-75 group-hover:scale-105 transition-opacity transition-transform duration-300 ease-out will-change-transform"
+                                    onError={() => setImageError(true)}
+                                />
+                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <div
+                                        className="bg-black/60 rounded-full p-4 cursor-pointer hover:bg-black/75"
+                                        role="button"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            navigate(buildPlayerUrl(episode.Id!, backUrl));
+                                        }}
+                                    >
+                                        <Play className="w-6 h-6 text-white fill-white" />
+                                    </div>
+                                </div>
+                                {episode.RunTimeTicks && (
+                                    <Badge className="absolute top-2 right-2 bg-black/70 text-white">
+                                        {ticksToReadableTime(episode.RunTimeTicks)}
+                                    </Badge>
+                                )}
+                                <div className="absolute inset-0 rounded-md pointer-events-none poster-card-outline z-20" />
+                            </div>
+                        )}
+                        {progress > 0 && (
+                            <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-700">
+                                <div
+                                    style={{ width: `${progress}%` }}
+                                    className="h-full bg-brand transition-width"
+                                />
+                            </div>
+                        )}
+                    </div>
+                    <p className="mt-2 text-md line-clamp-1 text-ellipsis break-all">
+                        {episode.Name || t('no_title')}
+                    </p>
+                    <p className="mt-1 text-sm line-clamp-2 text-ellipsis text-muted-foreground">
+                        {episode.Overview}
+                    </p>
+                    <div className="flex flex-wrap items-center gap-2 mt-2">
+                        {episode.IndexNumber !== undefined && (
+                            <Badge variant={'outline'}>
+                                S{episode.ParentIndexNumber} E{episode.IndexNumber}
+                            </Badge>
+                        )}
+                        {episode.CommunityRating !== undefined && (
+                            <Badge variant={'outline'}>
+                                <Star size={14} />
+                                {episode.CommunityRating?.toFixed(1)}
+                            </Badge>
+                        )}
+                        {episode.PremiereDate && (
+                            <Badge variant={'outline'}>
+                                {new Date(episode.PremiereDate).toLocaleDateString(undefined, {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric',
+                                })}
+                            </Badge>
+                        )}
+                    </div>
+                </Link>
+            </GeneralItemContextMenu>
         );
     }
 );

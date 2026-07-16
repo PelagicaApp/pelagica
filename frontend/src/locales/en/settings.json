@@ -24,6 +24,7 @@
     "episode_display_grid": "Grid",
     "episode_display_description": "Choose how episodes are displayed on series detail pages.",
     "show_watchlist_button_label": "Show Watchlist Button",
+    "auto_play_trailers_label": "Autoplay Trailer on Item Page",
     "favorite_button_types_label": "Favorite Button Item Types",
     "favorite_button_types_description": "Select the item types for which the favorite button should be displayed.",
     "detail_badges_label": "Detail Badges",
@@ -43,6 +44,7 @@
     "section_type_streamystatsRecommended": "Recommended (Streamystats)",
     "section_type_genres": "Genres",
     "section_type_libraries": "Libraries",
+    "section_type_seerrDiscover": "Seerr Discover",
     "detail_badges_ReleaseYear": "Release Year",
     "detail_badges_ReleaseYearAndMonth": "Release Year and Month",
     "detail_badges_ReleaseDate": "Release Date",
@@ -87,6 +89,10 @@
     "recomm_series": "Series",
     "show_similarity": "Show Similarity",
     "show_based_on": "Show Based On",
+    "seerr_discover_variant": "Discovery List",
+    "seerr_variant_trending": "Trending",
+    "seerr_variant_popularMovies": "Popular Movies",
+    "seerr_variant_popularSeries": "Popular Series",
     "detail_fields": "Detail Fields",
     "watched_state_badges": "Watched State Badges",
     "watched_state_badges_description": "Configure the display of watched state badges on posters.",
@@ -140,5 +146,9 @@
     "usage_statistics_description": "We have no way to know how many people use Pelagica unless you tell us. Opting in sends a daily ping with your version and a random ID. That's it.",
     "login_page": "Login Page",
     "login_page_description": "Configure the behavior of the login page. This only takes effect when a server address is enforced via the SERVER_ADDRESS environment variable.",
-    "hide_back_to_server_button_label": "Hide \"Back to Server\" Button"
+    "hide_back_to_server_button_label": "Hide \"Back to Server\" Button",
+    "seerr_integration": "Seerr Integration",
+    "seerr_description": "Access Seerr-powered recommendations, search for titles, and send media requests straight from Pelagica.",
+    "seerr_url_label": "Seerr URL",
+    "seerr_url_placeholder": "http://your-seerr-server"
 }

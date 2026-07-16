@@ -1,5 +1,6 @@
 import { getBackdropUrl, getLogoUrl } from '@/utils/jellyfinUrls';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { ItemBackdropTrailerControls, ItemBackdropTrailerVideo } from './ItemBackdropTrailer';
 
 interface BaseMediaPageProps {
     itemId: string;
@@ -9,6 +10,7 @@ interface BaseMediaPageProps {
     topPadding?: boolean;
     topPaddingMinHeight?: string;
     logo?: React.ReactNode;
+    hasLocalTrailers?: boolean;
 }
 
 const BaseMediaPage = ({
@@ -19,16 +21,40 @@ const BaseMediaPage = ({
     topPadding = true,
     topPaddingMinHeight = '45dvh',
     logo,
+    hasLocalTrailers = false,
 }: BaseMediaPageProps) => {
     const [failedBackdrop, setFailedBackdrop] = useState(false);
     const [failedLogo, setFailedLogo] = useState(false);
     const [isBgLoaded, setIsBgLoaded] = useState(false);
     const [prevItemId, setPrevItemId] = useState(itemId);
+    const trailerVideoRef = useRef<HTMLVideoElement>(null);
+    const [trailerMuted, setTrailerMuted] = useState(true);
+    const [trailerReady, setTrailerReady] = useState(false);
+    const [trailerFullscreen, setTrailerFullscreen] = useState(false);
 
     if (itemId !== prevItemId) {
         setPrevItemId(itemId);
         setIsBgLoaded(false);
+        setTrailerReady(false);
     }
+
+    useEffect(() => {
+        const handleFullscreenChange = () => {
+            setTrailerFullscreen(document.fullscreenElement === trailerVideoRef.current);
+        };
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    }, []);
+
+    const handleToggleTrailerFullscreen = () => {
+        const video = trailerVideoRef.current;
+        if (!video) return;
+        if (document.fullscreenElement) {
+            document.exitFullscreen();
+        } else if (video.requestFullscreen) {
+            video.requestFullscreen();
+        }
+    };
 
     return (
         <div className="relative">
@@ -46,6 +72,14 @@ const BaseMediaPage = ({
                             onLoad={() => setIsBgLoaded(true)}
                             onError={() => setFailedBackdrop(true)}
                         />
+                        <ItemBackdropTrailerVideo
+                            itemId={itemId}
+                            enabled={hasLocalTrailers}
+                            videoRef={trailerVideoRef}
+                            muted={trailerMuted}
+                            isFullscreen={trailerFullscreen}
+                            onReadyChange={setTrailerReady}
+                        />
                         {/* Left-to-right dark fade to ensure text readability */}
                         <div className="absolute inset-0 bg-linear-to-r from-background via-background/75 to-transparent" />
                         {/* Bottom-to-top fade to background */}
@@ -57,6 +91,16 @@ const BaseMediaPage = ({
                     <div className="absolute inset-0 bg-muted/10 animate-pulse" />
                 )}
             </div>
+            {trailerReady && (
+                <div className="absolute top-0 left-0 h-[75vh] md:h-[85vh] w-full z-20 pointer-events-none">
+                    <ItemBackdropTrailerControls
+                        muted={trailerMuted}
+                        onMutedChange={setTrailerMuted}
+                        isFullscreen={trailerFullscreen}
+                        onFullscreenToggle={handleToggleTrailerFullscreen}
+                    />
+                </div>
+            )}
             {topPadding && (
                 <div
                     className={`flex items-center justify-center`}
