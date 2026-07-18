@@ -75,9 +75,6 @@ const VideoPlayer = ({
 
         player.ready(() => {
             onReady?.(player);
-            player.play()?.catch((error) => {
-                console.error('Error attempting to play:', error);
-            });
         });
 
         return () => {
