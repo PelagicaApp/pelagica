@@ -7,8 +7,15 @@ import { useParams } from 'react-router';
 import VideoPlayer, { type SubtitleTrack } from '@/pages/Player/VideoPlayer';
 import PlayerControls from '@/pages/Player/PlayerControls';
 import PlayerLoading from '@/pages/Player/PlayerLoading';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { getPrimaryImageUrl, getSubtitleUrl, getPlaybackStreamUrl } from '@/utils/jellyfinUrls';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
+import {
+    getPrimaryImageUrl,
+    getSubtitleUrl,
+    getPlaybackStreamUrl,
+    getAttachmentUrl,
+} from '@/utils/jellyfinUrls';
 import { usePlaybackInfo } from '@/hooks/api/usePlaybackInfo';
 import { useMediaSegments } from '@/hooks/api/useMediaSegments';
 import { useAdjacentItems } from '@/hooks/api/useAdjacentItems';
@@ -17,18 +24,23 @@ import { getLastAudioLanguage, getLastSubtitleLanguage } from '@/utils/localstor
 import { useUserConfiguration } from '@/hooks/api/playbackPreferences/useUserConfiguration';
 import { usePlayerItem } from '@/hooks/api/usePlayerItem';
 import { useMusicPlayback } from '@/hooks/useMusicPlayback';
+import { clearCodecCache } from '@/utils/videoCodecDetection';
 
 const PLAYBACK_PROGRESS_REPORT_MIN_PLAYTIME_SECONDS = 5;
 const PLAYBACK_PROGRESS_REPORT_INTERVAL_MS = 5000;
+const FONT_ATTACHMENT_EXTENSION_PATTERN = /\.(ttf|otf|woff2?)$/i;
 
 export type VideoJsPlayer = ReturnType<typeof import('video.js').default>;
 
 const PlayerPage = () => {
+    const { t } = useTranslation('player');
     const params = useParams<{ itemId: string }>();
     const itemId = params.itemId;
     const hasUserSelectedSubtitleRef = useRef(false);
     const hasUserSelectedAudioRef = useRef(false);
+    const hasAttemptedTranscodeFallbackRef = useRef(false);
     const [player, setPlayer] = useState<VideoJsPlayer | null>(null);
+    const [forceTranscode, setForceTranscode] = useState(false);
     const {
         data: userConfiguration,
         isLoading: isLoadingUserConfiguration,
@@ -103,7 +115,7 @@ const PlayerPage = () => {
         data: playbackInfo,
         isLoading: isLoadingPlaybackInfo,
         error: playbackInfoError,
-    } = usePlaybackInfo(itemId, getUserId() || undefined, audioTrackIndex);
+    } = usePlaybackInfo(itemId, getUserId() || undefined, audioTrackIndex, forceTranscode);
 
     const playSessionId = playbackInfo?.playSessionId || '';
 
@@ -146,8 +158,10 @@ const PlayerPage = () => {
             hasUserSelectedAudioRef.current = false;
             hasUserSelectedSubtitleRef.current = false;
             isAudioSwitchRef.current = false;
+            hasAttemptedTranscodeFallbackRef.current = false;
 
             setPlayer(null);
+            setForceTranscode(false);
             setAudioTrackIndex(resolvedAudio.index);
             setSubtitleTrackIndex(resolvedSubtitleTrackIndex);
         });
@@ -268,6 +282,23 @@ const PlayerPage = () => {
         lastPositionRef.current = startTicks;
     }, [startTicks]);
 
+    const handlePlaybackError = useCallback(
+        (mediaError: MediaError | null) => {
+            if (!mediaError || mediaError.code !== MediaError.MEDIA_ERR_DECODE) return;
+
+            if (hasAttemptedTranscodeFallbackRef.current) {
+                toast.error(t('playbackDecodeErrorFailed'));
+                return;
+            }
+
+            hasAttemptedTranscodeFallbackRef.current = true;
+            clearCodecCache();
+            toast.error(t('playbackDecodeErrorRetrying'));
+            setForceTranscode(true);
+        },
+        [t]
+    );
+
     const handleAudioTrackChange = (index: number) => {
         isAudioSwitchRef.current = true;
         hasUserSelectedAudioRef.current = true;
@@ -300,15 +331,38 @@ const PlayerPage = () => {
 
         const subtitles = item.MediaStreams.filter((s) => s.Type === 'Subtitle');
 
-        return subtitles.map(
-            (subtitle): SubtitleTrack => ({
-                src: getSubtitleUrl(item.Id!, item.Id!, subtitle.Index || 0),
+        return subtitles.map((subtitle): SubtitleTrack => {
+            const codec = subtitle.Codec?.toLowerCase();
+            const isAss = codec === 'ass' || codec === 'ssa';
+
+            return {
+                src: getSubtitleUrl(
+                    item.Id!,
+                    item.Id!,
+                    subtitle.Index || 0,
+                    isAss ? (codec as 'ass' | 'ssa') : 'vtt'
+                ),
                 srclang: subtitle.Language || 'unknown',
                 label: subtitle.DisplayTitle || subtitle.Language || `Subtitle ${subtitle.Index}`,
                 default: subtitle.IsDefault || false,
-            })
-        );
+                format: isAss ? 'ass' : 'vtt',
+            };
+        });
     }, [item]);
+
+    const subtitleFonts = useMemo(() => {
+        const attachments = playbackInfo?.mediaSource.MediaAttachments;
+        if (!attachments || attachments.length === 0) return [];
+
+        return attachments
+            .filter(
+                (attachment) =>
+                    attachment.DeliveryUrl &&
+                    (attachment.MimeType?.startsWith('font/') ||
+                        FONT_ATTACHMENT_EXTENSION_PATTERN.test(attachment.FileName || ''))
+            )
+            .map((attachment) => getAttachmentUrl(attachment.DeliveryUrl!));
+    }, [playbackInfo?.mediaSource.MediaAttachments]);
 
     if (
         isLoading ||
@@ -351,8 +405,10 @@ const PlayerPage = () => {
                 srcType={streamResult.mimeType}
                 poster={posterUrl}
                 onReady={setPlayer}
+                onPlaybackError={handlePlaybackError}
                 startTicks={item.UserData?.PlaybackPositionTicks || 0}
                 subtitles={subtitleTracks}
+                subtitleFonts={subtitleFonts}
                 isAudioSwitchRef={isAudioSwitchRef}
                 subtitleTrackIndex={subtitleTrackIndex}
             />

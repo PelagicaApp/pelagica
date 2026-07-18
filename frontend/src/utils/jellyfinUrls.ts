@@ -328,7 +328,7 @@ export function getSubtitleUrl(
     itemId: string,
     mediaSourceId: string,
     subtitleStreamIndex: number,
-    format: 'vtt' | 'srt' = 'vtt'
+    format: 'vtt' | 'srt' | 'ass' | 'ssa' = 'vtt'
 ) {
     try {
         const creds = resolveCredentials();
@@ -336,6 +336,20 @@ export function getSubtitleUrl(
 
         const url = new URL(creds.server);
         url.pathname = `/Videos/${itemId}/${mediaSourceId}/Subtitles/${subtitleStreamIndex}/0/Stream.${format}`;
+        url.searchParams.append('ApiKey', creds.token);
+
+        return url.toString();
+    } catch {
+        return '';
+    }
+}
+
+export function getAttachmentUrl(deliveryUrl: string) {
+    try {
+        const creds = resolveCredentials();
+        if (!creds) return '';
+
+        const url = new URL(deliveryUrl, creds.server);
         url.searchParams.append('ApiKey', creds.token);
 
         return url.toString();

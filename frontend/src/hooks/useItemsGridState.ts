@@ -78,9 +78,12 @@ export function useItemsGridState(defaults?: {
     useEffect(() => {
         const handleResize = () => {
             const newPageSize = getColumnCount(window.innerWidth) * ITEM_ROWS;
-            setPageSize(newPageSize);
-            setPageState(0);
-            updateSearchParams(0);
+            setPageSize((prevPageSize) => {
+                if (prevPageSize === newPageSize) return prevPageSize;
+                setPageState(0);
+                updateSearchParams(0);
+                return newPageSize;
+            });
         };
 
         window.addEventListener('resize', handleResize);

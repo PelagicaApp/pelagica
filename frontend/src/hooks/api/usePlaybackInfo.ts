@@ -14,15 +14,31 @@ export interface PlaybackDecision {
     liveStreamId?: string;
 }
 
-function buildDeviceProfile(options?: { liveTvContainer?: boolean }) {
+function buildDeviceProfile(options?: { liveTvContainer?: boolean; excludeHevc?: boolean }) {
     const codecs = detectSupportedCodecs();
 
     const videoCodecs: string[] = [];
     if (codecs.h264) videoCodecs.push('h264');
-    if (codecs.hevc) videoCodecs.push('hevc');
+    if (!options?.excludeHevc && (codecs.hevcMain || codecs.hevcMain10)) videoCodecs.push('hevc');
     if (codecs.av1) videoCodecs.push('av1');
     if (codecs.vp9) videoCodecs.push('vp9');
     if (videoCodecs.length === 0) videoCodecs.push('h264');
+
+    const codecProfiles = [];
+    if ((codecs.hevcMain || codecs.hevcMain10) && !codecs.hevcMain10) {
+        codecProfiles.push({
+            Type: 'Video' as const,
+            Codec: 'hevc',
+            Conditions: [
+                {
+                    Condition: 'LessThanEqual' as const,
+                    Property: 'VideoBitDepth' as const,
+                    Value: '8',
+                    IsRequired: false,
+                },
+            ],
+        });
+    }
 
     const directPlayProfiles = [
         {
@@ -67,7 +83,7 @@ function buildDeviceProfile(options?: { liveTvContainer?: boolean }) {
         DirectPlayProfiles: directPlayProfiles,
         TranscodingProfiles: transcodingProfiles,
         ContainerProfiles: [],
-        CodecProfiles: [],
+        CodecProfiles: codecProfiles,
         SubtitleProfiles: [
             { Format: 'vtt', Method: 'External' as const },
             { Format: 'srt', Method: 'External' as const },
@@ -80,10 +96,11 @@ function buildDeviceProfile(options?: { liveTvContainer?: boolean }) {
 export function usePlaybackInfo(
     itemId: string | null | undefined,
     userId: string | undefined,
-    audioStreamIndex?: number
+    audioStreamIndex?: number,
+    forceTranscode?: boolean
 ) {
     return useQuery<PlaybackDecision>({
-        queryKey: ['playbackInfo', itemId, audioStreamIndex],
+        queryKey: ['playbackInfo', itemId, audioStreamIndex, forceTranscode],
         queryFn: async (): Promise<PlaybackDecision> => {
             const api = getApi();
             const mediaInfoApi = getMediaInfoApi(api);
@@ -93,13 +110,13 @@ export function usePlaybackInfo(
                 userId,
                 maxStreamingBitrate: 80_000_000,
                 audioStreamIndex,
-                enableDirectPlay: true,
-                enableDirectStream: true,
+                enableDirectPlay: !forceTranscode,
+                enableDirectStream: !forceTranscode,
                 enableTranscoding: true,
-                allowVideoStreamCopy: true,
+                allowVideoStreamCopy: !forceTranscode,
                 allowAudioStreamCopy: true,
                 playbackInfoDto: {
-                    DeviceProfile: buildDeviceProfile(),
+                    DeviceProfile: buildDeviceProfile({ excludeHevc: forceTranscode }),
                 },
             });
 
@@ -123,9 +140,12 @@ export function usePlaybackInfo(
                         ItemId: itemId,
                         AudioStreamIndex: audioStreamIndex,
                         MaxStreamingBitrate: 80_000_000,
-                        EnableDirectPlay: true,
-                        EnableDirectStream: true,
-                        DeviceProfile: buildDeviceProfile({ liveTvContainer: true }),
+                        EnableDirectPlay: !forceTranscode,
+                        EnableDirectStream: !forceTranscode,
+                        DeviceProfile: buildDeviceProfile({
+                            liveTvContainer: true,
+                            excludeHevc: forceTranscode,
+                        }),
                     },
                 });
 

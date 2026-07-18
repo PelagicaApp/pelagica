@@ -1,5 +1,7 @@
 {
     "live": "Live",
+    "playbackDecodeErrorRetrying": "Playback failed, retrying with transcoding...",
+    "playbackDecodeErrorFailed": "This video could not be played on your device.",
     "skipIntro": "Skip Intro",
     "skipOutro": "Skip Outro",
     "audioTracks": "Audio Tracks",
