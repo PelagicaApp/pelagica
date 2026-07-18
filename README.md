@@ -154,7 +154,7 @@ services:
 
 Replace `/path/to/your/config` with the actual path where your config files should be located (e.g. `/mnt/user/appdata/pelagica`)
 
-Then run: `docker-compose up -d`
+Then run: `docker compose up -d`
 
 ### Building from Source
 
@@ -166,7 +166,7 @@ git clone https://github.com/KartoffelChipss/pelagica.git
 cd pelagica
 
 # Build and start
-docker-compose up -d --build
+docker compose up -d --build
 ```
 
 ## Custom Themes
