@@ -35,6 +35,22 @@ tasks:
     cmds:
       - go run main.go
 
+  desktop:
+    desc: Run the desktop app (proof of concept, Wails v3)
+    deps:
+      - desktop:assets
+    dir: desktop
+    cmds:
+      - go run .
+
+  desktop:build:
+    desc: Build the desktop app binary (proof of concept, Wails v3)
+    deps:
+      - desktop:assets
+    dir: desktop
+    cmds:
+      - go build -o bin/pelagica .
+
   install-frontend:
     internal: true
     dir: frontend
@@ -54,6 +70,33 @@ tasks:
       - go.sum
     cmds:
       - go mod download
+
+  install-desktop:
+    internal: true
+    dir: desktop
+    sources:
+      - go.mod
+      - go.sum
+    cmds:
+      - go mod download
+
+  build-frontend:
+    desc: Build the frontend for production
+    deps:
+      - install-frontend
+    dir: frontend
+    cmds:
+      - pnpm run build
+
+  desktop:assets:
+    internal: true
+    deps:
+      - install-desktop
+      - build-frontend
+    cmds:
+      - rm -rf desktop/frontend/dist
+      - mkdir -p desktop/frontend/dist
+      - cp -r frontend/dist/. desktop/frontend/dist/
 
   lint:
     desc: Lint frontend code with ESLint
