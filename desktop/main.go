@@ -27,6 +27,10 @@ func main() {
 		Width:  1280,
 		Height: 800,
 		URL:    "/",
+		Mac: application.MacWindow{
+			TitleBar:                application.MacTitleBarHiddenInset,
+			InvisibleTitleBarHeight: 50,
+		},
 	})
 
 	if err := app.Run(); err != nil {

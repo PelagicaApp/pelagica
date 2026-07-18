@@ -17,6 +17,7 @@ import './index.css';
 import './theme.css';
 import './i18n.ts';
 import { ScrollToTop } from './components/ScrollToTop.tsx';
+import { DesktopDragRegion } from './components/DesktopDragRegion.tsx';
 
 const HomePage = lazy(() => import('./pages/Home/HomePage.tsx'));
 const LoginPage = lazy(() => import('./pages/Login/LoginPage.tsx'));
@@ -49,6 +50,7 @@ createRoot(document.getElementById('root')!).render(
                         <AdminItemDialogsProvider>
                             <SeerrItemDialogProvider>
                                 <ScrollToTop />
+                                <DesktopDragRegion />
                                 <KeyboardShortcuts />
                                 <SearchCommand />
                                 <PelagicaThemeLoader />
