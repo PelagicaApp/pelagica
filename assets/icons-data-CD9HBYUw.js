@@ -1,1 +1,0 @@
-import{t as e}from"./SettingsPage-BOrqNlB3.js";export{e as iconsData};
