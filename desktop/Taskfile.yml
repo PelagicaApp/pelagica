@@ -85,6 +85,7 @@ tasks:
 
     package:linux:
         desc: Build a Linux binary for the desktop app (requires gcc, gtk4 and webkitgtk-6.0 dev headers)
+        run: once
         deps:
             - assets
         preconditions:
@@ -94,6 +95,12 @@ tasks:
             - go build -trimpath -ldflags="-w -s" -o bin/pelagica .
         env:
             CGO_ENABLED: 1
+
+    installer:linux:
+        desc: Build both the .deb and AppImage installers for the desktop app
+        cmds:
+            - task: installer:linux:deb
+            - task: installer:linux:appimage
 
     installer:linux:deb:
         desc: Build a .deb package for the desktop app
