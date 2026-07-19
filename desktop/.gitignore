@@ -1,1 +1,3 @@
 /bin
+*.syso
+/build/windows/nsis/MicrosoftEdgeWebview2Setup.exe

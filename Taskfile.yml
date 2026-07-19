@@ -37,9 +37,8 @@ tasks:
                   VERSION: '{{.VERSION}}'
             - cmd: 'perl -i -pe "s/APP_VERSION: ''.*''/APP_VERSION: ''{{.VERSION}}''/" backend/Taskfile.yml'
             - cmd: 'perl -i -pe "s/^    version: ''.*''/    version: ''{{.VERSION}}''/" desktop/build/config.yml'
-            - cmd: 'perl -i -0777 -pe "s/(<key>CFBundleVersion<\/key>\s*<string>)[^<]*(<\/string>)/\${1}{{.VERSION}}\${2}/" desktop/build/darwin/Info.plist'
-            - cmd: 'perl -i -0777 -pe "s/(<key>CFBundleShortVersionString<\/key>\s*<string>)[^<]*(<\/string>)/\${1}{{.VERSION}}\${2}/" desktop/build/darwin/Info.plist'
-            - 'echo "Version set to {{.VERSION}} in frontend/package.json, backend/Taskfile.yml, desktop/build/config.yml, and desktop/build/darwin/Info.plist"'
+            - perl desktop/build/set-versions.pl {{.VERSION}}
+            - 'echo "Version set to {{.VERSION}} in frontend/package.json, backend/Taskfile.yml, and desktop/build/config.yml"'
 
     docker:
         desc: Build and run the local Docker image

@@ -25,11 +25,20 @@ task desktop:build
 
 Produces `desktop/bin/pelagica`.
 
-## Build an installer (macOS only)
+## Build an installer (macOS)
 
 ```bash
-task desktop:package     # produces desktop/bin/Pelagica.app
-task desktop:installer   # also produces desktop/bin/Pelagica.dmg
+task desktop:package:macos     # produces desktop/bin/Pelagica.app
+task desktop:installer:macos   # also produces desktop/bin/Pelagica.dmg
 ```
 
 The `.app` is ad-hoc codesigned (`codesign --sign -`) so it runs locally, but it isn't signed with a Developer ID or notarized, so Gatekeeper will still flag it for anyone else who downloads it (right-click -> Open bypasses this). The `.dmg` has the usual drag-to-Applications layout (built with [create-dmg](https://github.com/create-dmg/create-dmg): `brew install create-dmg`).
+
+## Build an installer (Windows)
+
+```bash
+task desktop:package:windows     # produces desktop/bin/pelagica.exe
+task desktop:installer:windows   # also produces desktop/bin/Pelagica-amd64-installer.exe
+```
+
+The `.exe` has the app icon and version info embedded via a generated `.syso` resource file. The installer is an NSIS setup built with [NSIS](https://nsis.sourceforge.io/) (`winget install NSIS.NSIS`, or `choco install nsis`); on first run it also downloads the Microsoft Edge WebView2 bootstrapper into `build/windows/nsis/` so the installer can provision the WebView2 Runtime on machines that don't already have it. It isn't signed with an Authenticode certificate, so Windows SmartScreen will flag it for anyone else who downloads it.

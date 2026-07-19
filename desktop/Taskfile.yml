@@ -15,13 +15,13 @@ tasks:
         cmds:
             - go build -o bin/pelagica .
 
-    package:
+    package:macos:
         desc: Build a macOS .app bundle for the desktop app (unsigned/ad-hoc)
         deps:
             - assets
         preconditions:
             - sh: '[ "{{OS}}" = "darwin" ]'
-              msg: desktop:package currently only supports macOS
+              msg: desktop:package only supports macOS
         cmds:
             - go build -o bin/pelagica .
             - rm -rf bin/Pelagica.app
@@ -33,13 +33,13 @@ tasks:
             - xattr -cr bin/Pelagica.app # strips resource forks/quarantine flags icon tools leave behind, which codesign rejects
             - codesign --force --deep --sign - bin/Pelagica.app
 
-    installer:
+    installer:macos:
         desc: Build a macOS .dmg installer for the desktop app (unsigned), with a drag-to-Applications layout
         deps:
-            - package
+            - package:macos
         preconditions:
             - sh: '[ "{{OS}}" = "darwin" ]'
-              msg: desktop:installer currently only supports macOS
+              msg: desktop:installer only supports macOS
             - sh: command -v create-dmg
               msg: 'create-dmg is required. Install it with: brew install create-dmg'
         cmds:
@@ -49,6 +49,39 @@ tasks:
             - cp -r bin/Pelagica.app bin/dmg-staging/
             - create-dmg --volname "Pelagica" --volicon "build/driveicon.icns" --window-size 660 400 --icon-size 100 --icon "Pelagica.app" 175 190 --hide-extension "Pelagica.app" --app-drop-link 480 190 "bin/Pelagica.dmg" "bin/dmg-staging"
             - rm -rf bin/dmg-staging
+
+    package:windows:
+        desc: Build a Windows .exe for the desktop app, with the app icon and version info embedded (unsigned)
+        deps:
+            - assets
+        preconditions:
+            - sh: '[ "{{OS}}" = "windows" ]'
+              msg: desktop:package:windows only supports Windows
+        cmds:
+            - wails3 generate syso -arch amd64 -icon build/windows/icon.ico -manifest build/windows/wails.exe.manifest -info build/windows/info.json -out wails_windows_amd64.syso
+            - go build -trimpath -ldflags="-w -s -H windowsgui" -o bin/pelagica.exe .
+            - rm -f wails_windows_amd64.syso
+
+    installer:windows:
+        desc: Build a Windows NSIS installer (.exe) for the desktop app (unsigned)
+        deps:
+            - package:windows
+        preconditions:
+            - sh: '[ "{{OS}}" = "windows" ]'
+              msg: desktop:installer:windows only supports Windows
+            - sh: command -v makensis
+              msg: 'makensis (NSIS) is required. Install it with: winget install NSIS.NSIS'
+        cmds:
+            - task: webview2:bootstrapper
+            - makensis -DARG_WAILS_AMD64_BINARY="..\..\..\bin\pelagica.exe" project.nsi
+        dir: build/windows/nsis
+
+    webview2:bootstrapper:
+        internal: true
+        status:
+            - test -f build/windows/nsis/MicrosoftEdgeWebview2Setup.exe
+        cmds:
+            - wails3 generate webview2bootstrapper -dir build/windows/nsis
 
     install:
         internal: true
