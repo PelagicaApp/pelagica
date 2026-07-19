@@ -39,5 +39,7 @@
     "seerr_open": "Open Seerr",
     "app_icon": "App Icon",
     "app_icon_classic": "Classic",
-    "app_icon_pride": "Pride"
+    "app_icon_classic_light": "Classic Light",
+    "app_icon_pride": "Pride",
+    "app_icon_pride_light": "Pride Light"
 }

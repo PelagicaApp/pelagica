@@ -12,7 +12,7 @@ import (
 //go:embed appicons/*.icns
 var appIconAssets embed.FS
 
-var appIconOrder = []string{"classic", "pride"}
+var appIconOrder = []string{"classic", "classic_light", "pride", "pride_light"}
 
 const defaultAppIcon = "classic"
 
