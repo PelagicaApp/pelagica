@@ -4,6 +4,8 @@ import {
     ChartLine,
     Check,
     ChevronDown,
+    ChevronLeft,
+    ChevronRight,
     ChevronsUpDown,
     DotIcon,
     ExternalLink,
@@ -94,6 +96,7 @@ import {
 import { useThemes } from '@/hooks/api/themes/useThemes';
 import { useQueryClient } from '@tanstack/react-query';
 import { SUPPORTED_LANGUAGES } from '../utils/supportedLanguages';
+import { isDesktopApp } from '../utils/desktopApp';
 
 const AuthorizeQuickConnectDialog = ({
     onAuthorize,
@@ -598,6 +601,8 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
     const { theme } = useTheme();
     const effectiveTheme = getEffectiveTheme(theme);
     const [scrolled, setScrolled] = useState(false);
+    const navigate = useNavigate();
+    const isDesktop = isDesktopApp();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -626,10 +631,47 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
 
     const validLinks = config?.links?.filter((l) => l.url && l.text) ?? [];
 
+    const goback = () => {
+        navigate(-1);
+    };
+
+    const goforward = () => {
+        navigate(1);
+    };
+
     return (
         <header className="fixed top-0 z-50 w-full flex justify-center pointer-events-none">
             {overlay && !scrolled && (
                 <div className="absolute inset-0 -bottom-5 bg-linear-to-b from-background/70 to-transparent" />
+            )}
+
+            {isDesktop && (
+                <div
+                    className={cn(
+                        'pointer-events-auto absolute right-3 flex h-11 items-center px-1 w-full md:w-auto mt-3 rounded-full transition-all duration-300 border',
+                        'justify-between md:justify-start gap-0.5',
+                        !overlay || scrolled
+                            ? 'border-border bg-background/60 backdrop-blur shadow-sm'
+                            : 'border-white/10 bg-background/20 backdrop-blur-md'
+                    )}
+                >
+                    <Button
+                        size="icon-sm"
+                        variant="ghost"
+                        onClick={goback}
+                        className="h-9 w-9 rounded-l-full"
+                    >
+                        <ChevronLeft />
+                    </Button>
+                    <Button
+                        size="icon-sm"
+                        variant="ghost"
+                        onClick={goforward}
+                        className="h-9 w-9 rounded-r-full"
+                    >
+                        <ChevronRight />
+                    </Button>
+                </div>
             )}
 
             <div
