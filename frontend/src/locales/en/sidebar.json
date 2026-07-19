@@ -36,5 +36,8 @@
     "password": "Password",
     "login": "Login",
     "logging_in": "Logging in...",
-    "seerr_open": "Open Seerr"
+    "seerr_open": "Open Seerr",
+    "app_icon": "App Icon",
+    "app_icon_classic": "Classic",
+    "app_icon_pride": "Pride"
 }

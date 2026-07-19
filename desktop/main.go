@@ -13,12 +13,14 @@ var assets embed.FS
 
 func main() {
 	windowService := &WindowService{}
+	appIconService := &AppIconService{}
 
 	app := application.New(application.Options{
 		Name:        "Pelagica",
 		Description: "A modern cross-platform desktop client for Jellyfin",
 		Services: []application.Service{
 			application.NewService(windowService),
+			application.NewService(appIconService),
 		},
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
@@ -45,6 +47,7 @@ func main() {
 
 	window.RegisterHook(events.Common.WindowShow, func(*application.WindowEvent) {
 		windowService.positionTrafficLights()
+		applySavedAppIcon()
 	})
 	window.RegisterHook(events.Common.WindowDidResize, func(*application.WindowEvent) {
 		windowService.positionTrafficLights()

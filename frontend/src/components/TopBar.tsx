@@ -12,6 +12,7 @@ import {
     Fingerprint,
     Globe,
     House,
+    ImageIcon,
     Laptop,
     Library,
     LogIn,
@@ -96,7 +97,13 @@ import {
 import { useThemes } from '@/hooks/api/themes/useThemes';
 import { useQueryClient } from '@tanstack/react-query';
 import { SUPPORTED_LANGUAGES } from '../utils/supportedLanguages';
-import { isDesktopApp, isMacOS } from '../utils/desktopApp';
+import {
+    isDesktopApp,
+    isMacOS,
+    getAppIconOptions,
+    getAppIcon,
+    setAppIcon,
+} from '../utils/desktopApp';
 
 const AuthorizeQuickConnectDialog = ({
     onAuthorize,
@@ -293,6 +300,19 @@ const UserMenu = () => {
     const { config } = useConfig();
     const { data: isSeerrLoggedIn } = useSeerrLoginStatus();
     const seerrLogout = useSeerrLogout();
+    const [appIconOptions, setAppIconOptions] = useState<string[]>([]);
+    const [selectedAppIcon, setSelectedAppIcon] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (!isDesktopApp()) return;
+        getAppIconOptions().then(setAppIconOptions);
+        getAppIcon().then(setSelectedAppIcon);
+    }, []);
+
+    const handleSelectAppIcon = (name: string) => {
+        setSelectedAppIcon(name);
+        setAppIcon(name);
+    };
 
     const onAuthorizeQuickConnect = (code: string) => {
         setQuickConnectLoading(true);
@@ -408,6 +428,37 @@ const UserMenu = () => {
                         </DropdownMenuSubContent>
                     </DropdownMenuPortal>
                 </DropdownMenuSub>
+
+                {/* App Icon (desktop app only) */}
+                {isDesktopApp() && appIconOptions.length > 0 && (
+                    <DropdownMenuSub>
+                        <DropdownMenuSubTrigger>
+                            <ImageIcon className="text-muted-foreground" />
+                            {t('app_icon')}
+                        </DropdownMenuSubTrigger>
+                        <DropdownMenuPortal>
+                            <DropdownMenuSubContent>
+                                {appIconOptions.map((name) => (
+                                    <DropdownMenuItem
+                                        key={name}
+                                        onClick={() => handleSelectAppIcon(name)}
+                                    >
+                                        <img
+                                            src={`appicons/${name}.png`}
+                                            alt={t(`app_icon_${name}`)}
+                                            height={32}
+                                            width={32}
+                                        />
+                                        {t(`app_icon_${name}`)}
+                                        {selectedAppIcon === name && (
+                                            <Check className="ml-auto h-4 w-4" />
+                                        )}
+                                    </DropdownMenuItem>
+                                ))}
+                            </DropdownMenuSubContent>
+                        </DropdownMenuPortal>
+                    </DropdownMenuSub>
+                )}
 
                 {/* Preferences */}
                 <Dialog>

@@ -27,6 +27,24 @@ export async function toggleNativeFullscreen(): Promise<void> {
     await WindowService.ToggleFullscreen();
 }
 
+export async function getAppIconOptions(): Promise<string[]> {
+    if (!isDesktopBuild || !isDesktopApp()) return [];
+    const { AppIconService } = await import('@/bindings/pelagica-desktop');
+    return AppIconService.GetAppIconOptions();
+}
+
+export async function getAppIcon(): Promise<string | null> {
+    if (!isDesktopBuild || !isDesktopApp()) return null;
+    const { AppIconService } = await import('@/bindings/pelagica-desktop');
+    return AppIconService.GetAppIcon();
+}
+
+export async function setAppIcon(name: string): Promise<void> {
+    if (!isDesktopBuild || !isDesktopApp()) return;
+    const { AppIconService } = await import('@/bindings/pelagica-desktop');
+    await AppIconService.SetAppIcon(name);
+}
+
 export function onNativeFullscreenChange(callback: (isFullscreen: boolean) => void): () => void {
     if (!isDesktopBuild || !isDesktopApp()) return () => {};
 
