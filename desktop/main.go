@@ -35,6 +35,9 @@ func main() {
 		Mac: application.MacWindow{
 			TitleBar:                application.MacTitleBarHiddenInset,
 			InvisibleTitleBarHeight: 50,
+			WebviewPreferences: application.MacWebviewPreferences{
+				FullscreenEnabled: application.Enabled,
+			},
 		},
 	})
 

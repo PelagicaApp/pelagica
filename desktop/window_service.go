@@ -20,3 +20,13 @@ func (s *WindowService) ShowTrafficLights() {
 	s.window.SetMinimiseButtonState(application.ButtonEnabled)
 	s.window.SetMaximiseButtonState(application.ButtonEnabled)
 }
+
+// ToggleFullscreen toggles native window fullscreen.
+func (s *WindowService) ToggleFullscreen() {
+	s.window.ToggleFullscreen()
+}
+
+// IsFullscreen reports whether the window is currently fullscreen.
+func (s *WindowService) IsFullscreen() bool {
+	return s.window.IsFullscreen()
+}

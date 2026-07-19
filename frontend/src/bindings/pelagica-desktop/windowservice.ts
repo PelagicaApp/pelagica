@@ -18,8 +18,22 @@ export function HideTrafficLights(): $CancellablePromise<void> {
 }
 
 /**
+ * IsFullscreen reports whether the window is currently fullscreen.
+ */
+export function IsFullscreen(): $CancellablePromise<boolean> {
+    return $Call.ByID(1414357132);
+}
+
+/**
  * ShowTrafficLights restores the macOS traffic light window buttons (no-op on other platforms).
  */
 export function ShowTrafficLights(): $CancellablePromise<void> {
     return $Call.ByID(3756487496);
+}
+
+/**
+ * ToggleFullscreen toggles native window fullscreen.
+ */
+export function ToggleFullscreen(): $CancellablePromise<void> {
+    return $Call.ByID(954194204);
 }

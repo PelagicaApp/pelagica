@@ -25,7 +25,13 @@ import { useUserConfiguration } from '@/hooks/api/playbackPreferences/useUserCon
 import { usePlayerItem } from '@/hooks/api/usePlayerItem';
 import { useMusicPlayback } from '@/hooks/useMusicPlayback';
 import { clearCodecCache } from '@/utils/videoCodecDetection';
-import { hideTrafficLights, showTrafficLights } from '@/utils/desktopApp';
+import {
+    hideTrafficLights,
+    showTrafficLights,
+    isDesktopApp,
+    toggleNativeFullscreen,
+    onNativeFullscreenChange,
+} from '@/utils/desktopApp';
 
 const PLAYBACK_PROGRESS_REPORT_MIN_PLAYTIME_SECONDS = 5;
 const PLAYBACK_PROGRESS_REPORT_INTERVAL_MS = 5000;
@@ -153,6 +159,11 @@ const PlayerPage = () => {
         };
     }, []);
 
+    // The desktop app toggles native window fullscreen instead of the DOM Fullscreen API, so keep isFullscreen in sync with native fullscreen changes
+    useEffect(() => {
+        return onNativeFullscreenChange(setIsFullscreen);
+    }, []);
+
     // Hide the macOS traffic lights while the player is open so they don't cover the back button
     useEffect(() => {
         hideTrafficLights();
@@ -204,6 +215,12 @@ const PlayerPage = () => {
 
     const handleToggleFullscreen = () => {
         if (!containerRef.current) return;
+
+        if (isDesktopApp()) {
+            toggleNativeFullscreen();
+            return;
+        }
+
         if (document.fullscreenElement) {
             document.exitFullscreen();
         } else {

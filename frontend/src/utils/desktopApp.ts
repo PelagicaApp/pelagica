@@ -16,3 +16,29 @@ export async function showTrafficLights(): Promise<void> {
     const { WindowService } = await import('@/bindings/pelagica-desktop');
     await WindowService.ShowTrafficLights();
 }
+
+export async function toggleNativeFullscreen(): Promise<void> {
+    if (!isDesktopBuild || !isDesktopApp()) return;
+    const { WindowService } = await import('@/bindings/pelagica-desktop');
+    await WindowService.ToggleFullscreen();
+}
+
+export function onNativeFullscreenChange(callback: (isFullscreen: boolean) => void): () => void {
+    if (!isDesktopBuild || !isDesktopApp()) return () => {};
+
+    let cancelled = false;
+    let unsubscribeEnter: (() => void) | undefined;
+    let unsubscribeExit: (() => void) | undefined;
+
+    import('@wailsio/runtime').then(({ Events }) => {
+        if (cancelled) return;
+        unsubscribeEnter = Events.On(Events.Types.Common.WindowFullscreen, () => callback(true));
+        unsubscribeExit = Events.On(Events.Types.Common.WindowUnFullscreen, () => callback(false));
+    });
+
+    return () => {
+        cancelled = true;
+        unsubscribeEnter?.();
+        unsubscribeExit?.();
+    };
+}
