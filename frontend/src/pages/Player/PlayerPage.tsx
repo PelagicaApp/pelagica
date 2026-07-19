@@ -25,6 +25,8 @@ import { useUserConfiguration } from '@/hooks/api/playbackPreferences/useUserCon
 import { usePlayerItem } from '@/hooks/api/usePlayerItem';
 import { useMusicPlayback } from '@/hooks/useMusicPlayback';
 import { clearCodecCache } from '@/utils/videoCodecDetection';
+import { isDesktopApp } from '@/utils/desktopApp';
+import { WindowService } from '@/bindings/pelagica-desktop';
 
 const PLAYBACK_PROGRESS_REPORT_MIN_PLAYTIME_SECONDS = 5;
 const PLAYBACK_PROGRESS_REPORT_INTERVAL_MS = 5000;
@@ -149,6 +151,16 @@ const PlayerPage = () => {
         document.addEventListener('fullscreenchange', handleFullscreenChange);
         return () => {
             document.removeEventListener('fullscreenchange', handleFullscreenChange);
+        };
+    }, []);
+
+    // Hide the macOS traffic lights while the player is open so they don't cover the back button
+    useEffect(() => {
+        if (!isDesktopApp()) return;
+
+        WindowService.HideTrafficLights();
+        return () => {
+            WindowService.ShowTrafficLights();
         };
     }, []);
 

@@ -59,6 +59,9 @@ importers:
       '@tanstack/react-virtual':
         specifier: ^3.14.2
         version: 3.14.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@wailsio/runtime':
+        specifier: 3.0.0-alpha.97
+        version: 3.0.0-alpha.97
       axios:
         specifier: ^1.18.0
         version: 1.18.0
@@ -1534,6 +1537,9 @@ packages:
         optional: true
       babel-plugin-react-compiler:
         optional: true
+
+  '@wailsio/runtime@3.0.0-alpha.97':
+    resolution: {integrity: sha512-alvEG6B0YqW7AcBcNaUWNMD9q8JWqx5AO6BPOZpijBeq4ZjhQxSom3jvvq8Z1mWSMKPEjSvlFirKIh9NLI3ajA==}
 
   '@xmldom/xmldom@0.8.13':
     resolution: {integrity: sha512-KRYzxepc14G/CEpEGc3Yn+JKaAeT63smlDr+vjB8jRfgTBBI9wRj/nkQEO+ucV8p8I9bfKLWp37uHgFrbntPvw==}
@@ -3914,6 +3920,8 @@ snapshots:
     dependencies:
       '@rolldown/pluginutils': 1.0.1
       vite: 8.0.16(@types/node@24.13.2)(esbuild@0.27.7)(jiti@2.7.0)
+
+  '@wailsio/runtime@3.0.0-alpha.97': {}
 
   '@xmldom/xmldom@0.8.13': {}
 

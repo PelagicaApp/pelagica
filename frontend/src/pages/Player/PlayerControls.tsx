@@ -440,7 +440,7 @@ const PlayerControls = ({
     return (
         <>
             <div
-                className="absolute top-0 left-0 w-full p-4 bg-linear-to-b from-black/80 to-transparent z-20 text-gray-200 text-lg flex items-center gap-2 transition-opacity duration-300"
+                className="absolute top-0 left-0 w-full p-4 bg-linear-to-b from-black/80 to-transparent z-50 text-gray-200 text-lg flex items-center gap-2 transition-opacity duration-300"
                 style={{
                     opacity: showControls ? 1 : 0,
                     pointerEvents: showControls ? 'auto' : 'none',

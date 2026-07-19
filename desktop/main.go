@@ -11,9 +11,14 @@ import (
 var assets embed.FS
 
 func main() {
+	windowService := &WindowService{}
+
 	app := application.New(application.Options{
 		Name:        "Pelagica",
 		Description: "A modern cross-platform desktop client for Jellyfin",
+		Services: []application.Service{
+			application.NewService(windowService),
+		},
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
 		},
@@ -22,7 +27,7 @@ func main() {
 		},
 	})
 
-	app.Window.NewWithOptions(application.WebviewWindowOptions{
+	windowService.window = app.Window.NewWithOptions(application.WebviewWindowOptions{
 		Title:  "Pelagica",
 		Width:  1280,
 		Height: 800,
