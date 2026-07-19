@@ -25,6 +25,11 @@ tasks:
         cmds:
             - pnpm run build
 
+    set-frontend-version:
+        internal: true
+        cmds:
+            - pnpm pkg set version={{.VERSION}}
+
     lint:
         desc: Lint frontend code with ESLint
         deps:

@@ -6,7 +6,7 @@ tasks:
         deps:
             - install-backend
         env:
-            APP_VERSION: '1.1.1'
+            APP_VERSION: '3.2.0'
             CONFIG_PATH: '{{.ROOT_DIR}}/dev.config.json'
             COLLECTOR_INSTANCE_ID_FILE: '{{.ROOT_DIR}}/config/instance_id'
             COLLECTOR_STATS_CONSENT_FILE: '{{.ROOT_DIR}}/config/stats_consent'

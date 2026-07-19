@@ -7,4 +7,4 @@ info:
     productIdentifier: 'app.pelagica.desktop'
     description: 'Watch Movies and TV Shows from your Jellyfin server.'
     copyright: '© Pelagica'
-    version: '0.1.0'
+    version: '3.2.0'
