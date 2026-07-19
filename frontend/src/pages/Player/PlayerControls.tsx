@@ -35,6 +35,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { formatPlayTime, ticksToReadableTime, ticksToSeconds } from '@/utils/timeConversion';
 import { buildPlayerUrl } from '@/utils/playerUrl';
+import { isDesktopApp } from '@/utils/desktopApp';
 import { useTranslation } from 'react-i18next';
 import { usePlayerKeyboardControls } from '@/hooks/usePlayerKeyboardControls';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -897,7 +898,7 @@ const PlayerControls = ({
                             onValueChange={handleVolumeChange}
                             className="w-25 cursor-pointer mr-2"
                         />
-                        {document.pictureInPictureEnabled && (
+                        {document.pictureInPictureEnabled && !isDesktopApp() && (
                             <Button
                                 variant={'ghost'}
                                 size={'icon-lg'}
