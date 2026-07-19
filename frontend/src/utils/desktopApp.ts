@@ -2,3 +2,17 @@
 export function isDesktopApp(): boolean {
     return typeof navigator !== 'undefined' && navigator.userAgent.includes('wails.io');
 }
+
+const isDesktopBuild = import.meta.env.VITE_IS_DESKTOP_BUILD === 'true';
+
+export async function hideTrafficLights(): Promise<void> {
+    if (!isDesktopBuild || !isDesktopApp()) return;
+    const { WindowService } = await import('@/bindings/pelagica-desktop');
+    await WindowService.HideTrafficLights();
+}
+
+export async function showTrafficLights(): Promise<void> {
+    if (!isDesktopBuild || !isDesktopApp()) return;
+    const { WindowService } = await import('@/bindings/pelagica-desktop');
+    await WindowService.ShowTrafficLights();
+}

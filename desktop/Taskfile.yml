@@ -62,7 +62,7 @@ tasks:
         internal: true
         deps:
             - install
-            - :build-frontend
+            - :build-frontend-desktop
         cmds:
             - rm -rf frontend/dist
             - mkdir -p frontend/dist

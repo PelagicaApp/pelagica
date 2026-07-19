@@ -25,6 +25,13 @@ tasks:
         cmds:
             - pnpm run build
 
+    build-frontend-desktop:
+        desc: Build the frontend for the desktop app
+        deps:
+            - install-frontend
+        cmds:
+            - pnpm run build:desktop
+
     set-frontend-version:
         internal: true
         cmds:
