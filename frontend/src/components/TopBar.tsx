@@ -440,8 +440,8 @@ const UserMenu = () => {
                     </DropdownMenuPortal>
                 </DropdownMenuSub>
 
-                {/* App Icon (desktop app only) */}
-                {isDesktopApp() && appIconOptions.length > 0 && (
+                {/* App Icon (desktop app and macOS only) */}
+                {isDesktopApp() && isMacOS() && appIconOptions.length > 0 && (
                     <DropdownMenuSub>
                         <DropdownMenuSubTrigger>
                             <ImageIcon className="text-muted-foreground" />
@@ -715,7 +715,9 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
                 'fixed top-0 z-50 w-full h-17 flex items-center justify-center',
                 isWindowsOrLinux ? 'pointer-events-auto' : 'pointer-events-none'
             )}
-            style={isWindowsOrLinux ? ({ '--wails-draggable': 'drag' } as CSSProperties) : undefined}
+            style={
+                isWindowsOrLinux ? ({ '--wails-draggable': 'drag' } as CSSProperties) : undefined
+            }
         >
             {overlay && !scrolled && (
                 <div className="pointer-events-none absolute inset-0 -bottom-5 bg-linear-to-b from-background/70 to-transparent" />
