@@ -40,6 +40,26 @@ func (s *WindowService) ToggleFullscreen() {
 	s.window.ToggleFullscreen()
 }
 
+// Minimise minimises the window (used by the custom title bar on Windows/Linux).
+func (s *WindowService) Minimise() {
+	s.window.Minimise()
+}
+
+// ToggleMaximise toggles the window between maximised and normal size (used by the custom title bar on Windows/Linux).
+func (s *WindowService) ToggleMaximise() {
+	s.window.ToggleMaximise()
+}
+
+// IsMaximised reports whether the window is currently maximised.
+func (s *WindowService) IsMaximised() bool {
+	return s.window.IsMaximised()
+}
+
+// CloseWindow closes the window (used by the custom title bar on Windows/Linux).
+func (s *WindowService) CloseWindow() {
+	s.window.Close()
+}
+
 // IsFullscreen reports whether the window is currently fullscreen.
 func (s *WindowService) IsFullscreen() bool {
 	return s.window.IsFullscreen()

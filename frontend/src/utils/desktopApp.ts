@@ -1,6 +1,5 @@
-// Wails desktop webview appends "wails.io" to the user agent, which lets us detect if we're running in the desktop app or in a browser.
 export function isDesktopApp(): boolean {
-    return typeof navigator !== 'undefined' && navigator.userAgent.includes('wails.io');
+    return typeof window !== 'undefined' && typeof (window as unknown as { _wails?: unknown })._wails !== 'undefined';
 }
 
 export function isMacOS(): boolean {
@@ -25,6 +24,52 @@ export async function toggleNativeFullscreen(): Promise<void> {
     if (!isDesktopBuild || !isDesktopApp()) return;
     const { WindowService } = await import('@/bindings/pelagica-desktop');
     await WindowService.ToggleFullscreen();
+}
+
+export async function minimiseWindow(): Promise<void> {
+    if (!isDesktopBuild || !isDesktopApp()) return;
+    const { WindowService } = await import('@/bindings/pelagica-desktop');
+    await WindowService.Minimise();
+}
+
+export async function toggleMaximiseWindow(): Promise<void> {
+    if (!isDesktopBuild || !isDesktopApp()) return;
+    const { WindowService } = await import('@/bindings/pelagica-desktop');
+    await WindowService.ToggleMaximise();
+}
+
+export async function isWindowMaximised(): Promise<boolean> {
+    if (!isDesktopBuild || !isDesktopApp()) return false;
+    const { WindowService } = await import('@/bindings/pelagica-desktop');
+    return WindowService.IsMaximised();
+}
+
+export async function closeWindow(): Promise<void> {
+    if (!isDesktopBuild || !isDesktopApp()) return;
+    const { WindowService } = await import('@/bindings/pelagica-desktop');
+    await WindowService.CloseWindow();
+}
+
+export function onWindowMaximiseChange(callback: (isMaximised: boolean) => void): () => void {
+    if (!isDesktopBuild || !isDesktopApp()) return () => {};
+
+    let cancelled = false;
+    let unsubscribeMaximise: (() => void) | undefined;
+    let unsubscribeUnMaximise: (() => void) | undefined;
+
+    import('@wailsio/runtime').then(({ Events }) => {
+        if (cancelled) return;
+        unsubscribeMaximise = Events.On(Events.Types.Common.WindowMaximise, () => callback(true));
+        unsubscribeUnMaximise = Events.On(Events.Types.Common.WindowUnMaximise, () =>
+            callback(false)
+        );
+    });
+
+    return () => {
+        cancelled = true;
+        unsubscribeMaximise?.();
+        unsubscribeUnMaximise?.();
+    };
 }
 
 export async function getAppIconOptions(): Promise<string[]> {

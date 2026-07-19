@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	"log"
+	"runtime"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 	"github.com/wailsapp/wails/v3/pkg/events"
@@ -31,10 +32,11 @@ func main() {
 	})
 
 	window := app.Window.NewWithOptions(application.WebviewWindowOptions{
-		Title:  "Pelagica",
-		Width:  1280,
-		Height: 800,
-		URL:    "/",
+		Title:     "Pelagica",
+		Width:     1280,
+		Height:    800,
+		URL:       "/",
+		Frameless: runtime.GOOS != "darwin", // macOS keeps framed, it's just inset so traggic light stays there
 		Mac: application.MacWindow{
 			TitleBar:                application.MacTitleBarHiddenInset,
 			InvisibleTitleBarHeight: 50,

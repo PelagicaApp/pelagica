@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, type CSSProperties } from 'react';
 import { Link, useNavigate } from 'react-router';
 import {
     ChartLine,
@@ -7,6 +7,7 @@ import {
     ChevronLeft,
     ChevronRight,
     ChevronsUpDown,
+    Copy,
     DotIcon,
     ExternalLink,
     Fingerprint,
@@ -17,15 +18,18 @@ import {
     Library,
     LogIn,
     LogOut,
+    Minus,
     Moon,
     Music,
     Search,
     Settings,
     Settings2,
+    Square,
     Sun,
     Telescope,
     TriangleAlert,
     Tv,
+    X,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -103,7 +107,14 @@ import {
     getAppIconOptions,
     getAppIcon,
     setAppIcon,
+    minimiseWindow,
+    toggleMaximiseWindow,
+    isWindowMaximised,
+    closeWindow,
+    onWindowMaximiseChange,
 } from '../utils/desktopApp';
+
+const noDragStyle = { '--wails-draggable': 'no-drag' } as CSSProperties;
 
 const AuthorizeQuickConnectDialog = ({
     onAuthorize,
@@ -654,6 +665,8 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
     const [scrolled, setScrolled] = useState(false);
     const navigate = useNavigate();
     const isDesktop = isDesktopApp();
+    const isWindowsOrLinux = isDesktop && !isMacOS();
+    const [isMaximised, setIsMaximised] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -666,6 +679,12 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
 
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    useEffect(() => {
+        if (!isWindowsOrLinux) return;
+        isWindowMaximised().then(setIsMaximised);
+        return onWindowMaximiseChange(setIsMaximised);
+    }, [isWindowsOrLinux]);
 
     const defaultLogo = effectiveTheme === 'dark' ? '/logo.svg' : '/logo-dark.svg';
     const configuredLogo =
@@ -691,9 +710,15 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
     };
 
     return (
-        <header className="fixed top-0 z-50 w-full h-17 flex items-center justify-center pointer-events-none">
+        <header
+            className={cn(
+                'fixed top-0 z-50 w-full h-17 flex items-center justify-center',
+                isWindowsOrLinux ? 'pointer-events-auto' : 'pointer-events-none'
+            )}
+            style={isWindowsOrLinux ? ({ '--wails-draggable': 'drag' } as CSSProperties) : undefined}
+        >
             {overlay && !scrolled && (
-                <div className="absolute inset-0 -bottom-5 bg-linear-to-b from-background/70 to-transparent" />
+                <div className="pointer-events-none absolute inset-0 -bottom-5 bg-linear-to-b from-background/70 to-transparent" />
             )}
 
             {isDesktop && isMacOS() && (
@@ -710,12 +735,14 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
             {isDesktop && (
                 <div
                     className={cn(
-                        'pointer-events-auto absolute right-2 top-1/2 -translate-y-1/2 flex h-11 items-center px-1 w-full md:w-auto rounded-full transition-all duration-300 border',
+                        'pointer-events-auto absolute top-1/2 -translate-y-1/2 flex h-11 items-center px-1 w-full md:w-auto rounded-full transition-all duration-300 border',
                         'justify-between md:justify-start gap-0.5',
+                        isMacOS() ? 'right-2' : 'left-2',
                         !overlay || scrolled
                             ? 'border-border bg-background/60 backdrop-blur shadow-sm'
                             : 'border-white/10 bg-background/20 backdrop-blur-md'
                     )}
+                    style={noDragStyle}
                 >
                     <Button
                         size="icon-sm"
@@ -736,6 +763,47 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
                 </div>
             )}
 
+            {isWindowsOrLinux && (
+                <div
+                    className={cn(
+                        'pointer-events-auto absolute right-2 top-1/2 -translate-y-1/2 flex h-11 items-center px-1 rounded-full transition-all duration-300 border gap-0.5',
+                        !overlay || scrolled
+                            ? 'border-border bg-background/60 backdrop-blur shadow-sm'
+                            : 'border-white/10 bg-background/20 backdrop-blur-md'
+                    )}
+                    style={noDragStyle}
+                >
+                    <Button
+                        size="icon-sm"
+                        variant="ghost"
+                        onClick={() => minimiseWindow()}
+                        className="h-9 w-9 rounded-l-full"
+                    >
+                        <Minus className="h-4 w-4" />
+                    </Button>
+                    <Button
+                        size="icon-sm"
+                        variant="ghost"
+                        onClick={() => toggleMaximiseWindow()}
+                        className="h-9 w-9 rounded-none"
+                    >
+                        {isMaximised ? (
+                            <Copy className="h-3.5 w-3.5" />
+                        ) : (
+                            <Square className="h-3.5 w-3.5" />
+                        )}
+                    </Button>
+                    <Button
+                        size="icon-sm"
+                        variant="ghost"
+                        onClick={() => closeWindow()}
+                        className="h-9 w-9 rounded-r-full hover:bg-destructive hover:text-white"
+                    >
+                        <X className="h-4 w-4" />
+                    </Button>
+                </div>
+            )}
+
             <div
                 className={cn(
                     'pointer-events-auto relative flex h-11 items-center px-2 sm:px-4 mx-3 w-full md:w-auto rounded-full transition-all duration-300 border',
@@ -744,6 +812,7 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
                         ? 'border-border bg-background/60 backdrop-blur shadow-sm'
                         : 'border-white/10 bg-background/20 backdrop-blur-md'
                 )}
+                style={noDragStyle}
             >
                 <div className="flex items-center gap-1 md:gap-2">
                     {/* Logo */}

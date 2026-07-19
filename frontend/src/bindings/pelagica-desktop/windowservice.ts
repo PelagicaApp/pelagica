@@ -11,6 +11,13 @@
 import { Call as $Call, CancellablePromise as $CancellablePromise, Create as $Create } from "@wailsio/runtime";
 
 /**
+ * CloseWindow closes the window (used by the custom title bar on Windows/Linux).
+ */
+export function CloseWindow(): $CancellablePromise<void> {
+    return $Call.ByID(1853142863);
+}
+
+/**
  * HideTrafficLights hides the macOS traffic light window buttons (no-op on other platforms).
  */
 export function HideTrafficLights(): $CancellablePromise<void> {
@@ -25,6 +32,20 @@ export function IsFullscreen(): $CancellablePromise<boolean> {
 }
 
 /**
+ * IsMaximised reports whether the window is currently maximised.
+ */
+export function IsMaximised(): $CancellablePromise<boolean> {
+    return $Call.ByID(914905918);
+}
+
+/**
+ * Minimise minimises the window (used by the custom title bar on Windows/Linux).
+ */
+export function Minimise(): $CancellablePromise<void> {
+    return $Call.ByID(147975292);
+}
+
+/**
  * ShowTrafficLights restores the macOS traffic light window buttons (no-op on other platforms).
  */
 export function ShowTrafficLights(): $CancellablePromise<void> {
@@ -36,4 +57,11 @@ export function ShowTrafficLights(): $CancellablePromise<void> {
  */
 export function ToggleFullscreen(): $CancellablePromise<void> {
     return $Call.ByID(954194204);
+}
+
+/**
+ * ToggleMaximise toggles the window between maximised and normal size (used by the custom title bar on Windows/Linux).
+ */
+export function ToggleMaximise(): $CancellablePromise<void> {
+    return $Call.ByID(3549911582);
 }
