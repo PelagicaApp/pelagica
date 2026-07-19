@@ -1,171 +1,24 @@
 version: '3'
 
+includes:
+    frontend:
+        taskfile: ./frontend/Taskfile.yml
+        dir: ./frontend
+        flatten: true
+    backend:
+        taskfile: ./backend/Taskfile.yml
+        dir: ./backend
+        flatten: true
+    desktop:
+        taskfile: ./desktop/Taskfile.yml
+        dir: ./desktop
+
 tasks:
     dev:
         desc: Start backend and frontend in parallel
         deps:
             - backend
             - frontend
-
-    frontend:
-        desc: Start Vite dev server
-        deps:
-            - install-frontend
-        dir: frontend
-        cmds:
-            - pnpm exec vite --host {{if .MODE}}--mode {{.MODE}}{{end}}
-
-    backend:
-        desc: Start Go backend
-        deps:
-            - install-backend
-        dir: backend
-        env:
-            APP_VERSION: '1.1.1'
-            CONFIG_PATH: '{{.ROOT_DIR}}/dev.config.json'
-            COLLECTOR_INSTANCE_ID_FILE: '{{.ROOT_DIR}}/config/instance_id'
-            COLLECTOR_STATS_CONSENT_FILE: '{{.ROOT_DIR}}/config/stats_consent'
-            LOG_FILE: '{{.ROOT_DIR}}/config/pelagica.log'
-            COLLECTOR_PING_BASE_URL: 'http://localhost:4000'
-            COLLECTOR_PING_TOKEN: '2f64e07c-e930-463f-b118-556a741fb2aa'
-            SERVERS_DIR: '{{.ROOT_DIR}}/config/servers'
-            ENABLE_AUTH: 'true'
-            LOG_LEVEL: 'debug'
-            SERVER_ADDRESS: 'https://jellyfin.jan.run'
-        cmds:
-            - go run main.go
-
-    desktop:
-        desc: Run the desktop app
-        deps:
-            - desktop:assets
-        dir: desktop
-        cmds:
-            - go run .
-
-    desktop:build:
-        desc: Build the desktop app binary
-        deps:
-            - desktop:assets
-        dir: desktop
-        cmds:
-            - go build -o bin/pelagica .
-
-    desktop:package:
-        desc: Build a macOS .app bundle for the desktop app (unsigned/ad-hoc)
-        deps:
-            - desktop:assets
-        dir: desktop
-        preconditions:
-            - sh: '[ "{{OS}}" = "darwin" ]'
-              msg: desktop:package currently only supports macOS
-        cmds:
-            - go build -o bin/pelagica .
-            - rm -rf bin/Pelagica.app
-            - mkdir -p bin/Pelagica.app/Contents/MacOS
-            - mkdir -p bin/Pelagica.app/Contents/Resources
-            - cp build/appicon.icns bin/Pelagica.app/Contents/Resources/icons.icns
-            - cp bin/pelagica bin/Pelagica.app/Contents/MacOS/
-            - cp build/darwin/Info.plist bin/Pelagica.app/Contents/
-            - xattr -cr bin/Pelagica.app # strips resource forks/quarantine flags icon tools leave behind, which codesign rejects
-            - codesign --force --deep --sign - bin/Pelagica.app
-
-    desktop:installer:
-        desc: Build a macOS .dmg installer for the desktop app (unsigned), with a drag-to-Applications layout
-        deps:
-            - desktop:package
-        dir: desktop
-        preconditions:
-            - sh: '[ "{{OS}}" = "darwin" ]'
-              msg: desktop:installer currently only supports macOS
-            - sh: command -v create-dmg
-              msg: 'create-dmg is required. Install it with: brew install create-dmg'
-        cmds:
-            - rm -f bin/Pelagica.dmg
-            - rm -rf bin/dmg-staging
-            - mkdir -p bin/dmg-staging
-            - cp -r bin/Pelagica.app bin/dmg-staging/
-            - create-dmg --volname "Pelagica" --volicon "build/driveicon.icns" --window-size 660 400 --icon-size 100 --icon "Pelagica.app" 175 190 --hide-extension "Pelagica.app" --app-drop-link 480 190 "bin/Pelagica.dmg" "bin/dmg-staging"
-            - rm -rf bin/dmg-staging
-
-    install-frontend:
-        internal: true
-        dir: frontend
-        sources:
-            - package.json
-            - pnpm-lock.yaml
-        generates:
-            - node_modules/.modules.yaml
-        cmds:
-            - pnpm install
-
-    install-backend:
-        internal: true
-        dir: backend
-        sources:
-            - go.mod
-            - go.sum
-        cmds:
-            - go mod download
-
-    install-desktop:
-        internal: true
-        dir: desktop
-        sources:
-            - go.mod
-            - go.sum
-        cmds:
-            - go mod download
-
-    build-frontend:
-        desc: Build the frontend for production
-        deps:
-            - install-frontend
-        dir: frontend
-        cmds:
-            - pnpm run build
-
-    desktop:assets:
-        internal: true
-        deps:
-            - install-desktop
-            - build-frontend
-        cmds:
-            - rm -rf desktop/frontend/dist
-            - mkdir -p desktop/frontend/dist
-            - cp -r frontend/dist/. desktop/frontend/dist/
-
-    lint:
-        desc: Lint frontend code with ESLint
-        deps:
-            - install-frontend
-        dir: frontend
-        cmds:
-            - pnpm exec eslint .
-
-    lint:fix:
-        desc: Lint frontend code with ESLint and fix issues
-        deps:
-            - install-frontend
-        dir: frontend
-        cmds:
-            - pnpm exec eslint . --fix
-
-    format:
-        desc: Format frontend code with Prettier
-        deps:
-            - install-frontend
-        dir: frontend
-        cmds:
-            - pnpm exec prettier --write .
-
-    format:check:
-        desc: Check frontend code formatting with Prettier
-        deps:
-            - install-frontend
-        dir: frontend
-        cmds:
-            - pnpm exec prettier --check .
 
     checkup:
         desc: Run all checks (lint, format, and tests)

@@ -1,0 +1,69 @@
+version: '3'
+
+tasks:
+    default:
+        desc: Run the desktop app
+        deps:
+            - assets
+        cmds:
+            - go run .
+
+    build:
+        desc: Build the desktop app binary
+        deps:
+            - assets
+        cmds:
+            - go build -o bin/pelagica .
+
+    package:
+        desc: Build a macOS .app bundle for the desktop app (unsigned/ad-hoc)
+        deps:
+            - assets
+        preconditions:
+            - sh: '[ "{{OS}}" = "darwin" ]'
+              msg: desktop:package currently only supports macOS
+        cmds:
+            - go build -o bin/pelagica .
+            - rm -rf bin/Pelagica.app
+            - mkdir -p bin/Pelagica.app/Contents/MacOS
+            - mkdir -p bin/Pelagica.app/Contents/Resources
+            - cp build/appicon.icns bin/Pelagica.app/Contents/Resources/icons.icns
+            - cp bin/pelagica bin/Pelagica.app/Contents/MacOS/
+            - cp build/darwin/Info.plist bin/Pelagica.app/Contents/
+            - xattr -cr bin/Pelagica.app # strips resource forks/quarantine flags icon tools leave behind, which codesign rejects
+            - codesign --force --deep --sign - bin/Pelagica.app
+
+    installer:
+        desc: Build a macOS .dmg installer for the desktop app (unsigned), with a drag-to-Applications layout
+        deps:
+            - package
+        preconditions:
+            - sh: '[ "{{OS}}" = "darwin" ]'
+              msg: desktop:installer currently only supports macOS
+            - sh: command -v create-dmg
+              msg: 'create-dmg is required. Install it with: brew install create-dmg'
+        cmds:
+            - rm -f bin/Pelagica.dmg
+            - rm -rf bin/dmg-staging
+            - mkdir -p bin/dmg-staging
+            - cp -r bin/Pelagica.app bin/dmg-staging/
+            - create-dmg --volname "Pelagica" --volicon "build/driveicon.icns" --window-size 660 400 --icon-size 100 --icon "Pelagica.app" 175 190 --hide-extension "Pelagica.app" --app-drop-link 480 190 "bin/Pelagica.dmg" "bin/dmg-staging"
+            - rm -rf bin/dmg-staging
+
+    install:
+        internal: true
+        sources:
+            - go.mod
+            - go.sum
+        cmds:
+            - go mod download
+
+    assets:
+        internal: true
+        deps:
+            - install
+            - :build-frontend
+        cmds:
+            - rm -rf frontend/dist
+            - mkdir -p frontend/dist
+            - cp -r ../frontend/dist/. frontend/dist/

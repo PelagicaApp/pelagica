@@ -1,0 +1,54 @@
+version: '3'
+
+tasks:
+    frontend:
+        desc: Start Vite dev server
+        deps:
+            - install-frontend
+        cmds:
+            - pnpm exec vite --host {{if .MODE}}--mode {{.MODE}}{{end}}
+
+    install-frontend:
+        internal: true
+        sources:
+            - package.json
+            - pnpm-lock.yaml
+        generates:
+            - node_modules/.modules.yaml
+        cmds:
+            - pnpm install
+
+    build-frontend:
+        desc: Build the frontend for production
+        deps:
+            - install-frontend
+        cmds:
+            - pnpm run build
+
+    lint:
+        desc: Lint frontend code with ESLint
+        deps:
+            - install-frontend
+        cmds:
+            - pnpm exec eslint .
+
+    lint:fix:
+        desc: Lint frontend code with ESLint and fix issues
+        deps:
+            - install-frontend
+        cmds:
+            - pnpm exec eslint . --fix
+
+    format:
+        desc: Format frontend code with Prettier
+        deps:
+            - install-frontend
+        cmds:
+            - pnpm exec prettier --write .
+
+    format:check:
+        desc: Check frontend code formatting with Prettier
+        deps:
+            - install-frontend
+        cmds:
+            - pnpm exec prettier --check .
