@@ -83,6 +83,43 @@ tasks:
         cmds:
             - wails3 generate webview2bootstrapper -dir build/windows/nsis
 
+    package:linux:
+        desc: Build a Linux binary for the desktop app (requires gcc, gtk4 and webkitgtk-6.0 dev headers)
+        deps:
+            - assets
+        preconditions:
+            - sh: '[ "{{OS}}" = "linux" ]'
+              msg: desktop:package:linux only supports Linux
+        cmds:
+            - go build -trimpath -ldflags="-w -s" -o bin/pelagica .
+        env:
+            CGO_ENABLED: 1
+
+    installer:linux:deb:
+        desc: Build a .deb package for the desktop app
+        deps:
+            - package:linux
+        preconditions:
+            - sh: '[ "{{OS}}" = "linux" ]'
+              msg: desktop:installer:linux:deb only supports Linux
+        cmds:
+            - wails3 tool package -name pelagica -format deb -config build/linux/nfpm/nfpm.yaml -out bin
+        env:
+            GOARCH:
+                sh: go env GOARCH
+
+    installer:linux:appimage:
+        desc: Build an AppImage for the desktop app
+        deps:
+            - package:linux
+        preconditions:
+            - sh: '[ "{{OS}}" = "linux" ]'
+              msg: desktop:installer:linux:appimage only supports Linux
+        cmds:
+            # AppImage requires the icon file's basename to match the desktop entry's Icon= value.
+            - cp build/appicon.png build/linux/pelagica.png
+            - wails3 generate appimage -binary bin/pelagica -icon build/linux/pelagica.png -desktopfile build/linux/pelagica.desktop -outputdir bin -builddir build/linux/appimage/build
+
     install:
         internal: true
         sources:

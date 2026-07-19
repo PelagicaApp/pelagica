@@ -1,0 +1,28 @@
+name: "pelagica"
+arch: ${GOARCH}
+platform: "linux"
+version: "3.2.0"
+section: "default"
+priority: "extra"
+maintainer: "Pelagica <noreply@pelagicaapp.github.io>"
+description: "Watch Movies and TV Shows from your Jellyfin server."
+vendor: "Pelagica"
+homepage: "https://github.com/PelagicaApp/pelagica"
+license: "MIT"
+release: "1"
+
+contents:
+    - src: "./bin/pelagica"
+      dst: "/usr/local/bin/pelagica"
+    - src: "./build/appicon.png"
+      dst: "/usr/share/icons/hicolor/512x512/apps/pelagica.png"
+    - src: "./build/linux/pelagica.desktop"
+      dst: "/usr/share/applications/pelagica.desktop"
+
+# Dependencies for the GTK4 + WebKitGTK 6.0 stack (Ubuntu 24.04+ / Debian 13+)
+depends:
+    - libgtk-4-1
+    - libwebkitgtk-6.0-4
+
+scripts:
+    postinstall: "./build/linux/nfpm/scripts/postinstall.sh"

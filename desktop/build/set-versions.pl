@@ -60,4 +60,10 @@ replace_in_file(
     sub { "$1$version$2" }
 );
 
-print "Version set to $version in desktop/build/darwin/Info.plist and desktop/build/windows/{info.json,wails.exe.manifest,nsis/wails_tools.nsh}\n";
+replace_in_file(
+    'desktop/build/linux/nfpm/nfpm.yaml',
+    qr/^version:\s*"[^"]*"/m,
+    sub { qq(version: "$version") }
+);
+
+print "Version set to $version in desktop/build/darwin/Info.plist, desktop/build/windows/{info.json,wails.exe.manifest,nsis/wails_tools.nsh}, and desktop/build/linux/nfpm/nfpm.yaml\n";
