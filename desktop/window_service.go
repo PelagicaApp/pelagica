@@ -2,6 +2,9 @@ package main
 
 import "github.com/wailsapp/wails/v3/pkg/application"
 
+// trafficLightLeftInset should match the TopBar's fake pill left inset in TopBar.tsx.
+const trafficLightLeftInset = 20.0
+
 // WindowService exposes window chrome controls to the frontend.
 type WindowService struct {
 	window *application.WebviewWindow
@@ -19,6 +22,17 @@ func (s *WindowService) ShowTrafficLights() {
 	s.window.SetCloseButtonState(application.ButtonEnabled)
 	s.window.SetMinimiseButtonState(application.ButtonEnabled)
 	s.window.SetMaximiseButtonState(application.ButtonEnabled)
+	s.positionTrafficLights()
+}
+
+// positionTrafficLights aligns the traffic lights with the TopBar's pill row. AppKit resets
+// their position on resize and when re-enabled, so this must be re-invoked after both.
+// NSWindow/NSView geometry may only be touched on the main thread, so this must run through
+// InvokeSync rather than being called directly from a background goroutine (e.g. an event hook).
+func (s *WindowService) positionTrafficLights() {
+	application.InvokeSync(func() {
+		positionTrafficLights(s.window.NativeWindow(), trafficLightLeftInset)
+	})
 }
 
 // ToggleFullscreen toggles native window fullscreen.

@@ -3,6 +3,10 @@ export function isDesktopApp(): boolean {
     return typeof navigator !== 'undefined' && navigator.userAgent.includes('wails.io');
 }
 
+export function isMacOS(): boolean {
+    return typeof navigator !== 'undefined' && /Mac/i.test(navigator.userAgent);
+}
+
 const isDesktopBuild = import.meta.env.VITE_IS_DESKTOP_BUILD === 'true';
 
 export async function hideTrafficLights(): Promise<void> {

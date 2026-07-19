@@ -96,7 +96,7 @@ import {
 import { useThemes } from '@/hooks/api/themes/useThemes';
 import { useQueryClient } from '@tanstack/react-query';
 import { SUPPORTED_LANGUAGES } from '../utils/supportedLanguages';
-import { isDesktopApp } from '../utils/desktopApp';
+import { isDesktopApp, isMacOS } from '../utils/desktopApp';
 
 const AuthorizeQuickConnectDialog = ({
     onAuthorize,
@@ -640,15 +640,26 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
     };
 
     return (
-        <header className="fixed top-0 z-50 w-full flex justify-center pointer-events-none">
+        <header className="fixed top-0 z-50 w-full h-17 flex items-center justify-center pointer-events-none">
             {overlay && !scrolled && (
                 <div className="absolute inset-0 -bottom-5 bg-linear-to-b from-background/70 to-transparent" />
+            )}
+
+            {isDesktop && isMacOS() && (
+                <div
+                    className={cn(
+                        'pointer-events-none absolute left-2 top-1/2 -translate-y-1/2 h-11 w-21 rounded-full border transition-all duration-300',
+                        !overlay || scrolled
+                            ? 'border-border bg-background/60 backdrop-blur shadow-sm'
+                            : 'border-white/10 bg-background/20 backdrop-blur-md'
+                    )}
+                />
             )}
 
             {isDesktop && (
                 <div
                     className={cn(
-                        'pointer-events-auto absolute right-3 flex h-11 items-center px-1 w-full md:w-auto mt-3 rounded-full transition-all duration-300 border',
+                        'pointer-events-auto absolute right-2 top-1/2 -translate-y-1/2 flex h-11 items-center px-1 w-full md:w-auto rounded-full transition-all duration-300 border',
                         'justify-between md:justify-start gap-0.5',
                         !overlay || scrolled
                             ? 'border-border bg-background/60 backdrop-blur shadow-sm'
@@ -676,7 +687,7 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
 
             <div
                 className={cn(
-                    'pointer-events-auto relative flex h-11 items-center px-2 sm:px-4 mx-3 w-full md:w-auto mt-3 rounded-full transition-all duration-300 border',
+                    'pointer-events-auto relative flex h-11 items-center px-2 sm:px-4 mx-3 w-full md:w-auto rounded-full transition-all duration-300 border',
                     'justify-between md:justify-start gap-1 md:gap-2',
                     !overlay || scrolled
                         ? 'border-border bg-background/60 backdrop-blur shadow-sm'

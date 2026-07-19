@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
+	"github.com/wailsapp/wails/v3/pkg/events"
 )
 
 //go:embed all:frontend/dist
@@ -27,7 +28,7 @@ func main() {
 		},
 	})
 
-	windowService.window = app.Window.NewWithOptions(application.WebviewWindowOptions{
+	window := app.Window.NewWithOptions(application.WebviewWindowOptions{
 		Title:  "Pelagica",
 		Width:  1280,
 		Height: 800,
@@ -39,6 +40,14 @@ func main() {
 				FullscreenEnabled: application.Enabled,
 			},
 		},
+	})
+	windowService.window = window
+
+	window.RegisterHook(events.Common.WindowShow, func(*application.WindowEvent) {
+		windowService.positionTrafficLights()
+	})
+	window.RegisterHook(events.Common.WindowDidResize, func(*application.WindowEvent) {
+		windowService.positionTrafficLights()
 	})
 
 	if err := app.Run(); err != nil {
