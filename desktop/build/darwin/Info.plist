@@ -1,0 +1,27 @@
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+    <dict>
+        <key>CFBundlePackageType</key>
+            <string>APPL</string>
+        <key>CFBundleName</key>
+            <string>Pelagica</string>
+        <key>CFBundleExecutable</key>
+            <string>pelagica</string>
+        <key>CFBundleIdentifier</key>
+            <string>app.pelagica.desktop</string>
+        <key>CFBundleVersion</key>
+            <string>0.1.0</string>
+        <key>CFBundleShortVersionString</key>
+            <string>0.1.0</string>
+        <key>CFBundleIconFile</key>
+            <string>icons</string>
+        <key>CFBundleIconName</key>
+            <string>appicon</string>
+        <key>LSMinimumSystemVersion</key>
+            <string>12.0.0</string>
+        <key>NSHighResolutionCapable</key>
+            <string>true</string>
+        <key>NSHumanReadableCopyright</key>
+            <string>© Pelagica</string>
+    </dict>
+</plist>

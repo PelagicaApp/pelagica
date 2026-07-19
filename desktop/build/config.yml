@@ -1,0 +1,10 @@
+# Metadata used when packaging the desktop app into a native installer.
+version: '3'
+
+info:
+    companyName: 'Pelagica'
+    productName: 'Pelagica'
+    productIdentifier: 'app.pelagica.desktop'
+    description: 'Watch Movies and TV Shows from your Jellyfin server.'
+    copyright: '© Pelagica'
+    version: '0.1.0'

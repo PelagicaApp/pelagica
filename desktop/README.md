@@ -24,3 +24,12 @@ task desktop:build
 ```
 
 Produces `desktop/bin/pelagica`.
+
+## Build an installer (macOS only)
+
+```bash
+task desktop:package     # produces desktop/bin/Pelagica.app
+task desktop:installer   # also produces desktop/bin/Pelagica.dmg
+```
+
+The `.app` is ad-hoc codesigned (`codesign --sign -`) so it runs locally, but it isn't signed with a Developer ID or notarized, so Gatekeeper will still flag it for anyone else who downloads it (right-click -> Open bypasses this). The `.dmg` has the usual drag-to-Applications layout (built with [create-dmg](https://github.com/create-dmg/create-dmg): `brew install create-dmg`).
