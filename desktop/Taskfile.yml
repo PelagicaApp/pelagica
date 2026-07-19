@@ -7,6 +7,8 @@ tasks:
             - assets
         cmds:
             - go run .
+        env:
+            WEBKIT_DISABLE_SANDBOX: "1"
 
     build:
         desc: Build the desktop app binary

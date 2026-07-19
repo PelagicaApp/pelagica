@@ -7,8 +7,8 @@ priority: "extra"
 maintainer: "Pelagica <noreply@pelagicaapp.github.io>"
 description: "Watch Movies and TV Shows from your Jellyfin server."
 vendor: "Pelagica"
-homepage: "https://github.com/PelagicaApp/pelagica"
-license: "MIT"
+homepage: "https://pelagica.app"
+license: "GPL-3.0"
 release: "1"
 
 contents:
@@ -26,3 +26,4 @@ depends:
 
 scripts:
     postinstall: "./build/linux/nfpm/scripts/postinstall.sh"
+    postremove: "./build/linux/nfpm/scripts/postremove.sh"
