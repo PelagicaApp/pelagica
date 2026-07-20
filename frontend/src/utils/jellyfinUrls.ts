@@ -408,3 +408,7 @@ export function getDownloadurl(itemId: string) {
 export function getStudioImageUrl(studioName: string) {
     return `/api/studios/${encodeURIComponent(studioName)}/thumb`;
 }
+
+export function getStudioGithubThumbUrl(studioName: string) {
+    return `https://raw.githubusercontent.com/Entree3k/Jellyfin/main/studios/${encodeURIComponent(studioName)}/thumb.webp`;
+}

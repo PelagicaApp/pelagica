@@ -528,6 +528,10 @@ func downloadStudioThumb(studioName, cacheDir, cachePath string) error {
 	return nil
 }
 
+func GetStudiosHealth(c fiber.Ctx) error {
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"ok": true})
+}
+
 func GetStudios(c fiber.Ctx) error {
 	limit, err := parseStudiosLimit(c)
 	if err != nil {

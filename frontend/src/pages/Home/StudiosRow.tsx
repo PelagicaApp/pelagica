@@ -1,10 +1,10 @@
 import SectionScroller from '@/components/SectionScroller';
 import { Skeleton } from '@/components/ui/skeleton';
-import { getThumbUrl } from '@/utils/jellyfinUrls';
+import { getStudioGithubThumbUrl, getStudioImageUrl, getThumbUrl } from '@/utils/jellyfinUrls';
 import { ImageOff } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router';
-import { useStudiosByItemCount } from '../../hooks/api/useStudiosApi';
+import { useStudiosBackendAvailable, useStudiosByItemCount } from '../../hooks/api/useStudiosApi';
 
 interface StudiosRowProps {
     title?: string;
@@ -20,7 +20,18 @@ const StudioDisplay = ({
         count: number;
     };
 }) => {
-    const [imageError, setImageError] = useState(false);
+    const { data: backendAvailable, isLoading: checkingBackend } = useStudiosBackendAvailable();
+
+    const sources = useMemo(() => {
+        const urls: string[] = [];
+        if (backendAvailable) urls.push(getStudioImageUrl(item.name));
+        urls.push(getStudioGithubThumbUrl(item.name));
+        urls.push(getThumbUrl(item.id, { maxHeight: 300 }, undefined, 90));
+        return urls;
+    }, [backendAvailable, item.name, item.id]);
+
+    const [sourceIndex, setSourceIndex] = useState(0);
+    const src = sourceIndex < sources.length ? sources[sourceIndex] : undefined;
 
     return (
         <Link
@@ -29,16 +40,18 @@ const StudioDisplay = ({
             className={'group w-min min-w-48 lg:min-w-64 2xl:min-w-80'}
         >
             <div className="relative w-full aspect-video rounded-md overflow-hidden">
-                {imageError ? (
+                {checkingBackend ? (
+                    <Skeleton className="w-full h-full rounded-md" />
+                ) : !src ? (
                     <div className="w-full h-full bg-muted flex items-center justify-center rounded-md">
                         <ImageOff className="w-12 h-12 text-muted-foreground" />
                     </div>
                 ) : (
                     <img
-                        src={getThumbUrl(item.id, { maxHeight: 300 }, undefined, 90)}
+                        src={src}
                         alt={item.name || 'No Name'}
                         className="w-full h-full object-cover rounded-md group-hover:opacity-75 transition-all group-hover:scale-105"
-                        onError={() => setImageError(true)}
+                        onError={() => setSourceIndex((i) => i + 1)}
                     />
                 )}
                 <div className="absolute inset-0 rounded-md pointer-events-none poster-card-outline z-20" />
