@@ -203,6 +203,24 @@ func parseStudiosLimit(c fiber.Ctx) (int, error) {
 	return limit, nil
 }
 
+func parseStudiosStartIndex(c fiber.Ctx) (int, error) {
+	raw := strings.TrimSpace(c.Query("startIndex"))
+	if raw == "" {
+		return 0, nil
+	}
+
+	startIndex, err := strconv.Atoi(raw)
+	if err != nil {
+		return 0, errors.New("startIndex must be a valid number")
+	}
+
+	if startIndex < 0 {
+		return 0, errors.New("startIndex must be greater than or equal to 0")
+	}
+
+	return startIndex, nil
+}
+
 func parseHasThumbOnly(c fiber.Ctx) (bool, error) {
 	raw := strings.TrimSpace(c.Query("hasThumb"))
 	if raw == "" {
@@ -538,10 +556,17 @@ func GetStudios(c fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(models.APIError{Error: err.Error()})
 	}
 
+	startIndex, err := parseStudiosStartIndex(c)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(models.APIError{Error: err.Error()})
+	}
+
 	hasThumbOnly, err := parseHasThumbOnly(c)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(models.APIError{Error: err.Error()})
 	}
+
+	search := strings.ToLower(strings.TrimSpace(c.Query("search")))
 
 	jellyfinURL, token, err := parseJellyfinCredentials(c)
 	if err != nil {
@@ -554,32 +579,47 @@ func GetStudios(c fiber.Ctx) error {
 		return c.Status(fiber.StatusBadGateway).JSON(models.APIError{Error: "Failed to load studios from Jellyfin: " + err.Error()})
 	}
 
-	if !hasThumbOnly {
-		if len(studios) > limit {
-			studios = studios[:limit]
+	if hasThumbOnly {
+		thumbs, err := getThumbsListWithCache()
+		if err != nil {
+			slog.Error("Failed to load thumbs list", "error", err)
+			return c.Status(fiber.StatusBadGateway).JSON(models.APIError{Error: "Failed to load studio thumbnail metadata"})
 		}
-		return c.Status(fiber.StatusOK).JSON(studios)
+
+		withThumbs := make([]models.StudioSummary, 0, len(studios))
+		for _, studio := range studios {
+			if _, hasThumb := thumbs[normalizeStudioName(studio.Name)]; !hasThumb {
+				continue
+			}
+			studio.HasThumb = true
+			withThumbs = append(withThumbs, studio)
+		}
+		studios = withThumbs
 	}
 
-	thumbs, err := getThumbsListWithCache()
-	if err != nil {
-		slog.Error("Failed to load thumbs list", "error", err)
-		return c.Status(fiber.StatusBadGateway).JSON(models.APIError{Error: "Failed to load studio thumbnail metadata"})
+	if search != "" {
+		filtered := make([]models.StudioSummary, 0, len(studios))
+		for _, studio := range studios {
+			if strings.Contains(strings.ToLower(studio.Name), search) {
+				filtered = append(filtered, studio)
+			}
+		}
+		studios = filtered
 	}
 
-	filtered := make([]models.StudioSummary, 0, limit)
-	for _, studio := range studios {
-		if _, hasThumb := thumbs[normalizeStudioName(studio.Name)]; !hasThumb {
-			continue
-		}
-		studio.HasThumb = true
-		filtered = append(filtered, studio)
-		if len(filtered) == limit {
-			break
-		}
+	totalCount := len(studios)
+	if startIndex > totalCount {
+		startIndex = totalCount
+	}
+	end := startIndex + limit
+	if end > totalCount {
+		end = totalCount
 	}
 
-	return c.Status(fiber.StatusOK).JSON(filtered)
+	return c.Status(fiber.StatusOK).JSON(models.StudiosPage{
+		Items:      studios[startIndex:end],
+		TotalCount: totalCount,
+	})
 }
 
 func GetStudioThumb(c fiber.Ctx) error {

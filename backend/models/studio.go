@@ -6,3 +6,8 @@ type StudioSummary struct {
 	Count    int    `json:"count"`
 	HasThumb bool   `json:"hasThumb,omitempty"`
 }
+
+type StudiosPage struct {
+	Items      []StudioSummary `json:"items"`
+	TotalCount int             `json:"totalCount"`
+}

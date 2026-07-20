@@ -11,6 +11,13 @@ export interface StudioSummary {
     hasThumb?: boolean;
 }
 
+export interface StudiosResult {
+    items: StudioSummary[];
+    totalCount: number;
+}
+
+const EMPTY_RESULT: StudiosResult = { items: [], totalCount: 0 };
+
 const DIRECT_JELLYFIN_PAGE_SIZE = 300;
 
 function normalizeStudioName(name: string): string {
@@ -32,15 +39,24 @@ async function fetchStudioThumbNames(): Promise<Set<string>> {
     );
 }
 
-async function fetchStudiosDirectlyFromJellyfin(
-    limit: number,
-    hasThumb: boolean
-): Promise<StudioSummary[]> {
+interface StudiosQueryOptions {
+    limit: number;
+    hasThumb: boolean;
+    startIndex: number;
+    search: string;
+}
+
+async function fetchStudiosDirectlyFromJellyfin({
+    limit,
+    hasThumb,
+    startIndex,
+    search,
+}: StudiosQueryOptions): Promise<StudiosResult> {
     const api = getApi();
     const itemsApi = getItemsApi(api);
 
     const counts = new Map<string, StudioSummary>();
-    let startIndex = 0;
+    let pageStart = 0;
 
     for (;;) {
         const response = await itemsApi.getItems({
@@ -48,7 +64,7 @@ async function fetchStudiosDirectlyFromJellyfin(
             includeItemTypes: ['Movie', 'Series'],
             fields: ['Studios'],
             enableImages: false,
-            startIndex,
+            startIndex: pageStart,
             limit: DIRECT_JELLYFIN_PAGE_SIZE,
         });
 
@@ -66,28 +82,34 @@ async function fetchStudiosDirectlyFromJellyfin(
             }
         }
 
-        startIndex += items.length;
+        pageStart += items.length;
         if (items.length === 0 || items.length < DIRECT_JELLYFIN_PAGE_SIZE) break;
     }
 
-    const studios = Array.from(counts.values()).sort((a, b) => {
+    let studios = Array.from(counts.values()).sort((a, b) => {
         if (b.count !== a.count) return b.count - a.count;
         return a.name.localeCompare(b.name);
     });
 
-    if (!hasThumb) {
-        return studios.slice(0, limit);
+    if (hasThumb) {
+        const thumbNames = await fetchStudioThumbNames();
+        studios = studios
+            .filter((studio) => thumbNames.has(normalizeStudioName(studio.name)))
+            .map((studio) => ({ ...studio, hasThumb: true }));
     }
 
-    const thumbNames = await fetchStudioThumbNames();
-    const filtered: StudioSummary[] = [];
-    for (const studio of studios) {
-        if (!thumbNames.has(normalizeStudioName(studio.name))) continue;
-        filtered.push({ ...studio, hasThumb: true });
-        if (filtered.length === limit) break;
+    if (search) {
+        const query = search.toLowerCase();
+        studios = studios.filter((studio) => studio.name.toLowerCase().includes(query));
     }
 
-    return filtered;
+    const totalCount = studios.length;
+    const clampedStart = Math.min(startIndex, totalCount);
+
+    return {
+        items: studios.slice(clampedStart, clampedStart + limit),
+        totalCount,
+    };
 }
 
 const BACKEND_AVAILABLE_QUERY_KEY = ['studios', 'backend-available'];
@@ -112,19 +134,26 @@ export function useStudiosBackendAvailable() {
     });
 }
 
-async function fetchStudiosFromBackend(limit: number, hasThumb: boolean): Promise<StudioSummary[]> {
+async function fetchStudiosFromBackend({
+    limit,
+    hasThumb,
+    startIndex,
+    search,
+}: StudiosQueryOptions): Promise<StudiosResult> {
     const server = getServerUrl();
     const token = getAccessToken();
 
     if (!server || !token) {
-        return [];
+        return EMPTY_RESULT;
     }
 
     const params = new URLSearchParams({
         jellyfin_url: server,
         limit: String(limit),
+        startIndex: String(startIndex),
         hasThumb: String(hasThumb),
     });
+    if (search) params.set('search', search);
 
     const response = await fetch(`/api/studios?${params.toString()}`, {
         headers: {
@@ -136,19 +165,31 @@ async function fetchStudiosFromBackend(limit: number, hasThumb: boolean): Promis
         throw new Error('Failed to fetch studios');
     }
 
-    return (await response.json()) as StudioSummary[];
+    return (await response.json()) as StudiosResult;
 }
 
-export function useStudiosByItemCount(limit: number = 20, hasThumb: boolean = true) {
+interface UseStudiosByItemCountOptions {
+    limit?: number;
+    hasThumb?: boolean;
+    startIndex?: number;
+    search?: string;
+}
+
+export function useStudiosByItemCount({
+    limit = 20,
+    hasThumb = true,
+    startIndex = 0,
+    search = '',
+}: UseStudiosByItemCountOptions = {}) {
     const queryClient = useQueryClient();
 
     return useQuery({
-        queryKey: ['studios', 'byItemCount', limit, hasThumb],
-        queryFn: async () => {
+        queryKey: ['studios', 'byItemCount', limit, hasThumb, startIndex, search],
+        queryFn: async (): Promise<StudiosResult> => {
             const server = getServerUrl();
             const token = getAccessToken();
             if (!server || !token) {
-                return [] as StudioSummary[];
+                return EMPTY_RESULT;
             }
 
             const backendAvailable = await queryClient.fetchQuery({
@@ -157,9 +198,10 @@ export function useStudiosByItemCount(limit: number = 20, hasThumb: boolean = tr
                 staleTime: Infinity,
             });
 
+            const options: StudiosQueryOptions = { limit, hasThumb, startIndex, search };
             return backendAvailable
-                ? fetchStudiosFromBackend(limit, hasThumb)
-                : fetchStudiosDirectlyFromJellyfin(limit, hasThumb);
+                ? fetchStudiosFromBackend(options)
+                : fetchStudiosDirectlyFromJellyfin(options);
         },
         staleTime: 10 * 60 * 1000,
     });
