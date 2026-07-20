@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"image"
 	"io"
 	"log/slog"
 	"net/http"
@@ -19,7 +20,10 @@ import (
 
 	"pelagica-backend/models"
 
+	webpencoder "github.com/chai2010/webp"
 	"github.com/gofiber/fiber/v3"
+	"golang.org/x/image/draw"
+	"golang.org/x/image/webp"
 	"golang.org/x/sync/singleflight"
 )
 
@@ -38,6 +42,9 @@ const (
 	defaultJellyfinPageSize   = 300
 	studioThumbCacheControl   = "public, max-age=86400"
 	studioThumbContentType    = "image/webp"
+	studioThumbWidth          = 450
+	studioThumbHeight         = 300
+	studioThumbWebPQuality    = 85
 	thumbsListRequestTimeout  = 10 * time.Second
 	jellyfinItemsRequestLimit = 30 * time.Second
 	defaultThumbCacheDir      = "./cache/studio-thumbs"
@@ -490,6 +497,14 @@ func thumbCachePath(cacheDir, normalizedName string) string {
 	return filepath.Join(cacheDir, filename)
 }
 
+// resizeStudioThumb scales src to exactly width x height using a high-quality
+// interpolator, since studio thumbs are cached and served at a fixed size.
+func resizeStudioThumb(src image.Image, width, height int) image.Image {
+	dst := image.NewRGBA(image.Rect(0, 0, width, height))
+	draw.CatmullRom.Scale(dst, dst.Bounds(), src, src.Bounds(), draw.Over, nil)
+	return dst
+}
+
 // downloadStudioThumb fetches the thumbnail from the upstream source and
 // writes it atomically to cachePath. A temp file in <cacheDir>/.tmp is used
 // so partial writes are never visible under cachePath.
@@ -518,6 +533,12 @@ func downloadStudioThumb(studioName, cacheDir, cachePath string) error {
 		return errors.New("upstream returned status " + strconv.Itoa(resp.StatusCode))
 	}
 
+	src, err := webp.Decode(resp.Body)
+	if err != nil {
+		return err
+	}
+	resized := resizeStudioThumb(src, studioThumbWidth, studioThumbHeight)
+
 	tmpFile, err := os.CreateTemp(filepath.Join(cacheDir, thumbCacheTempSubdir), "thumb-*.webp")
 	if err != nil {
 		return err
@@ -529,7 +550,7 @@ func downloadStudioThumb(studioName, cacheDir, cachePath string) error {
 		os.Remove(tmpPath)
 	}
 
-	if _, err := io.Copy(tmpFile, resp.Body); err != nil {
+	if err := webpencoder.Encode(tmpFile, resized, &webpencoder.Options{Quality: studioThumbWebPQuality}); err != nil {
 		cleanup()
 		return err
 	}

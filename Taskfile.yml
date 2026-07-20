@@ -30,7 +30,7 @@ tasks:
         desc: "Set the app version everywhere it's tracked (usage: task version VERSION=1.2.3)"
         preconditions:
             - sh: '[ -n "{{.VERSION}}" ]'
-              msg: "Usage: task version VERSION=1.2.3"
+              msg: 'Usage: task version VERSION=1.2.3'
         cmds:
             - task: set-frontend-version
               vars:

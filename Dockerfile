@@ -19,11 +19,13 @@ WORKDIR /backend
 ARG TARGETOS
 ARG TARGETARCH
 
+RUN apk add --no-cache gcc musl-dev
+
 COPY backend/go.mod backend/go.sum ./
 RUN go mod download
 
 COPY backend .
-RUN CGO_ENABLED=0 \ 
+RUN CGO_ENABLED=1 \
     GOOS=$TARGETOS \
     GOARCH=$TARGETARCH \
     go build -o server ./
