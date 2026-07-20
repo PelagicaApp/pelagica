@@ -1,6 +1,6 @@
 import SectionScroller from '@/components/SectionScroller';
 import { Skeleton } from '@/components/ui/skeleton';
-import { getStudioImageUrl } from '@/utils/jellyfinUrls';
+import { getThumbUrl } from '@/utils/jellyfinUrls';
 import { ImageOff } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
@@ -35,7 +35,7 @@ const StudioDisplay = ({
                     </div>
                 ) : (
                     <img
-                        src={getStudioImageUrl(item.name)}
+                        src={getThumbUrl(item.id, { maxHeight: 300 }, undefined, 90)}
                         alt={item.name || 'No Name'}
                         className="w-full h-full object-cover rounded-md group-hover:opacity-75 transition-all group-hover:scale-105"
                         onError={() => setImageError(true)}
