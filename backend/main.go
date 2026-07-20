@@ -60,6 +60,7 @@ func main() {
 	api.Post("/themes/:id/install", protected, handlers.InstallTheme)
 
 	api.Get("/studios", handlers.GetStudios)
+	api.Get("/studios/health", handlers.GetStudiosHealth)
 	api.Get("/studios/:name/thumb", handlers.GetStudioThumb)
 
 	api.Get("/stats-consent", handlers.GetStatsConsent)
