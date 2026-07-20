@@ -31,3 +31,4 @@ branding
 
 .task/
 /backend/cache/
+/cache/
