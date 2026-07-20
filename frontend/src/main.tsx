@@ -35,6 +35,7 @@ const MusicAlbumView = lazy(() => import('./pages/Music/MusicAlbumView.tsx'));
 const MusicPlaylistView = lazy(() => import('./pages/Music/MusicPlaylistView.tsx'));
 const MusicArtistView = lazy(() => import('./pages/Music/MusicArtistView.tsx'));
 const GenrePage = lazy(() => import('./pages/Genre/GenrePage.tsx'));
+const StudiosPage = lazy(() => import('./pages/Studios/StudiosPage.tsx'));
 const ItemsSectionPage = lazy(() => import('./pages/Items/ItemsSectionPage.tsx'));
 const LivetvPage = lazy(() => import('./pages/Live/LiveTvPage.tsx'));
 
@@ -61,6 +62,7 @@ createRoot(document.getElementById('root')!).render(
                                         <Route path="/item/:itemId" element={<ItemPage />} />
                                         <Route path="/person/:itemId" element={<PersonPage />} />
                                         <Route path="/genre/:itemId" element={<GenrePage />} />
+                                        <Route path="/studios" element={<StudiosPage />} />
                                         <Route
                                             path="/items/section"
                                             element={<ItemsSectionPage />}
