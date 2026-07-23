@@ -138,7 +138,7 @@ const EqualizerPopover = ({
                 align="end"
                 side="top"
                 sideOffset={8}
-                className="z-[110] w-72 max-h-[min(70vh,28rem)] overflow-y-auto p-3"
+                className="z-300 w-72 max-h-[min(70vh,28rem)] overflow-y-auto p-3"
             >
                 {editorState ? (
                     <CustomPresetEditor

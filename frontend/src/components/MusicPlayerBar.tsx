@@ -1,5 +1,6 @@
 import {
     ChevronDown,
+    ListMusic,
     Pause,
     Play,
     Repeat2,
@@ -25,6 +26,8 @@ import LyricsInlinePanel from '@/features/lyrics/shell/LyricsInlinePanel';
 import { cn } from '@/lib/utils';
 import { lyricsPanelWidthClass } from '@/features/lyrics/constants';
 import EqualizerPopover from '@/features/equalizer/EqualizerPopover';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import MusicQueueSidebar from '@/pages/Music/MusicQueueSidebar';
 
 const formatTime = (timeTicks: number) => {
     const timeSeconds = timeTicks / 10000000;
@@ -138,6 +141,23 @@ const MusicPlayerBar = () => {
                             </span>
                         </div>
                     </div>
+                    {/* Queue toggle */}
+                    <Sheet>
+                        <SheetTrigger asChild>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                }}
+                            >
+                                <ListMusic className="h-5 w-5" />
+                            </Button>
+                        </SheetTrigger>
+                        <SheetContent side="right" className="p-0 min-w-70 sm:max-w-sm">
+                            <MusicQueueSidebar />
+                        </SheetContent>
+                    </Sheet>
                     <Button
                         variant="ghost"
                         size="icon"
@@ -163,9 +183,11 @@ const MusicPlayerBar = () => {
                     <span className="text-sm font-medium">
                         {showLyricsInline ? t('lyrics') : t('nowPlaying')}
                     </span>
-                    <Button variant="ghost" size="icon" onClick={clearPlayback}>
-                        <XIcon />
-                    </Button>
+                    <div className="flex items-center gap-1">
+                        <Button variant="ghost" size="icon" onClick={clearPlayback}>
+                            <XIcon />
+                        </Button>
+                    </div>
                 </div>
 
                 <div className="flex min-h-0 flex-1 flex-col p-6 gap-6">
@@ -183,13 +205,24 @@ const MusicPlayerBar = () => {
                                     className="rounded-lg w-full max-w-sm aspect-square object-cover shadow-2xl"
                                 />
 
-                                <div className="w-full max-w-sm text-center">
-                                    <h2 className="text-2xl font-bold truncate">
-                                        {currentTrack.title}
-                                    </h2>
-                                    <p className="text-lg text-muted-foreground truncate">
-                                        {currentTrack.artist}
-                                    </p>
+                                <div className="w-full max-w-sm flex flex-row">
+                                    <div className="text-start">
+                                        <h2 className="text-2xl font-bold truncate">
+                                            {currentTrack.title}
+                                        </h2>
+                                        <p className="text-lg text-muted-foreground truncate">
+                                            {currentTrack.artist}
+                                        </p>
+                                    </div>
+                                    <div className="ml-auto justify-center">
+                                        {showLyricsButton && (
+                                            <LyricsButton
+                                                active={showLyricsInline}
+                                                loading={isLyricsLoading}
+                                                onClick={toggleMobileLyrics}
+                                            />
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </>
@@ -239,13 +272,9 @@ const MusicPlayerBar = () => {
                         >
                             <Repeat2 />
                         </Button>
-                        {showLyricsButton && (
-                            <LyricsButton
-                                active={showLyricsInline}
-                                loading={isLyricsLoading}
-                                onClick={toggleMobileLyrics}
-                            />
-                        )}
+                    </div>
+
+                    <div className="flex items-center gap-2 w-full max-w-sm mx-auto shrink-0">
                         <EqualizerPopover
                             preset={equalizerPreset}
                             onPresetChange={setEqualizerPreset}
@@ -261,26 +290,17 @@ const MusicPlayerBar = () => {
                             isPlaying={isPlaying}
                             equalizerAvailable={equalizerAvailable}
                         />
-                    </div>
-
-                    <div className="flex items-center gap-2 w-full max-w-sm mx-auto shrink-0">
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => {
-                                if (volume === 0) setVolume(0.5);
-                                else setVolume(0);
-                            }}
-                        >
-                            {volume === 0 ? <VolumeX /> : <Volume2 />}
-                        </Button>
-                        <Slider
-                            className="flex-1"
-                            max={1}
-                            step={0.01}
-                            value={[volume]}
-                            onValueChange={(value) => setVolume(value[0])}
-                        />
+                        {/* Queue toggle */}
+                        <Sheet>
+                            <SheetTrigger asChild>
+                                <Button variant="ghost" size="icon" className="ml-auto">
+                                    <ListMusic className="h-5 w-5" />
+                                </Button>
+                            </SheetTrigger>
+                            <SheetContent side="right" className="p-0 min-w-70 sm:max-w-sm">
+                                <MusicQueueSidebar />
+                            </SheetContent>
+                        </Sheet>
                     </div>
                 </div>
             </div>

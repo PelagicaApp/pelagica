@@ -15,7 +15,7 @@ const LyricsScrollArea = ({
     return (
         <div
             ref={containerRef}
-            className="h-full overflow-y-auto overscroll-contain scroll-smooth"
+            className="h-full overflow-y-auto overscroll-contain scroll-smooth no-scrollbar"
             onScroll={onUserScroll}
             onWheel={onUserScroll}
             onTouchMove={onUserScroll}
