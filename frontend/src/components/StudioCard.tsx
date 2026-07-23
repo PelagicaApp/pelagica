@@ -38,7 +38,7 @@ const StudioCard = ({ studio, className }: StudioCardProps) => {
                     <Skeleton className="w-full h-full rounded-md" />
                 ) : !src ? (
                     <div className="w-full h-full flex items-center justify-center rounded-md px-3">
-                        <span className="text-sm font-medium text-muted-foreground text-center line-clamp-2">
+                        <span className="text-xl font-medium text-center line-clamp-2">
                             {studio.name}
                         </span>
                     </div>
