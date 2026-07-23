@@ -47,6 +47,7 @@ import {
     setLastAudioLanguage,
     setLastSubtitleLanguage,
 } from '@/utils/localstorageLastlanguage';
+import { useConfig } from '../../hooks/api/useConfig';
 
 function getPrimaryTrickplayInfo(trickplay?: BaseItemDto['Trickplay']) {
     if (!trickplay) return null;
@@ -148,6 +149,7 @@ const PlayerControls = ({
     const [container, setContainer] = useState<HTMLElement | null>(null);
     const { data: session } = useSession(item.Id, showStats);
     const [backButtonLogoFailed, setBackButtonLogoFailed] = useState(false);
+    const { config } = useConfig();
 
     const handleBack = () => {
         if (backUrl) {
@@ -454,7 +456,7 @@ const PlayerControls = ({
                 <Button variant="ghost" onClick={handleBack}>
                     <ArrowLeft />
                 </Button>
-                {backButtonLogoFailed ? (
+                {backButtonLogoFailed || (config && !config.showLogoInPlayerControls) ? (
                     <h1>{title}</h1>
                 ) : (
                     <img

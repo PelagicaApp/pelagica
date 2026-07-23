@@ -19,6 +19,7 @@ type AppConfig struct {
 	ShowLogoInTopBar            *bool               `json:"showLogoInTopBar,omitempty"`
 	Links                       []ConfigLink        `json:"links,omitempty"`
 	HideBackToServerButton      *bool               `json:"hideBackToServerButton,omitempty"`
+	ShowLogoInPlayerControls    *bool               `json:"showLogoInPlayerControls,omitempty"`
 }
 
 type ConfigLink struct {

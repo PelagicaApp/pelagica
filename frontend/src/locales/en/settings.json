@@ -150,5 +150,8 @@
     "seerr_integration": "Seerr Integration",
     "seerr_description": "Access Seerr-powered recommendations, search for titles, and send media requests straight from Pelagica.",
     "seerr_url_label": "Seerr URL",
-    "seerr_url_placeholder": "http://your-seerr-server"
+    "seerr_url_placeholder": "http://your-seerr-server",
+    "show_logo_in_player_controls": "Show Logo in Player Controls",
+    "show_logo_in_player_controls_description": "When enabled, the logo of the currently playing item will be displayed in the player instead of just the title.",
+    "show_logo_in_player_controls_label": "Show Logo in Player Controls"
 }
