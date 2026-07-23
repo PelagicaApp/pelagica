@@ -261,6 +261,8 @@ export interface AppConfig {
     showLogoInTopBar?: boolean;
     /** Whether to hide the "back to server" button on the login page when serverAddress is set */
     hideBackToServerButton?: boolean;
+    /** Whether to show the logo of the item in the player controls */
+    showLogoInPlayerControls?: boolean;
 }
 
 const DEFAULT_ITEM_PAGE_SETTINGS: ItemPageSettings = {
@@ -283,6 +285,7 @@ const DEFAULT_CONFIG: AppConfig = {
     serverName: 'Pelagica',
     logoLightUrl: '',
     logoDarkUrl: '',
+    showLogoInPlayerControls: true,
     homeScreenSections: [
         {
             type: 'mediaBar',

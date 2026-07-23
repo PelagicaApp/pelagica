@@ -19,13 +19,11 @@ WORKDIR /backend
 ARG TARGETOS
 ARG TARGETARCH
 
-RUN apk add --no-cache gcc musl-dev
-
 COPY backend/go.mod backend/go.sum ./
 RUN go mod download
 
 COPY backend .
-RUN CGO_ENABLED=1 \
+RUN CGO_ENABLED=0 \
     GOOS=$TARGETOS \
     GOARCH=$TARGETARCH \
     go build -o server ./
@@ -59,7 +57,7 @@ ENV LOG_LEVEL=info
 ENV LOG_FILE=/config/logs/pelagica.log
 ENV ENABLE_AUTH=true
 ENV SERVERS_DIR=/config/servers
-ENV STUDIO_THUMBS=/config/studio_thumbs
+ENV STUDIOS_DB_DIR=/config/studios_db
 ENV DEFAULT_THEME_PATH=/default.theme.json
 ENV THEMES_REPO_BASE_URL=https://themes.pelagica.app/
 ENV COLLECTOR_PING_BASE_URL=https://stats.pelagica.app

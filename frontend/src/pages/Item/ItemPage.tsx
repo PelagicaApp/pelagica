@@ -12,14 +12,10 @@ import SeasonPage from './SeasonPage';
 import { getUserId } from '@/utils/localstorageCredentials';
 import BoxSetPage from './BoxSetPage';
 import type { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models';
-import StudioPage from './StudioPage';
 
 const ItemPageSkeleton = memo(() => {
     return (
         <div className="relative h-full w-full">
-            {/* Backdrop skeleton */}
-            <div className="absolute top-0 left-0 h-[75vh] md:h-[85vh] w-full -z-10 bg-muted/10 animate-pulse" />
-
             {/* Main Content */}
             <div className="pt-24 sm:pt-32 pb-12 mx-auto w-full flex flex-col gap-12">
                 <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start relative z-10 w-full animate-pulse">
@@ -93,6 +89,7 @@ const REDIRECT_ITEM_TYPES: Partial<Record<BaseItemKind, string>> = {
     MusicArtist: '/music/artist',
     Playlist: '/music/playlist',
     Genre: '/genre',
+    Studio: '/studio',
 };
 
 const ItemPage = () => {
@@ -115,7 +112,7 @@ const ItemPage = () => {
         <Page
             title={item ? `${item.Name}` : isLoading ? t('loading') : t('item_not_found')}
             className="flex-1 flex flex-col"
-            overlayHeader={isFullPageItem}
+            overlayHeader={isFullPageItem || isLoading || configLoading}
             pagePadding={!isFullPageItem}
         >
             {(isLoading || configLoading) && <ItemPageSkeleton />}
@@ -133,8 +130,6 @@ const ItemPage = () => {
                             return <SeasonPage item={item} config={config} />;
                         case 'BoxSet':
                             return <BoxSetPage item={item} config={config} />;
-                        case 'Studio':
-                            return <StudioPage item={item} />;
                         default:
                             return (
                                 <p>

@@ -117,11 +117,7 @@ const ItemMetadataBadges = ({ item }: ItemMetadataBadgesProps) => {
                         {visible('studios', studios).map((studio) => (
                             <ItemBadge key={studio.Name} asChild>
                                 {studio.Id ? (
-                                    <Link
-                                        to={`/item/${studio.Id}?name=${encodeURIComponent(studio.Name ?? '')}`}
-                                    >
-                                        {studio.Name}
-                                    </Link>
+                                    <Link to={`/studio/${studio.Id}`}>{studio.Name}</Link>
                                 ) : (
                                     <span>{studio.Name}</span>
                                 )}

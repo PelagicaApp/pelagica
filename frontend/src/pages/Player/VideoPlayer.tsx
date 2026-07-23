@@ -59,7 +59,7 @@ const VideoPlayer = ({
             responsive: false,
             fluid: false,
             html5: {
-                nativeControlsForTouch: true,
+                nativeControlsForTouch: false,
                 hls: { overrideNative: true },
                 nativeTextTracks: false, // Force video.js to render text tracks
             },

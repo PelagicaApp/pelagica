@@ -109,6 +109,22 @@ export const GeneralTab = ({
                 }
             />
             <h2 className="mt-6 mb-2 text-xl font-semibold leading-none tracking-tight">
+                {t('show_logo_in_player_controls')}
+            </h2>
+            <p className="mb-2 text-sm text-muted-foreground">
+                {t('show_logo_in_player_controls_description')}
+            </p>
+            <BooleanInput
+                label={t('show_logo_in_player_controls_label')}
+                checked={config.showLogoInPlayerControls || false}
+                onChange={(checked) =>
+                    saveConfig((prev) => ({
+                        ...prev,
+                        showLogoInPlayerControls: checked,
+                    }))
+                }
+            />
+            <h2 className="mt-6 mb-2 text-xl font-semibold leading-none tracking-tight">
                 {t('login_page')}
             </h2>
             <p className="mb-2 text-sm text-muted-foreground">{t('login_page_description')}</p>

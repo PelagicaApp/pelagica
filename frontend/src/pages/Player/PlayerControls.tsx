@@ -39,7 +39,7 @@ import { isDesktopApp } from '@/utils/desktopApp';
 import { useTranslation } from 'react-i18next';
 import { usePlayerKeyboardControls } from '@/hooks/usePlayerKeyboardControls';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { getPrimaryImageUrl, getTrickplayImageUrl } from '@/utils/jellyfinUrls';
+import { getLogoUrl, getPrimaryImageUrl, getTrickplayImageUrl } from '@/utils/jellyfinUrls';
 import { useReportPlaybackProgress } from '@/hooks/api/usePlaybackProgress';
 import { getRuntimePlaybackStats, type RuntimePlaybackStats } from '@/utils/playbackStats';
 import { useSession } from '@/hooks/api/useSession';
@@ -48,6 +48,7 @@ import {
     setLastAudioLanguage,
     setLastSubtitleLanguage,
 } from '@/utils/localstorageLastlanguage';
+import { useConfig } from '../../hooks/api/useConfig';
 
 function getPrimaryTrickplayInfo(trickplay?: BaseItemDto['Trickplay']) {
     if (!trickplay) return null;
@@ -148,6 +149,8 @@ const PlayerControls = ({
     const [showStats, setShowStats] = useState(false);
     const [container, setContainer] = useState<HTMLElement | null>(null);
     const { data: session } = useSession(item.Id, showStats);
+    const [backButtonLogoFailed, setBackButtonLogoFailed] = useState(false);
+    const { config } = useConfig();
 
     const handleBack = () => {
         if (backUrl) {
@@ -425,6 +428,9 @@ const PlayerControls = ({
             ? `${item.SeriesName} - S${item.ParentIndexNumber}E${item.IndexNumber} - ${item.Name}`
             : item.Name;
 
+    const backButtonImageId = item.Type === 'Episode' ? item.SeriesId : item.Id;
+    const backButtonImageTag = item.Type === 'Episode' ? undefined : item.ImageTags?.Logo;
+
     const isLive = item.Type === 'TvChannel';
 
     const audioStreams = item.MediaStreams?.filter((s) => s.Type === 'Audio') || [];
@@ -451,7 +457,15 @@ const PlayerControls = ({
                 <Button variant="ghost" onClick={handleBack}>
                     <ArrowLeft />
                 </Button>
-                <h1>{title}</h1>
+                {backButtonLogoFailed || (config && !config.showLogoInPlayerControls) ? (
+                    <h1>{title}</h1>
+                ) : (
+                    <img
+                        className="h-6 object-contain"
+                        src={getLogoUrl(backButtonImageId!, { maxHeight: 40 }, backButtonImageTag)}
+                        onError={() => setBackButtonLogoFailed(true)}
+                    />
+                )}
             </div>
             <div
                 className={`absolute inset-0 z-10 p-4 ${showControls ? '' : 'cursor-none'}`}
