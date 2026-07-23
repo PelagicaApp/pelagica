@@ -218,20 +218,6 @@ func parseStudiosStartIndex(c fiber.Ctx) (int, error) {
 	return startIndex, nil
 }
 
-func parseHasLogoOnly(c fiber.Ctx) (bool, error) {
-	raw := strings.TrimSpace(c.Query("hasLogo"))
-	if raw == "" {
-		return false, nil
-	}
-
-	value, err := strconv.ParseBool(raw)
-	if err != nil {
-		return false, errors.New("hasLogo must be true or false")
-	}
-
-	return value, nil
-}
-
 func buildStudiosCacheKey(jellyfinURL, token string) string {
 	return jellyfinURL + "\n" + token
 }
@@ -413,11 +399,6 @@ func GetStudios(c fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(models.APIError{Error: err.Error()})
 	}
 
-	hasLogoOnly, err := parseHasLogoOnly(c)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(models.APIError{Error: err.Error()})
-	}
-
 	search := strings.ToLower(strings.TrimSpace(c.Query("search")))
 
 	jellyfinURL, token, err := parseJellyfinCredentials(c)
@@ -429,18 +410,6 @@ func GetStudios(c fiber.Ctx) error {
 	if err != nil {
 		slog.Error("Failed to load studios", "error", err)
 		return c.Status(fiber.StatusBadGateway).JSON(models.APIError{Error: "Failed to load studios from Jellyfin: " + err.Error()})
-	}
-
-	if hasLogoOnly {
-		withLogos := make([]models.StudioSummary, 0, len(studios))
-		for _, studio := range studios {
-			if !services.HasStudioLogo(studio.Name) {
-				continue
-			}
-			studio.HasLogo = true
-			withLogos = append(withLogos, studio)
-		}
-		studios = withLogos
 	}
 
 	if search != "" {

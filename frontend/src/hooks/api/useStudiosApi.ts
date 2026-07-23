@@ -21,7 +21,6 @@ const DIRECT_JELLYFIN_PAGE_SIZE = 300;
 
 interface StudiosQueryOptions {
     limit: number;
-    hasThumb: boolean;
     startIndex: number;
     search: string;
 }
@@ -108,7 +107,6 @@ export function useStudiosBackendAvailable() {
 
 async function fetchStudiosFromBackend({
     limit,
-    hasThumb,
     startIndex,
     search,
 }: StudiosQueryOptions): Promise<StudiosResult> {
@@ -123,7 +121,6 @@ async function fetchStudiosFromBackend({
         jellyfin_url: server,
         limit: String(limit),
         startIndex: String(startIndex),
-        hasThumb: String(hasThumb),
     });
     if (search) params.set('search', search);
 
@@ -149,14 +146,13 @@ interface UseStudiosByItemCountOptions {
 
 export function useStudiosByItemCount({
     limit = 20,
-    hasThumb = true,
     startIndex = 0,
     search = '',
 }: UseStudiosByItemCountOptions = {}) {
     const queryClient = useQueryClient();
 
     return useQuery({
-        queryKey: ['studios', 'byItemCount', limit, hasThumb, startIndex, search],
+        queryKey: ['studios', 'byItemCount', limit, startIndex, search],
         queryFn: async (): Promise<StudiosResult> => {
             const server = getServerUrl();
             const token = getAccessToken();
@@ -170,7 +166,7 @@ export function useStudiosByItemCount({
                 staleTime: Infinity,
             });
 
-            const options: StudiosQueryOptions = { limit, hasThumb, startIndex, search };
+            const options: StudiosQueryOptions = { limit, startIndex, search };
             return backendAvailable
                 ? fetchStudiosFromBackend(options)
                 : fetchStudiosDirectlyFromJellyfin(options);

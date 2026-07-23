@@ -337,23 +337,6 @@ func loadStudioNamesWithLogo(conn *sql.DB) (map[string]struct{}, error) {
 	return names, rows.Err()
 }
 
-// HasStudioLogo reports whether the studios database has a logo for name.
-func HasStudioLogo(name string) bool {
-	normalized := NormalizeStudioName(name)
-	if normalized == "" {
-		return false
-	}
-
-	studiosDB.mu.RLock()
-	defer studiosDB.mu.RUnlock()
-
-	if studiosDB.names == nil {
-		return false
-	}
-	_, ok := studiosDB.names[normalized]
-	return ok
-}
-
 // GetStudioLogo looks up the best-voted logo for a studio name. It returns
 // (nil, nil) when the studio has no logo on record.
 func GetStudioLogo(name string) (*StudioLogo, error) {

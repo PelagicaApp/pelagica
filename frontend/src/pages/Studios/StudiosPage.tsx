@@ -42,7 +42,6 @@ const StudiosPage = () => {
 
     const { data, isLoading } = useStudiosByItemCount({
         limit: PAGE_SIZE,
-        hasThumb: false,
         startIndex: page * PAGE_SIZE,
         search: debouncedSearch,
     });
