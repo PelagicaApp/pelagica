@@ -32,7 +32,7 @@ tasks:
       ENABLE_AUTH: "true"
       LOG_LEVEL: "debug"
       SERVER_ADDRESS: "https://jellyfin.jan.run"
-      STUDIO_THUMBS: "{{.ROOT_DIR}}/cache/studio-thumbs"
+      STUDIOS_DB_DIR: "{{.ROOT_DIR}}/cache/studios-db"
     cmds:
       - go run main.go
 
