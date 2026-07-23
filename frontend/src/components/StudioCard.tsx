@@ -2,7 +2,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useTheme } from '@/components/theme-provider';
 import { useStudiosBackendAvailable, type StudioSummary } from '@/hooks/api/useStudiosApi';
 import { getEffectiveTheme } from '@/utils/effectiveTheme';
-import { getStudioGithubThumbUrl, getStudioImageUrl, getThumbUrl } from '@/utils/jellyfinUrls';
+import { getStudioImageUrl, getThumbUrl } from '@/utils/jellyfinUrls';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router';
 
@@ -24,7 +24,6 @@ const StudioCard = ({ studio, className }: StudioCardProps) => {
     const sources = useMemo(() => {
         const urls: string[] = [];
         if (backendAvailable) urls.push(getStudioImageUrl(studio.name, monoColor, monoColor2));
-        urls.push(getStudioGithubThumbUrl(studio.name));
         urls.push(getThumbUrl(studio.id, { maxHeight: 300 }, undefined, 90));
         return urls;
     }, [backendAvailable, studio.name, studio.id, monoColor, monoColor2]);

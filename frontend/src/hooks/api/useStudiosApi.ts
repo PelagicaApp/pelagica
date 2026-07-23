@@ -1,5 +1,4 @@
 import { getApi } from '@/api/getApi';
-import { STUDIOS_REMOTE_JSON_URL } from '@/utils/jellyfinUrls';
 import { getAccessToken, getServerUrl } from '@/utils/localstorageCredentials';
 import { getItemsApi } from '@jellyfin/sdk/lib/utils/api/items-api';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -20,25 +19,6 @@ const EMPTY_RESULT: StudiosResult = { items: [], totalCount: 0 };
 
 const DIRECT_JELLYFIN_PAGE_SIZE = 300;
 
-function normalizeStudioName(name: string): string {
-    return name.trim().split(/\s+/).join(' ').toLowerCase();
-}
-
-async function fetchStudioThumbNames(): Promise<Set<string>> {
-    const response = await fetch(STUDIOS_REMOTE_JSON_URL);
-    if (!response.ok) {
-        throw new Error('Failed to fetch studio thumbnail list');
-    }
-
-    const entries = (await response.json()) as Array<{ name?: string }>;
-    return new Set(
-        entries
-            .map((entry) => entry.name?.trim())
-            .filter((name): name is string => !!name)
-            .map(normalizeStudioName)
-    );
-}
-
 interface StudiosQueryOptions {
     limit: number;
     hasThumb: boolean;
@@ -48,7 +28,6 @@ interface StudiosQueryOptions {
 
 async function fetchStudiosDirectlyFromJellyfin({
     limit,
-    hasThumb,
     startIndex,
     search,
 }: StudiosQueryOptions): Promise<StudiosResult> {
@@ -90,13 +69,6 @@ async function fetchStudiosDirectlyFromJellyfin({
         if (b.count !== a.count) return b.count - a.count;
         return a.name.localeCompare(b.name);
     });
-
-    if (hasThumb) {
-        const thumbNames = await fetchStudioThumbNames();
-        studios = studios
-            .filter((studio) => thumbNames.has(normalizeStudioName(studio.name)))
-            .map((studio) => ({ ...studio, hasThumb: true }));
-    }
 
     if (search) {
         const query = search.toLowerCase();

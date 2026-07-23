@@ -2,11 +2,6 @@ import { getAccessToken, getServerUrl } from './localstorageCredentials';
 import { getSupportedVideoCodecs } from './videoCodecDetection';
 import type { PlayMethod } from '@/hooks/api/usePlaybackInfo';
 
-export const STUDIOS_REMOTE_JSON_URL =
-    'https://raw.githubusercontent.com/Entree3k/Jellyfin/main/studios/studios.json';
-const STUDIOS_REMOTE_BASE_URL = 'https://raw.githubusercontent.com/Entree3k/Jellyfin/main/studios';
-const STUDIOS_REMOTE_FILE_EXTENSION = '.webp';
-
 interface Credentials {
     server: string;
     token: string;
@@ -413,8 +408,4 @@ export function getDownloadurl(itemId: string) {
 export function getStudioImageUrl(studioName: string, monoColor: string, monoColor2: string) {
     const params = new URLSearchParams({ mono: 'true', color: monoColor, color2: monoColor2 });
     return `/api/studios/${encodeURIComponent(studioName)}/logo?${params.toString()}`;
-}
-
-export function getStudioGithubThumbUrl(studioName: string) {
-    return `${STUDIOS_REMOTE_BASE_URL}/${encodeURIComponent(studioName)}/thumb${STUDIOS_REMOTE_FILE_EXTENSION}`;
 }
