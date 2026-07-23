@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	"log"
+	"net/http"
 	"runtime"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
@@ -12,7 +13,16 @@ import (
 //go:embed all:frontend/dist
 var assets embed.FS
 
+func newAssetHandler() http.Handler {
+	mux := http.NewServeMux()
+	mux.HandleFunc("GET /api/studios/{name}/logo", handleStudioLogo)
+	mux.Handle("/", application.AssetFileServerFS(assets))
+	return mux
+}
+
 func main() {
+	initStudiosDB()
+
 	windowService := &WindowService{}
 	appIconService := &AppIconService{}
 
@@ -24,7 +34,7 @@ func main() {
 			application.NewService(appIconService),
 		},
 		Assets: application.AssetOptions{
-			Handler: application.AssetFileServerFS(assets),
+			Handler: newAssetHandler(),
 		},
 		Mac: application.MacOptions{
 			ApplicationShouldTerminateAfterLastWindowClosed: true,
