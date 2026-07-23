@@ -27,7 +27,7 @@ const StudioCard = ({ studio, className }: StudioCardProps) => {
         : undefined;
 
     return (
-        <Link to={`/item/${studio.id}`} className={`group ${className ?? ''}`}>
+        <Link to={`/studio/${studio.id}`} className={`group ${className ?? ''}`}>
             <div className="relative w-full aspect-video rounded-md overflow-hidden bg-muted">
                 {checkingBackend ? (
                     <Skeleton className="w-full h-full rounded-md" />
