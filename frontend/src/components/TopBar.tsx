@@ -313,7 +313,7 @@ const UserMenu = () => {
     );
     const { data: themes, isLoading: isLoadingThemes } = useThemes();
     const { config } = useConfig();
-  const { highlightActivePage, setHighlightActivePage } = useTopBarNavHighlight();
+    const { highlightActivePage, setHighlightActivePage } = useTopBarNavHighlight();
     const { data: isSeerrLoggedIn } = useSeerrLoginStatus();
     const seerrLogout = useSeerrLogout();
     const [appIconOptions, setAppIconOptions] = useState<string[]>([]);
@@ -860,11 +860,7 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
                             </Link>
                         </Button>
 
-                        <Button
-                            asChild
-                            variant={navVariant('/library')}
-                            size="sm"
-                        >
+                        <Button asChild variant={navVariant('/library')} size="sm">
                             <Link to="/library">
                                 <Library className="h-4 w-4" />
                                 {t('library')}
@@ -872,11 +868,7 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
                         </Button>
 
                         {hasMusicLibrary && (
-                            <Button
-                                asChild
-                                variant={navVariant('/music')}
-                                size="sm"
-                            >
+                            <Button asChild variant={navVariant('/music')} size="sm">
                                 <Link to="/music">
                                     <Music className="h-4 w-4" />
                                     {t('music')}
@@ -934,12 +926,7 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
 
                     {/* Mobile nav */}
                     <nav className="flex md:hidden items-center gap-0.5">
-                        <Button
-                            asChild
-                            variant={navVariant('/')}
-                            size="icon"
-                            className="h-8 w-8"
-                        >
+                        <Button asChild variant={navVariant('/')} size="icon" className="h-8 w-8">
                             <Link to="/">
                                 <House className="h-4 w-4" />
                             </Link>
@@ -977,7 +964,12 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
                             </Button>
                         )}
 
-                        <Button asChild variant={navVariant('/search')} size="icon" className="h-8 w-8">
+                        <Button
+                            asChild
+                            variant={navVariant('/search')}
+                            size="icon"
+                            className="h-8 w-8"
+                        >
                             <Link to="/search">
                                 <Search className="h-4 w-4" />
                             </Link>

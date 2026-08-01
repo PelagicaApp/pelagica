@@ -14,7 +14,5 @@ export function getTopBarNavHighlight(): boolean {
 
 export function saveTopBarNavHighlight(enabled: boolean) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(enabled));
-    window.dispatchEvent(
-        new CustomEvent(TOP_BAR_NAV_HIGHLIGHT_CHANGE_EVENT, { detail: enabled })
-    );
+    window.dispatchEvent(new CustomEvent(TOP_BAR_NAV_HIGHLIGHT_CHANGE_EVENT, { detail: enabled }));
 }
