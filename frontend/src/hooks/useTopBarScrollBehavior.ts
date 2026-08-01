@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router';
-import { usePageScrollElement } from '@/context/PageScrollProvider';
+import { usePageScrollElement } from '@/hooks/usePageScrollElement';
 
 const SCROLL_DIRECTION_THRESHOLD = 8;
 const TOP_REVEAL_THRESHOLD = 20;
@@ -22,11 +22,14 @@ export function useTopBarScrollBehavior() {
     const [scrolled, setScrolled] = useState(false);
     const [barHidden, setBarHidden] = useState(false);
     const [barPeek, setBarPeek] = useState(false);
+    const [trackedPathname, setTrackedPathname] = useState(location.pathname);
 
-    useEffect(() => {
+    if (trackedPathname !== location.pathname) {
+        setTrackedPathname(location.pathname);
         setBarHidden(false);
         setBarPeek(false);
-    }, [location.pathname]);
+        setScrolled(false);
+    }
 
     useEffect(() => {
         const nestedTargets = getNestedScrollTargets(scrollElement);

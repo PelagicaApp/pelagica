@@ -1,6 +1,5 @@
-import { createContext, useContext, type PropsWithChildren } from 'react';
-
-const PageScrollContext = createContext<HTMLElement | null>(null);
+import { type PropsWithChildren } from 'react';
+import { PageScrollContext } from '@/context/pageScrollContext';
 
 export function PageScrollProvider({
     scrollElement,
@@ -9,8 +8,4 @@ export function PageScrollProvider({
     return (
         <PageScrollContext.Provider value={scrollElement}>{children}</PageScrollContext.Provider>
     );
-}
-
-export function usePageScrollElement() {
-    return useContext(PageScrollContext);
 }
