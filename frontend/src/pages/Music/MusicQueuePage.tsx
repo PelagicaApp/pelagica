@@ -18,7 +18,9 @@ const MusicQueuePage = () => {
                 </Button>
                 <h1 className="text-lg font-semibold">{t('queue')}</h1>
                 {queue.length > 0 && (
-                    <span className="text-sm font-normal text-muted-foreground">({queue.length})</span>
+                    <span className="text-sm font-normal text-muted-foreground">
+                        ({queue.length})
+                    </span>
                 )}
             </div>
             <MusicQueueSidebar variant="page" />

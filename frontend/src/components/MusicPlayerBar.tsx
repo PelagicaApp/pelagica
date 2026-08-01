@@ -180,11 +180,7 @@ const MusicPlayerBar = () => {
                         </div>
                     </div>
                     {/* Queue toggle */}
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={openMobileQueue}
-                    >
+                    <Button variant="ghost" size="icon" onClick={openMobileQueue}>
                         <ListMusic className="h-5 w-5" />
                     </Button>
                     <Button
@@ -320,7 +316,12 @@ const MusicPlayerBar = () => {
                             equalizerAvailable={equalizerAvailable}
                         />
                         {/* Queue toggle */}
-                        <Button variant="ghost" size="icon" className="ml-auto" onClick={openMobileQueue}>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="ml-auto"
+                            onClick={openMobileQueue}
+                        >
                             <ListMusic className="h-5 w-5" />
                         </Button>
                     </div>

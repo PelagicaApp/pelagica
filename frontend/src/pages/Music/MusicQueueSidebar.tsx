@@ -139,9 +139,7 @@ const MusicQueueSidebar = ({ variant = 'sidebar' }: MusicQueueSidebarProps) => {
                                 }}
                                 className={cn(
                                     'hover:text-destructive shrink-0 rounded p-0.5 transition-all',
-                                    isPage
-                                        ? 'opacity-70'
-                                        : 'opacity-0 group-hover:opacity-100'
+                                    isPage ? 'opacity-70' : 'opacity-0 group-hover:opacity-100'
                                 )}
                                 style={{ display: 'flex' }}
                                 aria-label={t('remove_from_queue')}
