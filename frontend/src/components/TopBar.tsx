@@ -116,6 +116,7 @@ import {
     openExternalUrl,
 } from '../utils/desktopApp';
 import { useTopBarNavHighlight } from '@/hooks/useTopBarNavHighlight';
+import { useTopBarScrollBehavior } from '@/hooks/useTopBarScrollBehavior';
 import { ExternalAnchor } from './ExternalAnchor';
 
 const noDragStyle = { '--wails-draggable': 'no-drag' } as CSSProperties;
@@ -675,9 +676,9 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
     const { data: views } = useUserViews();
     const { theme } = useTheme();
     const effectiveTheme = getEffectiveTheme(theme);
-    const [scrolled, setScrolled] = useState(false);
     const location = useLocation();
     const { highlightActivePage } = useTopBarNavHighlight();
+    const { scrolled, showBar, barHidden, setBarPeek } = useTopBarScrollBehavior();
 
     function isActive(path: string) {
         if (path === '/') return location.pathname === '/';
@@ -691,18 +692,6 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
     const isDesktop = isDesktopApp();
     const isWindowsOrLinux = isDesktop && !isMacOS();
     const [isMaximised, setIsMaximised] = useState(false);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 20);
-        };
-
-        handleScroll();
-
-        window.addEventListener('scroll', handleScroll);
-
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
 
     useEffect(() => {
         if (!isWindowsOrLinux) return;
@@ -734,15 +723,27 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
     };
 
     return (
-        <header
-            className={cn(
-                'fixed top-0 z-50 w-full h-17 flex items-center justify-center',
-                isWindowsOrLinux ? 'pointer-events-auto' : 'pointer-events-none'
+        <>
+            {barHidden && !showBar && (
+                <div
+                    className="fixed top-0 inset-x-0 z-[60] h-4 pointer-events-auto"
+                    onMouseEnter={() => setBarPeek(true)}
+                    aria-hidden
+                />
             )}
-            style={
-                isWindowsOrLinux ? ({ '--wails-draggable': 'drag' } as CSSProperties) : undefined
-            }
-        >
+            <header
+                className={cn(
+                    'fixed top-0 z-50 w-full h-17 flex items-center justify-center transition-transform duration-300 ease-in-out',
+                    !showBar && '-translate-y-full',
+                    isWindowsOrLinux && showBar ? 'pointer-events-auto' : 'pointer-events-none'
+                )}
+                onMouseLeave={() => {
+                    if (barHidden) setBarPeek(false);
+                }}
+                style={
+                    isWindowsOrLinux ? ({ '--wails-draggable': 'drag' } as CSSProperties) : undefined
+                }
+            >
             {overlay && !scrolled && (
                 <div className="pointer-events-none absolute inset-0 -bottom-5 bg-linear-to-b from-background/70 to-transparent" />
             )}
@@ -994,6 +995,7 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
                 <UserMenu />
             </div>
         </header>
+        </>
     );
 };
 

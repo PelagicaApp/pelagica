@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
-import { type PropsWithChildren, useEffect, useState } from 'react';
+import { type PropsWithChildren, useEffect, useState, useCallback } from 'react';
+import { PageScrollProvider } from '@/context/PageScrollProvider';
 import { useNavigate } from 'react-router';
 import { useCurrentUser } from '@/hooks/api/useCurrentUser';
 import { PageBackgroundProvider } from '@/context/PageBackgroundProvider';
@@ -47,6 +48,10 @@ const PageContent = ({
     const { isLoading, isError, data: user } = useCurrentUser();
     const { background } = usePageBackground();
     const [showLoader, setShowLoader] = useState(true);
+    const [scrollElement, setScrollElement] = useState<HTMLElement | null>(null);
+    const pageScrollRef = useCallback((node: HTMLDivElement | null) => {
+        setScrollElement(node);
+    }, []);
 
     useEffect(() => {
         if (title) document.title = title;
@@ -102,21 +107,32 @@ const PageContent = ({
         );
 
     return (
-        <div className={`relative flex flex-col min-h-dvh ${containerClassName ?? ''}`}>
-            {background || bgItem}
-            {showHeader && <TopBar overlay={overlayHeader} />}
+        <PageScrollProvider scrollElement={scrollElement}>
             <div
                 className={cn(
-                    'relative flex flex-col flex-1 overflow-x-hidden overflow-y-auto z-5 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-muted-foreground [&::-webkit-scrollbar-thumb]:rounded-full',
-                    pagePadding && 'py-4 px-4 sm:px-12',
-                    !overlayHeader && 'pt-18' // Topbar has height of 14 + 4 (padding) = 18
+                    'relative flex flex-col h-dvh min-h-0 overflow-hidden',
+                    containerClassName
                 )}
             >
-                {breadcrumbs && <div className="flex items-center gap-2 mb-4">{breadcrumbs}</div>}
-                <main className={`w-full flex-1 ${className ?? ''}`}>{children}</main>
+                {background || bgItem}
+                {showHeader && <TopBar overlay={overlayHeader} />}
+                <div
+                    ref={pageScrollRef}
+                    data-page-scroll-root
+                    className={cn(
+                        'relative flex flex-col flex-1 min-h-0 overflow-x-hidden overflow-y-auto z-5 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-muted-foreground [&::-webkit-scrollbar-thumb]:rounded-full',
+                        pagePadding && 'py-4 px-4 sm:px-12',
+                        !overlayHeader && 'pt-18' // Topbar has height of 14 + 4 (padding) = 18
+                    )}
+                >
+                    {breadcrumbs && (
+                        <div className="flex items-center gap-2 mb-4">{breadcrumbs}</div>
+                    )}
+                    <main className={`w-full flex-1 ${className ?? ''}`}>{children}</main>
+                </div>
+                {showPlayerBar && <MusicPlayerBar />}
             </div>
-            {showPlayerBar && <MusicPlayerBar />}
-        </div>
+        </PageScrollProvider>
     );
 };
 
