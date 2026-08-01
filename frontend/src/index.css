@@ -122,6 +122,10 @@ body {
     --color-sidebar-ring: var(--sidebar-ring);
 
     --color-brand: var(--brand);
+
+    /* Stacking: top bar / sheets use z-50; player bar and expanded player sit above */
+    --z-player: 100;
+    --z-player-expanded: 200;
 }
 
 @layer base {

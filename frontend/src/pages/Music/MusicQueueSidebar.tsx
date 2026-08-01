@@ -5,7 +5,15 @@ import { useMusicPlayback } from '@/hooks/useMusicPlayback';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 
-const MusicQueueSidebar = () => {
+type MusicQueueSidebarProps = {
+    variant?: 'sidebar' | 'page';
+};
+
+const MusicQueueSidebar = ({ variant = 'sidebar' }: MusicQueueSidebarProps) => {
+    const isPage = variant === 'page';
+    const asideClassName = isPage
+        ? 'flex min-h-0 w-full flex-1 flex-col'
+        : 'w-72 shrink-0 flex flex-col h-full pl-2';
     const { t } = useTranslation('music');
     const { queue, currentIndex, loadQueue, setQueue, setCurrentIndex } = useMusicPlayback();
     const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
@@ -58,11 +66,13 @@ const MusicQueueSidebar = () => {
 
     if (queue.length === 0) {
         return (
-            <aside className="w-72 shrink-0 flex flex-col h-full pl-2">
-                <div className="flex items-center gap-2 px-3 py-1.5 mb-2 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                    <ListMusic className="w-4 h-4" />
-                    {t('queue')}
-                </div>
+            <aside className={asideClassName}>
+                {!isPage && (
+                    <div className="flex items-center gap-2 px-3 py-1.5 mb-2 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                        <ListMusic className="w-4 h-4" />
+                        {t('queue')}
+                    </div>
+                )}
                 <div className="flex-1 flex items-center justify-center">
                     <span className="text-sm text-muted-foreground">{t('queue_empty')}</span>
                 </div>
@@ -71,13 +81,15 @@ const MusicQueueSidebar = () => {
     }
 
     return (
-        <aside className="w-72 shrink-0 flex flex-col h-full pl-2">
-            <div className="flex items-center justify-between px-3 py-1.5 mb-2">
-                <div className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                    <ListMusic className="w-4 h-4" />
-                    {t('queue_count', { count: queue.length })}
+        <aside className={asideClassName}>
+            {!isPage && (
+                <div className="mb-2 flex items-center justify-between px-3 py-1.5">
+                    <div className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                        <ListMusic className="w-4 h-4" />
+                        {t('queue_count', { count: queue.length })}
+                    </div>
                 </div>
-            </div>
+            )}
             <div className="flex-1 overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-muted-foreground/20 [&::-webkit-scrollbar-thumb]:rounded-full">
                 <div className="flex flex-col gap-0.5">
                     {queue.map((track, index) => (
@@ -132,7 +144,12 @@ const MusicQueueSidebar = () => {
                                     e.stopPropagation();
                                     removeTrack(index);
                                 }}
-                                className="opacity-0 group-hover:opacity-100 hover:text-destructive p-0.5 rounded transition-all shrink-0"
+                                className={cn(
+                                    'hover:text-destructive shrink-0 rounded p-0.5 transition-all',
+                                    isPage
+                                        ? 'opacity-70'
+                                        : 'opacity-0 group-hover:opacity-100'
+                                )}
                                 style={{ display: 'flex' }}
                                 aria-label={t('remove_from_queue')}
                             >

@@ -16,7 +16,8 @@ import { Slider } from './ui/slider';
 import { getPrimaryImageUrl } from '@/utils/jellyfinUrls';
 import { useMusicPlayback } from '@/hooks/useMusicPlayback';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useLocation, useNavigate, useNavigationType } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useLyrics } from '@/features/lyrics/api/useLyrics';
 import { processLyrics } from '@/features/lyrics/utils/lyrics';
@@ -26,8 +27,9 @@ import LyricsInlinePanel from '@/features/lyrics/shell/LyricsInlinePanel';
 import { cn } from '@/lib/utils';
 import { lyricsPanelWidthClass } from '@/features/lyrics/constants';
 import EqualizerPopover from '@/features/equalizer/EqualizerPopover';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import MusicQueueSidebar from '@/pages/Music/MusicQueueSidebar';
+
+const MOBILE_QUEUE_PATH = '/music/queue';
+const RESTORE_EXPANDED_AFTER_QUEUE_KEY = 'pelagica-restore-expanded-after-queue';
 
 const formatTime = (timeTicks: number) => {
     const timeSeconds = timeTicks / 10000000;
@@ -71,6 +73,10 @@ const MusicPlayerBar = () => {
         clearPlayback,
     } = useMusicPlayback();
     const isMobile = useIsMobile();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const navigationType = useNavigationType();
+    const prevPathnameRef = useRef(location.pathname);
     const [isExpanded, setIsExpanded] = useState(false);
     const [lyricsOpenTrackId, setLyricsOpenTrackId] = useState<string | null>(null);
     const [inlineLyricsTrackId, setInlineLyricsTrackId] = useState<string | null>(null);
@@ -103,6 +109,38 @@ const MusicPlayerBar = () => {
             prev === currentTrack?.id ? null : (currentTrack?.id ?? null)
         );
     }, [currentTrack?.id]);
+
+    const openMobileQueue = useCallback(
+        (e?: React.MouseEvent) => {
+            e?.stopPropagation();
+            if (isExpanded) {
+                sessionStorage.setItem(RESTORE_EXPANDED_AFTER_QUEUE_KEY, '1');
+            }
+            setIsExpanded(false);
+            navigate(MOBILE_QUEUE_PATH);
+        },
+        [isExpanded, navigate]
+    );
+
+    useEffect(() => {
+        if (!isMobile) {
+            prevPathnameRef.current = location.pathname;
+            return;
+        }
+
+        const leftQueue =
+            prevPathnameRef.current === MOBILE_QUEUE_PATH &&
+            location.pathname !== MOBILE_QUEUE_PATH;
+
+        if (leftQueue && sessionStorage.getItem(RESTORE_EXPANDED_AFTER_QUEUE_KEY)) {
+            sessionStorage.removeItem(RESTORE_EXPANDED_AFTER_QUEUE_KEY);
+            if (navigationType === 'POP') {
+                setIsExpanded(true);
+            }
+        }
+
+        prevPathnameRef.current = location.pathname;
+    }, [isMobile, location.pathname, navigationType]);
 
     if (!currentTrack) return null;
 
@@ -142,22 +180,13 @@ const MusicPlayerBar = () => {
                         </div>
                     </div>
                     {/* Queue toggle */}
-                    <Sheet>
-                        <SheetTrigger asChild>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                }}
-                            >
-                                <ListMusic className="h-5 w-5" />
-                            </Button>
-                        </SheetTrigger>
-                        <SheetContent side="right" className="p-0 min-w-70 sm:max-w-sm">
-                            <MusicQueueSidebar />
-                        </SheetContent>
-                    </Sheet>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={openMobileQueue}
+                    >
+                        <ListMusic className="h-5 w-5" />
+                    </Button>
                     <Button
                         variant="ghost"
                         size="icon"
@@ -291,16 +320,9 @@ const MusicPlayerBar = () => {
                             equalizerAvailable={equalizerAvailable}
                         />
                         {/* Queue toggle */}
-                        <Sheet>
-                            <SheetTrigger asChild>
-                                <Button variant="ghost" size="icon" className="ml-auto">
-                                    <ListMusic className="h-5 w-5" />
-                                </Button>
-                            </SheetTrigger>
-                            <SheetContent side="right" className="p-0 min-w-70 sm:max-w-sm">
-                                <MusicQueueSidebar />
-                            </SheetContent>
-                        </Sheet>
+                        <Button variant="ghost" size="icon" className="ml-auto" onClick={openMobileQueue}>
+                            <ListMusic className="h-5 w-5" />
+                        </Button>
                     </div>
                 </div>
             </div>

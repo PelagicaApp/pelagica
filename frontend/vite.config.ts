@@ -13,7 +13,7 @@ export default defineConfig({
     },
     server: {
         port: 3000,
-        allowedHosts: ['mbjan.local'],
+        allowedHosts: ['mbjan.local', 'omarchy'],
         proxy: {
             '/api': {
                 target: 'http://localhost:4321/api',
