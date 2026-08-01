@@ -6,11 +6,11 @@ export function ScrollToTop() {
 
     useEffect(() => {
         window.scrollTo(0, 0);
-        document.querySelectorAll('[data-page-scroll-root], [data-page-scroll-nested]').forEach(
-            (el) => {
+        document
+            .querySelectorAll('[data-page-scroll-root], [data-page-scroll-nested]')
+            .forEach((el) => {
                 el.scrollTop = 0;
-            }
-        );
+            });
     }, [pathname]);
 
     return null;

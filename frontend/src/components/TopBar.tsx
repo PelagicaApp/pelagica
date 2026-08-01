@@ -741,260 +741,269 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
                     if (barHidden) setBarPeek(false);
                 }}
                 style={
-                    isWindowsOrLinux ? ({ '--wails-draggable': 'drag' } as CSSProperties) : undefined
+                    isWindowsOrLinux
+                        ? ({ '--wails-draggable': 'drag' } as CSSProperties)
+                        : undefined
                 }
             >
-            {overlay && !scrolled && (
-                <div className="pointer-events-none absolute inset-0 -bottom-5 bg-linear-to-b from-background/70 to-transparent" />
-            )}
-
-            {isDesktop && isMacOS() && (
-                <div
-                    className={cn(
-                        'pointer-events-none absolute left-2 top-1/2 -translate-y-1/2 h-11 w-21 rounded-full border transition-all duration-300',
-                        !overlay || scrolled
-                            ? 'border-border bg-background/60 backdrop-blur shadow-sm'
-                            : 'border-white/10 bg-background/20 backdrop-blur-md'
-                    )}
-                />
-            )}
-
-            {isDesktop && (
-                <div
-                    className={cn(
-                        'pointer-events-auto absolute top-1/2 -translate-y-1/2 flex h-11 items-center px-1 w-full md:w-auto rounded-full transition-all duration-300 border',
-                        'justify-between md:justify-start gap-0.5',
-                        isMacOS() ? 'right-2' : 'left-2',
-                        !overlay || scrolled
-                            ? 'border-border bg-background/60 backdrop-blur shadow-sm'
-                            : 'border-white/10 bg-background/20 backdrop-blur-md'
-                    )}
-                    style={noDragStyle}
-                >
-                    <Button
-                        size="icon-sm"
-                        variant="ghost"
-                        onClick={goback}
-                        className="h-9 w-9 rounded-l-full"
-                    >
-                        <ChevronLeft />
-                    </Button>
-                    <Button
-                        size="icon-sm"
-                        variant="ghost"
-                        onClick={goforward}
-                        className="h-9 w-9 rounded-r-full"
-                    >
-                        <ChevronRight />
-                    </Button>
-                </div>
-            )}
-
-            {isWindowsOrLinux && (
-                <div
-                    className={cn(
-                        'pointer-events-auto absolute right-2 top-1/2 -translate-y-1/2 flex h-11 items-center px-1 rounded-full transition-all duration-300 border gap-0.5',
-                        !overlay || scrolled
-                            ? 'border-border bg-background/60 backdrop-blur shadow-sm'
-                            : 'border-white/10 bg-background/20 backdrop-blur-md'
-                    )}
-                    style={noDragStyle}
-                >
-                    <Button
-                        size="icon-sm"
-                        variant="ghost"
-                        onClick={() => minimiseWindow()}
-                        className="h-9 w-9 rounded-l-full"
-                    >
-                        <Minus className="h-4 w-4" />
-                    </Button>
-                    <Button
-                        size="icon-sm"
-                        variant="ghost"
-                        onClick={() => toggleMaximiseWindow()}
-                        className="h-9 w-9 rounded-none"
-                    >
-                        {isMaximised ? (
-                            <Copy className="h-3.5 w-3.5" />
-                        ) : (
-                            <Square className="h-3.5 w-3.5" />
-                        )}
-                    </Button>
-                    <Button
-                        size="icon-sm"
-                        variant="ghost"
-                        onClick={() => closeWindow()}
-                        className="h-9 w-9 rounded-r-full hover:bg-destructive hover:text-white"
-                    >
-                        <X className="h-4 w-4" />
-                    </Button>
-                </div>
-            )}
-
-            <div
-                className={cn(
-                    'pointer-events-auto relative flex h-11 items-center px-2 sm:px-4 mx-3 w-full md:w-auto rounded-full transition-all duration-300 border',
-                    'justify-between md:justify-start gap-1 md:gap-2',
-                    !overlay || scrolled
-                        ? 'border-border bg-background/60 backdrop-blur shadow-sm'
-                        : 'border-white/10 bg-background/20 backdrop-blur-md'
+                {overlay && !scrolled && (
+                    <div className="pointer-events-none absolute inset-0 -bottom-5 bg-linear-to-b from-background/70 to-transparent" />
                 )}
-                style={noDragStyle}
-            >
-                <div className="flex items-center gap-1 md:gap-2">
-                    {/* Logo */}
-                    {config?.showLogoInTopBar !== false && (
-                        <Link to="/" className="flex items-center shrink-0">
-                            <Avatar className="h-6 w-6 p-0.5 rounded-md">
-                                <AvatarImage src={logoSrc} alt="logo" />
-                                <AvatarFallback className="rounded-md text-xs">PE</AvatarFallback>
-                            </Avatar>
-                        </Link>
-                    )}
 
-                    {/* Desktop nav */}
-                    <nav className="hidden md:flex items-center gap-0.5">
-                        <Button asChild variant={navVariant('/')} size="sm">
-                            <Link to="/">
-                                <House className="h-4 w-4" />
-                                {t('home')}
-                            </Link>
-                        </Button>
-
-                        <Button asChild variant={navVariant('/library')} size="sm">
-                            <Link to="/library">
-                                <Library className="h-4 w-4" />
-                                {t('library')}
-                            </Link>
-                        </Button>
-
-                        {hasMusicLibrary && (
-                            <Button asChild variant={navVariant('/music')} size="sm">
-                                <Link to="/music">
-                                    <Music className="h-4 w-4" />
-                                    {t('music')}
-                                </Link>
-                            </Button>
+                {isDesktop && isMacOS() && (
+                    <div
+                        className={cn(
+                            'pointer-events-none absolute left-2 top-1/2 -translate-y-1/2 h-11 w-21 rounded-full border transition-all duration-300',
+                            !overlay || scrolled
+                                ? 'border-border bg-background/60 backdrop-blur shadow-sm'
+                                : 'border-white/10 bg-background/20 backdrop-blur-md'
                         )}
+                    />
+                )}
 
-                        {hasLiveTvLibrary && (
-                            <Button asChild variant="ghost" size="sm">
-                                <Link to="/live">
-                                    <Tv className="h-4 w-4" />
-                                    {t('live')}
-                                </Link>
-                            </Button>
+                {isDesktop && (
+                    <div
+                        className={cn(
+                            'pointer-events-auto absolute top-1/2 -translate-y-1/2 flex h-11 items-center px-1 w-full md:w-auto rounded-full transition-all duration-300 border',
+                            'justify-between md:justify-start gap-0.5',
+                            isMacOS() ? 'right-2' : 'left-2',
+                            !overlay || scrolled
+                                ? 'border-border bg-background/60 backdrop-blur shadow-sm'
+                                : 'border-white/10 bg-background/20 backdrop-blur-md'
                         )}
-
-                        <Button asChild variant={navVariant('/search')} size="sm">
-                            <Link to="/search">
-                                <Search className="h-4 w-4" />
-                                {t('search')}
-                            </Link>
-                        </Button>
-
-                        {config?.streamystatsUrl && config?.showStreamystatsButton && (
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() =>
-                                    config.streamystatsUrl &&
-                                    openExternalUrl(config.streamystatsUrl)
-                                }
-                                className="cursor-pointer"
-                            >
-                                <ChartLine className="h-4 w-4" />
-                                Streamystats
-                            </Button>
-                        )}
-
-                        {validLinks.map((link, i) => (
-                            <Button
-                                key={i}
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => openExternalUrl(link.url)}
-                                className="cursor-pointer"
-                            >
-                                <DynamicIcon
-                                    name={(link.icon || 'link-2') as IconName}
-                                    className="h-4 w-4"
-                                />
-                                {link.text}
-                            </Button>
-                        ))}
-                    </nav>
-
-                    {/* Mobile nav */}
-                    <nav className="flex md:hidden items-center gap-0.5">
-                        <Button asChild variant={navVariant('/')} size="icon" className="h-8 w-8">
-                            <Link to="/">
-                                <House className="h-4 w-4" />
-                            </Link>
-                        </Button>
-
+                        style={noDragStyle}
+                    >
                         <Button
-                            asChild
-                            variant={navVariant('/library')}
-                            size="icon"
-                            className="h-8 w-8"
+                            size="icon-sm"
+                            variant="ghost"
+                            onClick={goback}
+                            className="h-9 w-9 rounded-l-full"
                         >
-                            <Link to="/library">
-                                <Library className="h-4 w-4" />
-                            </Link>
+                            <ChevronLeft />
                         </Button>
+                        <Button
+                            size="icon-sm"
+                            variant="ghost"
+                            onClick={goforward}
+                            className="h-9 w-9 rounded-r-full"
+                        >
+                            <ChevronRight />
+                        </Button>
+                    </div>
+                )}
 
-                        {hasMusicLibrary && (
+                {isWindowsOrLinux && (
+                    <div
+                        className={cn(
+                            'pointer-events-auto absolute right-2 top-1/2 -translate-y-1/2 flex h-11 items-center px-1 rounded-full transition-all duration-300 border gap-0.5',
+                            !overlay || scrolled
+                                ? 'border-border bg-background/60 backdrop-blur shadow-sm'
+                                : 'border-white/10 bg-background/20 backdrop-blur-md'
+                        )}
+                        style={noDragStyle}
+                    >
+                        <Button
+                            size="icon-sm"
+                            variant="ghost"
+                            onClick={() => minimiseWindow()}
+                            className="h-9 w-9 rounded-l-full"
+                        >
+                            <Minus className="h-4 w-4" />
+                        </Button>
+                        <Button
+                            size="icon-sm"
+                            variant="ghost"
+                            onClick={() => toggleMaximiseWindow()}
+                            className="h-9 w-9 rounded-none"
+                        >
+                            {isMaximised ? (
+                                <Copy className="h-3.5 w-3.5" />
+                            ) : (
+                                <Square className="h-3.5 w-3.5" />
+                            )}
+                        </Button>
+                        <Button
+                            size="icon-sm"
+                            variant="ghost"
+                            onClick={() => closeWindow()}
+                            className="h-9 w-9 rounded-r-full hover:bg-destructive hover:text-white"
+                        >
+                            <X className="h-4 w-4" />
+                        </Button>
+                    </div>
+                )}
+
+                <div
+                    className={cn(
+                        'pointer-events-auto relative flex h-11 items-center px-2 sm:px-4 mx-3 w-full md:w-auto rounded-full transition-all duration-300 border',
+                        'justify-between md:justify-start gap-1 md:gap-2',
+                        !overlay || scrolled
+                            ? 'border-border bg-background/60 backdrop-blur shadow-sm'
+                            : 'border-white/10 bg-background/20 backdrop-blur-md'
+                    )}
+                    style={noDragStyle}
+                >
+                    <div className="flex items-center gap-1 md:gap-2">
+                        {/* Logo */}
+                        {config?.showLogoInTopBar !== false && (
+                            <Link to="/" className="flex items-center shrink-0">
+                                <Avatar className="h-6 w-6 p-0.5 rounded-md">
+                                    <AvatarImage src={logoSrc} alt="logo" />
+                                    <AvatarFallback className="rounded-md text-xs">
+                                        PE
+                                    </AvatarFallback>
+                                </Avatar>
+                            </Link>
+                        )}
+
+                        {/* Desktop nav */}
+                        <nav className="hidden md:flex items-center gap-0.5">
+                            <Button asChild variant={navVariant('/')} size="sm">
+                                <Link to="/">
+                                    <House className="h-4 w-4" />
+                                    {t('home')}
+                                </Link>
+                            </Button>
+
+                            <Button asChild variant={navVariant('/library')} size="sm">
+                                <Link to="/library">
+                                    <Library className="h-4 w-4" />
+                                    {t('library')}
+                                </Link>
+                            </Button>
+
+                            {hasMusicLibrary && (
+                                <Button asChild variant={navVariant('/music')} size="sm">
+                                    <Link to="/music">
+                                        <Music className="h-4 w-4" />
+                                        {t('music')}
+                                    </Link>
+                                </Button>
+                            )}
+
+                            {hasLiveTvLibrary && (
+                                <Button asChild variant="ghost" size="sm">
+                                    <Link to="/live">
+                                        <Tv className="h-4 w-4" />
+                                        {t('live')}
+                                    </Link>
+                                </Button>
+                            )}
+
+                            <Button asChild variant={navVariant('/search')} size="sm">
+                                <Link to="/search">
+                                    <Search className="h-4 w-4" />
+                                    {t('search')}
+                                </Link>
+                            </Button>
+
+                            {config?.streamystatsUrl && config?.showStreamystatsButton && (
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() =>
+                                        config.streamystatsUrl &&
+                                        openExternalUrl(config.streamystatsUrl)
+                                    }
+                                    className="cursor-pointer"
+                                >
+                                    <ChartLine className="h-4 w-4" />
+                                    Streamystats
+                                </Button>
+                            )}
+
+                            {validLinks.map((link, i) => (
+                                <Button
+                                    key={i}
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => openExternalUrl(link.url)}
+                                    className="cursor-pointer"
+                                >
+                                    <DynamicIcon
+                                        name={(link.icon || 'link-2') as IconName}
+                                        className="h-4 w-4"
+                                    />
+                                    {link.text}
+                                </Button>
+                            ))}
+                        </nav>
+
+                        {/* Mobile nav */}
+                        <nav className="flex md:hidden items-center gap-0.5">
                             <Button
                                 asChild
-                                variant={navVariant('/music')}
+                                variant={navVariant('/')}
                                 size="icon"
                                 className="h-8 w-8"
                             >
-                                <Link to="/music">
-                                    <Music className="h-4 w-4" />
+                                <Link to="/">
+                                    <House className="h-4 w-4" />
                                 </Link>
                             </Button>
-                        )}
 
-                        {hasLiveTvLibrary && (
-                            <Button asChild variant="ghost" size="icon" className="h-8 w-8">
-                                <Link to="/live">
-                                    <Tv className="h-4 w-4" />
-                                </Link>
-                            </Button>
-                        )}
-
-                        <Button
-                            asChild
-                            variant={navVariant('/search')}
-                            size="icon"
-                            className="h-8 w-8"
-                        >
-                            <Link to="/search">
-                                <Search className="h-4 w-4" />
-                            </Link>
-                        </Button>
-
-                        {validLinks.map((link, i) => (
                             <Button
-                                key={i}
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => openExternalUrl(link.url)}
+                                asChild
+                                variant={navVariant('/library')}
+                                size="icon"
+                                className="h-8 w-8"
                             >
-                                <DynamicIcon
-                                    name={(link.icon || 'link-2') as IconName}
-                                    className="h-4 w-4"
-                                />
+                                <Link to="/library">
+                                    <Library className="h-4 w-4" />
+                                </Link>
                             </Button>
-                        ))}
-                    </nav>
-                </div>
 
-                <UserMenu />
-            </div>
-        </header>
+                            {hasMusicLibrary && (
+                                <Button
+                                    asChild
+                                    variant={navVariant('/music')}
+                                    size="icon"
+                                    className="h-8 w-8"
+                                >
+                                    <Link to="/music">
+                                        <Music className="h-4 w-4" />
+                                    </Link>
+                                </Button>
+                            )}
+
+                            {hasLiveTvLibrary && (
+                                <Button asChild variant="ghost" size="icon" className="h-8 w-8">
+                                    <Link to="/live">
+                                        <Tv className="h-4 w-4" />
+                                    </Link>
+                                </Button>
+                            )}
+
+                            <Button
+                                asChild
+                                variant={navVariant('/search')}
+                                size="icon"
+                                className="h-8 w-8"
+                            >
+                                <Link to="/search">
+                                    <Search className="h-4 w-4" />
+                                </Link>
+                            </Button>
+
+                            {validLinks.map((link, i) => (
+                                <Button
+                                    key={i}
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => openExternalUrl(link.url)}
+                                >
+                                    <DynamicIcon
+                                        name={(link.icon || 'link-2') as IconName}
+                                        className="h-4 w-4"
+                                    />
+                                </Button>
+                            ))}
+                        </nav>
+                    </div>
+
+                    <UserMenu />
+                </div>
+            </header>
         </>
     );
 };

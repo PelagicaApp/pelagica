@@ -33,9 +33,7 @@ export function useTopBarScrollBehavior() {
 
     useEffect(() => {
         const nestedTargets = getNestedScrollTargets(scrollElement);
-        const scrollTargets = scrollElement
-            ? [scrollElement, ...nestedTargets]
-            : nestedTargets;
+        const scrollTargets = scrollElement ? [scrollElement, ...nestedTargets] : nestedTargets;
 
         let lastScrollTop = readScrollTop(scrollTargets);
 
