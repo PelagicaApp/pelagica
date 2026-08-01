@@ -3,6 +3,7 @@ import type { AppConfig } from '@/hooks/api/useConfig';
 import { useStatsConsent } from '@/hooks/api/statsConsent/useStatsConsent';
 import { useSetStatsConsent } from '@/hooks/api/statsConsent/useSetStatsConsent';
 import { StringInput, BooleanInput } from '../components/SettingsInputs';
+import { isDesktopApp } from '../../../utils/desktopApp';
 
 const StatsConsentSetting = () => {
     const { t } = useTranslation('settings');
@@ -26,6 +27,8 @@ export const GeneralTab = ({
     saveConfig: (updater: (prev: AppConfig) => AppConfig) => void;
 }) => {
     const { t } = useTranslation('settings');
+
+    const isDesktop = isDesktopApp();
 
     return (
         <div className="max-w-200">
@@ -109,6 +112,22 @@ export const GeneralTab = ({
                 }
             />
             <h2 className="mt-6 mb-2 text-xl font-semibold leading-none tracking-tight">
+                {t('show_logo_in_player_controls')}
+            </h2>
+            <p className="mb-2 text-sm text-muted-foreground">
+                {t('show_logo_in_player_controls_description')}
+            </p>
+            <BooleanInput
+                label={t('show_logo_in_player_controls_label')}
+                checked={config.showLogoInPlayerControls || false}
+                onChange={(checked) =>
+                    saveConfig((prev) => ({
+                        ...prev,
+                        showLogoInPlayerControls: checked,
+                    }))
+                }
+            />
+            <h2 className="mt-6 mb-2 text-xl font-semibold leading-none tracking-tight">
                 {t('login_page')}
             </h2>
             <p className="mb-2 text-sm text-muted-foreground">{t('login_page_description')}</p>
@@ -122,13 +141,17 @@ export const GeneralTab = ({
                     }))
                 }
             />
-            <h2 className="mt-6 mb-2 text-xl font-semibold leading-none tracking-tight">
-                {t('usage_statistics')}
-            </h2>
-            <p className="mb-2 text-sm text-muted-foreground">
-                {t('usage_statistics_description')}
-            </p>
-            <StatsConsentSetting />
+            {!isDesktop && (
+                <>
+                    <h2 className="mt-6 mb-2 text-xl font-semibold leading-none tracking-tight">
+                        {t('usage_statistics')}
+                    </h2>
+                    <p className="mb-2 text-sm text-muted-foreground">
+                        {t('usage_statistics_description')}
+                    </p>
+                    <StatsConsentSetting />
+                </>
+            )}
         </div>
     );
 };

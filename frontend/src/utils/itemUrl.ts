@@ -17,6 +17,7 @@ const STANDALONE_ROUTES: Partial<Record<BaseItemKind, string>> = {
     Person: '/person',
     Genre: '/genre',
     MusicGenre: '/genre',
+    Studio: '/studio',
 };
 
 export function getItemUrl(type: BaseItemKind | undefined, id: string | undefined): string {

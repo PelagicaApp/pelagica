@@ -1,28 +1,35 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, type CSSProperties } from 'react';
 import { Link, useNavigate } from 'react-router';
 import {
     ChartLine,
     Check,
     ChevronDown,
+    ChevronLeft,
+    ChevronRight,
     ChevronsUpDown,
+    Copy,
     DotIcon,
     ExternalLink,
     Fingerprint,
     Globe,
     House,
+    ImageIcon,
     Laptop,
     Library,
     LogIn,
     LogOut,
+    Minus,
     Moon,
     Music,
     Search,
     Settings,
     Settings2,
+    Square,
     Sun,
     Telescope,
     TriangleAlert,
     Tv,
+    X,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -94,6 +101,22 @@ import {
 import { useThemes } from '@/hooks/api/themes/useThemes';
 import { useQueryClient } from '@tanstack/react-query';
 import { SUPPORTED_LANGUAGES } from '../utils/supportedLanguages';
+import {
+    isDesktopApp,
+    isMacOS,
+    getAppIconOptions,
+    getAppIcon,
+    setAppIcon,
+    minimiseWindow,
+    toggleMaximiseWindow,
+    isWindowMaximised,
+    closeWindow,
+    onWindowMaximiseChange,
+    openExternalUrl,
+} from '../utils/desktopApp';
+import { ExternalAnchor } from './ExternalAnchor';
+
+const noDragStyle = { '--wails-draggable': 'no-drag' } as CSSProperties;
 
 const AuthorizeQuickConnectDialog = ({
     onAuthorize,
@@ -290,6 +313,19 @@ const UserMenu = () => {
     const { config } = useConfig();
     const { data: isSeerrLoggedIn } = useSeerrLoginStatus();
     const seerrLogout = useSeerrLogout();
+    const [appIconOptions, setAppIconOptions] = useState<string[]>([]);
+    const [selectedAppIcon, setSelectedAppIcon] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (!isDesktopApp()) return;
+        getAppIconOptions().then(setAppIconOptions);
+        getAppIcon().then(setSelectedAppIcon);
+    }, []);
+
+    const handleSelectAppIcon = (name: string) => {
+        setSelectedAppIcon(name);
+        setAppIcon(name);
+    };
 
     const onAuthorizeQuickConnect = (code: string) => {
         setQuickConnectLoading(true);
@@ -406,6 +442,37 @@ const UserMenu = () => {
                     </DropdownMenuPortal>
                 </DropdownMenuSub>
 
+                {/* App Icon (desktop app and macOS only) */}
+                {isDesktopApp() && isMacOS() && appIconOptions.length > 0 && (
+                    <DropdownMenuSub>
+                        <DropdownMenuSubTrigger>
+                            <ImageIcon className="text-muted-foreground" />
+                            {t('app_icon')}
+                        </DropdownMenuSubTrigger>
+                        <DropdownMenuPortal>
+                            <DropdownMenuSubContent>
+                                {appIconOptions.map((name) => (
+                                    <DropdownMenuItem
+                                        key={name}
+                                        onClick={() => handleSelectAppIcon(name)}
+                                    >
+                                        <img
+                                            src={`appicons/${name}.png`}
+                                            alt={t(`app_icon_${name}`)}
+                                            height={32}
+                                            width={32}
+                                        />
+                                        {t(`app_icon_${name}`)}
+                                        {selectedAppIcon === name && (
+                                            <Check className="ml-auto h-4 w-4" />
+                                        )}
+                                    </DropdownMenuItem>
+                                ))}
+                            </DropdownMenuSubContent>
+                        </DropdownMenuPortal>
+                    </DropdownMenuSub>
+                )}
+
                 {/* Preferences */}
                 <Dialog>
                     <DialogTrigger asChild>
@@ -516,15 +583,13 @@ const UserMenu = () => {
                             <DropdownMenuPortal>
                                 <DropdownMenuSubContent>
                                     <DropdownMenuItem asChild>
-                                        <a
+                                        <ExternalAnchor
                                             href={config.seerrUrl}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
                                             className="flex items-center gap-2"
                                         >
                                             <ExternalLink />
                                             {t('seerr_open')}
-                                        </a>
+                                        </ExternalAnchor>
                                     </DropdownMenuItem>
                                     {isSeerrLoggedIn === false ? (
                                         <SeerrLoginDialog
@@ -598,6 +663,10 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
     const { theme } = useTheme();
     const effectiveTheme = getEffectiveTheme(theme);
     const [scrolled, setScrolled] = useState(false);
+    const navigate = useNavigate();
+    const isDesktop = isDesktopApp();
+    const isWindowsOrLinux = isDesktop && !isMacOS();
+    const [isMaximised, setIsMaximised] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -610,6 +679,12 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
 
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    useEffect(() => {
+        if (!isWindowsOrLinux) return;
+        isWindowMaximised().then(setIsMaximised);
+        return onWindowMaximiseChange(setIsMaximised);
+    }, [isWindowsOrLinux]);
 
     const defaultLogo = effectiveTheme === 'dark' ? '/logo.svg' : '/logo-dark.svg';
     const configuredLogo =
@@ -626,20 +701,120 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
 
     const validLinks = config?.links?.filter((l) => l.url && l.text) ?? [];
 
+    const goback = () => {
+        navigate(-1);
+    };
+
+    const goforward = () => {
+        navigate(1);
+    };
+
     return (
-        <header className="fixed top-0 z-50 w-full flex justify-center pointer-events-none">
+        <header
+            className={cn(
+                'fixed top-0 z-50 w-full h-17 flex items-center justify-center',
+                isWindowsOrLinux ? 'pointer-events-auto' : 'pointer-events-none'
+            )}
+            style={
+                isWindowsOrLinux ? ({ '--wails-draggable': 'drag' } as CSSProperties) : undefined
+            }
+        >
             {overlay && !scrolled && (
-                <div className="absolute inset-0 -bottom-5 bg-linear-to-b from-background/70 to-transparent" />
+                <div className="pointer-events-none absolute inset-0 -bottom-5 bg-linear-to-b from-background/70 to-transparent" />
+            )}
+
+            {isDesktop && isMacOS() && (
+                <div
+                    className={cn(
+                        'pointer-events-none absolute left-2 top-1/2 -translate-y-1/2 h-11 w-21 rounded-full border transition-all duration-300',
+                        !overlay || scrolled
+                            ? 'border-border bg-background/60 backdrop-blur shadow-sm'
+                            : 'border-white/10 bg-background/20 backdrop-blur-md'
+                    )}
+                />
+            )}
+
+            {isDesktop && (
+                <div
+                    className={cn(
+                        'pointer-events-auto absolute top-1/2 -translate-y-1/2 flex h-11 items-center px-1 w-full md:w-auto rounded-full transition-all duration-300 border',
+                        'justify-between md:justify-start gap-0.5',
+                        isMacOS() ? 'right-2' : 'left-2',
+                        !overlay || scrolled
+                            ? 'border-border bg-background/60 backdrop-blur shadow-sm'
+                            : 'border-white/10 bg-background/20 backdrop-blur-md'
+                    )}
+                    style={noDragStyle}
+                >
+                    <Button
+                        size="icon-sm"
+                        variant="ghost"
+                        onClick={goback}
+                        className="h-9 w-9 rounded-l-full"
+                    >
+                        <ChevronLeft />
+                    </Button>
+                    <Button
+                        size="icon-sm"
+                        variant="ghost"
+                        onClick={goforward}
+                        className="h-9 w-9 rounded-r-full"
+                    >
+                        <ChevronRight />
+                    </Button>
+                </div>
+            )}
+
+            {isWindowsOrLinux && (
+                <div
+                    className={cn(
+                        'pointer-events-auto absolute right-2 top-1/2 -translate-y-1/2 flex h-11 items-center px-1 rounded-full transition-all duration-300 border gap-0.5',
+                        !overlay || scrolled
+                            ? 'border-border bg-background/60 backdrop-blur shadow-sm'
+                            : 'border-white/10 bg-background/20 backdrop-blur-md'
+                    )}
+                    style={noDragStyle}
+                >
+                    <Button
+                        size="icon-sm"
+                        variant="ghost"
+                        onClick={() => minimiseWindow()}
+                        className="h-9 w-9 rounded-l-full"
+                    >
+                        <Minus className="h-4 w-4" />
+                    </Button>
+                    <Button
+                        size="icon-sm"
+                        variant="ghost"
+                        onClick={() => toggleMaximiseWindow()}
+                        className="h-9 w-9 rounded-none"
+                    >
+                        {isMaximised ? (
+                            <Copy className="h-3.5 w-3.5" />
+                        ) : (
+                            <Square className="h-3.5 w-3.5" />
+                        )}
+                    </Button>
+                    <Button
+                        size="icon-sm"
+                        variant="ghost"
+                        onClick={() => closeWindow()}
+                        className="h-9 w-9 rounded-r-full hover:bg-destructive hover:text-white"
+                    >
+                        <X className="h-4 w-4" />
+                    </Button>
+                </div>
             )}
 
             <div
                 className={cn(
-                    'pointer-events-auto relative flex h-11 items-center px-2 sm:px-4 mx-3 w-full md:w-auto mt-3 rounded-full transition-all duration-300 border',
+                    'pointer-events-auto relative flex h-11 items-center px-2 sm:px-4 mx-3 w-full md:w-auto rounded-full transition-all duration-300 border',
                     'justify-between md:justify-start gap-1 md:gap-2',
                     !overlay || scrolled
                         ? 'border-border bg-background/60 backdrop-blur shadow-sm'
                         : 'border-white/10 bg-background/20 backdrop-blur-md'
                 )}
+                style={noDragStyle}
             >
                 <div className="flex items-center gap-1 md:gap-2">
                     {/* Logo */}
@@ -698,11 +873,8 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
                                 variant="ghost"
                                 size="sm"
                                 onClick={() =>
-                                    window.open(
-                                        config.streamystatsUrl,
-                                        '_blank',
-                                        'noopener,noreferrer'
-                                    )
+                                    config.streamystatsUrl &&
+                                    openExternalUrl(config.streamystatsUrl)
                                 }
                                 className="cursor-pointer"
                             >
@@ -716,9 +888,7 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
                                 key={i}
                                 variant="ghost"
                                 size="sm"
-                                onClick={() =>
-                                    window.open(link.url, '_blank', 'noopener,noreferrer')
-                                }
+                                onClick={() => openExternalUrl(link.url)}
                                 className="cursor-pointer"
                             >
                                 <DynamicIcon
@@ -771,9 +941,7 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
                                 key={i}
                                 variant="ghost"
                                 size="sm"
-                                onClick={() =>
-                                    window.open(link.url, '_blank', 'noopener,noreferrer')
-                                }
+                                onClick={() => openExternalUrl(link.url)}
                             >
                                 <DynamicIcon
                                     name={(link.icon || 'link-2') as IconName}

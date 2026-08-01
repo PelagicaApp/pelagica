@@ -30,6 +30,7 @@ import { useRequestSeerrItem } from '@/hooks/api/useRequestSeerrItem';
 import { getSeerrItemBackdropUrl, getSeerrItemPosterUrl, getSeerrItemUrl } from '@/utils/seerUrls';
 import { SeerrMediaStatus, SeerrRequestStatus, type SeerrMediaType } from '@/api/seerr/types';
 import type { SeerrDialogItem } from '@/context/SeerrItemDialogContext';
+import { ExternalAnchor } from '@/components/ExternalAnchor';
 
 interface SeerrItemDialogProps {
     item: SeerrDialogItem | null;
@@ -289,14 +290,10 @@ const SeerrItemDialog = ({ item, open, onOpenChange }: SeerrItemDialogProps) => 
                                     )}
                                     {trailerUrl && (
                                         <Button variant="secondary" size="sm" asChild>
-                                            <a
-                                                href={trailerUrl}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                            >
+                                            <ExternalAnchor href={trailerUrl}>
                                                 <Film />
                                                 {t('seerr_watch_trailer')}
-                                            </a>
+                                            </ExternalAnchor>
                                         </Button>
                                     )}
                                 </div>
@@ -390,18 +387,16 @@ const SeerrItemDialog = ({ item, open, onOpenChange }: SeerrItemDialogProps) => 
                     <DialogFooter>
                         {seerrUrl && item && (
                             <Button variant="outline" asChild>
-                                <a
+                                <ExternalAnchor
                                     href={getSeerrItemUrl({
                                         seerrUrl,
                                         tmdbId: item.id,
                                         mediaType: item.mediaType,
                                     })}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
                                 >
                                     {t('seerr_open_in_seerr')}
                                     <ExternalLink />
-                                </a>
+                                </ExternalAnchor>
                             </Button>
                         )}
                         {details?.mediaInfo?.jellyfinMediaId && (

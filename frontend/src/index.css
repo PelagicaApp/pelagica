@@ -17,6 +17,12 @@ body {
     /* background-color: tomato; */
 }
 
+img,
+video {
+    -webkit-user-drag: none;
+    user-drag: none;
+}
+
 .backdrop-blur {
     -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(5px);

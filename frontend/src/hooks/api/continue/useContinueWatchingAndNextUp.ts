@@ -55,17 +55,8 @@ export function useContinueWatchingAndNextUp(
             const resumeItems = resumeResponse.data.Items || [];
             const nextUpItems = nextUpResponse.data.Items || [];
             const continueWatchingItems = [...resumeItems, ...nextUpItems];
-            console.log(
-                'Continue Watching & Next Up Items:',
-                continueWatchingItems.map((i) => ({
-                    id: i.Id,
-                    name: i.Name,
-                    lastPlayed: i.UserData?.LastPlayedDate,
-                }))
-            );
 
             if (accurateSorting) {
-                // For episodes without LastPlayedDate, try to infer it from the previous episode
                 const itemsNeedingAdjacentData = continueWatchingItems.filter(
                     (item) =>
                         item.Type === 'Episode' &&
@@ -74,29 +65,35 @@ export function useContinueWatchingAndNextUp(
                         item.IndexNumber
                 );
 
-                const adjacentPromises = itemsNeedingAdjacentData.map((item) =>
-                    tvShowsApi
-                        .getEpisodes({
-                            seriesId: item.SeriesId!,
-                            userId: userId!,
-                            adjacentTo: item.Id,
-                            limit: 3,
-                            fields: ['Overview', 'MediaSources', 'PrimaryImageAspectRatio'],
-                            enableUserData: true,
-                            enableImages: true,
-                        })
-                        .then((response) => ({ item, response }))
-                        .catch(() => null)
+                // Group by series so each series is hit once
+                const seriesIds = [
+                    ...new Set(itemsNeedingAdjacentData.map((item) => item.SeriesId!)),
+                ];
+
+                const seriesEpisodesMap = new Map<string, BaseItemDto[]>();
+
+                await Promise.all(
+                    seriesIds.map(async (seriesId) => {
+                        try {
+                            const response = await tvShowsApi.getEpisodes({
+                                seriesId,
+                                userId: userId!,
+                                enableUserData: true,
+                                enableImages: false,
+                            });
+                            seriesEpisodesMap.set(seriesId, response.data.Items || []);
+                        } catch {
+                            // Ignore
+                        }
+                    })
                 );
 
-                const results = await Promise.all(adjacentPromises);
+                itemsNeedingAdjacentData.forEach((item) => {
+                    const episodes = seriesEpisodesMap.get(item.SeriesId!);
+                    if (!episodes) return;
 
-                results.forEach((result) => {
-                    if (!result) return;
-                    const { item, response } = result;
-                    const items = response.data.Items || [];
-                    const currentItemIndex = items.findIndex((ep) => ep.Id === item.Id);
-                    const previousEpisode = items[currentItemIndex - 1];
+                    const currentItemIndex = episodes.findIndex((ep) => ep.Id === item.Id);
+                    const previousEpisode = episodes[currentItemIndex - 1];
 
                     if (previousEpisode?.UserData?.LastPlayedDate) {
                         item.UserData = item.UserData || {};

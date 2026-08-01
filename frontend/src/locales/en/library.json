@@ -7,5 +7,10 @@
     "sort_premiere_date": "Premiere Date",
     "sort_community_rating": "Community Rating",
     "sort_critic_rating": "Critic Rating",
-    "sort_runtime": "Runtime"
+    "sort_runtime": "Runtime",
+    "no_studios_found_title": "No studios found",
+    "no_studios_found_for_search": "No studios found for '{{search}}'.",
+    "no_studios_found": "There are no studios in this library.",
+    "clear_search": "Clear search",
+    "studios_search_placeholder": "Search studios..."
 }

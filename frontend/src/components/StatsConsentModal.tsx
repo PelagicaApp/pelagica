@@ -11,6 +11,7 @@ import {
     DialogTitle,
 } from './ui/dialog';
 import { Trans, useTranslation } from 'react-i18next';
+import { ExternalAnchor } from './ExternalAnchor';
 
 const StatsConsentModal = () => {
     const { t } = useTranslation('common');
@@ -39,10 +40,8 @@ const StatsConsentModal = () => {
                             i18nKey="stats_consent_message"
                             components={{
                                 anchor: (
-                                    <a
+                                    <ExternalAnchor
                                         href="https://stats.pelagica.app"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
                                         className="underline"
                                     />
                                 ),

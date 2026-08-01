@@ -12,6 +12,7 @@ import type { SeerrSearchResultItem } from '@/api/seerr/types';
 import { SeerrRecommendationPoster } from '../Item/SeerrRecommendationsRow';
 import { ChevronRight } from 'lucide-react';
 import { useConfig } from '../../hooks/api/useConfig';
+import { ExternalAnchor } from '@/components/ExternalAnchor';
 
 interface SeerrDiscoverRowProps {
     title?: React.ReactNode;
@@ -66,15 +67,13 @@ const SeerrDiscoverRowBase = ({
         <SectionScroller
             title={
                 allLink ? (
-                    <a
+                    <ExternalAnchor
                         href={allLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
                         className="flex items-center gap-1 group cursor-pointer w-fit transition-colors"
                     >
                         <h2 className="text-2xl font-bold">{title}</h2>
                         <ChevronRight className="w-7 h-7 opacity-50 group-hover:opacity-100 transition-opacity" />
-                    </a>
+                    </ExternalAnchor>
                 ) : (
                     <h2 className="text-2xl font-bold flex items-center gap-2">{title}</h2>
                 )

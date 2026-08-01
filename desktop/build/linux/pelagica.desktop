@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Pelagica
+Exec=pelagica %u
+Icon=pelagica
+Categories=Video;AudioVideo;
+Comment=Watch Movies and TV Shows from your Jellyfin server.
+Terminal=false
+Version=1.0
+StartupNotify=false

@@ -1,0 +1,15 @@
+{
+	"fixed": {
+		"file_version": "3.2.0"
+	},
+	"info": {
+		"0000": {
+			"ProductVersion": "3.2.0",
+			"CompanyName": "Pelagica",
+			"FileDescription": "Watch Movies and TV Shows from your Jellyfin server.",
+			"LegalCopyright": "© Pelagica",
+			"ProductName": "Pelagica",
+			"Comments": "This is a comment"
+		}
+	}
+}

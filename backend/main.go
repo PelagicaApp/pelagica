@@ -7,6 +7,7 @@ import (
 	"pelagica-backend/collector"
 	"pelagica-backend/handlers"
 	"pelagica-backend/logging"
+	"pelagica-backend/services"
 	"strings"
 
 	"github.com/gofiber/fiber/v3"
@@ -36,6 +37,12 @@ func main() {
 		defer job.Stop()
 	}
 
+	services.InitStudiosDB()
+	studiosDBJob := services.RegisterStudiosDBRefreshJob()
+	if studiosDBJob != nil {
+		defer studiosDBJob.Stop()
+	}
+
 	var protected fiber.Handler
 	if isAuthEnabled() {
 		protected = handlers.AuthMiddleware
@@ -47,10 +54,8 @@ func main() {
 	api := app.Group("/api")
 
 	api.Get("/config", handlers.GetConfig)
-	api.Post("/config", protected, handlers.UpdateConfig)
+	api.Get("/server-address", handlers.GetServerAddress)
 	api.Get("/branding/logo/:mode", handlers.GetBrandingLogo)
-	api.Post("/branding/logo/:mode", protected, handlers.UploadBrandingLogo)
-	api.Delete("/branding/logo/:mode", protected, handlers.ResetBrandingLogo)
 
 	api.Get("/themes", handlers.GetThemes)
 	api.Post("/themes", protected, handlers.CreateTheme)
@@ -60,7 +65,8 @@ func main() {
 	api.Post("/themes/:id/install", protected, handlers.InstallTheme)
 
 	api.Get("/studios", handlers.GetStudios)
-	api.Get("/studios/:name/thumb", handlers.GetStudioThumb)
+	api.Get("/studios/health", handlers.GetStudiosHealth)
+	api.Get("/studios/:name/logo", handlers.GetStudioLogo)
 
 	api.Get("/stats-consent", handlers.GetStatsConsent)
 	api.Post("/stats-consent", handlers.PostStatsConsent)
