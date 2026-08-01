@@ -71,6 +71,8 @@ import {
 } from '@/components/ui/select';
 import { useThemes } from '@/hooks/api/themes/useThemes';
 import { useQueryClient } from '@tanstack/react-query';
+import { Switch } from '@/components/ui/switch';
+import { useTopBarNavHighlight } from '@/hooks/useTopBarNavHighlight';
 
 const FlagIcon = ({ countryCode }: { countryCode: string }) => {
     const flagUrl = `https://flagcdn.com/${countryCode.toLowerCase()}.svg`;
@@ -285,6 +287,7 @@ export function NavUser() {
         getLocalTheme() ?? LOCAL_THEME_SERVER_DEFAULT
     );
     const { data: themes, isLoading: isLoadingThemes } = useThemes();
+    const { highlightActivePage, setHighlightActivePage } = useTopBarNavHighlight();
 
     const onAuthorizeQuickConnect = (code: string) => {
         setAuthorizeQuickConnectLoading(true);
@@ -536,6 +539,15 @@ export function NavUser() {
                                             )}
                                         </SelectContent>
                                     </Select>
+                                </div>
+                                <div className="flex items-center justify-between gap-4">
+                                    <Label className="text-sm font-medium">
+                                        {t('topbar_highlight_active_page')}
+                                    </Label>
+                                    <Switch
+                                        checked={highlightActivePage}
+                                        onCheckedChange={setHighlightActivePage}
+                                    />
                                 </div>
                             </DialogContent>
                         </Dialog>

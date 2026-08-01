@@ -11,5 +11,6 @@
     "preferences": "Preferências",
     "audio_language_preference": "Preferência de idioma de áudio",
     "subtitle_language_preference": "Preferência de idioma de legenda",
-    "select_language": "Selecionar idioma"
+    "select_language": "Selecionar idioma",
+    "topbar_highlight_active_page": "Destacar a página ativa na barra superior"
 }

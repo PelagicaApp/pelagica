@@ -61,6 +61,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import { useCurrentUser } from '@/hooks/api/useCurrentUser';
 import { useUserViews } from '@/hooks/api/useUserViews';
 import { useConfig } from '@/hooks/api/useConfig';
@@ -86,6 +87,7 @@ import {
 import { useThemes } from '@/hooks/api/themes/useThemes';
 import { useQueryClient } from '@tanstack/react-query';
 import { SUPPORTED_LANGUAGES } from '../utils/supportedLanguages';
+import { useTopBarNavHighlight } from '@/hooks/useTopBarNavHighlight';
 
 const AuthorizeQuickConnectDialog = ({
     onAuthorize,
@@ -279,6 +281,7 @@ const UserMenu = () => {
         getLocalTheme() ?? LOCAL_THEME_SERVER_DEFAULT
     );
     const { data: themes, isLoading: isLoadingThemes } = useThemes();
+    const { highlightActivePage, setHighlightActivePage } = useTopBarNavHighlight();
 
     const onAuthorizeQuickConnect = (code: string) => {
         setQuickConnectLoading(true);
@@ -478,6 +481,16 @@ const UserMenu = () => {
                                 </SelectContent>
                             </Select>
                         </div>
+                        <div className="flex items-center justify-between gap-4">
+                            <Label htmlFor="topbar-nav-highlight" className="text-sm font-medium">
+                                {t('topbar_highlight_active_page')}
+                            </Label>
+                            <Switch
+                                id="topbar-nav-highlight"
+                                checked={highlightActivePage}
+                                onCheckedChange={setHighlightActivePage}
+                            />
+                        </div>
                     </DialogContent>
                 </Dialog>
 
@@ -526,10 +539,15 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
     const effectiveTheme = getEffectiveTheme(theme);
     const [scrolled, setScrolled] = useState(false);
     const location = useLocation();
+    const { highlightActivePage } = useTopBarNavHighlight();
 
     function isActive(path: string) {
         if (path === '/') return location.pathname === '/';
         return location.pathname.startsWith(path);
+    }
+
+    function navVariant(path: string): 'secondary' | 'ghost' {
+        return highlightActivePage && isActive(path) ? 'secondary' : 'ghost';
     }
 
     useEffect(() => {
@@ -586,7 +604,7 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
 
                     {/* Desktop nav */}
                     <nav className="hidden md:flex items-center gap-0.5">
-                        <Button asChild variant={isActive('/') ? 'secondary' : 'ghost'} size="sm">
+                        <Button asChild variant={navVariant('/')} size="sm">
                             <Link to="/">
                                 <House className="h-4 w-4" />
                                 {t('home')}
@@ -595,7 +613,7 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
 
                         <Button
                             asChild
-                            variant={isActive('/library') ? 'secondary' : 'ghost'}
+                            variant={navVariant('/library')}
                             size="sm"
                         >
                             <Link to="/library">
@@ -607,7 +625,7 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
                         {hasMusicLibrary && (
                             <Button
                                 asChild
-                                variant={isActive('/music') ? 'secondary' : 'ghost'}
+                                variant={navVariant('/music')}
                                 size="sm"
                             >
                                 <Link to="/music">
@@ -619,7 +637,7 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
 
                         <Button
                             asChild
-                            variant={isActive('/search') ? 'secondary' : 'ghost'}
+                            variant={navVariant('/search')}
                             size="sm"
                         >
                             <Link to="/search">
@@ -669,7 +687,7 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
                     <nav className="flex md:hidden items-center gap-0.5">
                         <Button
                             asChild
-                            variant={isActive('/') ? 'secondary' : 'ghost'}
+                            variant={navVariant('/')}
                             size="icon"
                             className="h-8 w-8"
                         >
@@ -680,7 +698,7 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
 
                         <Button
                             asChild
-                            variant={isActive('/library') ? 'secondary' : 'ghost'}
+                            variant={navVariant('/library')}
                             size="icon"
                             className="h-8 w-8"
                         >
@@ -692,7 +710,7 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
                         {hasMusicLibrary && (
                             <Button
                                 asChild
-                                variant={isActive('/music') ? 'secondary' : 'ghost'}
+                                variant={navVariant('/music')}
                                 size="icon"
                                 className="h-8 w-8"
                             >
@@ -704,7 +722,7 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
 
                         <Button
                             asChild
-                            variant={isActive('/search') ? 'secondary' : 'ghost'}
+                            variant={navVariant('/search')}
                             size="icon"
                             className="h-8 w-8"
                         >

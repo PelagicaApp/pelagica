@@ -21,5 +21,6 @@
     "theme_preference": "Theme Preference",
     "select_theme": "Select theme",
     "server_default": "Server Default",
-    "pelagica_default": "Pelagica Default"
+    "pelagica_default": "Pelagica Default",
+    "topbar_highlight_active_page": "Highlight active page in top bar"
 }

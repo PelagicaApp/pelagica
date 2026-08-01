@@ -20,5 +20,6 @@
     "theme_preference": "Préférence de thème",
     "select_theme": "Sélectionner un thème",
     "server_default": "Par défaut du serveur",
-    "pelagica_default": "Par défaut de Pelagica"
+    "pelagica_default": "Par défaut de Pelagica",
+    "topbar_highlight_active_page": "Mettre en surbrillance la page active dans la barre supérieure"
 }
