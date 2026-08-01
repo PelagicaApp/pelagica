@@ -2,6 +2,7 @@ import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { Button } from './ui/button';
 import { ChevronDown, ExternalLink, Film } from 'lucide-react';
 import { Link, useLocation } from 'react-router';
+import { ExternalAnchor } from './ExternalAnchor';
 import { buildPlayerUrl } from '@/utils/playerUrl';
 import { useLocalTrailers } from '@/hooks/api/useLocalTrailers';
 import { ButtonGroup } from './ui/button-group';
@@ -41,10 +42,10 @@ const TrailerLink = forwardRef<
     }
 
     return (
-        <a href={trailer.url} target="_blank" rel="noopener noreferrer" ref={ref} {...props}>
+        <ExternalAnchor href={trailer.url} ref={ref} {...props}>
             <Icon />
             <span>{showName ? trailer.name : t('trailer')}</span>
-        </a>
+        </ExternalAnchor>
     );
 });
 

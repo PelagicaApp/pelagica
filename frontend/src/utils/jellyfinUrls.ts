@@ -195,6 +195,7 @@ export function getVideoStreamUrl(
     options: {
         playSessionId?: string;
         audioStreamIndex?: number;
+        mediaSourceId?: string;
     }
 ) {
     try {
@@ -203,7 +204,7 @@ export function getVideoStreamUrl(
 
         const url = new URL(creds.server);
         url.pathname = `/videos/${itemId}/master.m3u8`;
-        url.searchParams.append('MediaSourceId', itemId);
+        url.searchParams.append('MediaSourceId', options.mediaSourceId || itemId);
         url.searchParams.append('ApiKey', creds.token);
         url.searchParams.append('VideoCodec', getSupportedVideoCodecs());
         url.searchParams.append('AudioCodec', 'aac');
@@ -303,8 +304,12 @@ export function getPlaybackStreamUrl(
         const path = options.transcodingUrl.startsWith('/')
             ? options.transcodingUrl
             : `/${options.transcodingUrl}`;
+        const url = new URL(`${base}${path}`);
+        if (options.audioStreamIndex !== undefined) {
+            url.searchParams.set('AudioStreamIndex', options.audioStreamIndex.toString());
+        }
         return {
-            url: `${base}${path}`,
+            url: url.toString(),
             mimeType: 'application/x-mpegURL',
         };
     }
@@ -313,6 +318,7 @@ export function getPlaybackStreamUrl(
         url: getVideoStreamUrl(itemId, {
             audioStreamIndex: options.audioStreamIndex,
             playSessionId: options.playSessionId,
+            mediaSourceId: options.mediaSourceId,
         }),
         mimeType: 'application/x-mpegURL',
     };
@@ -322,7 +328,7 @@ export function getSubtitleUrl(
     itemId: string,
     mediaSourceId: string,
     subtitleStreamIndex: number,
-    format: 'vtt' | 'srt' = 'vtt'
+    format: 'vtt' | 'srt' | 'ass' | 'ssa' = 'vtt'
 ) {
     try {
         const creds = resolveCredentials();
@@ -330,6 +336,20 @@ export function getSubtitleUrl(
 
         const url = new URL(creds.server);
         url.pathname = `/Videos/${itemId}/${mediaSourceId}/Subtitles/${subtitleStreamIndex}/0/Stream.${format}`;
+        url.searchParams.append('ApiKey', creds.token);
+
+        return url.toString();
+    } catch {
+        return '';
+    }
+}
+
+export function getAttachmentUrl(deliveryUrl: string) {
+    try {
+        const creds = resolveCredentials();
+        if (!creds) return '';
+
+        const url = new URL(deliveryUrl, creds.server);
         url.searchParams.append('ApiKey', creds.token);
 
         return url.toString();
@@ -385,6 +405,7 @@ export function getDownloadurl(itemId: string) {
     }
 }
 
-export function getStudioImageUrl(studioName: string) {
-    return `/api/studios/${encodeURIComponent(studioName)}/thumb`;
+export function getStudioImageUrl(studioName: string, monoColor: string, monoColor2: string) {
+    const params = new URLSearchParams({ mono: 'true', color: monoColor, color2: monoColor2 });
+    return `/api/studios/${encodeURIComponent(studioName)}/logo?${params.toString()}`;
 }

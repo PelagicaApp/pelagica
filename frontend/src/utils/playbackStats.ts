@@ -6,6 +6,7 @@ interface PlaybackInfo {
     player: string;
     transcoding: boolean;
     protocol: 'http' | 'https' | 'data' | 'unknown';
+    live: boolean;
 }
 
 interface VideoInfo {
@@ -79,6 +80,7 @@ export const getRuntimePlaybackStats = (
             player: 'Html Video Player',
             protocol: protocol,
             transcoding: session.TranscodingInfo !== null && session.TranscodingInfo !== undefined,
+            live: item.Type === 'TvChannel',
         },
         videoInfo: {
             playerDimensions: {

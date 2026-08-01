@@ -30,6 +30,7 @@ export function useItem(
                     'MediaSources',
                     'Path',
                     'LocalTrailerCount',
+                    'ProviderIds',
                 ],
                 enableUserData,
                 userId,

@@ -6,6 +6,7 @@ import PeopleRow from './PeopleRow';
 import { useTranslation } from 'react-i18next';
 import { Skeleton } from '@/components/ui/skeleton';
 import MoreLikeThisRow from './MoreLikeThisRow';
+import SeerRecommendationsRow from './SeerrRecommendationsRow';
 import type { AppConfig } from '@/hooks/api/useConfig';
 import DetailBadges from './DetailBadges';
 import MediaInfoDialog from '../../components/MediaInfoDialog';
@@ -14,6 +15,7 @@ import WatchListButton from '../../components/WatchlistButton';
 import PlayStateButton from '../../components/PlayStateButton';
 import { getUserId } from '@/utils/localstorageCredentials';
 import ItemAdminButton from '@/components/ItemAdminButton';
+import SeerrItemButton from '@/components/SeerrItemButton';
 import { useState } from 'react';
 import { TrailerButton } from '../../components/TrailerButton';
 import ItemDownloadButton from '../../components/ItemDownloadButton';
@@ -44,6 +46,9 @@ const MoviePage = ({ item, config }: MoviePageProps) => {
             name={item.Name || ''}
             showLogo={false}
             topPadding={false}
+            hasLocalTrailers={
+                (item.LocalTrailerCount ?? 0) > 0 && !!config.itemPage?.autoPlayTrailers
+            }
         >
             <div className="pt-24 sm:pt-32 pb-12 mx-auto w-full flex flex-col gap-12">
                 <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start relative z-10 w-full">
@@ -123,6 +128,9 @@ const MoviePage = ({ item, config }: MoviePageProps) => {
                                 showDownloadButton={config.itemPage?.showDownloadButton}
                             />
                             <MediaInfoDialog streams={item.MediaStreams || []} path={item.Path} />
+                            {config.seerrUrl && item.ProviderIds?.Tmdb && (
+                                <SeerrItemButton tmdbId={item.ProviderIds.Tmdb} mediaType="movie" />
+                            )}
                             <ItemAdminButton item={item} showSubtitlesButton={true} />
                         </div>
 
@@ -140,6 +148,13 @@ const MoviePage = ({ item, config }: MoviePageProps) => {
                     title={<h3 className="text-3xl font-bold">{t('more_like_this')}</h3>}
                     itemId={item.Id || ''}
                 />
+                {config.seerrUrl && item.ProviderIds?.Tmdb && (
+                    <SeerRecommendationsRow
+                        title={<h3 className="text-3xl font-bold">{t('recommendations')}</h3>}
+                        tmdbId={item.ProviderIds.Tmdb}
+                        mediaType="movie"
+                    />
+                )}
             </div>
         </BaseMediaPage>
     );

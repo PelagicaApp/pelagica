@@ -19,6 +19,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import PeopleRow from './PeopleRow';
 import BaseMediaPage from './BaseMediaPage';
 import MoreLikeThisRow from './MoreLikeThisRow';
+import SeerRecommendationsRow from './SeerrRecommendationsRow';
 import { type AppConfig } from '@/hooks/api/useConfig';
 import DetailBadges from './DetailBadges';
 import EpisodesDisplay from './EpisodesDisplay';
@@ -27,6 +28,7 @@ import WatchListButton from '../../components/WatchlistButton';
 import PlayStateButton from '../../components/PlayStateButton';
 import { getUserId } from '@/utils/localstorageCredentials';
 import ItemAdminButton from '@/components/ItemAdminButton';
+import SeerrItemButton from '@/components/SeerrItemButton';
 import { TrailerButton } from '../../components/TrailerButton';
 import { useUpcomingEpisodes } from '../../hooks/api/useUpcomingEpisodes';
 import UpcomingEpisodeComponent from './UpcomingEpisodeComponent';
@@ -72,6 +74,9 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
             name={item.Name || ''}
             showLogo={false}
             topPadding={false}
+            hasLocalTrailers={
+                (item.LocalTrailerCount ?? 0) > 0 && !!config.itemPage?.autoPlayTrailers
+            }
         >
             <div className="pt-24 sm:pt-32 pb-12 mx-auto w-full flex flex-col gap-12">
                 <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start relative z-10 w-full">
@@ -168,6 +173,9 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
                                 showWatchlistButton={config.itemPage?.showWatchlistButton}
                             />
                             <PlayStateButton itemId={item.Id || ''} userId={getUserId() || ''} />
+                            {config.seerrUrl && item.ProviderIds?.Tmdb && (
+                                <SeerrItemButton tmdbId={item.ProviderIds.Tmdb} mediaType="tv" />
+                            )}
                             <ItemAdminButton item={item} />
                         </div>
 
@@ -238,6 +246,13 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
                     title={<h3 className="text-3xl font-bold">{t('more_like_this')}</h3>}
                     itemId={item.Id || ''}
                 />
+                {config.seerrUrl && item.ProviderIds?.Tmdb && (
+                    <SeerRecommendationsRow
+                        title={<h3 className="text-3xl font-bold">{t('recommendations')}</h3>}
+                        tmdbId={item.ProviderIds.Tmdb}
+                        mediaType="tv"
+                    />
+                )}
             </div>
         </BaseMediaPage>
     );

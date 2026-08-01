@@ -6,7 +6,7 @@ import { RotateCcw } from 'lucide-react';
 import { toast } from 'sonner';
 import type { AppConfig } from '@/hooks/api/useConfig';
 import { getServerUrl } from '@/utils/localstorageCredentials';
-import { getAuthorizationHeader } from '@/api/getApi';
+import { getPluginLogoUrl, uploadPluginLogo } from '@/api/pelagicaPlugin';
 import FileDropInput from '@/components/FileDropInput';
 import { StringInput, BooleanInput } from '../components/SettingsInputs';
 
@@ -22,48 +22,19 @@ export const BrandingTab = ({
     const [logoDarkFile, setLogoDarkFile] = useState<File | null>(null);
 
     const handleBrandingLogoUpload = async (mode: 'light' | 'dark', file: File) => {
-        const formData = new FormData();
-        formData.append('logo', file);
-
-        const jellyfinUrl = getServerUrl() || '';
-        const response = await fetch(
-            `/api/branding/logo/${mode}?jellyfin_url=${encodeURIComponent(jellyfinUrl)}`,
-            {
-                method: 'POST',
-                headers: {
-                    Authorization: getAuthorizationHeader(),
-                },
-                body: formData,
-            }
-        );
-
-        if (!response.ok) {
-            throw new Error(`Failed to upload ${mode} logo`);
+        const serverUrl = getServerUrl();
+        if (!serverUrl) {
+            throw new Error('Server URL not set');
         }
 
-        const payload = (await response.json()) as { url?: string };
-        const uploadedUrl = payload.url ? `${payload.url}&v=${Date.now()}` : '';
+        await uploadPluginLogo(serverUrl, mode, file);
 
+        const uploadedUrl = `${getPluginLogoUrl(serverUrl, mode)}?v=${Date.now()}`;
         const key = mode === 'light' ? 'logoLightUrl' : 'logoDarkUrl';
         saveConfig((prev) => ({ ...prev, [key]: uploadedUrl }));
     };
 
-    const handleResetBrandingLogo = async (mode: 'light' | 'dark') => {
-        const jellyfinUrl = getServerUrl() || '';
-        const response = await fetch(
-            `/api/branding/logo/${mode}?jellyfin_url=${encodeURIComponent(jellyfinUrl)}`,
-            {
-                method: 'DELETE',
-                headers: {
-                    Authorization: getAuthorizationHeader(),
-                },
-            }
-        );
-
-        if (!response.ok) {
-            throw new Error(`Failed to reset ${mode} logo`);
-        }
-
+    const handleResetBrandingLogo = (mode: 'light' | 'dark') => {
         const key = mode === 'light' ? 'logoLightUrl' : 'logoDarkUrl';
         saveConfig((prev) => ({ ...prev, [key]: '' }));
 
@@ -124,14 +95,9 @@ export const BrandingTab = ({
                     variant="outline"
                     size="sm"
                     className="mt-2"
-                    onClick={async () => {
-                        try {
-                            await handleResetBrandingLogo('light');
-                            toast.success(t('logo_reset_success'));
-                        } catch (resetError) {
-                            console.error('Error resetting light logo:', resetError);
-                            toast.error(t('logo_reset_error'));
-                        }
+                    onClick={() => {
+                        handleResetBrandingLogo('light');
+                        toast.success(t('logo_reset_success'));
                     }}
                 >
                     <RotateCcw />
@@ -172,14 +138,9 @@ export const BrandingTab = ({
                     variant="outline"
                     size="sm"
                     className="mt-2"
-                    onClick={async () => {
-                        try {
-                            await handleResetBrandingLogo('dark');
-                            toast.success(t('logo_reset_success'));
-                        } catch (resetError) {
-                            console.error('Error resetting dark logo:', resetError);
-                            toast.error(t('logo_reset_error'));
-                        }
+                    onClick={() => {
+                        handleResetBrandingLogo('dark');
+                        toast.success(t('logo_reset_success'));
                     }}
                 >
                     <RotateCcw />

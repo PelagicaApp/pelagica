@@ -1,0 +1,11 @@
+{
+    "title": "Biblioteka",
+    "no_items_title": "Nie znaleziono elementów",
+    "no_items_description": "W tej bibliotece nie ma żadnych elementów.",
+    "sort_name": "Nazwa",
+    "sort_date_added": "Data dodania",
+    "sort_premiere_date": "Data premiery",
+    "sort_community_rating": "Ocena społeczności",
+    "sort_critic_rating": "Ocena krytyków",
+    "sort_runtime": "Czas trwania"
+}

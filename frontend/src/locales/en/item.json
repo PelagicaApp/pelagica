@@ -10,6 +10,7 @@
     "select_season": "Select Season",
     "item_not_found": "Item Not Found",
     "more_like_this": "More Like This",
+    "recommendations": "Recommendations",
     "season_episode": "S{{season}} E{{episode}}",
     "media_info": "Media Info",
     "select_stream": "Select Stream",

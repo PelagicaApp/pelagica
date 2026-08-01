@@ -4,6 +4,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useSimilarItems } from '@/hooks/api/useSimilarItems';
 import { memo, useMemo } from 'react';
 import type React from 'react';
+import GeneralItemContextMenu from '../../components/GeneraItemContextMenu';
 
 interface MoreLikeThisRowProps {
     title?: React.ReactNode;
@@ -48,13 +49,15 @@ const MoreLikeThisRow: React.FC<MoreLikeThisRowProps> = memo(
 
         const itemElements = useMemo(() => {
             return displayItems.map((item) => (
-                <ScrollableSectionPoster key={item.Id} item={item}>
-                    {item.PremiereDate && (
-                        <span className="text-xs text-muted-foreground mt-1">
-                            {new Date(item.PremiereDate).getFullYear()}
-                        </span>
-                    )}
-                </ScrollableSectionPoster>
+                <GeneralItemContextMenu key={item.Id} item={item}>
+                    <ScrollableSectionPoster item={item}>
+                        {item.PremiereDate && (
+                            <span className="text-xs text-muted-foreground mt-1">
+                                {new Date(item.PremiereDate).getFullYear()}
+                            </span>
+                        )}
+                    </ScrollableSectionPoster>
+                </GeneralItemContextMenu>
             ));
         }, [displayItems]);
 

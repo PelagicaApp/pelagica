@@ -35,6 +35,8 @@ export function useMediaBarItems(items?: SectionItemsConfig) {
             });
             return response.data.Items;
         },
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
         ...getRetryConfig(),
     });
 }

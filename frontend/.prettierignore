@@ -13,3 +13,4 @@ src/i18n/resources/**
 express.d.ts
 src/components/ui/**
 src/locales/**
+src/bindings/**

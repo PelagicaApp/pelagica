@@ -2,7 +2,7 @@ import type { BaseItemKind, ItemSortBy } from '@jellyfin/sdk/lib/generated-clien
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { RecommendationTypeFilter } from './useRecommendedItems';
 import { getServerUrl } from '@/utils/localstorageCredentials';
-import { getAuthorizationHeader } from '@/api/getApi';
+import { fetchPluginConfig, savePluginConfig } from '@/api/pelagicaPlugin';
 
 interface BaseHomeScreenSection {
     /** Whether the section is enabled. Mostly intended for testing purposes */
@@ -160,6 +160,16 @@ export interface StudiosSection extends BaseHomeScreenSection {
     limit?: number;
 }
 
+export const SEERR_DISCOVER_VARIANTS = ['trending', 'popularMovies', 'popularSeries'] as const;
+export type SeerrDiscoverVariant = (typeof SEERR_DISCOVER_VARIANTS)[number];
+
+/** A section showing a Seerr discovery list (trending, popular movies, popular series) */
+export interface SeerrDiscoverSection extends BaseHomeScreenSection {
+    type: 'seerrDiscover';
+    /** Which Seerr discovery list to show */
+    variant?: SeerrDiscoverVariant;
+}
+
 export type HomeScreenSection =
     | MediaBarSection
     | RecentlyAddedSection
@@ -170,7 +180,8 @@ export type HomeScreenSection =
     | ResumeSection
     | GenresSection
     | LibrariesSection
-    | StudiosSection;
+    | StudiosSection
+    | SeerrDiscoverSection;
 
 export const EPISODE_DISPLAYS = ['grid', 'row'] as const;
 export type EpisodeDisplay = (typeof EPISODE_DISPLAYS)[number];
@@ -202,6 +213,8 @@ export interface ItemPageSettings {
     showDownloadButton?: boolean;
     /** Whether to show the watchlist button to add items to the kefintweaks watchlist */
     showWatchlistButton?: boolean;
+    /** Whether to autoplay a local trailer as a background video on item detail pages */
+    autoPlayTrailers?: boolean;
 }
 
 export interface ConfigLink {
@@ -214,10 +227,10 @@ export interface ConfigLink {
 }
 
 export interface AppConfig {
-    /** Optional server address to automatically choose */
-    serverAddress?: string;
     /** Optional URL for Streamystats integration */
     streamystatsUrl?: string;
+    /** Optional URL for Seer integration */
+    seerrUrl?: string;
     /** Whether to show the Streamystats button in the user menu */
     showStreamystatsButton?: boolean;
     /** Whether to show the watched state badge for items on the home screen */
@@ -246,6 +259,8 @@ export interface AppConfig {
     showLogoInTopBar?: boolean;
     /** Whether to hide the "back to server" button on the login page when serverAddress is set */
     hideBackToServerButton?: boolean;
+    /** Whether to show the logo of the item in the player controls */
+    showLogoInPlayerControls?: boolean;
 }
 
 const DEFAULT_ITEM_PAGE_SETTINGS: ItemPageSettings = {
@@ -254,6 +269,7 @@ const DEFAULT_ITEM_PAGE_SETTINGS: ItemPageSettings = {
     favoriteButton: ['Movie', 'Series'],
     showWatchlistButton: true,
     showDownloadButton: true,
+    autoPlayTrailers: false,
 };
 
 const DEFAULT_CONFIG: AppConfig = {
@@ -267,6 +283,7 @@ const DEFAULT_CONFIG: AppConfig = {
     serverName: 'Pelagica',
     logoLightUrl: '',
     logoDarkUrl: '',
+    showLogoInPlayerControls: true,
     homeScreenSections: [
         {
             type: 'mediaBar',
@@ -349,14 +366,19 @@ const DEFAULT_CONFIG: AppConfig = {
 };
 
 const fetchConfig = async (): Promise<AppConfig> => {
-    const response = await fetch(
-        '/api/config?jellyfin_url=' + encodeURIComponent(getServerUrl() || '')
-    );
-    if (!response.ok) {
-        console.warn('Config file not found, using default configuration');
+    const serverUrl = getServerUrl();
+    if (!serverUrl) {
         return DEFAULT_CONFIG;
     }
-    const data: AppConfig = await response.json();
+
+    let data: AppConfig;
+    try {
+        data = await fetchPluginConfig(serverUrl);
+    } catch {
+        console.warn('Pelagica plugin config not available, using default configuration');
+        return DEFAULT_CONFIG;
+    }
+
     // Merge with defaults to ensure all required fields exist
     return {
         ...DEFAULT_CONFIG,
@@ -388,20 +410,11 @@ export const useUpdateConfig = () => {
 
     const mutation = useMutation({
         mutationFn: async (newConfig: AppConfig): Promise<void> => {
-            const response = await fetch(
-                '/api/config?jellyfin_url=' + encodeURIComponent(getServerUrl() || ''),
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: getAuthorizationHeader(),
-                    },
-                    body: JSON.stringify(newConfig),
-                }
-            );
-            if (!response.ok) {
-                throw new Error(`Failed to update config: ${response.statusText}`);
+            const serverUrl = getServerUrl();
+            if (!serverUrl) {
+                throw new Error('Server URL not set');
             }
+            await savePluginConfig(serverUrl, newConfig);
         },
         onSuccess: (_data, newConfig) => {
             queryClient.setQueryData(['config', getServerUrl()], {

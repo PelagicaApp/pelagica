@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"io"
@@ -10,7 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"path/filepath"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -18,39 +16,43 @@ import (
 	"time"
 
 	"pelagica-backend/models"
+	"pelagica-backend/services"
 
 	"github.com/gofiber/fiber/v3"
-	"golang.org/x/sync/singleflight"
 )
-
-type studioThumbEntry struct {
-	Name        string `json:"name"`
-	MachineName string `json:"machine-name"`
-}
 
 const (
 	defaultStudiosCacheTTL    = 10 * time.Minute
-	defaultThumbsCacheTTL     = 12 * time.Hour
 	defaultStudiosLimit       = 20
 	maxStudiosLimit           = 300
-	studiosJSONURL            = "https://raw.githubusercontent.com/Entree3k/Jellyfin/main/studios/studios.json"
-	thumbBaseURL              = "https://raw.githubusercontent.com/Entree3k/Jellyfin/main/studios/"
 	defaultJellyfinPageSize   = 300
-	studioThumbCacheControl   = "public, max-age=86400"
-	studioThumbContentType    = "image/webp"
-	thumbsListRequestTimeout  = 10 * time.Second
 	jellyfinItemsRequestLimit = 30 * time.Second
-	defaultThumbCacheDir      = "./cache/studio-thumbs"
-	thumbCacheTempSubdir      = ".tmp"
+	studioLogoCacheControl    = "public, max-age=86400"
+	defaultStudioLogoSize     = "w300"
+	tmdbImageBaseURL          = "https://image.tmdb.org/t/p/"
+	studioLogoRequestTimeout  = 10 * time.Second
+	defaultMonoLogoColor      = "ffffff"
+	defaultMonoLogoColor2     = "bababa"
 )
+
+var hexColorPattern = regexp.MustCompile(`^[0-9a-fA-F]{6}$`)
+
+func monoLogoFilter(color, color2 string) string {
+	return "_filter(duotone," + color + "," + color2 + ")"
+}
+
+var validStudioLogoSizes = map[string]struct{}{
+	"w45":      {},
+	"w92":      {},
+	"w154":     {},
+	"w185":     {},
+	"w300":     {},
+	"w500":     {},
+	"original": {},
+}
 
 type studiosCacheEntry struct {
 	studios   []models.StudioSummary
-	expiresAt time.Time
-}
-
-type thumbsCacheEntry struct {
-	thumbs    map[string]struct{}
 	expiresAt time.Time
 }
 
@@ -60,14 +62,6 @@ var studiosCache = struct {
 }{
 	entries: map[string]studiosCacheEntry{},
 }
-
-var thumbsCache = struct {
-	mu    sync.RWMutex
-	entry thumbsCacheEntry
-}{}
-
-// thumbFetchGroup deduplicates concurrent fetches for the same studio thumbnail.
-var thumbFetchGroup singleflight.Group
 
 type jellyfinItemsResponse struct {
 	Items []struct {
@@ -95,14 +89,6 @@ func parseDurationFromEnv(key string, fallback time.Duration) time.Duration {
 	}
 
 	return d
-}
-
-func normalizeStudioName(name string) string {
-	parts := strings.Fields(name)
-	if len(parts) == 0 {
-		return ""
-	}
-	return strings.ToLower(strings.Join(parts, " "))
 }
 
 func parseJellyfinCredentials(c fiber.Ctx) (string, string, error) {
@@ -181,6 +167,17 @@ func applyJellyfinAuthHeaders(req *http.Request, token string) {
 	req.Header.Set("Authorization", `MediaBrowser Token="`+token+`"`)
 }
 
+func parseHexColorQuery(c fiber.Ctx, name, fallback string) (string, error) {
+	raw := strings.TrimSpace(strings.TrimPrefix(c.Query(name), "#"))
+	if raw == "" {
+		return fallback, nil
+	}
+	if !hexColorPattern.MatchString(raw) {
+		return "", errors.New(name + " must be a 6-digit hex value")
+	}
+	return strings.ToLower(raw), nil
+}
+
 func parseStudiosLimit(c fiber.Ctx) (int, error) {
 	raw := strings.TrimSpace(c.Query("limit"))
 	if raw == "" {
@@ -203,18 +200,22 @@ func parseStudiosLimit(c fiber.Ctx) (int, error) {
 	return limit, nil
 }
 
-func parseHasThumbOnly(c fiber.Ctx) (bool, error) {
-	raw := strings.TrimSpace(c.Query("hasThumb"))
+func parseStudiosStartIndex(c fiber.Ctx) (int, error) {
+	raw := strings.TrimSpace(c.Query("startIndex"))
 	if raw == "" {
-		return false, nil
+		return 0, nil
 	}
 
-	value, err := strconv.ParseBool(raw)
+	startIndex, err := strconv.Atoi(raw)
 	if err != nil {
-		return false, errors.New("hasThumb must be true or false")
+		return 0, errors.New("startIndex must be a valid number")
 	}
 
-	return value, nil
+	if startIndex < 0 {
+		return 0, errors.New("startIndex must be greater than or equal to 0")
+	}
+
+	return startIndex, nil
 }
 
 func buildStudiosCacheKey(jellyfinURL, token string) string {
@@ -383,149 +384,8 @@ func getStudiosWithCache(jellyfinURL, token string) ([]models.StudioSummary, err
 	return studios, nil
 }
 
-func fetchThumbsList() (map[string]struct{}, error) {
-	req, err := http.NewRequest(http.MethodGet, studiosJSONURL, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	client := &http.Client{Timeout: thumbsListRequestTimeout}
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, errors.New("failed to fetch studios json: status=" + strconv.Itoa(resp.StatusCode))
-	}
-
-	var entries []studioThumbEntry
-	if err := json.NewDecoder(resp.Body).Decode(&entries); err != nil {
-		return nil, err
-	}
-
-	thumbs := make(map[string]struct{}, len(entries))
-	for _, e := range entries {
-		name := strings.TrimSpace(e.Name)
-		if name == "" {
-			continue
-		}
-		thumbs[normalizeStudioName(name)] = struct{}{}
-	}
-
-	return thumbs, nil
-}
-
-func getThumbsListWithCache() (map[string]struct{}, error) {
-	now := time.Now()
-
-	thumbsCache.mu.RLock()
-	entry := thumbsCache.entry
-	thumbsCache.mu.RUnlock()
-
-	if entry.thumbs != nil && now.Before(entry.expiresAt) {
-		return entry.thumbs, nil
-	}
-
-	thumbs, err := fetchThumbsList()
-	if err != nil {
-		return nil, err
-	}
-
-	ttl := parseDurationFromEnv("STUDIO_THUMBS_CACHE_TTL", defaultThumbsCacheTTL)
-
-	thumbsCache.mu.Lock()
-	thumbsCache.entry = thumbsCacheEntry{
-		thumbs:    thumbs,
-		expiresAt: now.Add(ttl),
-	}
-	thumbsCache.mu.Unlock()
-
-	slog.Debug("Studios thumbs list refreshed", "count", len(thumbs))
-
-	return thumbs, nil
-}
-
-// thumbCacheDir returns the configured cache directory, ensuring it and its
-// temp subdirectory exist.
-func thumbCacheDir() (string, error) {
-	dir := strings.TrimSpace(os.Getenv("STUDIO_THUMBS"))
-	if dir == "" {
-		dir = defaultThumbCacheDir
-	}
-
-	tmpDir := filepath.Join(dir, thumbCacheTempSubdir)
-	if err := os.MkdirAll(tmpDir, 0o755); err != nil {
-		return "", err
-	}
-
-	return dir, nil
-}
-
-// thumbCachePath returns the on-disk path for a studio thumbnail, derived
-// from a hash of the normalized name so it is safe against path traversal
-// and filesystem case-sensitivity differences.
-func thumbCachePath(cacheDir, normalizedName string) string {
-	sum := sha256.Sum256([]byte(normalizedName))
-	filename := hex.EncodeToString(sum[:16]) + ".webp"
-	return filepath.Join(cacheDir, filename)
-}
-
-// downloadStudioThumb fetches the thumbnail from the upstream source and
-// writes it atomically to cachePath. A temp file in <cacheDir>/.tmp is used
-// so partial writes are never visible under cachePath.
-func downloadStudioThumb(studioName, cacheDir, cachePath string) error {
-	escaped := url.PathEscape(studioName)
-	if escaped == "" {
-		return errors.New("invalid studio name")
-	}
-	thumbURL := thumbBaseURL + escaped + "/thumb.webp"
-
-	req, err := http.NewRequest(http.MethodGet, thumbURL, nil)
-	if err != nil {
-		return err
-	}
-
-	resp, err := (&http.Client{Timeout: thumbsListRequestTimeout}).Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode == http.StatusNotFound {
-		return fiber.ErrNotFound
-	}
-	if resp.StatusCode != http.StatusOK {
-		return errors.New("upstream returned status " + strconv.Itoa(resp.StatusCode))
-	}
-
-	tmpFile, err := os.CreateTemp(filepath.Join(cacheDir, thumbCacheTempSubdir), "thumb-*.webp")
-	if err != nil {
-		return err
-	}
-	tmpPath := tmpFile.Name()
-
-	cleanup := func() {
-		tmpFile.Close()
-		os.Remove(tmpPath)
-	}
-
-	if _, err := io.Copy(tmpFile, resp.Body); err != nil {
-		cleanup()
-		return err
-	}
-	if err := tmpFile.Close(); err != nil {
-		os.Remove(tmpPath)
-		return err
-	}
-
-	if err := os.Rename(tmpPath, cachePath); err != nil {
-		os.Remove(tmpPath)
-		return err
-	}
-
-	return nil
+func GetStudiosHealth(c fiber.Ctx) error {
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"ok": true})
 }
 
 func GetStudios(c fiber.Ctx) error {
@@ -534,10 +394,12 @@ func GetStudios(c fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(models.APIError{Error: err.Error()})
 	}
 
-	hasThumbOnly, err := parseHasThumbOnly(c)
+	startIndex, err := parseStudiosStartIndex(c)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(models.APIError{Error: err.Error()})
 	}
+
+	search := strings.ToLower(strings.TrimSpace(c.Query("search")))
 
 	jellyfinURL, token, err := parseJellyfinCredentials(c)
 	if err != nil {
@@ -550,35 +412,32 @@ func GetStudios(c fiber.Ctx) error {
 		return c.Status(fiber.StatusBadGateway).JSON(models.APIError{Error: "Failed to load studios from Jellyfin: " + err.Error()})
 	}
 
-	if !hasThumbOnly {
-		if len(studios) > limit {
-			studios = studios[:limit]
+	if search != "" {
+		filtered := make([]models.StudioSummary, 0, len(studios))
+		for _, studio := range studios {
+			if strings.Contains(strings.ToLower(studio.Name), search) {
+				filtered = append(filtered, studio)
+			}
 		}
-		return c.Status(fiber.StatusOK).JSON(studios)
+		studios = filtered
 	}
 
-	thumbs, err := getThumbsListWithCache()
-	if err != nil {
-		slog.Error("Failed to load thumbs list", "error", err)
-		return c.Status(fiber.StatusBadGateway).JSON(models.APIError{Error: "Failed to load studio thumbnail metadata"})
+	totalCount := len(studios)
+	if startIndex > totalCount {
+		startIndex = totalCount
+	}
+	end := startIndex + limit
+	if end > totalCount {
+		end = totalCount
 	}
 
-	filtered := make([]models.StudioSummary, 0, limit)
-	for _, studio := range studios {
-		if _, hasThumb := thumbs[normalizeStudioName(studio.Name)]; !hasThumb {
-			continue
-		}
-		studio.HasThumb = true
-		filtered = append(filtered, studio)
-		if len(filtered) == limit {
-			break
-		}
-	}
-
-	return c.Status(fiber.StatusOK).JSON(filtered)
+	return c.Status(fiber.StatusOK).JSON(models.StudiosPage{
+		Items:      studios[startIndex:end],
+		TotalCount: totalCount,
+	})
 }
 
-func GetStudioThumb(c fiber.Ctx) error {
+func GetStudioLogo(c fiber.Ctx) error {
 	rawStudioName := strings.TrimSpace(c.Params("name"))
 	studioName, unescapeErr := url.PathUnescape(rawStudioName)
 	if unescapeErr != nil {
@@ -589,54 +448,78 @@ func GetStudioThumb(c fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(models.APIError{Error: "Studio name is required"})
 	}
 
-	thumbs, err := getThumbsListWithCache()
-	if err != nil {
-		return c.Status(fiber.StatusBadGateway).JSON(models.APIError{Error: "Failed to load studio thumbnail metadata"})
+	size := strings.TrimSpace(c.Query("size"))
+	if size == "" {
+		size = defaultStudioLogoSize
+	}
+	if _, ok := validStudioLogoSizes[size]; !ok {
+		return c.Status(fiber.StatusBadRequest).JSON(models.APIError{Error: "Invalid size parameter"})
 	}
 
-	normalized := normalizeStudioName(studioName)
-	if _, ok := thumbs[normalized]; !ok {
-		return c.Status(fiber.StatusNotFound).JSON(models.APIError{Error: "Studio thumbnail not found"})
-	}
-
-	cacheDir, err := thumbCacheDir()
-	if err != nil {
-		slog.Error("Thumb cache dir unavailable", "error", err)
-		return c.Status(fiber.StatusInternalServerError).JSON(models.APIError{Error: "Thumbnail cache unavailable"})
-	}
-
-	cachePath := thumbCachePath(cacheDir, normalized)
-
-	// Fast path: cache hit.
-	if _, statErr := os.Stat(cachePath); statErr == nil {
-		c.Set("Content-Type", studioThumbContentType)
-		c.Set("Cache-Control", studioThumbCacheControl)
-		return c.SendFile(cachePath)
-	} else if !errors.Is(statErr, os.ErrNotExist) {
-		slog.Warn("Thumb cache stat error", "studio", normalized, "error", statErr)
-	}
-
-	// Cache miss: fetch via singleflight so concurrent requests for the same
-	// studio collapse into a single upstream fetch.
-	_, err, _ = thumbFetchGroup.Do(normalized, func() (interface{}, error) {
-		// Re-check inside the singleflight in case another goroutine just wrote it.
-		if _, statErr := os.Stat(cachePath); statErr == nil {
-			return nil, nil
+	mono := false
+	if raw := strings.TrimSpace(c.Query("mono")); raw != "" {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(models.APIError{Error: "mono must be true or false"})
 		}
-		return nil, downloadStudioThumb(studioName, cacheDir, cachePath)
-	})
-
-	if err != nil {
-		if errors.Is(err, fiber.ErrNotFound) {
-			return c.Status(fiber.StatusNotFound).JSON(models.APIError{Error: "Studio thumbnail not found"})
-		}
-		slog.Error("Thumb fetch failed", "studio", normalized, "error", err)
-		return c.Status(fiber.StatusBadGateway).JSON(models.APIError{Error: "Failed to fetch studio thumbnail"})
+		mono = parsed
 	}
 
-	slog.Debug("Cached thumbnail", "studio", normalized)
+	monoColor, err := parseHexColorQuery(c, "color", defaultMonoLogoColor)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(models.APIError{Error: err.Error()})
+	}
+	monoColor2, err := parseHexColorQuery(c, "color2", defaultMonoLogoColor2)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(models.APIError{Error: err.Error()})
+	}
 
-	c.Set("Content-Type", studioThumbContentType)
-	c.Set("Cache-Control", studioThumbCacheControl)
-	return c.SendFile(cachePath)
+	logo, err := services.GetStudioLogo(studioName)
+	if err != nil {
+		slog.Error("Failed to query studio logo", "studio", studioName, "error", err)
+		return c.Status(fiber.StatusBadGateway).JSON(models.APIError{Error: "Failed to load studio logo data"})
+	}
+	if logo == nil {
+		return c.Status(fiber.StatusNotFound).JSON(models.APIError{Error: "Studio logo not found"})
+	}
+
+	sizeSegment := size
+	if mono {
+		sizeSegment += monoLogoFilter(monoColor, monoColor2)
+	}
+	tmdbURL := tmdbImageBaseURL + sizeSegment + logo.LogoPath
+
+	req, err := http.NewRequest(http.MethodGet, tmdbURL, nil)
+	if err != nil {
+		slog.Error("Failed to build TMDB image request", "error", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(models.APIError{Error: "Failed to fetch studio logo"})
+	}
+
+	resp, err := (&http.Client{Timeout: studioLogoRequestTimeout}).Do(req)
+	if err != nil {
+		slog.Error("Failed to fetch studio logo from TMDB", "studio", studioName, "error", err)
+		return c.Status(fiber.StatusBadGateway).JSON(models.APIError{Error: "Failed to fetch studio logo"})
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode == http.StatusNotFound {
+		return c.Status(fiber.StatusNotFound).JSON(models.APIError{Error: "Studio logo not found"})
+	}
+	if resp.StatusCode != http.StatusOK {
+		slog.Error("Unexpected status from TMDB", "studio", studioName, "status", resp.StatusCode)
+		return c.Status(fiber.StatusBadGateway).JSON(models.APIError{Error: "Failed to fetch studio logo"})
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		slog.Error("Failed to read studio logo response", "studio", studioName, "error", err)
+		return c.Status(fiber.StatusBadGateway).JSON(models.APIError{Error: "Failed to fetch studio logo"})
+	}
+
+	if contentType := resp.Header.Get("Content-Type"); contentType != "" {
+		c.Set("Content-Type", contentType)
+	}
+	c.Set("Cache-Control", studioLogoCacheControl)
+
+	return c.Send(body)
 }

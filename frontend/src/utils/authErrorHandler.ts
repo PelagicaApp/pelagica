@@ -1,3 +1,4 @@
+import { logoutFromSeerr } from '@/api/seerr/logout';
 import { clearDeviceId } from './deviceId';
 import { clearCredentials } from './localstorageCredentials';
 
@@ -10,6 +11,7 @@ export function isAuthError(error: unknown): boolean {
 }
 
 export function clearAuthAndRedirect() {
+    void logoutFromSeerr();
     clearCredentials();
     clearDeviceId();
 

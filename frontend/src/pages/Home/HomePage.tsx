@@ -13,6 +13,11 @@ import GenresRow from './GenresRow';
 import LibrariesRow from './LibrariesRow';
 import StudiosRow from './StudiosRow';
 import RecentlyAddedRow from './RecentlyAddedRow';
+import {
+    SeerrPopularMoviesRow,
+    SeerrPopularSeriesRow,
+    SeerrTrendingRow,
+} from './SeerrDiscoverRows';
 
 function getDetailFieldsForCollectionType(type: CollectionType | undefined): DetailField[] {
     switch (type) {
@@ -186,6 +191,32 @@ const HomePage = () => {
                                     limit={section.limit}
                                 />
                             );
+
+                        case 'seerrDiscover':
+                            switch (section.variant) {
+                                case 'popularMovies':
+                                    return (
+                                        <SeerrPopularMoviesRow
+                                            key={index}
+                                            title={section.title || t('seerr_popular_movies')}
+                                        />
+                                    );
+                                case 'popularSeries':
+                                    return (
+                                        <SeerrPopularSeriesRow
+                                            key={index}
+                                            title={section.title || t('seerr_popular_series')}
+                                        />
+                                    );
+                                case 'trending':
+                                default:
+                                    return (
+                                        <SeerrTrendingRow
+                                            key={index}
+                                            title={section.title || t('seerr_trending')}
+                                        />
+                                    );
+                            }
 
                         default:
                             return null;

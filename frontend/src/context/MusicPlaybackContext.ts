@@ -47,6 +47,7 @@ export interface MusicPlaybackContextType {
     queue: MusicPlaybackTrack[];
     setQueue: (queue: MusicPlaybackTrack[]) => void;
     currentIndex: number;
+    setCurrentIndex: (index: number) => void;
 
     play: () => void;
     pause: () => void;
