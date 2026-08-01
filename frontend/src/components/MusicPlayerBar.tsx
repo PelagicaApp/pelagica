@@ -132,15 +132,29 @@ const MusicPlayerBar = () => {
             prevPathnameRef.current === MOBILE_QUEUE_PATH &&
             location.pathname !== MOBILE_QUEUE_PATH;
 
-        if (leftQueue && sessionStorage.getItem(RESTORE_EXPANDED_AFTER_QUEUE_KEY)) {
+        if (
+            leftQueue &&
+            navigationType !== 'POP' &&
+            sessionStorage.getItem(RESTORE_EXPANDED_AFTER_QUEUE_KEY)
+        ) {
             sessionStorage.removeItem(RESTORE_EXPANDED_AFTER_QUEUE_KEY);
-            if (navigationType === 'POP') {
-                setIsExpanded(true);
-            }
         }
 
         prevPathnameRef.current = location.pathname;
     }, [isMobile, location.pathname, navigationType]);
+
+    useEffect(() => {
+        if (!isMobile) return;
+
+        const onPopState = () => {
+            if (!sessionStorage.getItem(RESTORE_EXPANDED_AFTER_QUEUE_KEY)) return;
+            sessionStorage.removeItem(RESTORE_EXPANDED_AFTER_QUEUE_KEY);
+            setIsExpanded(true);
+        };
+
+        window.addEventListener('popstate', onPopState);
+        return () => window.removeEventListener('popstate', onPopState);
+    }, [isMobile]);
 
     if (!currentTrack) return null;
 
