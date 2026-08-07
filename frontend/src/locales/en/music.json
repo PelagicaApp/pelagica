@@ -14,6 +14,7 @@
     "queue_count": "Queue ({{count}})",
     "queue_empty": "Queue is empty",
     "remove_from_queue": "Remove from queue",
+    "reorder_queue": "Drag to reorder",
     "no_playlists": "No playlists",
     "no_favorites": "No favorites",
     "no_songs_found": "No songs found",

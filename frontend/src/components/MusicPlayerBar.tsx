@@ -1,5 +1,6 @@
 import {
     ChevronDown,
+    ListMusic,
     Pause,
     Play,
     Repeat2,
@@ -15,7 +16,8 @@ import { Slider } from './ui/slider';
 import { getPrimaryImageUrl } from '@/utils/jellyfinUrls';
 import { useMusicPlayback } from '@/hooks/useMusicPlayback';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useLocation, useNavigate, useNavigationType } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useLyrics } from '@/features/lyrics/api/useLyrics';
 import { processLyrics } from '@/features/lyrics/utils/lyrics';
@@ -25,6 +27,9 @@ import LyricsInlinePanel from '@/features/lyrics/shell/LyricsInlinePanel';
 import { cn } from '@/lib/utils';
 import { lyricsPanelWidthClass } from '@/features/lyrics/constants';
 import EqualizerPopover from '@/features/equalizer/EqualizerPopover';
+
+const MOBILE_QUEUE_PATH = '/music/queue';
+const RESTORE_EXPANDED_AFTER_QUEUE_KEY = 'pelagica-restore-expanded-after-queue';
 
 const formatTime = (timeTicks: number) => {
     const timeSeconds = timeTicks / 10000000;
@@ -68,6 +73,10 @@ const MusicPlayerBar = () => {
         clearPlayback,
     } = useMusicPlayback();
     const isMobile = useIsMobile();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const navigationType = useNavigationType();
+    const prevPathnameRef = useRef(location.pathname);
     const [isExpanded, setIsExpanded] = useState(false);
     const [lyricsOpenTrackId, setLyricsOpenTrackId] = useState<string | null>(null);
     const [inlineLyricsTrackId, setInlineLyricsTrackId] = useState<string | null>(null);
@@ -100,6 +109,52 @@ const MusicPlayerBar = () => {
             prev === currentTrack?.id ? null : (currentTrack?.id ?? null)
         );
     }, [currentTrack?.id]);
+
+    const openMobileQueue = useCallback(
+        (e?: React.MouseEvent) => {
+            e?.stopPropagation();
+            if (isExpanded) {
+                sessionStorage.setItem(RESTORE_EXPANDED_AFTER_QUEUE_KEY, '1');
+            }
+            setIsExpanded(false);
+            navigate(MOBILE_QUEUE_PATH);
+        },
+        [isExpanded, navigate]
+    );
+
+    useEffect(() => {
+        if (!isMobile) {
+            prevPathnameRef.current = location.pathname;
+            return;
+        }
+
+        const leftQueue =
+            prevPathnameRef.current === MOBILE_QUEUE_PATH &&
+            location.pathname !== MOBILE_QUEUE_PATH;
+
+        if (
+            leftQueue &&
+            navigationType !== 'POP' &&
+            sessionStorage.getItem(RESTORE_EXPANDED_AFTER_QUEUE_KEY)
+        ) {
+            sessionStorage.removeItem(RESTORE_EXPANDED_AFTER_QUEUE_KEY);
+        }
+
+        prevPathnameRef.current = location.pathname;
+    }, [isMobile, location.pathname, navigationType]);
+
+    useEffect(() => {
+        if (!isMobile) return;
+
+        const onPopState = () => {
+            if (!sessionStorage.getItem(RESTORE_EXPANDED_AFTER_QUEUE_KEY)) return;
+            sessionStorage.removeItem(RESTORE_EXPANDED_AFTER_QUEUE_KEY);
+            setIsExpanded(true);
+        };
+
+        window.addEventListener('popstate', onPopState);
+        return () => window.removeEventListener('popstate', onPopState);
+    }, [isMobile]);
 
     if (!currentTrack) return null;
 
@@ -138,6 +193,10 @@ const MusicPlayerBar = () => {
                             </span>
                         </div>
                     </div>
+                    {/* Queue toggle */}
+                    <Button variant="ghost" size="icon" onClick={openMobileQueue}>
+                        <ListMusic className="h-5 w-5" />
+                    </Button>
                     <Button
                         variant="ghost"
                         size="icon"
@@ -163,9 +222,11 @@ const MusicPlayerBar = () => {
                     <span className="text-sm font-medium">
                         {showLyricsInline ? t('lyrics') : t('nowPlaying')}
                     </span>
-                    <Button variant="ghost" size="icon" onClick={clearPlayback}>
-                        <XIcon />
-                    </Button>
+                    <div className="flex items-center gap-1">
+                        <Button variant="ghost" size="icon" onClick={clearPlayback}>
+                            <XIcon />
+                        </Button>
+                    </div>
                 </div>
 
                 <div className="flex min-h-0 flex-1 flex-col p-6 gap-6">
@@ -183,13 +244,24 @@ const MusicPlayerBar = () => {
                                     className="rounded-lg w-full max-w-sm aspect-square object-cover shadow-2xl"
                                 />
 
-                                <div className="w-full max-w-sm text-center">
-                                    <h2 className="text-2xl font-bold truncate">
-                                        {currentTrack.title}
-                                    </h2>
-                                    <p className="text-lg text-muted-foreground truncate">
-                                        {currentTrack.artist}
-                                    </p>
+                                <div className="w-full max-w-sm flex flex-row">
+                                    <div className="text-start">
+                                        <h2 className="text-2xl font-bold truncate">
+                                            {currentTrack.title}
+                                        </h2>
+                                        <p className="text-lg text-muted-foreground truncate">
+                                            {currentTrack.artist}
+                                        </p>
+                                    </div>
+                                    <div className="ml-auto justify-center">
+                                        {showLyricsButton && (
+                                            <LyricsButton
+                                                active={showLyricsInline}
+                                                loading={isLyricsLoading}
+                                                onClick={toggleMobileLyrics}
+                                            />
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </>
@@ -239,13 +311,9 @@ const MusicPlayerBar = () => {
                         >
                             <Repeat2 />
                         </Button>
-                        {showLyricsButton && (
-                            <LyricsButton
-                                active={showLyricsInline}
-                                loading={isLyricsLoading}
-                                onClick={toggleMobileLyrics}
-                            />
-                        )}
+                    </div>
+
+                    <div className="flex items-center gap-2 w-full max-w-sm mx-auto shrink-0">
                         <EqualizerPopover
                             preset={equalizerPreset}
                             onPresetChange={setEqualizerPreset}
@@ -261,26 +329,15 @@ const MusicPlayerBar = () => {
                             isPlaying={isPlaying}
                             equalizerAvailable={equalizerAvailable}
                         />
-                    </div>
-
-                    <div className="flex items-center gap-2 w-full max-w-sm mx-auto shrink-0">
+                        {/* Queue toggle */}
                         <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => {
-                                if (volume === 0) setVolume(0.5);
-                                else setVolume(0);
-                            }}
+                            className="ml-auto"
+                            onClick={openMobileQueue}
                         >
-                            {volume === 0 ? <VolumeX /> : <Volume2 />}
+                            <ListMusic className="h-5 w-5" />
                         </Button>
-                        <Slider
-                            className="flex-1"
-                            max={1}
-                            step={0.01}
-                            value={[volume]}
-                            onValueChange={(value) => setVolume(value[0])}
-                        />
                     </div>
                 </div>
             </div>
