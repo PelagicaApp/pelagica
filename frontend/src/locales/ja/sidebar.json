@@ -11,5 +11,6 @@
     "preferences": "設定",
     "audio_language_preference": "音声言語の優先設定",
     "subtitle_language_preference": "字幕言語の優先設定",
-    "select_language": "言語を選択"
+    "select_language": "言語を選択",
+    "topbar_highlight_active_page": "トップバーで現在のページを強調表示"
 }

@@ -12,7 +12,10 @@ const MusicLayout = () => {
                 <div className="border-r border-border pr-4">
                     <MusicLeftSidebar />
                 </div>
-                <div className="flex-1 flex flex-col min-w-0 overflow-y-auto h-full px-6 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-muted-foreground/20 [&::-webkit-scrollbar-thumb]:rounded-full">
+                <div
+                    data-page-scroll-nested
+                    className="flex-1 flex flex-col min-w-0 overflow-y-auto h-full px-6 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-muted-foreground/20 [&::-webkit-scrollbar-thumb]:rounded-full"
+                >
                     <Outlet />
                 </div>
                 <div className="border-l border-border pl-4">

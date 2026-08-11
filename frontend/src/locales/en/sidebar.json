@@ -23,6 +23,7 @@
     "select_theme": "Select theme",
     "server_default": "Server Default",
     "pelagica_default": "Pelagica Default",
+    "topbar_highlight_active_page": "Highlight active page in top bar",
     "seerr_not_connected": "Not logged in to Seerr",
     "seerr_connected": "Seerr",
     "seerr_login_action": "Log in",

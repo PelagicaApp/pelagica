@@ -12,6 +12,7 @@
     "audio_language_preference": "Inställning för ljudspråk",
     "subtitle_language_preference": "Inställning för undertextspråk",
     "select_language": "Välj språk",
+    "topbar_highlight_active_page": "Markera aktiv sida i toppfältet",
     "pelagica_config": "Pelagica-konfiguration",
     "authorize_quick_connect": "Auktorisera snabbanslutning",
     "enter_quick_connect_code": "Ange den 6-siffriga koden som visas på den enhet du vill auktorisera.",

@@ -22,5 +22,6 @@
     "theme_preference": "Designpräferenz",
     "select_theme": "Design auswählen",
     "server_default": "Serverstandard",
-    "pelagica_default": "Pelagica Standard"
+    "pelagica_default": "Pelagica Standard",
+    "topbar_highlight_active_page": "Aktive Seite in der oberen Leiste hervorheben"
 }
