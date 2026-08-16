@@ -1,0 +1,12 @@
+{
+    "previous": "Vorige",
+    "next": "Volgende",
+    "stats_consent_title": "Help ons meetellen",
+    "stats_consent_message": "We hebben geen manier om te weten hoeveel mensen Pelagica gebruiken, tenzij je het ons laat weten. Als je akkoord gaat, wordt er dagelijks een melding verzonden met je versie en een willekeurige ID. Meer niet. De resultaten zijn openbaar op <anchor>stats.pelagica.app</anchor>.",
+    "stats_consent_reject": "Nee, bedankt",
+    "stats_consent_accept": "Akkoord",
+    "cancel": "Annuleren",
+    "save": "Opslaan",
+    "saving": "Bezig met opslaan...",
+    "delete": "Verwijderen"
+}
