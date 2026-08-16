@@ -5,7 +5,7 @@ import type {
     MetadataField,
 } from '@jellyfin/sdk/lib/generated-client/models';
 import { getApi } from '@pelagica/core';
-import { getUserLibraryApi } from '@jellyfin/sdk/lib/utils/api/user-library-api';
+import { getItemCached, invalidateItemCache } from '@/api/getItemCached';
 import { getItemUpdateApi } from '@jellyfin/sdk/lib/utils/api/item-update-api';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState, startTransition } from 'react';
@@ -78,16 +78,17 @@ const EditItemMetadataButton = ({
     const [preferredCountry, setPreferredCountry] = useState('');
 
     const { editItemMetadata, isSaving } = useEditItemMetadata(() => {
+        if (item.Id) {
+            invalidateItemCache(item.Id);
+        }
+    
         setIsEditDialogOpen(false);
     });
 
     // ---- fetch full item when dialog opens ----
     const { data: fullItem } = useQuery({
         queryKey: ['fullItem', item.Id],
-        queryFn: async () => {
-            const api = getApi();
-            return (await getUserLibraryApi(api).getItem({ itemId: item.Id! })).data;
-        },
+        queryFn: () => getItemCached(item.Id!),
         enabled: isEditDialogOpen && !!item.Id,
     });
 
