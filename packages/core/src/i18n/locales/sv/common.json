@@ -1,6 +1,10 @@
 {
     "previous": "Föregående",
     "next": "Nästa",
+    "stats_consent_title": "Hjälp oss att räkna",
+    "stats_consent_message": "Vi kan inte veta hur många som använder Pelagica om du inte väljer att dela det med oss. Om du godkänner skickas en daglig signal med din version och ett slumpmässigt ID. Det är allt. Resultaten är offentliga på <anchor>stats.pelagica.app</anchor>.",
+    "stats_consent_reject": "Nej tack",
+    "stats_consent_accept": "Acceptera",
     "cancel": "Avboka",
     "save": "Spara",
     "saving": "Sparande...",
@@ -35,11 +39,15 @@
     "ascending": "Stigande",
     "descending": "Fallande",
     "album": "Album",
+    "albums": "Album",
+    "artist": "Artist",
     "subtitles": "Undertexter",
     "language": "Språk",
     "tags": "Taggar",
     "playlist": "Spellista",
     "no_results_found": "Inga resultat hittades",
     "category_links": "Länkar",
-    "quick_connect": "Snabbanslutning"
+    "quick_connect": "Snabbanslutning",
+    "back": "Tillbaka",
+    "close": "Stäng"
 }
