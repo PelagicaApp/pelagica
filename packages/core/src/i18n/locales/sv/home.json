@@ -21,5 +21,11 @@
     "unknown_artist": "Okänd konstnär",
     "track_count": "{{count}} spår",
     "track_count_plural": "{{count}} spår",
-    "libraries": "Bibliotek"
+    "libraries": "Bibliotek",
+    "section_not_found": "Det här avsnittet kunde inte hittas.",
+    "seerr_trending": "Populärt just nu",
+    "seerr_popular_movies": "Populära filmer",
+    "seerr_popular_series": "Populära serier",
+    "error_loading_continue": "Det gick inte att läsa in Fortsätt titta: {{error}}",
+    "continue_item_alt": "Fortsätt titta"
 }
