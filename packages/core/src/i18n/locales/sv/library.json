@@ -7,5 +7,11 @@
     "sort_premiere_date": "Premiärdatum",
     "sort_community_rating": "Gemenskapsbetyg",
     "sort_critic_rating": "Kritikerbetyg",
-    "sort_runtime": "Speltid"
+    "sort_runtime": "Speltid",
+    "no_studios_found_title": "Inga studios hittades",
+    "no_studios_found_for_search": "Inga studios hittades för \"{{search}}\".",
+    "no_studios_found": "Det finns inga studios i det här biblioteket.",
+    "clear_search": "Rensa sökning",
+    "studios_search_placeholder": "Sök studios...",
+    "no_libraries_found": "Inga bibliotek hittades."
 }
