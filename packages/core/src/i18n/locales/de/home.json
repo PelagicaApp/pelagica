@@ -21,5 +21,11 @@
     "unknown_artist": "Unbekannter Künstler",
     "track_count": "{{count}} Track",
     "track_count_plural": "{{count}} Tracks",
-    "libraries": "Bibliotheken"
+    "libraries": "Bibliotheken",
+    "section_not_found": "Dieser Abschnitt konnte nicht gefunden werden.",
+    "seerr_trending": "Trending",
+    "seerr_popular_movies": "Beliebte Filme",
+    "seerr_popular_series": "Beliebte Serien",
+    "error_loading_continue": "Fehler beim laden: {{error}}",
+    "continue_item_alt": "Weiter ansehen item"
 }

@@ -47,5 +47,7 @@
     "playlist": "Wiedergabeliste",
     "no_results_found": "Keine Ergebnisse gefunden",
     "category_links": "Links",
-    "quick_connect": "Schnellverbindung"
+    "quick_connect": "Schnellverbindung",
+    "back": "Zurück",
+    "close": "Schließen"
 }

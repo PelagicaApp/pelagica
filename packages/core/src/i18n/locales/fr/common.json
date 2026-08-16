@@ -2,6 +2,8 @@
     "previous": "Précédent",
     "next": "Suivant",
     "stats_consent_title": "Aidez-nous à compter",
+    "stats_consent_reject": "Non merci",
+    "stats_consent_accept": "Accepter",
     "cancel": "Annuler",
     "save": "Sauvegarder",
     "saving": "Enregistrement...",

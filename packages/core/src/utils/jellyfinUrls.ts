@@ -30,6 +30,15 @@ export interface ItemImageOptions {
     fallback?: string;
 }
 
+function appendPath(basePath: string, ...segments: string[]): string {
+    const cleanedBase = basePath.replace(/\/+$/, '');
+    const cleanedSegments = segments
+        .filter(Boolean)
+        .map((segment) => segment.replace(/^\/+|\/+$/g, ''));
+
+    return [cleanedBase, ...cleanedSegments].filter(Boolean).join('/');
+}
+
 function buildItemImageUrl(
     itemId: string,
     imageType: string,
@@ -42,8 +51,8 @@ function buildItemImageUrl(
         const url = new URL(creds.server);
         url.pathname =
             index !== undefined
-                ? `/Items/${itemId}/Images/${imageType}/${index}`
-                : `/Items/${itemId}/Images/${imageType}`;
+                ? appendPath(url.pathname, 'Items', itemId, 'Images', imageType, index.toString())
+                : appendPath(url.pathname, 'Items', itemId, 'Images', imageType);
 
         url.searchParams.append('quality', quality?.toString() || '90');
         if (tag) url.searchParams.set('tag', tag);
@@ -130,7 +139,7 @@ export function getAudioStreamUrl(itemId: string, userId?: string) {
         if (!creds) return '';
 
         const url = new URL(creds.server);
-        url.pathname = `/Audio/${itemId}/universal`;
+        url.pathname = appendPath(url.pathname, 'Audio', itemId, 'universal');
         if (userId) url.searchParams.append('UserId', userId);
         url.searchParams.append('ApiKey', creds.token);
         url.searchParams.append('AudioCodec', 'aac');
@@ -203,7 +212,7 @@ export function getVideoStreamUrl(
         if (!creds) return '';
 
         const url = new URL(creds.server);
-        url.pathname = `/videos/${itemId}/master.m3u8`;
+        url.pathname = appendPath(url.pathname, 'Videos', itemId, 'master.m3u8');
         url.searchParams.append('MediaSourceId', options.mediaSourceId || itemId);
         url.searchParams.append('ApiKey', creds.token);
         url.searchParams.append('VideoCodec', getSupportedVideoCodecs());
@@ -245,7 +254,7 @@ export function getDirectStreamUrl(
 
         const url = new URL(creds.server);
         const container = options.container || 'mp4';
-        url.pathname = `/Videos/${itemId}/stream.${container}`;
+        url.pathname = appendPath(url.pathname, 'Videos', itemId, `stream.${container}`);
         url.searchParams.append('Static', 'true');
         url.searchParams.append('MediaSourceId', options.mediaSourceId || itemId);
         url.searchParams.append('ApiKey', creds.token);
@@ -335,7 +344,16 @@ export function getSubtitleUrl(
         if (!creds) return '';
 
         const url = new URL(creds.server);
-        url.pathname = `/Videos/${itemId}/${mediaSourceId}/Subtitles/${subtitleStreamIndex}/0/Stream.${format}`;
+        url.pathname = appendPath(
+            url.pathname,
+            'Videos',
+            itemId,
+            mediaSourceId,
+            'Subtitles',
+            subtitleStreamIndex.toString(),
+            '0',
+            `Stream.${format}`
+        );
         url.searchParams.append('ApiKey', creds.token);
 
         return url.toString();
@@ -364,7 +382,14 @@ export function getTrickplayImageUrl(itemId: string, width: number, imageIndex: 
         if (!creds) return '';
 
         const url = new URL(creds.server);
-        url.pathname = `/Videos/${itemId}/Trickplay/${width}/${imageIndex}.jpg`;
+        url.pathname = appendPath(
+            url.pathname,
+            'Videos',
+            itemId,
+            'Trickplay',
+            width.toString(),
+            `${imageIndex}.jpg`
+        );
         url.searchParams.append('ApiKey', creds.token);
         url.searchParams.append('MediaSourceId', itemId);
 
@@ -380,7 +405,7 @@ export function getUserProfileImageUrl(userId: string): string {
         if (!creds) return '';
 
         const url = new URL(creds.server);
-        url.pathname = `/Users/${userId}/Images/Primary`;
+        url.pathname = appendPath(url.pathname, 'Users', userId, 'Images', 'Primary');
         url.searchParams.append('quality', '90');
 
         return url.toString();
@@ -395,7 +420,7 @@ export function getDownloadurl(itemId: string) {
         if (!creds) return '';
 
         const url = new URL(creds.server);
-        url.pathname = `/Items/${itemId}/Download`;
+        url.pathname = appendPath(url.pathname, 'Items', itemId, 'Download');
         url.searchParams.append('MediaSourceId', itemId);
         url.searchParams.append('ApiKey', creds.token);
 

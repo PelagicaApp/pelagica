@@ -9,6 +9,7 @@
   <a href="https://hub.docker.com/r/kartoffelchipss/pelagica"><img src="https://img.shields.io/docker/pulls/kartoffelchipss/pelagica" alt="Docker Pulls"></a>
   <img src="https://img.shields.io/github/stars/PelagicaApp/pelagica?style=flat&color=gold" alt="Stars">
   <a href="https://stats.pelagica.app/"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fstats.pelagica.app%2Fstats&label=active%20instances&query=%24.active_instances&color=brightgreen" alt="Active Instances"></a>
+  <a href="https://translate.pelagica.app/"><img src="https://translate.pelagica.app/api/badge.svg" alt="Translations"></a>
 </p>
 
 <p align="center">Pelagica is a web and desktop client for <a href="https://jellyfin.org">Jellyfin</a> built using React. It aims to provide a fast, modern, and customizable user experience for browsing and watching your media library. It's available both as a self-hosted web app and as a native desktop app for macOS, Windows, and Linux.</p>
@@ -108,6 +109,8 @@ For discussions about Pelagica, join the [JellyfinCommunity](https://discord.gg/
 ## Localization
 
 Pelagica supports multiple languages through community contributions. See the [Translations](https://pelagica.app/docs/translations) docs for how to contribute.
+
+![Languages](https://translate.pelagica.app/api/badge/languages.svg)
 
 ## Development Setup
 

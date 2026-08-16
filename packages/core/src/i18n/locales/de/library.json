@@ -7,5 +7,11 @@
     "sort_premiere_date": "Premiere Datum",
     "sort_community_rating": "Community Bewertung",
     "sort_critic_rating": "Kritiker Bewertung",
-    "sort_runtime": "Laufzeit"
+    "sort_runtime": "Laufzeit",
+    "no_studios_found_title": "Keine Studios gefunden",
+    "no_studios_found_for_search": "Keine Studios für '{{search}}' gefunden.",
+    "no_studios_found": "Es gibt keine Studios in dieser Bibliothek.",
+    "clear_search": "Suche löschen",
+    "studios_search_placeholder": "Studios durchsuchen...",
+    "no_libraries_found": "Keine Bibliotheken gefunden."
 }
