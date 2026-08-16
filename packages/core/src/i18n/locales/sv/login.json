@@ -25,5 +25,13 @@
     "quick_connect_initiated": "Initierar snabbanslutning...",
     "quick_connect_failed": "Snabbanslutning misslyckades. Försök igen.",
     "quick_connect_approved": "Snabbanslutning godkänd! Logga in...",
-    "quick_connect_timeout": "Snabbanslutningen har gått ut. Försök igen."
+    "quick_connect_timeout": "Snabbanslutningen har gått ut. Försök igen.",
+    "demo_warning": "Det här är en demo-instans av Pelagica. Du kan logga in med de förifyllda inloggningsuppgifterna eller gå tillbaka till servervalet för att ansluta till din egen server.",
+    "sign_in_with_quick_connect": "Logga in med Quick Connect",
+    "sign_in_with_password": "Logga in med användarnamn och lösenord",
+    "use_different_server": "Använd en annan server",
+    "quick_connect_qr_instructions": "Skanna QR-koden och godkänn, eller gå till {{server}} på din telefon eller dator, logga in och ange den här koden manuellt.",
+    "quick_connect_unavailable": "Quick Connect är inte tillgängligt på den här servern",
+    "quick_connect_auth_failed": "Quick Connect-autentiseringen misslyckades",
+    "invalid_credentials": "Felaktigt användarnamn eller lösenord"
 }
