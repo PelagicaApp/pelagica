@@ -1,0 +1,174 @@
+name: Build and Publish Desktop App
+
+on:
+    release:
+        types: [published]
+
+permissions:
+    contents: write
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.event.release.tag_name }}
+    cancel-in-progress: true
+
+jobs:
+    macos:
+        name: Build macOS app and installer
+        runs-on: macos-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Set up Go
+              uses: actions/setup-go@v5
+              with:
+                  go-version-file: desktop/go.mod
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 24
+
+            - name: Install pnpm
+              run: npm install -g pnpm
+
+            - name: Install go-task
+              uses: arduino/setup-task@v2
+              with:
+                  version: 3.x
+                  repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Install create-dmg
+              run: brew install create-dmg
+
+            - name: Build macOS app and installer
+              run: task desktop:installer:macos
+
+            - name: Rename assets
+              working-directory: desktop/bin
+              run: |
+                  arch=$(uname -m)
+                  if [ "$arch" = "x86_64" ]; then arch="amd64"; fi
+                  echo "ARCH=$arch" >> "$GITHUB_ENV"
+                  zip -r "pelagica-macos-${arch}.zip" Pelagica.app
+                  mv Pelagica.dmg "pelagica-macos-${arch}.dmg"
+
+            - name: Upload assets to release
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  gh release upload "${{ github.event.release.tag_name }}" \
+                    "desktop/bin/pelagica-macos-${ARCH}.zip" \
+                    "desktop/bin/pelagica-macos-${ARCH}.dmg" \
+                    --clobber
+
+    windows:
+        name: Build Windows installer
+        runs-on: windows-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Set up Go
+              uses: actions/setup-go@v5
+              with:
+                  go-version-file: desktop/go.mod
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 24
+
+            - name: Install pnpm
+              run: npm install -g pnpm
+
+            - name: Install go-task
+              uses: arduino/setup-task@v2
+              with:
+                  version: 3.x
+                  repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Install wails3 CLI
+              run: go install github.com/wailsapp/wails/v3/cmd/wails3@v3.0.0-alpha2.117
+
+            - name: Add Go bin to PATH
+              shell: bash
+              run: echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+
+            - name: Install NSIS
+              run: choco install nsis -y
+              
+            - name: Add NSIS to PATH
+              shell: bash
+              run: echo "C:\Program Files (x86)\NSIS" >> "$GITHUB_PATH"
+
+            - name: Build Windows installer
+              run: task desktop:installer:windows
+
+            - name: Rename asset
+              working-directory: desktop/bin
+              shell: bash
+              run: mv Pelagica-amd64-installer.exe pelagica-windows-amd64-installer.exe
+
+            - name: Upload asset to release
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: gh release upload "${{ github.event.release.tag_name }}" desktop/bin/pelagica-windows-amd64-installer.exe --clobber
+
+    linux:
+        name: Build Linux installers
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Set up Go
+              uses: actions/setup-go@v5
+              with:
+                  go-version-file: desktop/go.mod
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 24
+
+            - name: Install pnpm
+              run: npm install -g pnpm
+
+            - name: Install go-task
+              uses: arduino/setup-task@v2
+              with:
+                  version: 3.x
+                  repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Install build dependencies
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y build-essential pkg-config libgtk-4-dev libwebkitgtk-6.0-dev
+
+            - name: Install wails3 CLI
+              run: go install github.com/wailsapp/wails/v3/cmd/wails3@v3.0.0-alpha2.117
+
+            - name: Add Go bin to PATH
+              run: echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+
+            - name: Build Linux installers
+              run: task desktop:installer:linux
+
+            - name: Rename assets
+              working-directory: desktop/bin
+              run: |
+                  mv pelagica.deb pelagica-linux-amd64.deb
+                  mv pelagica-x86_64.AppImage pelagica-linux-amd64.AppImage
+
+            - name: Upload assets to release
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  gh release upload "${{ github.event.release.tag_name }}" \
+                    "desktop/bin/pelagica-linux-amd64.deb" \
+                    "desktop/bin/pelagica-linux-amd64.AppImage" \
+                    --clobber

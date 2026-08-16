@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { Button } from './ui/button';
 import { Slider } from './ui/slider';
-import { getPrimaryImageUrl } from '@/utils/jellyfinUrls';
+import { getPrimaryImageUrl } from '@pelagica/core';
 import { useMusicPlayback } from '@/hooks/useMusicPlayback';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useCallback, useState } from 'react';
@@ -293,7 +293,7 @@ const MusicPlayerBar = () => {
                 <div className="relative z-10 flex w-full items-center justify-between rounded-lg border border-sidebar-border bg-sidebar/90 p-3 shadow-sm backdrop-blur-lg">
                     <div className="flex flex-1 items-center gap-2">
                         <img
-                            src={getPrimaryImageUrl(currentTrack.id, {
+                            src={getPrimaryImageUrl(currentTrack.albumId || currentTrack.id, {
                                 width: 64,
                                 height: 64,
                             })}

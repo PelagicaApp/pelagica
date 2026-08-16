@@ -33,20 +33,22 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { formatPlayTime, ticksToReadableTime, ticksToSeconds } from '@/utils/timeConversion';
+import { formatPlayTime, ticksToReadableTime, ticksToSeconds } from '@pelagica/core';
 import { buildPlayerUrl } from '@/utils/playerUrl';
+import { isDesktopApp } from '@/utils/desktopApp';
 import { useTranslation } from 'react-i18next';
 import { usePlayerKeyboardControls } from '@/hooks/usePlayerKeyboardControls';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { getPrimaryImageUrl, getTrickplayImageUrl } from '@/utils/jellyfinUrls';
-import { useReportPlaybackProgress } from '@/hooks/api/usePlaybackProgress';
+import { getLogoUrl, getPrimaryImageUrl, getTrickplayImageUrl } from '@pelagica/core';
+import { useReportPlaybackProgress } from '@pelagica/core';
 import { getRuntimePlaybackStats, type RuntimePlaybackStats } from '@/utils/playbackStats';
-import { useSession } from '@/hooks/api/useSession';
+import { useSession } from '@pelagica/core';
 import {
     removeLastSubtitleLanguage,
     setLastAudioLanguage,
     setLastSubtitleLanguage,
 } from '@/utils/localstorageLastlanguage';
+import { useConfig } from '@pelagica/core';
 
 function getPrimaryTrickplayInfo(trickplay?: BaseItemDto['Trickplay']) {
     if (!trickplay) return null;
@@ -147,6 +149,8 @@ const PlayerControls = ({
     const [showStats, setShowStats] = useState(false);
     const [container, setContainer] = useState<HTMLElement | null>(null);
     const { data: session } = useSession(item.Id, showStats);
+    const [backButtonLogoFailed, setBackButtonLogoFailed] = useState(false);
+    const { config } = useConfig();
 
     const handleBack = () => {
         if (backUrl) {
@@ -424,6 +428,11 @@ const PlayerControls = ({
             ? `${item.SeriesName} - S${item.ParentIndexNumber}E${item.IndexNumber} - ${item.Name}`
             : item.Name;
 
+    const backButtonImageId = item.Type === 'Episode' ? item.SeriesId : item.Id;
+    const backButtonImageTag = item.Type === 'Episode' ? undefined : item.ImageTags?.Logo;
+
+    const isLive = item.Type === 'TvChannel';
+
     const audioStreams = item.MediaStreams?.filter((s) => s.Type === 'Audio') || [];
     const subtitleStreams = item.MediaStreams?.filter((s) => s.Type === 'Subtitle') || [];
 
@@ -438,7 +447,7 @@ const PlayerControls = ({
     return (
         <>
             <div
-                className="absolute top-0 left-0 w-full p-4 bg-linear-to-b from-black/80 to-transparent z-20 text-gray-200 text-lg flex items-center gap-2 transition-opacity duration-300"
+                className="absolute top-0 left-0 w-full p-4 bg-linear-to-b from-black/80 to-transparent z-50 text-gray-200 text-lg flex items-center gap-2 transition-opacity duration-300"
                 style={{
                     opacity: showControls ? 1 : 0,
                     pointerEvents: showControls ? 'auto' : 'none',
@@ -448,7 +457,15 @@ const PlayerControls = ({
                 <Button variant="ghost" onClick={handleBack}>
                     <ArrowLeft />
                 </Button>
-                <h1>{title}</h1>
+                {backButtonLogoFailed || (config && !config.showLogoInPlayerControls) ? (
+                    <h1>{title}</h1>
+                ) : (
+                    <img
+                        className="h-9 object-contain"
+                        src={getLogoUrl(backButtonImageId!, { maxHeight: 40 }, backButtonImageTag)}
+                        onError={() => setBackButtonLogoFailed(true)}
+                    />
+                )}
             </div>
             <div
                 className={`absolute inset-0 z-10 p-4 ${showControls ? '' : 'cursor-none'}`}
@@ -571,6 +588,12 @@ const PlayerControls = ({
                                     {stats.playbackInfo.protocol}
                                 </span>
                             </p>
+                            <p>
+                                <span>Live</span>{' '}
+                                <span className="text-muted-foreground">
+                                    {stats.playbackInfo.live ? 'Yes' : 'No'}
+                                </span>
+                            </p>
                         </div>
                         <h4 className="mb-1 mt-3">Video Info</h4>
                         <div className="ml-2">
@@ -665,85 +688,88 @@ const PlayerControls = ({
                 onMouseLeave={handleMouseLeave}
             >
                 {/* Progress bar */}
-                <div
-                    ref={progressRef}
-                    className="w-full h-3 rounded cursor-pointer mb-4 transition-all relative"
-                    onClick={handleProgressClick}
-                    onMouseMove={handleProgressHover}
-                    onMouseLeave={handleProgressLeave}
-                >
-                    {/* Actually visible bar that's smaller for better asthetics */}
-                    <div className="absolute top-1 left-0 w-full h-1 bg-gray-600 rounded pointer-events-none z-0" />
-                    {/* buffered progress */}
+                {!isLive && (
                     <div
-                        className="absolute top-1 left-0 h-1 bg-gray-500 rounded pointer-events-none z-5"
-                        style={{ width: `${bufferedPercentage}%` }}
-                    />
-                    {/** Bar that shows the hovered time */}
-                    <div
-                        className="absolute top-1 left-0 h-1 bg-white/20 rounded pointer-events-none z-10"
-                        style={{
-                            width: hoverTime !== null ? `${(hoverTime / duration) * 100}%` : '0%',
-                        }}
-                    />
-                    {/* current progress */}
-                    <div
-                        className="absolute top-1 left-0 h-1 bg-brand rounded pointer-events-none z-15"
-                        style={{ width: `${progressPercentage}%` }}
-                    />
-                    {/* Hover preview */}
-                    {hoverTime !== null &&
-                        item.Trickplay &&
-                        (() => {
-                            const trickplayInfo = getPrimaryTrickplayInfo(item.Trickplay);
-                            if (!trickplayInfo || hoverTime === null) return null;
+                        ref={progressRef}
+                        className="w-full h-3 rounded cursor-pointer mb-4 transition-all relative"
+                        onClick={handleProgressClick}
+                        onMouseMove={handleProgressHover}
+                        onMouseLeave={handleProgressLeave}
+                    >
+                        {/* Actually visible bar that's smaller for better asthetics */}
+                        <div className="absolute top-1 left-0 w-full h-1 bg-gray-600 rounded pointer-events-none z-0" />
+                        {/* buffered progress */}
+                        <div
+                            className="absolute top-1 left-0 h-1 bg-gray-500 rounded pointer-events-none z-5"
+                            style={{ width: `${bufferedPercentage}%` }}
+                        />
+                        {/** Bar that shows the hovered time */}
+                        <div
+                            className="absolute top-1 left-0 h-1 bg-white/20 rounded pointer-events-none z-10"
+                            style={{
+                                width:
+                                    hoverTime !== null ? `${(hoverTime / duration) * 100}%` : '0%',
+                            }}
+                        />
+                        {/* current progress */}
+                        <div
+                            className="absolute top-1 left-0 h-1 bg-brand rounded pointer-events-none z-15 transition-[width] duration-250 ease-linear"
+                            style={{ width: `${progressPercentage}%` }}
+                        />
+                        {/* Hover preview */}
+                        {hoverTime !== null &&
+                            item.Trickplay &&
+                            (() => {
+                                const trickplayInfo = getPrimaryTrickplayInfo(item.Trickplay);
+                                if (!trickplayInfo || hoverTime === null) return null;
 
-                            const { imageIndex, x, y, width, height } = getTrickplayTile(
-                                hoverTime,
-                                trickplayInfo
-                            );
+                                const { imageIndex, x, y, width, height } = getTrickplayTile(
+                                    hoverTime,
+                                    trickplayInfo
+                                );
 
-                            const previewWidth = width || 320;
-                            const halfWidth = previewWidth / 2;
-                            const clampedPosition = Math.max(
-                                halfWidth,
-                                Math.min(hoverPosition, window.innerWidth - halfWidth)
-                            );
+                                const previewWidth = width || 320;
+                                const halfWidth = previewWidth / 2;
+                                const clampedPosition = Math.max(
+                                    halfWidth,
+                                    Math.min(hoverPosition, window.innerWidth - halfWidth)
+                                );
 
-                            return (
-                                <div
-                                    className="absolute bottom-4 -translate-x-1/2 text-white pointer-events-none z-40 flex flex-col items-center"
-                                    style={{ left: `${clampedPosition}px` }}
-                                >
+                                return (
                                     <div
-                                        className="relative overflow-hidden rounded-md mb-1"
-                                        style={{
-                                            width: width,
-                                            height: height,
-                                        }}
+                                        className="absolute bottom-4 -translate-x-1/2 text-white pointer-events-none z-40 flex flex-col items-center"
+                                        style={{ left: `${clampedPosition}px` }}
                                     >
-                                        <img
-                                            src={getTrickplayImageUrl(
-                                                item.Id!,
-                                                width || 320,
-                                                imageIndex
-                                            )}
+                                        <div
+                                            className="relative overflow-hidden rounded-md mb-1"
                                             style={{
-                                                position: 'absolute',
-                                                left: -x * (width || 0),
-                                                top: -y * (height || 0),
-                                                maxWidth: 'none',
+                                                width: width,
+                                                height: height,
                                             }}
-                                            draggable={false}
-                                        />
+                                        >
+                                            <img
+                                                src={getTrickplayImageUrl(
+                                                    item.Id!,
+                                                    width || 320,
+                                                    imageIndex
+                                                )}
+                                                style={{
+                                                    position: 'absolute',
+                                                    left: -x * (width || 0),
+                                                    top: -y * (height || 0),
+                                                    maxWidth: 'none',
+                                                }}
+                                                draggable={false}
+                                            />
+                                        </div>
+                                        <div className="text-center bg-black/90 p-1 px-2 rounded-md w-min">
+                                            {formatPlayTime(hoverTime)}
+                                        </div>
                                     </div>
-                                    <div className="text-center bg-black/90 p-1 px-2 rounded-md w-min">
-                                        {formatPlayTime(hoverTime)}
-                                    </div>
-                                </div>
-                            );
-                        })()}
-                </div>
+                                );
+                            })()}
+                    </div>
+                )}
 
                 {/* Controls */}
                 <div className="flex items-center justify-between text-white gap-4">
@@ -782,9 +808,16 @@ const PlayerControls = ({
                                 </Link>
                             </Button>
                         )}
-                        <div className="text-sm ml-2">
-                            {formatPlayTime(clampedCurrentTime)} / {formatPlayTime(duration)}
-                        </div>
+                        {isLive ? (
+                            <div className="flex items-center gap-1.5 text-sm ml-2">
+                                <Dot className="text-red-500 -mx-1" size={32} />
+                                {t('live')}
+                            </div>
+                        ) : (
+                            <div className="text-sm ml-2">
+                                {formatPlayTime(clampedCurrentTime)} / {formatPlayTime(duration)}
+                            </div>
+                        )}
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -879,7 +912,7 @@ const PlayerControls = ({
                             onValueChange={handleVolumeChange}
                             className="w-25 cursor-pointer mr-2"
                         />
-                        {document.pictureInPictureEnabled && (
+                        {document.pictureInPictureEnabled && !isDesktopApp() && (
                             <Button
                                 variant={'ghost'}
                                 size={'icon-lg'}

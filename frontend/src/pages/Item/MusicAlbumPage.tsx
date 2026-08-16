@@ -1,7 +1,7 @@
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import BaseMusicListPage from './BaseMusicListPage';
 import { useTranslation } from 'react-i18next';
-import type { AppConfig } from '@/hooks/api/useConfig';
+import type { AppConfig } from '@pelagica/core';
 
 interface MusicAlbumPageProps {
     item: BaseItemDto;

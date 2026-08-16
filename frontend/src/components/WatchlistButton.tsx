@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { useLike } from '@/hooks/api/useLike';
+import { useLike } from '@pelagica/core';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { Bookmark } from 'lucide-react';
 import { useTranslation } from 'react-i18next';

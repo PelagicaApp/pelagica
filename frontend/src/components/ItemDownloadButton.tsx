@@ -1,5 +1,5 @@
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
-import { getDownloadurl } from '../utils/jellyfinUrls';
+import { getDownloadurl } from '@pelagica/core';
 import { Button } from './ui/button';
 import { Download } from 'lucide-react';
 

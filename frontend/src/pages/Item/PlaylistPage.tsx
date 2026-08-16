@@ -1,4 +1,4 @@
-import type { AppConfig } from '@/hooks/api/useConfig';
+import type { AppConfig } from '@pelagica/core';
 import { useTranslation } from 'react-i18next';
 import BaseMusicListPage from './BaseMusicListPage';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';

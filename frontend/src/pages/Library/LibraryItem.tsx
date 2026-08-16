@@ -1,18 +1,21 @@
 import { Skeleton } from '@/components/ui/skeleton';
-import { useConfig } from '@/hooks/api/useConfig';
+import { useConfig } from '@pelagica/core';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import type { TFunction } from 'i18next';
 import { ImageOff, Play } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { buildPlayerUrl } from '@/utils/playerUrl';
+import { getItemUrl } from '@/utils/itemUrl';
 import WatchedStateBadge from '@/components/WatchedStateBadge';
+import ItemContextMenu from '@/components/ItemContextMenu';
 
 const LibraryItem = ({
     item,
     posterUrl,
     t,
     posterAspectRatio = '2/3',
+    posterFit = 'cover',
     detailLine,
     isDirectPlay,
     itemLink,
@@ -21,6 +24,7 @@ const LibraryItem = ({
     posterUrl: string;
     t: TFunction;
     posterAspectRatio?: string;
+    posterFit?: 'cover' | 'contain';
     detailLine?: React.ReactNode;
     isDirectPlay?: boolean;
     itemLink?: string;
@@ -31,7 +35,9 @@ const LibraryItem = ({
     const [posterError, setPosterError] = useState(false);
 
     const playUrl = buildPlayerUrl(item.Id!, location.pathname + location.search);
-    const itemPath = itemLink || (isDirectPlay ? playUrl : `/item/${item.Id}`);
+    const itemPath =
+        itemLink ||
+        (isDirectPlay ? playUrl : getItemUrl(item.Type, item.Id) ?? `/item/${item.Id}`);
 
     const watched = item.UserData?.PlaybackPositionTicks ?? 0;
     const runtime = item.RunTimeTicks ?? 0;
@@ -44,7 +50,8 @@ const LibraryItem = ({
         : 0;
     
     return (
-        <Link to={itemPath} key={item.Id} className="p-0 m-0">
+        <ItemContextMenu item={item}>
+            <Link to={itemPath} key={item.Id} className="p-0 m-0">
             <div
                 className={`relative w-full aspect-${posterAspectRatio} overflow-hidden rounded-md group`}
             >
@@ -54,7 +61,7 @@ const LibraryItem = ({
                             key={item.Id}
                             src={posterUrl}
                             alt={item.Name || t('library:no_title')}
-                            className="w-full h-full object-cover rounded-md group-hover:opacity-75 transition-all group-hover:scale-105 z-10"
+                            className={`w-full h-full object-${posterFit} rounded-md group-hover:opacity-75 transition-all group-hover:scale-105 z-10`}
                             loading="lazy"
                             onError={() => setPosterError(true)}
                         />
@@ -99,6 +106,7 @@ const LibraryItem = ({
                 </span>
             </div>
         </Link>
+        </ItemContextMenu>
     );
 };
 

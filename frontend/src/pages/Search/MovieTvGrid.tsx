@@ -1,11 +1,11 @@
 import { Skeleton } from '@/components/ui/skeleton';
-import { getPrimaryImageUrl } from '@/utils/jellyfinUrls';
+import { getPrimaryImageUrl } from '@pelagica/core';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { ImageOff } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
 import WatchedStateBadge from '@/components/WatchedStateBadge';
-import { useConfig } from '@/hooks/api/useConfig';
+import { useConfig } from '@pelagica/core';
 
 interface MovieTvGridProps {
     items: BaseItemDto[];

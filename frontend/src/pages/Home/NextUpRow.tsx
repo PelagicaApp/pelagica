@@ -1,6 +1,6 @@
-import type { ContinueWatchingDetailLine, ContinueWatchingTitleLine } from '@/hooks/api/useConfig';
-import { useNextUp } from '@/hooks/api/continue/useNextUp';
-import { getUserId } from '@/utils/localstorageCredentials';
+import type { ContinueWatchingDetailLine, ContinueWatchingTitleLine } from '@pelagica/core';
+import { useNextUp } from '@pelagica/core';
+import { getUserId } from '@pelagica/core';
 import BaseContinueRow from './BaseContinueRow';
 
 interface NextUpRowProps {

@@ -6,6 +6,9 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path/filepath"
+	"sync"
+
 	"pelagica-backend/services"
 
 	"github.com/gofiber/fiber/v3"
@@ -14,25 +17,42 @@ import (
 	"pelagica-backend/models"
 )
 
-func themesDir() string {
-	dir := os.Getenv("THEMES_DIR")
-	if dir == "" {
-		dir = "themes"
+var (
+	themeStores   = make(map[string]*services.ThemeStore)
+	themeStoresMu sync.Mutex
+)
+
+func themeStoreForServer(serverKey string) (*services.ThemeStore, error) {
+	themeStoresMu.Lock()
+	defer themeStoresMu.Unlock()
+
+	if store, ok := themeStores[serverKey]; ok {
+		return store, nil
 	}
-	return dir
+
+	store, err := services.NewThemeStore(filepath.Join(serverDataDir(serverKey), "themes"))
+	if err != nil {
+		return nil, err
+	}
+
+	themeStores[serverKey] = store
+	return store, nil
 }
 
-var themeStore *services.ThemeStore
-
-func InitThemeStore() {
-	store, err := services.NewThemeStore(themesDir())
+func themeStoreFromRequest(c fiber.Ctx) (*services.ThemeStore, error) {
+	serverKey, err := serverKeyFromRequest(c)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	themeStore = store
+	return themeStoreForServer(serverKey)
 }
 
 func GetThemes(c fiber.Ctx) error {
+	themeStore, err := themeStoreFromRequest(c)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(models.APIError{Error: err.Error()})
+	}
+
 	return c.Status(fiber.StatusOK).JSON(themeStore.GetAll())
 }
 
@@ -40,6 +60,11 @@ func GetTheme(c fiber.Ctx) error {
 	id := c.Params("id", "")
 	if id == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(models.APIError{Error: "Theme ID is required"})
+	}
+
+	themeStore, err := themeStoreFromRequest(c)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(models.APIError{Error: err.Error()})
 	}
 
 	theme, err := themeStore.Get(id)
@@ -52,6 +77,11 @@ func GetTheme(c fiber.Ctx) error {
 }
 
 func CreateTheme(c fiber.Ctx) error {
+	themeStore, err := themeStoreFromRequest(c)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(models.APIError{Error: err.Error()})
+	}
+
 	var theme models.Theme
 
 	if err := c.Bind().Body(&theme); err != nil {
@@ -81,6 +111,11 @@ func UpdateTheme(c fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(models.APIError{Error: "Theme ID is required"})
 	}
 
+	themeStore, err := themeStoreFromRequest(c)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(models.APIError{Error: err.Error()})
+	}
+
 	var theme models.Theme
 
 	if err := c.Bind().Body(&theme); err != nil {
@@ -93,7 +128,7 @@ func UpdateTheme(c fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(models.APIError{Error: "Invalid theme: " + err.Error()})
 	}
 
-	_, err := themeStore.Write(id, theme)
+	_, err = themeStore.Write(id, theme)
 	if err != nil {
 		slog.Error("Failed to update theme", "error", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(models.APIError{Error: "Failed to update theme"})
@@ -108,6 +143,11 @@ func InstallTheme(c fiber.Ctx) error {
 	id := c.Params("id", "")
 	if id == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(models.APIError{Error: "Theme ID is required"})
+	}
+
+	themeStore, err := themeStoreFromRequest(c)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(models.APIError{Error: err.Error()})
 	}
 
 	repoBaseUrl := os.Getenv("THEMES_REPO_BASE_URL")
@@ -196,7 +236,12 @@ func DeleteTheme(c fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(models.APIError{Error: "Theme ID is required"})
 	}
 
-	err := themeStore.Delete(id)
+	themeStore, err := themeStoreFromRequest(c)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(models.APIError{Error: err.Error()})
+	}
+
+	err = themeStore.Delete(id)
 	if err != nil {
 		slog.Error("Failed to delete theme", "error", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(models.APIError{Error: "Failed to delete theme"})

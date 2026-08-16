@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { useFavorite } from '@/hooks/api/useFavorite';
+import { useFavorite } from '@pelagica/core';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { Heart } from 'lucide-react';
 import { useTranslation } from 'react-i18next';

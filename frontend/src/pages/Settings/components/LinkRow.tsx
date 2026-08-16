@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Trash2, ArrowUp, ArrowDown, Link2 } from 'lucide-react';
 import { IconPicker, type IconName } from '@/components/ui/icon-picker';
 import { DynamicIcon } from 'lucide-react/dynamic';
-import type { ConfigLink } from '@/hooks/api/useConfig';
+import type { ConfigLink } from '@pelagica/core';
 import { DebouncedInput } from './SettingsInputs';
 
 export const LinkRow = ({

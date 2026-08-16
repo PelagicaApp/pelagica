@@ -1,6 +1,6 @@
 import Page from '../Page';
-import { useUserViews } from '@/hooks/api/useUserViews';
-import { useConfig, type DetailField } from '@/hooks/api/useConfig';
+import { useUserViews } from '@pelagica/core';
+import { useConfig, type DetailField } from '@pelagica/core';
 import MediaBar from './MediaBar';
 import ItemsRow from './ItemsRow';
 import ContinueWatchingRow from './ContinueWatchingRow';
@@ -13,6 +13,11 @@ import GenresRow from './GenresRow';
 import LibrariesRow from './LibrariesRow';
 import StudiosRow from './StudiosRow';
 import RecentlyAddedRow from './RecentlyAddedRow';
+import {
+    SeerrPopularMoviesRow,
+    SeerrPopularSeriesRow,
+    SeerrTrendingRow,
+} from './SeerrDiscoverRows';
 
 function getDetailFieldsForCollectionType(type: CollectionType | undefined): DetailField[] {
     switch (type) {
@@ -161,6 +166,8 @@ const HomePage = () => {
                                             ? section.detailFields
                                             : ['ReleaseYear']
                                     }
+                                    useThumbImage={section.useThumbImage}
+                                    autoPlayTrailers={section.autoPlayTrailers}
                                 />
                             );
 
@@ -184,6 +191,32 @@ const HomePage = () => {
                                     limit={section.limit}
                                 />
                             );
+
+                        case 'seerrDiscover':
+                            switch (section.variant) {
+                                case 'popularMovies':
+                                    return (
+                                        <SeerrPopularMoviesRow
+                                            key={index}
+                                            title={section.title || t('seerr_popular_movies')}
+                                        />
+                                    );
+                                case 'popularSeries':
+                                    return (
+                                        <SeerrPopularSeriesRow
+                                            key={index}
+                                            title={section.title || t('seerr_popular_series')}
+                                        />
+                                    );
+                                case 'trending':
+                                default:
+                                    return (
+                                        <SeerrTrendingRow
+                                            key={index}
+                                            title={section.title || t('seerr_trending')}
+                                        />
+                                    );
+                            }
 
                         default:
                             return null;

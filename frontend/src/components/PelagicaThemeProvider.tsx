@@ -1,5 +1,5 @@
-import { fetchThemeById } from '@/api/themes';
-import { useConfig } from '@/hooks/api/useConfig';
+import { fetchThemeById } from '@pelagica/core';
+import { useConfig } from '@pelagica/core';
 import { applyTheme } from '@/utils/applyTheme';
 import {
     getLocalTheme,

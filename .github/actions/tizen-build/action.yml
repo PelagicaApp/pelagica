@@ -1,0 +1,52 @@
+name: 'Tizen Build (XML-escaped passwords)'
+description: >-
+    A fork of sourcetoad/tizen-build-action@v1.1.2.
+author: Sourcetoad (patched)
+branding:
+    color: 'blue'
+    icon: 'package'
+inputs:
+    project-dir:
+        description: 'Absolute path to your Tizen project.'
+        required: true
+    author-cert:
+        description: 'Author certificate for signing. Base64-encoded.'
+        required: false
+    author-key:
+        description: 'Your Tizen author key. A PKCS #12 private key, encoded as base64.'
+        required: true
+    author-password:
+        description: 'Password for author-key.'
+        required: true
+    distributor-cert:
+        description: 'Distributor certificate used for signing. Base64-encoded.'
+        required: false
+    distributor-key:
+        description: 'Distributor key used for signing. Base64-encoded.'
+        required: false
+    distributor-password:
+        description: 'Password for distributor-key'
+        required: false
+    privilege:
+        description: 'public or partner - Which distributor cert/key is used if not provided.'
+        required: false
+        default: 'public'
+outputs:
+    package-artifact:
+        description: 'The absolute path to the build artifact.'
+        value: ${{ steps.build.outputs.package-artifact }}
+runs:
+    using: 'composite'
+    steps:
+        - id: build
+          shell: bash
+          run: |
+              ${{ github.action_path }}/build.sh \
+                "${{ inputs.project-dir }}" \
+                "${{ inputs.author-cert }}" \
+                "${{ inputs.author-key }}" \
+                "${{ inputs.author-password }}" \
+                "${{ inputs.distributor-cert }}" \
+                "${{ inputs.distributor-key }}" \
+                "${{ inputs.distributor-password }}" \
+                "${{ inputs.privilege }}"

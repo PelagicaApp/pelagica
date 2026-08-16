@@ -1,0 +1,26 @@
+{
+    "name": "@pelagica/core",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "exports": {
+        ".": "./src/index.ts",
+        "./i18n": "./src/i18n/index.ts"
+    },
+    "dependencies": {
+        "@jellyfin/sdk": "^0.13.0",
+        "axios": "^1.18.0",
+        "country-flag-icons": "^1.6.19",
+        "i18next": "^26.3.1",
+        "i18next-browser-languagedetector": "^8.2.1",
+        "react-i18next": "^17.0.8"
+    },
+    "peerDependencies": {
+        "@tanstack/react-query": "^5.101.0",
+        "react": "^19.2.7"
+    },
+    "devDependencies": {
+        "@types/react": "^19.2.17",
+        "typescript": "~5.9.3"
+    }
+}

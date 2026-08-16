@@ -1,7 +1,7 @@
 import GenreItem from '@/components/GenreItem';
 import SectionScroller from '@/components/SectionScroller';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useGenresWithItems } from '@/hooks/api/genres/useGenresWithItems';
+import { useGenresWithItems } from '@pelagica/core';
 
 interface GenresRowProps {
     title?: string;

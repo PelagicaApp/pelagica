@@ -1,6 +1,6 @@
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
-import { useGenreItems } from '@/hooks/api/genres/useGenreItems';
-import { useConfig } from '@/hooks/api/useConfig';
+import { useGenreItems } from '@pelagica/core';
+import { useConfig } from '@pelagica/core';
 import WatchedStateBadge from '@/components/WatchedStateBadge';
 import ItemsListPage from '../../components/ItemsListPage';
 

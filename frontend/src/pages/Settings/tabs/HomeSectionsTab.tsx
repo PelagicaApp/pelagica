@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Trash2, Plus, Edit, ArrowUp, ArrowDown } from 'lucide-react';
-import type { AppConfig, HomeScreenSection } from '@/hooks/api/useConfig';
+import type { AppConfig, HomeScreenSection } from '@pelagica/core';
 import { SectionEditor } from '../components/SectionEditor';
 
 export const HomeSectionsTab = ({

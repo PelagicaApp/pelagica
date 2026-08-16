@@ -1,6 +1,6 @@
 import SectionScroller from '@/components/SectionScroller';
 import { Skeleton } from '@/components/ui/skeleton';
-import { getPrimaryImageUrl } from '@/utils/jellyfinUrls';
+import { getPrimaryImageUrl } from '@pelagica/core';
 import { getItemUrl } from '@/utils/itemUrl';
 import type { BaseItemPerson } from '@jellyfin/sdk/lib/generated-client/models';
 import { ImageOff } from 'lucide-react';

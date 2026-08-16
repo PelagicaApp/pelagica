@@ -1,8 +1,8 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Page from '../Page';
-import { useUserViews } from '@/hooks/api/useUserViews';
+import { COLLECTION_ITEM_TYPES, DIRECT_PLAY_COLLECTION_TYPES, useUserViews } from '@pelagica/core';
 import { useMemo, useState, useEffect } from 'react';
-import { useLibraryItems } from '@/hooks/api/useLibraryItems';
+import { useLibraryItems } from '@pelagica/core';
 import { useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -36,8 +36,8 @@ import type { BaseItemDto, CollectionType, ItemSortBy, SortOrder } from '@jellyf
 import { ButtonGroup } from '@/components/ui/button-group';
 import LibraryItem from './LibraryItem';
 import HomeVideoGrid, { TARGET_ROW_HEIGHT } from './HomeVideoGrid';
-import { COLLECTION_ITEM_TYPES, DIRECT_PLAY_TYPES, SUPPORTED_LIBRARY_COLLECTION_TYPES } from '@/utils/itemTypes';
-import { getPrimaryImageUrl, type ImageSize } from '@/utils/jellyfinUrls';
+import { SUPPORTED_LIBRARY_COLLECTION_TYPES } from '../../utils/itemTypes';
+import { getPrimaryImageUrl, type ImageSize } from '@pelagica/core';
 
 const ITEM_ROWS = 5;
 const HOME_VIDEO_PAGE_SIZE = 50;
@@ -149,7 +149,7 @@ const LibraryContent = ({
     const totalPages = libraryData?.totalCount ? Math.ceil(libraryData.totalCount / pageSize) : 0;
     const gridCols = getGridConfig(collectionType).cols;
     const posterAspectRatio = ITEM_POSTER_ASPECT_RATIOS[collectionType] || DEFAULT_POSTER_ASPECT_RATIO;
-    const isDirectPlay = DIRECT_PLAY_TYPES.includes(collectionType);
+    const isDirectPlay = DIRECT_PLAY_COLLECTION_TYPES.includes(collectionType);
     const isHomeVideos = collectionType === 'homevideos';
 
     return (
@@ -224,8 +224,8 @@ const LibraryPage = () => {
     const { data: libraries } = useUserViews();
     const [searchParams, setSearchParams] = useSearchParams();
 
-    const sortBy = (searchParams.get('sortBy') as ItemSortBy) || 'Name';
-    const sortOrder = (searchParams.get('sortOrder') as SortOrder) || 'Ascending';
+    const sortBy = (searchParams.get('sortBy') as ItemSortBy) || 'DateCreated';
+    const sortOrder = (searchParams.get('sortOrder') as SortOrder) || 'Descending';
     const page = Number(searchParams.get('page') ?? '0') || 0;
 
     const libraryIdFromUrl = searchParams.get('library') || '';

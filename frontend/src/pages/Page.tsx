@@ -1,12 +1,12 @@
 import { Button } from '@/components/ui/button';
 import { type PropsWithChildren, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { useCurrentUser } from '@/hooks/api/useCurrentUser';
+import { useCurrentUser } from '@pelagica/core';
 import { PageBackgroundProvider } from '@/context/PageBackgroundProvider';
 import { usePageBackground } from '@/hooks/usePageBackground';
 import MusicPlayerBar from '@/components/MusicPlayerBar';
 import FullPageLoader from '@/components/FullPageLoader';
-import { logout } from '@/api/logout';
+import { logout } from '@pelagica/core';
 import FullPageError from '@/components/FullPageError';
 import TopBar from '@/components/TopBar';
 import { cn } from '../lib/utils';

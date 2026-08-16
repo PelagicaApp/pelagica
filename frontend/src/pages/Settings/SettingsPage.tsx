@@ -4,20 +4,32 @@ import Page from '../Page';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAutoSaveConfig } from './useAutoSaveConfig';
 import { SettingsSkeleton } from './components/SettingsSkeleton';
+import { PluginRequiredNotice } from './components/PluginRequiredNotice';
+import { usePelagicaPluginStatus } from '@/hooks/api/usePelagicaPluginStatus';
 import { GeneralTab } from './tabs/GeneralTab';
 import { HomeSectionsTab } from './tabs/HomeSectionsTab';
 import { ItemPageTab } from './tabs/ItemPageTab';
 import { BrandingTab } from './tabs/BrandingTab';
 import { ThemesTab } from './tabs/ThemesTab';
 import { LinksTab } from './tabs/LinksTab';
+import { useQueryClient } from '@tanstack/react-query';
+import { useEffect } from 'react';
+import { getServerUrl } from '@pelagica/core';
 
 const SettingsPage = () => {
     const { t } = useTranslation('settings');
     const { config, loading, error, saveConfig } = useAutoSaveConfig();
+    const pluginStatus = usePelagicaPluginStatus();
     const [searchParams, setSearchParams] = useSearchParams();
     const activeTab = searchParams.get('tab') || 'general';
+    const queryClient = useQueryClient();
 
-    if (loading) {
+    useEffect(() => {
+        queryClient.invalidateQueries({ queryKey: ['config', getServerUrl()] });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    if (loading || pluginStatus.status === 'checking') {
         return (
             <Page title={t('title')} requiresAuth>
                 <SettingsSkeleton />
@@ -29,6 +41,20 @@ const SettingsPage = () => {
         return (
             <Page title={t('title')} requiresAuth>
                 Error loading settings.
+            </Page>
+        );
+    }
+
+    if (pluginStatus.status !== 'active') {
+        return (
+            <Page title={t('title')} requireAdmin requiresAuth>
+                <PluginRequiredNotice
+                    status={pluginStatus.status}
+                    installing={pluginStatus.installing}
+                    restarting={pluginStatus.restarting}
+                    onInstall={pluginStatus.install}
+                    onRestart={pluginStatus.restart}
+                />
             </Page>
         );
     }

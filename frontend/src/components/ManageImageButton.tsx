@@ -1,21 +1,21 @@
-import { useCurrentUser } from '@/hooks/api/useCurrentUser';
-import { useItemImages, type ItemImage } from '@/hooks/api/images/useItemImages';
-import { useDeleteItemImage } from '@/hooks/api/images/useDeleteItemImage';
-import { useSearchRemoteImages } from '@/hooks/api/images/useSearchRemoteImages';
-import { useDownloadRemoteImage } from '@/hooks/api/images/useDownloadRemoteImage';
+import { useCurrentUser } from '@pelagica/core';
+import { useItemImages, type ItemImage } from '@pelagica/core';
+import { useDeleteItemImage } from '@pelagica/core';
+import { useSearchRemoteImages } from '@pelagica/core';
+import { useDownloadRemoteImage } from '@pelagica/core';
 import { useState, useEffect, useRef } from 'react';
 import { Dialog, DialogContent, DialogFooter, DialogTrigger } from './ui/dialog';
 import { Button } from './ui/button';
 import { ArrowLeft, Image, Loader2, PackageOpen, Search, Trash2, Upload } from 'lucide-react';
 import type { BaseItemDto, ImageType } from '@jellyfin/sdk/lib/generated-client/models';
-import { getItemImageUrl } from '@/utils/jellyfinUrls';
+import { getItemImageUrl } from '@pelagica/core';
 import { Card, CardContent } from './ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Switch } from './ui/switch';
 import { Label } from './ui/label';
 import { Skeleton } from './ui/skeleton';
 import { useTranslation } from 'react-i18next';
-import { useUploadItemImage } from '@/hooks/api/images/useUploadItemImage';
+import { useUploadItemImage } from '@pelagica/core';
 import FileDropInput from './FileDropInput';
 import { getTmdbThumbnailUrl } from '../utils/tmdbThumbnails';
 

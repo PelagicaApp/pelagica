@@ -1,4 +1,4 @@
-import type { SectionItemsConfig } from '@/hooks/api/useConfig';
+import type { SectionItemsConfig } from '@pelagica/core';
 
 export function buildSectionItemsLink(
     title: string | undefined,

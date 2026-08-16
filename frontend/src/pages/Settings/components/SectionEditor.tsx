@@ -14,12 +14,13 @@ import {
     CONTINUE_WATCHING_DETAIL_LINES,
     DETAIL_FIELDS,
     MEDIABAR_SIZES,
+    SEERR_DISCOVER_VARIANTS,
     type ContinueWatchingDetailLine,
     type DetailField,
     type HomeScreenSection,
     type RecentlyAddedSection,
-} from '@/hooks/api/useConfig';
-import { useUserViews } from '@/hooks/api/useUserViews';
+} from '@pelagica/core';
+import { useUserViews } from '@pelagica/core';
 import {
     ImmediateStringInput,
     BooleanInput,
@@ -39,6 +40,7 @@ const HOMESCREEN_SECTION_TYPES = [
     { value: 'genres', label: 'Genres' },
     { value: 'libraries', label: 'Libraries' },
     { value: 'studios', label: 'Studios' },
+    { value: 'seerrDiscover', label: 'Seerr Discover' },
 ];
 
 const RecentlyAddedConfigEditor = ({
@@ -128,7 +130,8 @@ export const SectionEditor = ({
                     {editedSection.type !== 'recentlyAdded' &&
                         editedSection.type !== 'mediaBar' &&
                         editedSection.type !== 'items' &&
-                        editedSection.type !== 'libraries' && (
+                        editedSection.type !== 'libraries' &&
+                        editedSection.type !== 'seerrDiscover' && (
                             <ImmediateStringInput
                                 label={t('section_limit_label')}
                                 value={
@@ -328,7 +331,49 @@ export const SectionEditor = ({
                                     } as any)
                                 }
                             />
+                            <BooleanInput
+                                label={t('use_thumb_image')}
+                                checked={(editedSection as any).useThumbImage || false}
+                                onChange={(value) =>
+                                    setEditedSection({
+                                        ...editedSection,
+                                        useThumbImage: value,
+                                        autoPlayTrailers: value
+                                            ? (editedSection as any).autoPlayTrailers
+                                            : false,
+                                    })
+                                }
+                            />
+                            {(editedSection as any).useThumbImage && (
+                                <BooleanInput
+                                    label={t('autoplay_trailers')}
+                                    checked={(editedSection as any).autoPlayTrailers || false}
+                                    onChange={(value) =>
+                                        setEditedSection({
+                                            ...editedSection,
+                                            autoPlayTrailers: value,
+                                        })
+                                    }
+                                />
+                            )}
                         </>
+                    )}
+
+                    {editedSection.type === 'seerrDiscover' && (
+                        <SelectInput
+                            label={t('seerr_discover_variant')}
+                            options={SEERR_DISCOVER_VARIANTS.map((variant) => ({
+                                value: variant,
+                                label: t(`seerr_variant_${variant}`),
+                            }))}
+                            value={(editedSection as any).variant || 'trending'}
+                            onChange={(value) =>
+                                setEditedSection({
+                                    ...editedSection,
+                                    variant: value as any,
+                                })
+                            }
+                        />
                     )}
                 </div>
                 <DialogFooter>

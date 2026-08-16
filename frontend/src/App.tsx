@@ -1,0 +1,115 @@
+import { lazy, Suspense } from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router';
+import { SearchProvider } from './context/SearchProvider.tsx';
+import { AdminItemDialogsProvider } from './context/AdminItemDialogsProvider.tsx';
+import { SeerrItemDialogProvider } from './context/SeerrItemDialogProvider.tsx';
+import { SearchCommand } from './components/SearchCommand.tsx';
+import { KeyboardShortcuts } from './components/KeyboardShortcuts.tsx';
+import { MusicPlaybackProvider } from './context/MusicPlaybackProvider.tsx';
+import PelagicaThemeLoader from './components/PelagicaThemeProvider.tsx';
+import { Toaster } from './components/ui/sonner.tsx';
+import StatsConsentModal from './components/StatsConsentModal.tsx';
+import { ScrollToTop } from './components/ScrollToTop.tsx';
+import { DesktopDragRegion } from './components/DesktopDragRegion.tsx';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ThemeProvider } from './components/theme-provider.tsx';
+
+const HomePage = lazy(() => import('./pages/Home/HomePage.tsx'));
+const LoginPage = lazy(() => import('./pages/Login/LoginPage.tsx'));
+const LibraryPage = lazy(() => import('./pages/Library/LibraryPage.tsx'));
+const ItemPage = lazy(() => import('./pages/Item/ItemPage.tsx'));
+const PersonPage = lazy(() => import('./pages/Person/PersonPage.tsx'));
+const PlayerPage = lazy(() => import('./pages/Player/PlayerPage.tsx'));
+const SettingsPage = lazy(() => import('./pages/Settings/SettingsPage.tsx'));
+const SearchPage = lazy(() => import('./pages/Search/SearchPage.tsx'));
+const ThemeBrowserPage = lazy(() => import('./pages/ThemeBrowser/ThemeBrowserPage.tsx'));
+const NotFoundPage = lazy(() => import('./pages/NotFound/NotFoundPage.tsx'));
+const PhotoViewerPage = lazy(() => import('./pages/PhotoViewer/PhotoViewerPage.tsx'));
+const MusicLayout = lazy(() => import('./pages/Music/MusicLayout.tsx'));
+const MusicMainContent = lazy(() => import('./pages/Music/MusicMainContent.tsx'));
+const MusicAlbumView = lazy(() => import('./pages/Music/MusicAlbumView.tsx'));
+const MusicPlaylistView = lazy(() => import('./pages/Music/MusicPlaylistView.tsx'));
+const MusicArtistView = lazy(() => import('./pages/Music/MusicArtistView.tsx'));
+const GenrePage = lazy(() => import('./pages/Genre/GenrePage.tsx'));
+const StudioPage = lazy(() => import('./pages/Studio/StudioPage.tsx'));
+const StudiosPage = lazy(() => import('./pages/Studios/StudiosPage.tsx'));
+const ItemsSectionPage = lazy(() => import('./pages/Items/ItemsSectionPage.tsx'));
+const LivetvPage = lazy(() => import('./pages/Live/LiveTvPage.tsx'));
+
+const queryClient = new QueryClient();
+
+export default function App() {
+    return (
+        <QueryClientProvider client={queryClient}>
+            <ThemeProvider>
+                <MusicPlaybackProvider>
+                    <SearchProvider>
+                        <BrowserRouter>
+                            <AdminItemDialogsProvider>
+                                <SeerrItemDialogProvider>
+                                    <ScrollToTop />
+                                    <DesktopDragRegion />
+                                    <KeyboardShortcuts />
+                                    <SearchCommand />
+                                    <PelagicaThemeLoader />
+                                    <Toaster />
+                                    <StatsConsentModal />
+                                    <Suspense fallback={null}>
+                                        <Routes>
+                                            <Route path="/" element={<HomePage />} />
+                                            <Route path="/library" element={<LibraryPage />} />
+                                            <Route path="/item/:itemId" element={<ItemPage />} />
+                                            <Route
+                                                path="/person/:itemId"
+                                                element={<PersonPage />}
+                                            />
+                                            <Route path="/genre/:itemId" element={<GenrePage />} />
+                                            <Route
+                                                path="/studio/:itemId"
+                                                element={<StudioPage />}
+                                            />
+                                            <Route path="/studios" element={<StudiosPage />} />
+                                            <Route
+                                                path="/items/section"
+                                                element={<ItemsSectionPage />}
+                                            />
+                                            <Route path="/login" element={<LoginPage />} />
+                                            <Route path="/play/:itemId" element={<PlayerPage />} />
+                                            <Route path="/settings" element={<SettingsPage />} />
+                                            <Route
+                                                path="/browse-themes"
+                                                element={<ThemeBrowserPage />}
+                                            />
+                                            <Route path="/search" element={<SearchPage />} />
+                                            <Route path="/live" element={<LivetvPage />} />
+                                            <Route
+                                                path="/photo/:itemId"
+                                                element={<PhotoViewerPage />}
+                                            />
+                                            <Route path="/music" element={<MusicLayout />}>
+                                                <Route index element={<MusicMainContent />} />
+                                                <Route
+                                                    path="album/:itemId"
+                                                    element={<MusicAlbumView />}
+                                                />
+                                                <Route
+                                                    path="playlist/:itemId"
+                                                    element={<MusicPlaylistView />}
+                                                />
+                                                <Route
+                                                    path="artist/:itemId"
+                                                    element={<MusicArtistView />}
+                                                />
+                                            </Route>
+                                            <Route path="*" element={<NotFoundPage />} />
+                                        </Routes>
+                                    </Suspense>
+                                </SeerrItemDialogProvider>
+                            </AdminItemDialogsProvider>
+                        </BrowserRouter>
+                    </SearchProvider>
+                </MusicPlaybackProvider>
+            </ThemeProvider>
+        </QueryClientProvider>
+    );
+}

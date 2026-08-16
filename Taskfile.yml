@@ -1,107 +1,63 @@
 version: '3'
 
+includes:
+    frontend:
+        taskfile: ./frontend/Taskfile.yml
+        dir: ./frontend
+        flatten: true
+    backend:
+        taskfile: ./backend/Taskfile.yml
+        dir: ./backend
+        flatten: true
+    desktop:
+        taskfile: ./desktop/Taskfile.yml
+        dir: ./desktop
+    tizen:
+        taskfile: ./tizen/Taskfile.yml
+        dir: ./tizen
+
 tasks:
-  dev:
-    desc: Start backend and frontend in parallel
-    deps:
-      - backend
-      - frontend
+    dev:
+        desc: Start backend and frontend in parallel
+        deps:
+            - backend
+            - frontend
 
-  frontend:
-    desc: Start Vite dev server
-    deps:
-      - install-frontend
-    dir: frontend
-    cmds:
-      - pnpm exec vite --host {{if .MODE}}--mode {{.MODE}}{{end}}
+    checkup:
+        desc: Run all checks (lint, format, and tests)
+        deps:
+            - lint
+            - format:check
+            - tizen:format:check
 
-  backend:
-    desc: Start Go backend
-    deps:
-      - install-backend
-    dir: backend
-    env:
-      APP_VERSION: "1.1.1"
-      CONFIG_PATH: "{{.ROOT_DIR}}/dev.config.json"
-      COLLECTOR_INSTANCE_ID_FILE: "{{.ROOT_DIR}}/config/instance_id"
-      COLLECTOR_STATS_CONSENT_FILE: "{{.ROOT_DIR}}/config/stats_consent"
-      LOG_FILE: "{{.ROOT_DIR}}/config/pelagica.log"
-      COLLECTOR_PING_BASE_URL: "http://localhost:4000"
-      COLLECTOR_PING_TOKEN: "2f64e07c-e930-463f-b118-556a741fb2aa"
-      ENABLE_AUTH: "true"
-      LOG_LEVEL: "debug"
-    cmds:
-      - go run main.go
+    version:
+        desc: "Set the app version everywhere it's tracked (usage: task version VERSION=1.2.3)"
+        preconditions:
+            - sh: '[ -n "{{.VERSION}}" ]'
+              msg: 'Usage: task version VERSION=1.2.3'
+        cmds:
+            - task: set-frontend-version
+              vars:
+                  VERSION: '{{.VERSION}}'
+            - task: tizen:set-tizen-version
+              vars:
+                  VERSION: '{{.VERSION}}'
+            - cmd: 'perl -i -pe "s/APP_VERSION: ''.*''/APP_VERSION: ''{{.VERSION}}''/" backend/Taskfile.yml'
+            - cmd: 'perl -i -pe "s/^    version: ''.*''/    version: ''{{.VERSION}}''/" desktop/build/config.yml'
+            - perl desktop/build/set-versions.pl {{.VERSION}}
+            - 'echo "Version set to {{.VERSION}} in frontend/package.json, tizen/package.json, tizen/public/config.xml, backend/Taskfile.yml, and desktop/build/config.yml"'
 
-  install-frontend:
-    internal: true
-    dir: frontend
-    sources:
-      - package.json
-      - pnpm-lock.yaml
-    generates:
-      - node_modules/.modules.yaml
-    cmds:
-      - pnpm install
+    docker:
+        desc: Build and run the local Docker image
+        cmds:
+            - docker compose -f docker-compose.local.yml up --build
 
-  install-backend:
-    internal: true
-    dir: backend
-    sources:
-      - go.mod
-      - go.sum
-    cmds:
-      - go mod download
+    docker:stop:
+        desc: Stop the local Docker container
+        cmds:
+            - docker compose -f docker-compose.local.yml down
 
-  lint:
-    desc: Lint frontend code with ESLint
-    deps:
-      - install-frontend
-    dir: frontend
-    cmds:
-      - pnpm exec eslint .
-
-  lint:fix:
-    desc: Lint frontend code with ESLint and fix issues
-    deps:
-      - install-frontend
-    dir: frontend
-    cmds:
-      - pnpm exec eslint . --fix
-
-  format:
-    desc: Format frontend code with Prettier
-    deps:
-      - install-frontend
-    dir: frontend
-    cmds:
-      - pnpm exec prettier --write .
-
-  format:check:
-    desc: Check frontend code formatting with Prettier
-    deps:
-      - install-frontend
-    dir: frontend
-    cmds:
-      - pnpm exec prettier --check .
-
-  checkup:
-    desc: Run all checks (lint, format, and tests)
-    deps:
-      - lint
-      - format:check
-
-  docker:
-    desc: Build and run the local Docker image
-    cmds:
-      - docker compose -f docker-compose.local.yml up --build
-
-  docker:stop:
-    desc: Stop the local Docker container
-    cmds:
-      - docker compose -f docker-compose.local.yml down
-
-  stats:
-    desc: Count the amount of lines of code
-    cmds:
-      - cloc . --exclude-dir=dist,node_modules --not-match-f="(pnpm-lock|package-lock|yarn\.lock)"
+    stats:
+        desc: Count the amount of lines of code
+        cmds:
+            - cloc . --exclude-dir=dist,node_modules --not-match-f="(pnpm-lock|package-lock|yarn\.lock)"

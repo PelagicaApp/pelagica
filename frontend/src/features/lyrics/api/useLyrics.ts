@@ -1,8 +1,8 @@
-import { getApi } from '@/api/getApi';
+import { getApi } from '@pelagica/core';
 import { useQuery } from '@tanstack/react-query';
 import { getLyricsApi } from '@jellyfin/sdk/lib/utils/api/lyrics-api';
 import type { LyricDto } from '@jellyfin/sdk/lib/generated-client/models';
-import { getRetryConfig } from '@/utils/authErrorHandler';
+import { getRetryConfig } from '@pelagica/core';
 
 function getErrorStatus(error: unknown): number | undefined {
     if (!error || typeof error !== 'object') {

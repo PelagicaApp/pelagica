@@ -2,10 +2,10 @@ import { Button } from '@/components/ui/button';
 import Page from '../Page';
 import { Link } from 'react-router';
 import { ArrowLeft, CloudCheck, DownloadCloud, ExternalLink, Info } from 'lucide-react';
-import { useThemesRepository } from '@/hooks/api/themes/useThemesRepository';
+import { useThemesRepository } from '@pelagica/core';
 import { Card } from '@/components/ui/card';
-import { getRepositoryThemeUrl, getThemePreviewUrl } from '@/api/repositoryThemes';
-import { useThemes } from '@/hooks/api/themes/useThemes';
+import { getRepositoryThemeUrl, getThemePreviewUrl } from '@pelagica/core';
+import { useThemes } from '@pelagica/core';
 import {
     Carousel,
     CarouselContent,
@@ -13,12 +13,13 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from '@/components/ui/carousel';
-import { useInstallTheme } from '@/hooks/api/themes/useInstallTheme';
+import { useInstallTheme } from '@pelagica/core';
 import { Spinner } from '@/components/ui/spinner';
 import { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { Skeleton } from '@/components/ui/skeleton';
 import { memo } from 'react';
+import { ExternalAnchor } from '@/components/ExternalAnchor';
 
 const ThemeCardSkeleton = memo(() => {
     return (
@@ -87,10 +88,8 @@ const ThemeBrowserPage = () => {
                     i18nKey="themebrowser:repository_info"
                     components={{
                         repoLink: (
-                            <a
+                            <ExternalAnchor
                                 href="https://github.com/KartoffelChipss/pelagica-themes"
-                                target="_blank"
-                                rel="noopener noreferrer"
                                 className="underline"
                             />
                         ),
@@ -158,13 +157,9 @@ const ThemeBrowserPage = () => {
                                         )}
                                     </Button>
                                     <Button variant={'outline'} size={'icon'} asChild>
-                                        <a
-                                            href={getRepositoryThemeUrl(theme)}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                        >
+                                        <ExternalAnchor href={getRepositoryThemeUrl(theme)}>
                                             <ExternalLink />
-                                        </a>
+                                        </ExternalAnchor>
                                     </Button>
                                 </div>
                             </div>

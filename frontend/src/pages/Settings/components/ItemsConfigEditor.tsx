@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import type { Option } from '@/components/ui/multi-select';
-import type { SectionItemsConfig } from '@/hooks/api/useConfig';
-import { useUserViews } from '@/hooks/api/useUserViews';
+import type { SectionItemsConfig } from '@pelagica/core';
+import { useUserViews } from '@pelagica/core';
 import {
     ImmediateStringInput,
     BooleanInput,

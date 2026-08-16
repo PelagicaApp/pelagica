@@ -1,23 +1,25 @@
 import SectionScroller from '@/components/SectionScroller';
 import { Skeleton } from '@/components/ui/skeleton';
-import type { DetailField, SectionItemsConfig } from '@/hooks/api/useConfig';
-import { useRowItems } from '@/hooks/api/useRowItems';
+import type { DetailField, SectionItemsConfig } from '@pelagica/core';
+import { getEndsAt, ticksToReadableTime, useRowItems } from '@pelagica/core';
 import { Link } from 'react-router';
 import { useEffect, useMemo, type ReactNode } from 'react';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
-import { getEndsAt, ticksToReadableTime } from '@/utils/timeConversion';
 import { ChevronRight, Star } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import ScrollableSectionPoster from '@/components/ScrollableSectionPoster';
-import { getPrimaryImageUrl } from '@/utils/jellyfinUrls';
+import { getPrimaryImageUrl, getThumbUrl } from '@pelagica/core';
 import { buildSectionItemsLink } from '@/utils/sectionItemsLink';
+import ItemContextMenu from '@/components/ItemContextMenu';
 
 interface ItemsRowProps {
     title?: string;
     allLink?: string;
     items?: SectionItemsConfig;
     detailFields?: DetailField[];
+    useThumbImage?: boolean;
+    autoPlayTrailers?: boolean;
 }
 
 function getDetailFieldsStringForItem(
@@ -92,7 +94,14 @@ function getDetailFieldsStringForItem(
     }
 }
 
-const ItemsRow = ({ title, allLink, items, detailFields }: ItemsRowProps) => {
+const ItemsRow = ({
+    title,
+    allLink,
+    items,
+    detailFields,
+    useThumbImage,
+    autoPlayTrailers,
+}: ItemsRowProps) => {
     const { t } = useTranslation('home');
     const { data: recentItems, isLoading } = useRowItems(items);
     const resolvedAllLink = allLink ?? buildSectionItemsLink(title, items);
@@ -103,15 +112,23 @@ const ItemsRow = ({ title, allLink, items, detailFields }: ItemsRowProps) => {
             (acc, item) => {
                 const isLandscape =
                     item.Type === 'MusicVideo' || item.Type === 'Video' || item.Type === 'Photo';
-                const size = isLandscape
-                    ? { maxWidth: 640, maxHeight: 360 }
-                    : { maxWidth: 416, maxHeight: 640 };
-                acc[item.Id!] = getPrimaryImageUrl(item.Id!, size, item.ImageTags?.Primary);
+                if (useThumbImage) {
+                    acc[item.Id!] = getThumbUrl(
+                        item.Id!,
+                        { maxWidth: 640, maxHeight: 360 },
+                        item.ImageTags?.Thumb
+                    );
+                } else {
+                    const size = isLandscape
+                        ? { maxWidth: 640, maxHeight: 360 }
+                        : { maxWidth: 416, maxHeight: 640 };
+                    acc[item.Id!] = getPrimaryImageUrl(item.Id!, size, item.ImageTags?.Primary);
+                }
                 return acc;
             },
             {} as Record<string, string>
         );
-    }, [recentItems]);
+    }, [recentItems, useThumbImage]);
 
     useEffect(() => {
         if (recentItems && recentItems.length === 0) {
@@ -139,24 +156,31 @@ const ItemsRow = ({ title, allLink, items, detailFields }: ItemsRowProps) => {
                 items={
                     recentItems
                         ? recentItems.map((item) => (
-                              <ScrollableSectionPoster
-                                  key={item.Id}
-                                  item={item}
-                                  posterUrl={posterUrls[item.Id!]}
-                              >
-                                  <div className="flex flex-wrap items-center mt-1">
-                                      {detailFields && detailFields.length > 0
-                                          ? detailFields.map((field) => (
-                                                <span
-                                                    key={field}
-                                                    className="text-xs text-muted-foreground mr-3"
-                                                >
-                                                    {getDetailFieldsStringForItem(field, item, t)}
-                                                </span>
-                                            ))
-                                          : null}
-                                  </div>
-                              </ScrollableSectionPoster>
+                              <ItemContextMenu key={item.Id} item={item}>
+                                  <ScrollableSectionPoster
+                                      item={item}
+                                      posterUrl={posterUrls[item.Id!]}
+                                      forceLandscape={useThumbImage}
+                                      autoPlayTrailers={useThumbImage && autoPlayTrailers}
+                                  >
+                                      <div className="flex flex-wrap items-center mt-1">
+                                          {detailFields && detailFields.length > 0
+                                              ? detailFields.map((field) => (
+                                                    <span
+                                                        key={field}
+                                                        className="text-xs text-muted-foreground mr-3"
+                                                    >
+                                                        {getDetailFieldsStringForItem(
+                                                            field,
+                                                            item,
+                                                            t
+                                                        )}
+                                                    </span>
+                                                ))
+                                              : null}
+                                      </div>
+                                  </ScrollableSectionPoster>
+                              </ItemContextMenu>
                           ))
                         : Array.from({ length: 5 }).map((_, index) => (
                               <div key={index} className="w-36 lg:w-44 2xl:w-52">

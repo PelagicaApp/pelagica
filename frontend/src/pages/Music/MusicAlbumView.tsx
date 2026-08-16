@@ -1,8 +1,8 @@
 import { useParams } from 'react-router';
-import { useItem } from '@/hooks/api/useItem';
-import { useConfig } from '@/hooks/api/useConfig';
+import { useItem } from '@pelagica/core';
+import { useConfig } from '@pelagica/core';
 import { useTranslation } from 'react-i18next';
-import { getUserId } from '@/utils/localstorageCredentials';
+import { getUserId } from '@pelagica/core';
 import BaseMusicListPage from '@/pages/Item/BaseMusicListPage';
 import { Skeleton } from '@/components/ui/skeleton';
 import MusicBackButton from './MusicBackButton';

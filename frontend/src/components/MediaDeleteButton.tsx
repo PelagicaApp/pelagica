@@ -1,4 +1,4 @@
-import { useDeleteMedia } from '@/hooks/api/useDeleteMedia';
+import { useDeleteMedia } from '@pelagica/core';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { Button } from './ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
@@ -6,7 +6,7 @@ import { Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { useState } from 'react';
-import { useCurrentUser } from '@/hooks/api/useCurrentUser';
+import { useCurrentUser } from '@pelagica/core';
 
 const MediaDeleteButton = ({
     item,

@@ -11,10 +11,10 @@ import {
 } from '@/components/ui/carousel';
 import { Skeleton } from '@/components/ui/skeleton';
 import WatchListButton from '@/components/WatchlistButton';
-import type { MediabarSize, SectionItemsConfig } from '@/hooks/api/useConfig';
-import { useMediaBarItems } from '@/hooks/api/useMediaBarItems';
-import { getBackdropUrl, getLogoUrl } from '@/utils/jellyfinUrls';
-import { getEndsAt, ticksToReadableTime } from '@/utils/timeConversion';
+import type { MediabarSize, SectionItemsConfig } from '@pelagica/core';
+import { useMediaBarItems } from '@pelagica/core';
+import { getBackdropUrl, getLogoUrl } from '@pelagica/core';
+import { getEndsAt, ticksToReadableTime } from '@pelagica/core';
 import { Play, Star } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -90,6 +90,10 @@ const MediaBar = ({
               : size === 'xlarge'
                 ? 'max-h-48 sm:max-h-72'
                 : 'max-h-30 sm:max-h-50';
+
+    if (!mediabarItems?.length) {
+        return <div className="py-8"></div>;
+    }
 
     return (
         <div className={`${className} relative`}>

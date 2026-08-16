@@ -1,0 +1,6 @@
+/bin
+/pelagica-desktop
+*.syso
+/build/windows/nsis/MicrosoftEdgeWebview2Setup.exe
+/build/linux/appimage/build
+/build/linux/pelagica.png

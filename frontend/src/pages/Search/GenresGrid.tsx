@@ -1,6 +1,6 @@
 import GenreItem from '@/components/GenreItem';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useGenresWithItems } from '@/hooks/api/genres/useGenresWithItems';
+import { useGenresWithItems } from '@pelagica/core';
 import { memo } from 'react';
 
 const GenreSkeletonLoader = memo(() => (

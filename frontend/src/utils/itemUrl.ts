@@ -4,6 +4,7 @@ const DIRECT_PLAY_ROUTES: Partial<Record<BaseItemKind, string>> = {
     MusicVideo: '/play',
     Video: '/play',
     Photo: '/photo',
+    TvChannel: '/play',
 };
 
 const MUSIC_ROUTES: Partial<Record<BaseItemKind, string>> = {
@@ -16,6 +17,7 @@ const STANDALONE_ROUTES: Partial<Record<BaseItemKind, string>> = {
     Person: '/person',
     Genre: '/genre',
     MusicGenre: '/genre',
+    Studio: '/studio',
 };
 
 export function getItemUrl(type: BaseItemKind | undefined, id: string | undefined): string {

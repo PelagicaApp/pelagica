@@ -1,0 +1,156 @@
+version: '3'
+
+vars:
+    PROFILE: pelagica
+    APP_ID: Pel4g1c4Ap.pelagica
+    BUILD_DIR: www
+    CERT_DIR: '{{.HOME}}/tizen-studio-data/certs'
+    CERT_NAME: pelagica-author
+    AUTHOR_NAME: Pelagica Dev
+    TIZEN_STUDIO: '{{.HOME}}/tizen-studio'
+    # go-task can't override PATH via `env:` (the OS-inherited PATH always wins),
+    # so tizen/sdb/em-cli tasks prefix this onto $PATH inline instead.
+    TIZEN_BIN: '{{.TIZEN_STUDIO}}/tools/ide/bin:{{.TIZEN_STUDIO}}/tools:{{.TIZEN_STUDIO}}/tools/emulator/bin'
+    SIMULATOR_APP: '{{.TIZEN_STUDIO}}/tools/sec-tv-simulator/nwjs.app'
+    SIMULATOR_DATA: '{{.HOME}}/Library/Application Support/tizen tv web simulator'
+
+tasks:
+    default:
+        desc: List all available tasks
+        cmds:
+            - task --list
+        silent: true
+
+    install:
+        desc: Install JS dependencies
+        cmds:
+            - pnpm install
+
+    set-tizen-version:
+        internal: true
+        cmds:
+            - pnpm pkg set version={{.VERSION}}
+            - perl -i -0777 -pe 's/(<widget[^>]*?\bversion=")[^"]*(")/${1}{{.VERSION}}$2/s' public/config.xml
+
+    dev:
+        desc: Start the Vite dev server (fast iteration in a plain browser)
+        cmds:
+            - pnpm dev
+
+    build:
+        desc: Type-check and build the Tizen-ready bundle to www/
+        cmds:
+            - pnpm build
+
+    lint:
+        desc: Run oxlint
+        cmds:
+            - pnpm lint
+
+    format:
+        desc: Format code with Prettier
+        cmds:
+            - pnpm format
+
+    format:check:
+        desc: Check code formatting with Prettier
+        cmds:
+            - pnpm format:check
+
+    preview:
+        desc: Preview the production build with Vite
+        cmds:
+            - pnpm preview
+
+    clean:
+        desc: Remove build output
+        cmds:
+            - rm -rf {{.BUILD_DIR}}
+
+    ui:add:
+        desc: 'Add a shadcn/ui component, e.g. task ui:add -- button'
+        cmds:
+            - pnpm dlx shadcn@latest add {{.CLI_ARGS}}
+
+    cert:
+        desc: 'Generate a local Tizen author certificate (task tizen:cert PASSWORD=...)'
+        requires:
+            vars: [PASSWORD]
+        cmds:
+            - mkdir -p {{.CERT_DIR}}
+            - cd {{.CERT_DIR}} && PATH="{{.TIZEN_BIN}}:$PATH" tizen certificate -a {{.PROFILE}} -f {{.CERT_NAME}} -p {{.PASSWORD}} -n "{{.AUTHOR_NAME}}"
+
+    profile:
+        desc: 'Register the local signing profile (task tizen:profile PASSWORD=...)'
+        requires:
+            vars: [PASSWORD]
+        cmds:
+            - PATH="{{.TIZEN_BIN}}:$PATH" tizen security-profiles add -n {{.PROFILE}} -a {{.CERT_DIR}}/{{.CERT_NAME}}.p12 -p {{.PASSWORD}}
+
+    package:
+        desc: Package www/ into a signed .wgt (requires tizen:cert + tizen:profile once)
+        deps: [build]
+        cmds:
+            - PATH="{{.TIZEN_BIN}}:$PATH" tizen package -t wgt -s {{.PROFILE}} -- {{.BUILD_DIR}}
+
+    sim:
+        desc: Launch the Samsung TV Simulator against the current build (Apple Silicon-friendly, runs via Rosetta)
+        deps: [build]
+        cmds:
+            - >
+                open {{.SIMULATOR_APP}} --args
+                --platform=tizentv --tizentvversion=2.0 --resolution=1920x1080
+                --file="{{.TASKFILE_DIR}}/{{.BUILD_DIR}}/index.html"
+
+    sim:reset:
+        desc: Kill the TV Simulator and clear its saved window/profile state (fixes a stuck or invisible window)
+        cmds:
+            - pkill -f "sec-tv-simulator/nwjs.app" || true
+            - rm -rf "{{.SIMULATOR_DATA}}"
+
+    emulator:
+        desc: 'Launch the x86_64 TV emulator (Intel Mac/Linux with KVM only — fails on Apple Silicon). Override with NAME=...'
+        vars:
+            NAME: '{{.NAME | default "T-samsung-10.0-x86_64"}}'
+        cmds:
+            - PATH="{{.TIZEN_BIN}}:$PATH" em-cli launch -n {{.NAME}}
+
+    tv:connect:
+        desc: 'Connect to a Samsung TV in Developer Mode over the network (task tizen:tv:connect TV_IP=...)'
+        requires:
+            vars: [TV_IP]
+        cmds:
+            - PATH="{{.TIZEN_BIN}}:$PATH" sdb connect {{.TV_IP}}:26101
+
+    tv:install:
+        desc: 'Install the packaged .wgt to a target device (task tizen:tv:install TARGET=<serial-or-ip:port>)'
+        requires:
+            vars: [TARGET]
+        deps: [package]
+        cmds:
+            - |
+                export PATH="{{.TIZEN_BIN}}:$PATH"
+                TARGET_ID="$(sdb devices | awk -v t="{{.TARGET}}" '$1==t {print $3}')"
+                tizen install -n {{.BUILD_DIR}}/*.wgt -t "${TARGET_ID:-{{.TARGET}}}"
+
+    tv:run:
+        desc: 'Launch the installed app on a target device (task tizen:tv:run TARGET=<serial-or-ip:port>)'
+        requires:
+            vars: [TARGET]
+        cmds:
+            - |
+                export PATH="{{.TIZEN_BIN}}:$PATH"
+                TARGET_ID="$(sdb devices | awk -v t="{{.TARGET}}" '$1==t {print $3}')"
+                tizen run -p {{.APP_ID}} -t "${TARGET_ID:-{{.TARGET}}}"
+
+    tv:deploy:
+        desc: 'Build, package, install, and run on a real TV in one shot (task tizen:tv:deploy TV_IP=...)'
+        requires:
+            vars: [TV_IP]
+        cmds:
+            - task: tv:connect
+              vars: { TV_IP: '{{.TV_IP}}' }
+            - task: tv:install
+              vars: { TARGET: '{{.TV_IP}}:26101' }
+            - task: tv:run
+              vars: { TARGET: '{{.TV_IP}}:26101' }

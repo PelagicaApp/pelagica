@@ -2,9 +2,9 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import Page from '../Page';
-import { useItem } from '../../hooks/api/useItem';
-import { getUserId } from '../../utils/localstorageCredentials';
-import { getPrimaryImageUrl } from '../../utils/jellyfinUrls';
+import { useItem } from '@pelagica/core';
+import { getUserId } from '@pelagica/core';
+import { getPrimaryImageUrl } from '@pelagica/core';
 import { useNavigate, useParams } from 'react-router';
 import { Spinner } from '../../components/ui/spinner';
 

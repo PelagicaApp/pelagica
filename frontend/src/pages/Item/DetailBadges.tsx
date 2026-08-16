@@ -1,6 +1,6 @@
 import { Badge } from '@/components/ui/badge';
-import type { AppConfig, DetailBadge } from '@/hooks/api/useConfig';
-import { getEndsAt, ticksToReadableTime } from '@/utils/timeConversion';
+import type { AppConfig, DetailBadge } from '@pelagica/core';
+import { getEndsAt, ticksToReadableTime } from '@pelagica/core';
 import { getVideoQualityLabel } from '@/utils/videoQuality';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import type { TFunction } from 'i18next';

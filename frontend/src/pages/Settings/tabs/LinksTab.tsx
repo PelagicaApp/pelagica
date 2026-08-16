@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
-import type { AppConfig, ConfigLink } from '@/hooks/api/useConfig';
+import type { AppConfig, ConfigLink } from '@pelagica/core';
 import { LinkRow } from '../components/LinkRow';
 
 export const LinksTab = ({

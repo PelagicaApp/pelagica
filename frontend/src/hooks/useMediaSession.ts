@@ -1,5 +1,5 @@
 import type { MusicPlaybackTrack } from '@/context/MusicPlaybackContext';
-import { getPrimaryImageUrl } from '@/utils/jellyfinUrls';
+import { getPrimaryImageUrl } from '@pelagica/core';
 import { setSafeMediaSessionPositionState } from '@/utils/mediaSessionPosition';
 import { useEffect } from 'react';
 

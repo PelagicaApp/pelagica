@@ -4,19 +4,21 @@ type AppConfig struct {
 	JsonSchema                  string              `json:"$schema,omitempty"`
 	HomeScreenSections          []HomeScreenSection `json:"homeScreenSections,omitempty"`
 	ItemPage                    *ItemPageSettings   `json:"itemPage,omitempty"`
-	ServerAddress               string              `json:"serverAddress,omitempty"`
 	LogoLightURL                string              `json:"logoLightUrl,omitempty"`
 	LogoDarkURL                 string              `json:"logoDarkUrl,omitempty"`
 	ShowStreamystatsButton      *bool               `json:"showStreamystatsButton,omitempty"`
 	StreamystatsURL             string              `json:"streamystatsUrl,omitempty"`
+	SeerrURL                    string              `json:"seerrUrl,omitempty"`
 	WatchedStateBadgeHomeScreen *bool               `json:"watchedStateBadgeHomeScreen,omitempty"`
 	WatchedStateBadgeLibrary    *bool               `json:"watchedStateBadgeLibrary,omitempty"`
 	WatchedStateBadgeGenre      *bool               `json:"watchedStateBadgeGenre,omitempty"`
 	WatchedStateBadgeSearch     *bool               `json:"watchedStateBadgeSearch,omitempty"`
 	ServerThemeId               string              `json:"serverThemeId,omitempty"`
 	ServerName                  string              `json:"serverName,omitempty"`
-	ShowLogoInTopBar             *bool               `json:"showLogoInTopBar,omitempty"`
+	ShowLogoInTopBar            *bool               `json:"showLogoInTopBar,omitempty"`
 	Links                       []ConfigLink        `json:"links,omitempty"`
+	HideBackToServerButton      *bool               `json:"hideBackToServerButton,omitempty"`
+	ShowLogoInPlayerControls    *bool               `json:"showLogoInPlayerControls,omitempty"`
 }
 
 type ConfigLink struct {
@@ -44,8 +46,9 @@ type HomeScreenSection struct {
 	LibraryIDs []string `json:"libraryIds,omitempty"`
 
 	// Items section
-	AllLink      string        `json:"allLink,omitempty"`
-	DetailFields []DetailField `json:"detailFields,omitempty"`
+	AllLink       string        `json:"allLink,omitempty"`
+	DetailFields  []DetailField `json:"detailFields,omitempty"`
+	UseThumbImage *bool         `json:"useThumbImage,omitempty"`
 
 	// Continue / Resume / NextUp
 	DetailLine []ContinueWatchingDetailLine `json:"detailLine,omitempty"`
@@ -58,6 +61,9 @@ type HomeScreenSection struct {
 	RecommendationType RecommendationTypeFilter `json:"recommendationType,omitempty"`
 	ShowBasedOn        *bool                    `json:"showBasedOn,omitempty"`
 	ShowSimilarity     *bool                    `json:"showSimilarity,omitempty"`
+
+	// SeerrDiscover
+	Variant string `json:"variant,omitempty"`
 }
 
 type ItemPageSettings struct {
@@ -67,6 +73,7 @@ type ItemPageSettings struct {
 	FavoriteButton      []BaseItemKind `json:"favoriteButton"`
 	ShowWatchlistButton *bool          `json:"showWatchlistButton,omitempty"`
 	DeleteButton        []BaseItemKind `json:"deleteButton,omitempty"`
+	AutoPlayTrailers    *bool          `json:"autoPlayTrailers,omitempty"`
 }
 
 type SectionItemsConfig struct {
@@ -106,4 +113,5 @@ const (
 	SectionRecommended   = "streamystatsRecommended"
 	SectionGenres        = "genres"
 	SectionLibraries     = "libraries"
+	SectionSeerrDiscover = "seerrDiscover"
 )

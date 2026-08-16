@@ -1,5 +1,5 @@
 import { Skeleton } from '@/components/ui/skeleton';
-import { getPrimaryImageUrl } from '@/utils/jellyfinUrls';
+import { getPrimaryImageUrl } from '@pelagica/core';
 import { getItemUrl } from '@/utils/itemUrl';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { User } from 'lucide-react';

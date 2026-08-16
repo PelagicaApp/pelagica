@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
-import { useItemPlayState } from '@/hooks/api/playState/useItemPlayState';
-import { useMarkItemPlayed } from '@/hooks/api/playState/useMarkItemPlayed';
-import { useMarkItemUnplayed } from '@/hooks/api/playState/useMarkItemUnplayed';
+import { useItemPlayState } from '@pelagica/core';
+import { useMarkItemPlayed } from '@pelagica/core';
+import { useMarkItemUnplayed } from '@pelagica/core';
 import { Circle, CircleCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 

@@ -7,7 +7,7 @@ import {
     CommandList,
 } from '@/components/ui/command';
 import { useSearch, type SearchMode } from '@/context/SearchContext';
-import { useSearchItems } from '@/hooks/api/useSearchItems';
+import { useSearchItems } from '@pelagica/core';
 import { useMusicPlayback } from '@/hooks/useMusicPlayback';
 import { useNavigate } from 'react-router';
 import { Skeleton } from './ui/skeleton';
@@ -17,7 +17,7 @@ import JellyfinItemKindIcon from './JellyfinItemKindIcon';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import type { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models/base-item-kind';
-import { getPrimaryImageUrl } from '../utils/jellyfinUrls';
+import { getPrimaryImageUrl } from '@pelagica/core';
 import { getItemUrl } from '@/utils/itemUrl';
 import { cn } from '@/lib/utils';
 import { renderItemFallbackIcon } from '@/utils/itemFallbackIcon';
@@ -244,7 +244,7 @@ export const SearchCommand = () => {
                             return (
                                 <CommandItem
                                     key={item.Id}
-                                    value={item.Name!}
+                                    value={item.Id}
                                     onSelect={() => {
                                         if (item.Type === 'Audio') {
                                             loadTrack(

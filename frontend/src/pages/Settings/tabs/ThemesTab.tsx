@@ -5,10 +5,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Trash2, Plus, Earth } from 'lucide-react';
 import { Link } from 'react-router';
 import { toast } from 'sonner';
-import type { AppConfig } from '@/hooks/api/useConfig';
-import { useThemes } from '@/hooks/api/themes/useThemes';
-import { useDeleteTheme } from '@/hooks/api/themes/useDeleteTheme';
-import { useCreateTheme } from '@/hooks/api/themes/useCreateTheme';
+import type { AppConfig } from '@pelagica/core';
+import { useThemes } from '@pelagica/core';
+import { useDeleteTheme } from '@pelagica/core';
+import { useCreateTheme } from '@pelagica/core';
 import JsonFileUpload from '@/components/JsonFileUpload';
 import { SelectInput } from '../components/SettingsInputs';
 import { SettingsSkeleton } from '../components/SettingsSkeleton';

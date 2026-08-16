@@ -1,11 +1,11 @@
-import type { AppConfig } from '@/hooks/api/useConfig';
+import type { AppConfig } from '@pelagica/core';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import BaseMediaPage from './BaseMediaPage';
 import { useTranslation } from 'react-i18next';
-import { getPrimaryImageUrl } from '@/utils/jellyfinUrls';
+import { getPrimaryImageUrl } from '@pelagica/core';
 import DetailBadges from './DetailBadges';
 import { useState } from 'react';
-import { useSeasons } from '@/hooks/api/useSeasons';
+import { useSeasons } from '@pelagica/core';
 import EpisodesDisplay from './EpisodesDisplay';
 import {
     Select,
@@ -19,13 +19,15 @@ import FavoriteButton from '../../components/FavoriteButton';
 import { Skeleton } from '@/components/ui/skeleton';
 import ItemAdminButton from '@/components/ItemAdminButton';
 import { ImageOff } from 'lucide-react';
-import { getUserId } from '../../utils/localstorageCredentials';
+import { getUserId } from '@pelagica/core';
 import PlayStateButton from '../../components/PlayStateButton';
-import { useUpcomingEpisodes } from '../../hooks/api/useUpcomingEpisodes';
+import { useUpcomingEpisodes } from '@pelagica/core';
 import UpcomingEpisodeComponent from './UpcomingEpisodeComponent';
-import { getLogoUrl } from '@/utils/jellyfinUrls';
+import { getLogoUrl } from '@pelagica/core';
 import ItemMetadataBadges from './ItemMetadataBadges';
 import Overview from './Overview';
+import { Link } from 'react-router';
+import JellyfinItemKindIcon from '../../components/JellyfinItemKindIcon';
 
 interface SeasonPageProps {
     item: BaseItemDto;
@@ -89,6 +91,20 @@ const SeasonPage = ({ item, config }: SeasonPageProps) => {
 
                     {/* Details */}
                     <div className="flex-1 flex flex-col gap-5 w-full text-left">
+                        {/* Breadcrumb */}
+                        <div className="flex flex-wrap items-center text-sm text-muted-foreground">
+                            <Link
+                                to={`/item/${item.SeriesId}`}
+                                className="hover:underline flex items-center gap-2"
+                            >
+                                <JellyfinItemKindIcon kind="Series" className="h-4 w-4" />
+                                <span className="line-clamp-1 text-ellipsis break-all">
+                                    {item.SeriesName || t('no_title')}
+                                </span>
+                            </Link>
+                        </div>
+
+                        {/* Title */}
                         {!failedLogo && item.Id ? (
                             <img
                                 src={getLogoUrl(item.Id, { maxHeight: 150 }, item.ImageTags?.Logo)}
@@ -104,6 +120,7 @@ const SeasonPage = ({ item, config }: SeasonPageProps) => {
 
                         <DetailBadges item={item} appConfig={config} />
 
+                        {/* Actions */}
                         <div className="flex flex-wrap gap-2.5 items-center mt-2">
                             <FavoriteButton
                                 item={item}

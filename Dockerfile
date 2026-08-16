@@ -3,12 +3,16 @@ FROM node:20-alpine AS frontend-builder
 
 WORKDIR /app
 
-COPY frontend/package.json frontend/pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY frontend/package.json frontend/package.json
+COPY tizen/package.json tizen/package.json
+COPY packages/core/package.json packages/core/package.json
 RUN npm install -g pnpm \
-    && pnpm install --frozen-lockfile
+    && pnpm install --frozen-lockfile --filter pelagica...
 
-COPY frontend .
-RUN pnpm run build
+COPY packages/core packages/core
+COPY frontend frontend
+RUN pnpm --filter pelagica run build
 
 
 # Stage 2: Build backend
@@ -23,7 +27,7 @@ COPY backend/go.mod backend/go.sum ./
 RUN go mod download
 
 COPY backend .
-RUN CGO_ENABLED=0 \ 
+RUN CGO_ENABLED=0 \
     GOOS=$TARGETOS \
     GOARCH=$TARGETARCH \
     go build -o server ./
@@ -39,7 +43,7 @@ ARG COLLECTOR_PING_TOKEN
 RUN apk add --no-cache ca-certificates tzdata
 
 # frontend
-COPY --from=frontend-builder /app/dist /usr/share/nginx/html
+COPY --from=frontend-builder /app/frontend/dist /usr/share/nginx/html
 
 # backend
 COPY --from=backend-builder /backend/server /server
@@ -56,11 +60,9 @@ ENV PORT=4321
 ENV LOG_LEVEL=info
 ENV LOG_FILE=/config/logs/pelagica.log
 ENV ENABLE_AUTH=true
-ENV CONFIG_PATH=/config/config.json
-ENV THEMES_DIR=/config/themes
-ENV STUDIO_THUMBS=/config/studio_thumbs
+ENV SERVERS_DIR=/config/servers
+ENV STUDIOS_DB_DIR=/config/studios_db
 ENV DEFAULT_THEME_PATH=/default.theme.json
-ENV BRANDING_DIR=/config/branding
 ENV THEMES_REPO_BASE_URL=https://themes.pelagica.app/
 ENV COLLECTOR_PING_BASE_URL=https://stats.pelagica.app
 ENV COLLECTOR_PING_TOKEN=$COLLECTOR_PING_TOKEN

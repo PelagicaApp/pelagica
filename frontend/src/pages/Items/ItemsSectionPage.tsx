@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import Page from '../Page';
 import ItemsGridPage from '@/components/ItemsGridPage';
 import { useItemsGridState } from '@/hooks/useItemsGridState';
-import { useSectionItems } from '@/hooks/api/useSectionItems';
+import { useSectionItems } from '@pelagica/core';
 import { parseSectionItemsLink } from '@/utils/sectionItemsLink';
 
 const ItemsSectionPage = () => {

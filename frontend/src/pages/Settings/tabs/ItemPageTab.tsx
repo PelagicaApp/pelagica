@@ -2,9 +2,10 @@ import { useTranslation } from 'react-i18next';
 import {
     DETAIL_BADGES,
     EPISODE_DISPLAYS,
+    SERIES_VIEWS,
     type AppConfig,
     type DetailBadge,
-} from '@/hooks/api/useConfig';
+} from '@pelagica/core';
 import type { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models';
 import { BooleanInput, SelectInput, MultiSelectInput } from '../components/SettingsInputs';
 
@@ -40,6 +41,18 @@ export const ItemPageTab = ({
                 onChange={(value) => updateItemPage({ episodeDisplay: value as 'grid' | 'row' })}
                 description={t('episode_display_description')}
             />
+            <SelectInput
+                label={t('series_view_label')}
+                options={SERIES_VIEWS.map((view) => ({
+                    value: view,
+                    label: t(`series_view_${view}`),
+                }))}
+                value={itemPage.seriesView || 'episodes'}
+                onChange={(value) =>
+                    updateItemPage({ seriesView: value as 'episodes' | 'seasons' })
+                }
+                description={t('series_view_description')}
+            />
             <BooleanInput
                 label={t('show_watchlist_button_label')}
                 checked={itemPage.showWatchlistButton || false}
@@ -49,6 +62,11 @@ export const ItemPageTab = ({
                 label={t('show_download_button_label')}
                 checked={itemPage.showDownloadButton || false}
                 onChange={(checked) => updateItemPage({ showDownloadButton: checked })}
+            />
+            <BooleanInput
+                label={t('auto_play_trailers_label')}
+                checked={itemPage.autoPlayTrailers || false}
+                onChange={(checked) => updateItemPage({ autoPlayTrailers: checked })}
             />
             <MultiSelectInput
                 label={t('favorite_button_types_label')}

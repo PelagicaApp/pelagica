@@ -2,11 +2,8 @@ import ScrollableSectionPoster from '@/components/ScrollableSectionPoster';
 import SectionScroller from '@/components/SectionScroller';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-    useRecommendedItems,
-    type RecommendationTypeFilter,
-} from '@/hooks/api/useRecommendedItems';
-import { getPrimaryImageUrl } from '@/utils/jellyfinUrls';
+import { useRecommendedItems, type RecommendationTypeFilter } from '@pelagica/core';
+import { getPrimaryImageUrl } from '@pelagica/core';
 import { Star, TrendingUp } from 'lucide-react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';

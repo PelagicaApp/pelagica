@@ -1,6 +1,6 @@
 import { ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { getPrimaryImageUrl } from '@/utils/jellyfinUrls';
+import { getPrimaryImageUrl } from '@pelagica/core';
 import type { MusicPlaybackTrack } from '@/context/MusicPlaybackContext';
 import type { ProcessedLyrics } from '../types';
 import LyricsDisplay from '../display/LyricsDisplay';

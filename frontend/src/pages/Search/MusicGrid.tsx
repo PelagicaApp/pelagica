@@ -1,64 +1,23 @@
-import { Skeleton } from '@/components/ui/skeleton';
-import { getPrimaryImageUrl } from '@/utils/jellyfinUrls';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
-import { Music } from 'lucide-react';
-import { useState } from 'react';
-import { Link } from 'react-router';
+import MusicAlbumCard from '@/components/MusicAlbumCard';
 
 interface MusicGridProps {
     items: BaseItemDto[];
 }
 
-const MusicItem = ({ item }: { item: BaseItemDto }) => {
-    const [posterError, setPosterError] = useState(false);
-    const posterUrl = getPrimaryImageUrl(
-        item.Id || '',
-        {
-            maxWidth: 300,
-            maxHeight: 300,
-        },
-        item.ImageTags?.Primary,
-        85
-    );
-
-    return (
-        <Link to={`/item/${item.Id}`} key={item.Id} className="p-0 m-0">
-            <div className="relative w-full aspect-square overflow-hidden rounded-md group">
-                {!posterError ? (
-                    <>
-                        <img
-                            key={item.Id}
-                            src={posterUrl}
-                            alt={item.Name || 'No Title'}
-                            className="w-full h-full object-cover rounded-md group-hover:opacity-75 transition-all group-hover:scale-105 z-10"
-                            loading="lazy"
-                            onError={() => setPosterError(true)}
-                        />
-                        <Skeleton className="absolute bottom-0 left-0 right-0 top-0 -z-1" />
-                    </>
-                ) : (
-                    <div className="w-full h-full bg-muted flex items-center justify-center rounded-md">
-                        <Music className="text-4xl text-muted-foreground" />
-                    </div>
-                )}
-                <div className="absolute inset-0 rounded-md pointer-events-none poster-card-outline z-20" />
-            </div>
-            <p className="mt-2 text-sm line-clamp-1 text-ellipsis break-all">
-                {item.Name || 'No Title'}
-            </p>
-            {item.Artists && item.Artists.length > 0 && (
-                <p className="text-xs text-muted-foreground line-clamp-1">
-                    {item.Artists.join(', ')}
-                </p>
-            )}
-        </Link>
-    );
-};
-
 const MusicGrid = ({ items }: MusicGridProps) => (
     <div className="w-full gap-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8">
         {items.map((item) => (
-            <MusicItem key={item.Id} item={item} />
+            <MusicAlbumCard
+                key={item.Id}
+                album={item}
+                imageSize={{ maxWidth: 300, maxHeight: 300 }}
+                imageQuality={85}
+                titleClassName="mt-2 text-sm line-clamp-1 text-ellipsis break-all"
+                subtitleClassName="text-xs text-muted-foreground line-clamp-1"
+                showPosterOutline
+                showSkeleton
+            />
         ))}
     </div>
 );

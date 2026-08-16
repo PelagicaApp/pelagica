@@ -1,10 +1,10 @@
-import { useEditItemMetadata } from '@/hooks/api/useEditItemMetadata';
+import { useEditItemMetadata } from '@pelagica/core';
 import type {
     BaseItemDto,
     Video3DFormat,
     MetadataField,
 } from '@jellyfin/sdk/lib/generated-client/models';
-import { getApi } from '@/api/getApi';
+import { getApi } from '@pelagica/core';
 import { getUserLibraryApi } from '@jellyfin/sdk/lib/utils/api/user-library-api';
 import { getItemUpdateApi } from '@jellyfin/sdk/lib/utils/api/item-update-api';
 import { useQuery } from '@tanstack/react-query';

@@ -1,8 +1,8 @@
 import ScrollableSectionPoster from '@/components/ScrollableSectionPoster';
 import SectionScroller from '@/components/SectionScroller';
 import { Skeleton } from '@/components/ui/skeleton';
-import { usePersonFilmography } from '@/hooks/api/usePersonFilmography';
-import { getUserId } from '@/utils/localstorageCredentials';
+import { usePersonFilmography } from '@pelagica/core';
+import { getUserId } from '@pelagica/core';
 import { memo, useMemo } from 'react';
 import type React from 'react';
 

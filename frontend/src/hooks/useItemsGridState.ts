@@ -1,6 +1,9 @@
-import type { BaseItemDto, ItemSortBy, SortOrder } from '@jellyfin/sdk/lib/generated-client/models';
+import type { ItemSortBy, SortOrder } from '@jellyfin/sdk/lib/generated-client/models';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router';
+import type { ItemsQueryParams, ItemsQueryResult } from '@pelagica/core';
+
+export type { ItemsQueryParams, ItemsQueryResult };
 
 const ITEM_ROWS = 5;
 const DEFAULT_SORT_BY: ItemSortBy = 'Name';
@@ -13,24 +16,6 @@ function getColumnCount(width: number): number {
     if (width >= 768) return 4; // md
     if (width >= 640) return 3; // sm
     return 2;
-}
-
-export interface ItemsQueryParams {
-    sortBy: ItemSortBy[];
-    sortOrder: SortOrder[];
-    limit: number;
-    startIndex: number;
-}
-
-export interface ItemsQueryResult {
-    data:
-        | {
-              items?: BaseItemDto[] | null;
-              totalCount?: number | null;
-          }
-        | undefined;
-    isLoading: boolean;
-    error: unknown;
 }
 
 export interface ItemsGridState {
@@ -78,9 +63,12 @@ export function useItemsGridState(defaults?: {
     useEffect(() => {
         const handleResize = () => {
             const newPageSize = getColumnCount(window.innerWidth) * ITEM_ROWS;
-            setPageSize(newPageSize);
-            setPageState(0);
-            updateSearchParams(0);
+            setPageSize((prevPageSize) => {
+                if (prevPageSize === newPageSize) return prevPageSize;
+                setPageState(0);
+                updateSearchParams(0);
+                return newPageSize;
+            });
         };
 
         window.addEventListener('resize', handleResize);

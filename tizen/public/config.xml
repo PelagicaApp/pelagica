@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns="http://www.w3.org/ns/widgets"
+        xmlns:tizen="http://tizen.org/ns/widgets"
+        id="https://pelagica.app/pelagica"
+        version="4.2.1"
+        viewmodes="maximized">
+    <tizen:application id="Pel4g1c4Ap.pelagica"
+                        package="Pel4g1c4Ap"
+                        required_version="6.5"/>
+    <tizen:profile name="tv"/>
+    <name>Pelagica</name>
+    <icon src="icon.png"/>
+    <content src="index.html"/>
+    <feature name="http://tizen.org/feature/screen.size.all"/>
+    <tizen:privilege name="http://tizen.org/privilege/internet"/>
+    <tizen:privilege name="http://tizen.org/privilege/tv.inputdevice"/>
+    <tizen:setting screen-orientation="landscape"
+                    context-menu="disable"
+                    background-support="disable"
+                    encryption="disable"
+                    install-location="auto"
+                    hwkey-event="enable"/>
+    <access origin="*" subdomains="true"/>
+</widget>

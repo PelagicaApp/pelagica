@@ -5,19 +5,20 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@radix-ui/react-label';
 import { Info, Server, TriangleAlert, User } from 'lucide-react';
-import { jellyfin } from '@/api/jellyfinClient';
-import { useLogin } from '@/hooks/api/useLogin';
 import {
+    getJellyfinInstance,
+    useLogin,
     useQuickConnectInitiate,
     useQuickConnectStatus,
     useQuickConnectAuthenticate,
-} from '@/hooks/api/useQuickConnect';
+} from '@pelagica/core';
 import { Spinner } from '@/components/ui/spinner';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { useConfig } from '@/hooks/api/useConfig';
-import { getServerUrl, saveServerUrl } from '@/utils/localstorageCredentials';
-import { useServerBranding } from '../../hooks/api/useServerBranding';
+import { useConfig } from '@pelagica/core';
+import { useServerAddress } from '@pelagica/core';
+import { getServerUrl, saveServerUrl } from '@pelagica/core';
+import { useServerBranding } from '@pelagica/core';
 import DOMPurify from 'dompurify';
 
 const DEMO_SERVER_URL = 'https://jellyfin.streamyfin.app';
@@ -38,6 +39,7 @@ const LoginPage = () => {
     const isDemo = import.meta.env.VITE_IS_DEMO === 'true';
 
     const { config } = useConfig();
+    const serverAddress = useServerAddress();
     const [serverUrl, setServerUrl] = useState<string>(() =>
         isDemo ? DEMO_SERVER_URL : getServerUrl() || ''
     );
@@ -45,7 +47,7 @@ const LoginPage = () => {
     const navigate = useNavigate();
     const { t } = useTranslation('login');
     const [step, setStep] = useState<'server' | 'login' | 'quickconnect'>(
-        config?.serverAddress || serverUrl ? 'login' : 'server'
+        serverAddress || serverUrl ? 'login' : 'server'
     );
 
     const [checkingServer, setCheckingServer] = useState(false);
@@ -89,24 +91,21 @@ const LoginPage = () => {
     }, [serverUrl, step]);
 
     useEffect(() => {
-        if (config?.serverAddress) {
-            if (!config.serverAddress.trim()) return;
-            if (
-                !config.serverAddress.startsWith('http://') &&
-                !config.serverAddress.startsWith('https://')
-            ) {
+        if (serverAddress) {
+            if (!serverAddress.trim()) return;
+            if (!serverAddress.startsWith('http://') && !serverAddress.startsWith('https://')) {
                 console.warn(
-                    'Ignoring predefined server address: If you specify a server address in config.json, it must include http:// or https://'
+                    'Ignoring predefined server address: SERVER_ADDRESS must include http:// or https://'
                 );
                 return;
             }
-            saveServerUrl(config.serverAddress);
+            saveServerUrl(serverAddress);
             // eslint-disable-next-line react-hooks/set-state-in-effect
-            setServerUrl(config.serverAddress);
+            setServerUrl(serverAddress);
             setStep('login');
             setServerCheckError(null);
         }
-    }, [config?.serverAddress]);
+    }, [serverAddress]);
 
     const initiateQuickConnect = useCallback(async () => {
         setQuickConnectError(null);
@@ -179,8 +178,9 @@ const LoginPage = () => {
             return;
         }
 
-        const servers = await jellyfin.discovery.getRecommendedServerCandidates(serverAddress);
-        const best = jellyfin.discovery.findBestServer(servers);
+        const servers =
+            await getJellyfinInstance().discovery.getRecommendedServerCandidates(serverAddress);
+        const best = getJellyfinInstance().discovery.findBestServer(servers);
 
         if (!best) {
             setServerCheckError(t('could_not_find_server'));
@@ -373,9 +373,15 @@ const LoginPage = () => {
                             >
                                 {t('quick_connect')}
                             </Button>
-                            <Button variant="link" className="w-full mt-2" onClick={onBackToServer}>
-                                {t('back_to_server')}
-                            </Button>
+                            {!(serverAddress && config.hideBackToServerButton) && (
+                                <Button
+                                    variant="link"
+                                    className="w-full mt-2"
+                                    onClick={onBackToServer}
+                                >
+                                    {t('back_to_server')}
+                                </Button>
+                            )}
                         </form>
                         <Disclaimer text={branding?.LoginDisclaimer} />
                     </CardContent>

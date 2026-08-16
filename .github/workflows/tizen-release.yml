@@ -1,0 +1,63 @@
+name: Build and Publish Tizen App
+
+on:
+    release:
+        types: [published]
+
+permissions:
+    contents: write
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.event.release.tag_name }}
+    cancel-in-progress: true
+
+jobs:
+    tizen:
+        name: Build and sign Tizen widget
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 24
+
+            - name: Install pnpm
+              run: npm install -g pnpm
+
+            - name: Install go-task
+              uses: arduino/setup-task@v2
+              with:
+                  version: 3.x
+                  repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Install dependencies
+              run: task tizen:install
+
+            - name: Build Tizen bundle
+              run: task tizen:build
+
+            - name: Cache Tizen Studio CLI installer
+              uses: actions/cache@v4
+              with:
+                  path: tizen-studio_5.1.bin
+                  key: tizen-studio-cli-5.1-ubuntu-64
+
+            - name: Build and sign .wgt package
+              id: tizen-build
+              uses: ./.github/actions/tizen-build
+              with:
+                  project-dir: ${{ github.workspace }}/tizen/www
+                  author-key: ${{ secrets.TIZEN_CERT_P12_BASE64 }}
+                  author-password: ${{ secrets.TIZEN_CERT_PASSWORD }}
+
+            - name: Rename asset
+              run: mv "${{ steps.tizen-build.outputs.package-artifact }}" pelagica-tizen.wgt
+
+            - name: Upload asset to release
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: gh release upload "${{ github.event.release.tag_name }}" pelagica-tizen.wgt --clobber

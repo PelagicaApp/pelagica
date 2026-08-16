@@ -1,4 +1,4 @@
-import { useRefreshItemMetadata } from '@/hooks/api/useRefreshItemMetadata';
+import { useRefreshItemMetadata } from '@pelagica/core';
 import { MetadataRefreshMode, type BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';

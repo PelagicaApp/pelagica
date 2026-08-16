@@ -13,7 +13,7 @@ This is a fork
   <a href="https://stats.pelagica.app/"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fstats.pelagica.app%2Fstats&label=active%20instances&query=%24.active_instances&color=brightgreen" alt="Active Instances"></a>
 </p>
 
-<p align="center">Pelagica is an alternative web frontend for <a href="https://jellyfin.org">Jellyfin</a> built using React. It aims to provide a fast, modern, and customizable user experience for browsing and watching your media library.</p>
+<p align="center">Pelagica is a web and desktop client for <a href="https://jellyfin.org">Jellyfin</a> built using React. It aims to provide a fast, modern, and customizable user experience for browsing and watching your media library. It's available both as a self-hosted web app and as a native desktop app for macOS, Windows, and Linux.</p>
 
 <!-- p align="center">A fast, modern web frontend for Jellyfin</p> -->
 
@@ -22,9 +22,9 @@ This is a fork
 ## Table of Contents
 
 - [Features](#features)
-- [Demo](#demo)
-- [Docker Installation](#docker-installation)
-- [Custom Themes](#custom-themes)
+- [Web Demo](#web-demo)
+- [Web Installation](#web-installation)
+- [Desktop App](#desktop-app)
 - [Discord](#discord)
 - [Localization](#localization)
 - [Development Setup](#development-setup)
@@ -42,15 +42,15 @@ This is a fork
 - **Video Player:** Integrated video player for movies and TV shows.
 - **Music Player:** A music player that allows you to listen to your music albums or playlists while browsing your library.
 - **Responsive Design:** Works seamlessly on both desktop and mobile devices.
+- **Desktop App:** Native apps for macOS, Windows, and Linux, built with [Wails](https://v3.wails.io).
 - **Theming:** Light and dark mode support as well as custom themes
-- **Localization:** Supports multiple languages through [community contributions](https://gitlocalize.com/repo/10758).
-
-You can find a roadmap of planned features and improvements in the [GitHub Projects](https://github.com/users/KartoffelChipss/projects/7).
+- **Localization:** Supports multiple languages through [community contributions](#localization).
 
 If you want to suggest new features or report bugs, please use the [GitHub Issues](https://github.com/KartoffelChipss/pelagica/issues) section.
 
 ### Integrated Services
 
+- **Seerr:** Discover new movies and TV shows to watch, and request them without leaving Pelagica.
 - **Streamystats:** Get your streamystats recommendations directly on your home page.
 - **kefintweaks Watchlist:** View and manage your kefintweaks watchlist within Pelagica.
 
@@ -77,9 +77,9 @@ If you want to suggest new features or report bugs, please use the [GitHub Issue
 
 > Screenshots may include media artwork used for demonstration purposes only.
 
-## Demo
+## Web Demo
 
-You can find a live demo of Pelagica at:
+You can find a live demo of Pelagica web at:
 
 https://demo.pelagica.app/
 
@@ -89,90 +89,19 @@ For production use, you should self-host Pelagica using Docker or another method
 
 Thank you to [Streamyfin](https://streamyfin.app/) for providing a demo Jellyfin server for testing!
 
-## Docker Installation
+## Web Installation
 
-The easiest way to run Pelagica is using Docker. This provides a production-ready setup with nginx web server.
+Pelagica web is distributed as a Docker image. See the [Installation](https://pelagica.app/docs/installation) and [Configuration](https://pelagica.app/docs/configuration) docs for setup instructions, and [Themes](https://pelagica.app/docs/themes) for applying custom themes.
 
-### Quick Start
+## Desktop App
 
-1. **Create a directory for Pelagica:**
+Pelagica is also available as a native desktop app for macOS, Windows, and Linux, built with [Wails v3](https://v3.wails.io). Download the latest build for your platform from the [Releases](https://github.com/PelagicaApp/pelagica/releases/latest) page.
 
-    ```bash
-    mkdir -p pelagica && cd pelagica
-    ```
+- **macOS:** Not notarized, so Gatekeeper will flag it — right-click the app and choose "Open" to bypass.
+- **Windows:** Not signed with an Authenticode certificate, so SmartScreen will flag it.
+- **Linux:** Available as a `.deb` package or an `.AppImage`.
 
-2. **Run the container:**
-
-    ```bash
-    docker run -d \
-      --name pelagica \
-      -p 8080:80 \
-      -v "$(pwd)/config:/config" \
-      --restart unless-stopped \
-      kartoffelchipss/pelagica:latest
-    ```
-
-    Make sure to replace `$(pwd)/config` with the actual path where your config files should be located (e.g. `/mnt/user/appdata/pelagica`)
-
-3. **Access Pelagica:**
-
-    Open your browser to http://localhost:8080
-
-### Container Management
-
-```bash
-# View logs
-docker logs -f pelagica
-
-# Stop the container
-docker stop pelagica
-
-# Start the container
-docker start pelagica
-
-# Update to latest version
-docker pull kartoffelchipss/pelagica:latest
-docker stop pelagica
-docker rm pelagica
-# Then run the docker run command again from Quick Start
-```
-
-### Using Docker Compose
-
-If you prefer using docker-compose, create a `docker-compose.yml` file:
-
-```yaml
-services:
-    pelagica:
-        image: kartoffelchipss/pelagica:latest
-        container_name: pelagica
-        ports:
-            - '8080:80'
-        volumes:
-            - /path/to/your/config:/config
-        restart: unless-stopped
-```
-
-Replace `/path/to/your/config` with the actual path where your config files should be located (e.g. `/mnt/user/appdata/pelagica`)
-
-Then run: `docker-compose up -d`
-
-### Building from Source
-
-If you want to build the Docker image from source instead of using prebuilt images:
-
-```bash
-# Clone the repository
-git clone https://github.com/KartoffelChipss/pelagica.git
-cd pelagica
-
-# Build and start
-docker-compose up -d --build
-```
-
-## Custom Themes
-
-You can find instructions on how to build and/or publish custom themes [here](https://github.com/KartoffelChipss/pelagica-themes#readme).
+See the [desktop README](./desktop/README.md) for build and packaging instructions if you'd rather build it yourself.
 
 ## Discord
 
@@ -180,48 +109,15 @@ For discussions about Pelagica, join the [JellyfinCommunity](https://discord.gg/
 
 ## Localization
 
-Pelagica supports multiple languages and depends on community contributions for translations. If you'd like to help translate Pelagica into your language, you can contribute via [GitLocalize](https://gitlocalize.com/repo/10758).
+Pelagica supports multiple languages through community contributions. See the [Translations](https://pelagica.app/docs/translations) docs for how to contribute.
 
 ## Development Setup
 
-### Prerequisites
-
-| Tool                                       | Version |
-| ------------------------------------------ | ------- |
-| [Go](https://go.dev/dl/)                   | 1.25+   |
-| [Node.js](https://nodejs.org/)             | 24.16+  |
-| [pnpm](https://pnpm.io/installation)       | latest  |
-| [Task](https://taskfile.dev/installation/) | latest  |
-
-### Running the dev environment
-
-Dependencies are installed automatically on first run (and whenever `package.json`, `pnpm-lock.yaml`, `go.mod`, or `go.sum` change).
-
-```bash
-task dev
-```
-
-This starts both the frontend (http://localhost:3000) and backend in parallel.
-
-You can also run them individually:
-
-```bash
-task frontend   # Vite dev server only
-task backend    # Go backend only
-```
-
-To see all available tasks:
-
-```bash
-task --list
-```
+See the [Development Setup](https://pelagica.app/docs/development) docs for prerequisites and how to run the project locally.
 
 ## Contributing
 
-Issues and pull requests are welcome.
-Please open an issue to discuss larger changes before submitting a PR.
-
-> **Note:** All pull requests should be made against the `develop` branch, not `main`.
+See the [Contributing](https://pelagica.app/docs/contributing) docs for guidelines on reporting issues and submitting pull requests.
 
 ## What does that name mean?
 

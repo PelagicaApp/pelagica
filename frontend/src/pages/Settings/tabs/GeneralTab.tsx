@@ -1,8 +1,9 @@
 import { useTranslation } from 'react-i18next';
-import type { AppConfig } from '@/hooks/api/useConfig';
-import { useStatsConsent } from '@/hooks/api/statsConsent/useStatsConsent';
-import { useSetStatsConsent } from '@/hooks/api/statsConsent/useSetStatsConsent';
+import type { AppConfig } from '@pelagica/core';
+import { useStatsConsent } from '@pelagica/core';
+import { useSetStatsConsent } from '@pelagica/core';
 import { StringInput, BooleanInput } from '../components/SettingsInputs';
+import { isDesktopApp } from '../../../utils/desktopApp';
 
 const StatsConsentSetting = () => {
     const { t } = useTranslation('settings');
@@ -27,17 +28,22 @@ export const GeneralTab = ({
 }) => {
     const { t } = useTranslation('settings');
 
+    const isDesktop = isDesktopApp();
+
     return (
         <div className="max-w-200">
             <h1 className="mb-2 mt-2 text-2xl font-bold leading-none tracking-tight">
                 {t('category_general')}
             </h1>
+            <h2 className="mt-6 mb-2 text-xl font-semibold leading-none tracking-tight">
+                {t('seerr_integration')}
+            </h2>
+            <p className="mb-2 text-sm text-muted-foreground">{t('seerr_description')}</p>
             <StringInput
-                label={t('server_address_label')}
-                value={config.serverAddress || ''}
-                onChange={(value) => saveConfig((prev) => ({ ...prev, serverAddress: value }))}
-                placeholder={t('server_address_placeholder')}
-                description={t('server_address_description')}
+                label={t('seerr_url_label')}
+                value={config.seerrUrl || ''}
+                onChange={(value) => saveConfig((prev) => ({ ...prev, seerrUrl: value }))}
+                placeholder={t('seerr_url_placeholder')}
             />
             <h2 className="mt-6 mb-2 text-xl font-semibold leading-none tracking-tight">
                 Streamystats
@@ -106,12 +112,46 @@ export const GeneralTab = ({
                 }
             />
             <h2 className="mt-6 mb-2 text-xl font-semibold leading-none tracking-tight">
-                {t('usage_statistics')}
+                {t('show_logo_in_player_controls')}
             </h2>
             <p className="mb-2 text-sm text-muted-foreground">
-                {t('usage_statistics_description')}
+                {t('show_logo_in_player_controls_description')}
             </p>
-            <StatsConsentSetting />
+            <BooleanInput
+                label={t('show_logo_in_player_controls_label')}
+                checked={config.showLogoInPlayerControls || false}
+                onChange={(checked) =>
+                    saveConfig((prev) => ({
+                        ...prev,
+                        showLogoInPlayerControls: checked,
+                    }))
+                }
+            />
+            <h2 className="mt-6 mb-2 text-xl font-semibold leading-none tracking-tight">
+                {t('login_page')}
+            </h2>
+            <p className="mb-2 text-sm text-muted-foreground">{t('login_page_description')}</p>
+            <BooleanInput
+                label={t('hide_back_to_server_button_label')}
+                checked={config.hideBackToServerButton || false}
+                onChange={(checked) =>
+                    saveConfig((prev) => ({
+                        ...prev,
+                        hideBackToServerButton: checked,
+                    }))
+                }
+            />
+            {!isDesktop && (
+                <>
+                    <h2 className="mt-6 mb-2 text-xl font-semibold leading-none tracking-tight">
+                        {t('usage_statistics')}
+                    </h2>
+                    <p className="mb-2 text-sm text-muted-foreground">
+                        {t('usage_statistics_description')}
+                    </p>
+                    <StatsConsentSetting />
+                </>
+            )}
         </div>
     );
 };

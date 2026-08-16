@@ -1,6 +1,6 @@
-import { useResumeItems } from '@/hooks/api/continue/useResumeItems';
-import type { ContinueWatchingDetailLine, ContinueWatchingTitleLine } from '@/hooks/api/useConfig';
-import { getUserId } from '@/utils/localstorageCredentials';
+import { useResumeItems } from '@pelagica/core';
+import type { ContinueWatchingDetailLine, ContinueWatchingTitleLine } from '@pelagica/core';
+import { getUserId } from '@pelagica/core';
 import BaseContinueRow from './BaseContinueRow';
 
 interface ResumeRowProps {

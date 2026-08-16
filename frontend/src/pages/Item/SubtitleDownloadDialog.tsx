@@ -11,7 +11,7 @@ import {
 import { Captions, Download, ExternalLink, FileText, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useMemo, useState } from 'react';
-import { getAccessToken, getServerUrl } from '../../utils/localstorageCredentials';
+import { getAccessToken, getServerUrl } from '@pelagica/core';
 
 interface SubtitleDownloadDialogProps {
     item: BaseItemDto;

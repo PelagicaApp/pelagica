@@ -1,0 +1,23 @@
+name: Validate PR Target
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, edited]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check PR branch rules
+        run: |
+          BASE="${{ github.event.pull_request.base.ref }}"
+          HEAD="${{ github.event.pull_request.head.ref }}"
+
+          echo "Head: $HEAD"
+          echo "Base: $BASE"
+
+          if [[ "$BASE" == "main" && "$HEAD" != "develop" ]]; then
+            echo "::error::Only PRs from develop may target main."
+            exit 1
+          fi

@@ -1,4 +1,4 @@
-import type { Theme } from '@/api/themes';
+import type { Theme } from '@pelagica/core';
 
 function applyLightColors(colors: Record<string, string>) {
     let styleEl = document.getElementById('dynamic-light-theme') as HTMLStyleElement | null;
