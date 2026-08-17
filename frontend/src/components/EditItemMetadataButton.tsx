@@ -6,7 +6,7 @@ import type {
 import {
     getApi,
     getItemCached,
-    invalidateItemCache,
+    useEditItemMetadata,
 } from '@pelagica/core';
 import { getItemUpdateApi } from '@jellyfin/sdk/lib/utils/api/item-update-api';
 import { useQuery } from '@tanstack/react-query';
