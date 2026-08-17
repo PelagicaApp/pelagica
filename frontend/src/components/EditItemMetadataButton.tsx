@@ -7,7 +7,6 @@ import {
     getApi,
     getItemCached,
     invalidateItemCache,
-    useEditItemMetadata,
 } from '@pelagica/core';
 import { getItemUpdateApi } from '@jellyfin/sdk/lib/utils/api/item-update-api';
 import { useQuery } from '@tanstack/react-query';
@@ -81,10 +80,6 @@ const EditItemMetadataButton = ({
     const [preferredCountry, setPreferredCountry] = useState('');
 
     const { editItemMetadata, isSaving } = useEditItemMetadata(() => {
-        if (item.Id) {
-            invalidateItemCache(item.Id);
-        }
-    
         setIsEditDialogOpen(false);
     });
 
