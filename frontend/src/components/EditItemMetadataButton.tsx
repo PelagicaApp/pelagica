@@ -1,11 +1,14 @@
-import { useEditItemMetadata } from '@pelagica/core';
 import type {
     BaseItemDto,
     Video3DFormat,
     MetadataField,
 } from '@jellyfin/sdk/lib/generated-client/models';
-import { getApi } from '@pelagica/core';
-import { getItemCached, invalidateItemCache } from '@/api/getItemCached';
+import {
+    getApi,
+    getItemCached,
+    invalidateItemCache,
+    useEditItemMetadata,
+} from '@pelagica/core';
 import { getItemUpdateApi } from '@jellyfin/sdk/lib/utils/api/item-update-api';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState, startTransition } from 'react';
