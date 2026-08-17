@@ -3,11 +3,7 @@ import type {
     Video3DFormat,
     MetadataField,
 } from '@jellyfin/sdk/lib/generated-client/models';
-import {
-    getApi,
-    getItemCached,
-    useEditItemMetadata,
-} from '@pelagica/core';
+import { getApi, getItemCached, useEditItemMetadata } from '@pelagica/core';
 import { getItemUpdateApi } from '@jellyfin/sdk/lib/utils/api/item-update-api';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState, startTransition } from 'react';
