@@ -1,4 +1,5 @@
 import { getApi } from '../api/getApi';
+import { getItemCached, invalidateItemCache } from '../api/getItemCached';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getUserLibraryApi } from '@jellyfin/sdk/lib/utils/api/user-library-api';
 import { getRetryConfig } from '../utils/authErrorHandler';
@@ -10,10 +11,8 @@ export function useFavorite(itemId: string | null | undefined) {
         queryKey: ['favorite', itemId],
         queryFn: async (): Promise<boolean> => {
             if (!itemId) return false;
-            const api = getApi();
-            const userLibraryApi = getUserLibraryApi(api);
-            const response = await userLibraryApi.getItem({ itemId });
-            return response.data.UserData?.IsFavorite ?? false;
+            const item = await getItemCached(itemId);
+            return item.UserData?.IsFavorite ?? false;
         },
         enabled: !!itemId,
         ...getRetryConfig(),
@@ -33,6 +32,9 @@ export function useFavorite(itemId: string | null | undefined) {
             return favorite;
         },
         onSuccess: (newFavoriteState) => {
+            if (itemId) {
+                invalidateItemCache(itemId);
+            }
             queryClient.setQueryData(['favorite', itemId], newFavoriteState);
             queryClient.invalidateQueries({ queryKey: ['item', itemId] });
             queryClient.invalidateQueries({ queryKey: ['favoriteAlbums'] });
