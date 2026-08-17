@@ -1,4 +1,5 @@
 import { getApi } from '../api/getApi';
+import { getItemCached, invalidateItemCache } from '../api/getItemCached';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getUserLibraryApi } from '@jellyfin/sdk/lib/utils/api/user-library-api';
 import { getRetryConfig } from '../utils/authErrorHandler';
@@ -10,10 +11,8 @@ export function useLike(itemId: string | null | undefined) {
         queryKey: ['like', itemId],
         queryFn: async (): Promise<boolean> => {
             if (!itemId) return false;
-            const api = getApi();
-            const userLibraryApi = getUserLibraryApi(api);
-            const response = await userLibraryApi.getItem({ itemId });
-            return response.data.UserData?.Likes ?? false;
+            const item = await getItemCached(itemId);
+            return item.UserData?.Likes ?? false;
         },
         enabled: !!itemId,
         ...getRetryConfig(),
@@ -28,6 +27,9 @@ export function useLike(itemId: string | null | undefined) {
             return like;
         },
         onSuccess: (newLikeState) => {
+            if (itemId) {
+                invalidateItemCache(itemId);
+            }
             queryClient.setQueryData(['like', itemId], newLikeState);
             queryClient.invalidateQueries({ queryKey: ['item', itemId] });
         },
