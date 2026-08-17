@@ -1,7 +1,6 @@
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { getUserLibraryApi } from '@jellyfin/sdk/lib/utils/api/user-library-api';
-
-import { getApi } from '@/api/getApi';
+import { getApi } from 'getApi';
 
 type CacheEntry = {
   value: BaseItemDto;
