@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getUserLibraryApi } from '@jellyfin/sdk/lib/utils/api/user-library-api';
-import { getApi } from '../../api/getApi';
+import { getItemCached } from '../../api/getItemCached';
 
 export function useItemPlayState(itemId: string | undefined, userId: string | undefined) {
     return useQuery({
@@ -10,14 +9,8 @@ export function useItemPlayState(itemId: string | undefined, userId: string | un
             if (!itemId || !userId) {
                 throw new Error('Missing itemId or userId');
             }
-
-            const api = getApi();
-            const userLibraryApi = getUserLibraryApi(api);
-
-            const { data } = await userLibraryApi.getItem({
-                userId,
-                itemId,
-            });
+            
+            const data = await getItemCached(itemId, userId);
 
             return {
                 played: data.UserData?.Played ?? false,
