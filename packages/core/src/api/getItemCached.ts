@@ -1,3 +1,15 @@
+/**
+ * Shared short-lived cache for Jellyfin single-item lookups.
+ *
+ * Use this instead of calling UserLibraryApi.getItem() directly when
+ * retrieving normal item/UserData metadata.
+ *
+ * Mutations that alter item metadata or UserData must call
+ * invalidateItemCache(itemId) after succeeding.
+ *
+ * Do not use this for queries requiring explicit field sets unless
+ * the cache is extended to account for those fields.
+ */
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { getUserLibraryApi } from '@jellyfin/sdk/lib/utils/api/user-library-api';
 import { getApi } from './getApi';
