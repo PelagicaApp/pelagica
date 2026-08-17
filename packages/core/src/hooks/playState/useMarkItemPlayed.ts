@@ -27,7 +27,6 @@ export function useMarkItemPlayed() {
         },
         onSuccess: (_, { itemId, userId }) => {
             invalidateItemCache(itemId);
-
             queryClient.invalidateQueries({
                 queryKey: ['itemPlayState', userId, itemId],
             });
