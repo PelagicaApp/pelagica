@@ -1,4 +1,5 @@
 import { getApi } from '../api/getApi';
+import { invalidateItemCache } from '../api/getItemCached';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { getItemRefreshApi } from '@jellyfin/sdk/lib/utils/api/item-refresh-api';
 import type { MetadataRefreshMode } from '@jellyfin/sdk/lib/generated-client/models';
@@ -41,11 +42,14 @@ export function useRefreshItemMetadata(onSuccess?: () => void) {
             return itemId;
         },
         onSuccess: (itemId) => {
+            invalidateItemCache(itemId);
+
             queryClient.invalidateQueries({ queryKey: ['item', itemId] });
             queryClient.invalidateQueries({ queryKey: ['playerItem', itemId] });
             queryClient.invalidateQueries({ queryKey: ['items'] });
             queryClient.invalidateQueries({ queryKey: ['libraryItems'] });
             queryClient.invalidateQueries({ queryKey: ['mediaBarItems'] });
+
             onSuccess?.();
         },
     });
