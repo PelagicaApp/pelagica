@@ -1,4 +1,5 @@
 export * from './api/getApi';
+export * from './api/getItemCached';
 export * from './api/jellyfinClient';
 export * from './api/logout';
 export * from './api/pelagicaPlugin';
