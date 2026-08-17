@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { getPlaystateApi } from '@jellyfin/sdk/lib/utils/api/playstate-api';
 import { getApi } from '../../api/getApi';
+import { invalidateItemCache } from '../../api/getItemCached';
 
 interface MarkPlayedInput {
     itemId: string;
@@ -25,6 +26,8 @@ export function useMarkItemPlayed() {
             });
         },
         onSuccess: (_, { itemId, userId }) => {
+            invalidateItemCache(itemId);
+
             queryClient.invalidateQueries({
                 queryKey: ['itemPlayState', userId, itemId],
             });
