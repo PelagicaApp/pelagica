@@ -28,13 +28,11 @@ export function useEditItemMetadata(onSuccess?: () => void) {
         },
         onSuccess: (itemId) => {
             invalidateItemCache(itemId);
-
             queryClient.invalidateQueries({ queryKey: ['item', itemId] });
             queryClient.invalidateQueries({ queryKey: ['playerItem', itemId] });
             queryClient.invalidateQueries({ queryKey: ['items'] });
             queryClient.invalidateQueries({ queryKey: ['libraryItems'] });
             queryClient.invalidateQueries({ queryKey: ['mediaBarItems'] });
-
             onSuccess?.();
         },
     });
