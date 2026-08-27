@@ -1,0 +1,20 @@
+{
+    "connect_to_jellyfin": "Conectar a Jellyfin",
+    "enter_server_address": "Por favor, introduce la dirección de tu servidor.",
+    "server_address": "Dirección del Servidor",
+    "no_http": "No tienes que incluir \"http://\" o \"https://\".",
+    "connect": "Conectar con el Servidor",
+    "connecting": "Conectando...",
+    "username": "Usuario",
+    "password": "Contraseña",
+    "back_to_server": "Volver a Dirección del Servidor",
+    "please_enter_server_address": "Por favor, introduce la dirección del servidor.",
+    "could_not_find_server": "No se pudo encontrar un servidor Jellyfin en esa dirección.",
+    "enter_at_least_username": "Por favor, introduce al menos tu usuario.",
+    "waiting_for_approval": "Esperando la aprobación...",
+    "use_different_server": "Usa un servidor diferente",
+    "invalid_credentials": "Usuario o contraseña incorrectos",
+    "discovered_servers": "Servidores en tu red",
+    "scanning_network": "Escaneando...",
+    "enter_manually": "Introduce una dirección de servidor manualmente"
+}
