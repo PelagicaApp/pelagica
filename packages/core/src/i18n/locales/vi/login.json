@@ -26,5 +26,15 @@
     "quick_connect_failed": "Kết nối nhanh thất bại. Vui lòng thử lại.",
     "quick_connect_approved": "Kết nối nhanh đã được chấp thuận! Đang đăng nhập...",
     "quick_connect_timeout": "Kết nối nhanh đã hết thời gian chờ. Vui lòng thử lại.",
-    "demo_warning": "Đây là phiên bản demo của Pelagica. Bạn có thể đăng nhập bằng thông tin đã được điền sẵn hoặc quay lại bước chọn máy chủ để kết nối tới máy chủ riêng của mình."
+    "demo_warning": "Đây là phiên bản demo của Pelagica. Bạn có thể đăng nhập bằng thông tin đã được điền sẵn hoặc quay lại bước chọn máy chủ để kết nối tới máy chủ riêng của mình.",
+    "sign_in_with_quick_connect": "Đăng nhập nhanh",
+    "sign_in_with_password": "Đăng nhập bằng tài khoản",
+    "use_different_server": "Chọn máy chủ khác",
+    "quick_connect_qr_instructions": "Quét mã QR và xác thực hoặc truy cập máy chủ {{server}} trên thiết bị của bạn, đăng nhập và nhập mã thủ công.",
+    "quick_connect_unavailable": "Đăng nhập nhanh không khả dụng",
+    "quick_connect_auth_failed": "Đăng nhập nhanh xác thực không thành công",
+    "invalid_credentials": "Tài khoản hoặc mật khẩu sai",
+    "discovered_servers": "Máy chủ nội bộ trong mạng của bạn",
+    "scanning_network": "Đang quét...",
+    "enter_manually": "Nhập địa chỉ máy chủ thủ công"
 }
