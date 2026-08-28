@@ -47,5 +47,7 @@
     "playlist": "Danh sách phát",
     "no_results_found": "Không tìm thấy kết quả",
     "category_links": "Liên kết",
-    "quick_connect": "Kết nối nhanh"
+    "quick_connect": "Kết nối nhanh",
+    "back": "Quay lại",
+    "close": "Đóng"
 }
