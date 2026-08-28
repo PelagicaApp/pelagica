@@ -1,5 +1,7 @@
 {
     "live": "Trực tiếp",
+    "playbackDecodeErrorRetrying": "Không thể phát, thử lại với bộ giải mã...",
+    "playbackDecodeErrorFailed": "Phim này không thể phát trên thiết bị của bạn.",
     "skipIntro": "Bỏ qua phần giới thiệu",
     "skipOutro": "Bỏ qua phần kết",
     "audioTracks": "Các bản âm thanh",
@@ -53,5 +55,12 @@
         "mid": "Dải trung",
         "highMid": "Dải trung cao",
         "treble": "Dải cao"
-    }
+    },
+    "unknownLanguage": "Ngôn ngữ chưa xác định",
+    "unknown": "Chưa xác định",
+    "audioTrackLabel": "{{language}} - {{codec}}",
+    "rewind10": "Tua 10 giây trước",
+    "forward10": "Tua 10 giây tiếp",
+    "nextItemPoster": "Poster tiếp theo",
+    "errorLoadingItem": "Lỗi tải nội dung: {{message}}"
 }
