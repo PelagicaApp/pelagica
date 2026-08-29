@@ -7,5 +7,11 @@
     "sort_premiere_date": "Ngày phát hành",
     "sort_community_rating": "Cộng đồng đánh giá",
     "sort_critic_rating": "Nhà phê bình đánh giá",
-    "sort_runtime": "Thời lượng"
+    "sort_runtime": "Thời lượng",
+    "no_studios_found_title": "Không tìm thấy hãng phim nào",
+    "no_studios_found_for_search": "Không tìm thấy hãng phim nào với từ khoá '{{search}}'.",
+    "no_studios_found": "Không có hãng phim nào trong thư viện này.",
+    "clear_search": "Xoá lịch sử tìm kiếm",
+    "studios_search_placeholder": "Tìm kiếm hãng phim...",
+    "no_libraries_found": "Không tìm thấy thư viện."
 }

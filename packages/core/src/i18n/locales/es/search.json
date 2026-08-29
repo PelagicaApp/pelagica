@@ -1,0 +1,23 @@
+{
+    "input_placeholder_movies_tv": "Busca películas y series de TV...",
+    "input_placeholder_music": "Busca artistas, álbumes y canciones...",
+    "failed_search": "Error en la búsqueda",
+    "no_results": "No se encontraron resultados",
+    "no_results_description": "Intenta ajustar o filtrar tu búsqueda para encontrar lo que estás buscando.",
+    "typefilter_all": "Todo",
+    "typefilter_movies-tv": "Películas / TV",
+    "typefilter_music": "Música",
+    "clear_search": "Limpiar Búsqueda",
+    "unexpected_error": "Error inesperado",
+    "error_occurred_while_searching": "Ha ocurrido un error en la búsqueda.",
+    "group_moviesTv": "Películas & Series de TV",
+    "group_music": "Música",
+    "group_episodes": "Episodios",
+    "group_seerr": "Más en Seerr",
+    "song": "Canción",
+    "itemtype_movie": "Película",
+    "itemtype_series": "Serie de TV",
+    "itemtype_musicartist": "Artista",
+    "itemtype_audio": "Audio",
+    "itemtype_musicalbum": "Álbum"
+}

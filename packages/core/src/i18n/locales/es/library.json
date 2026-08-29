@@ -1,0 +1,17 @@
+{
+    "title": "Biblioteca",
+    "no_items_title": "No se encontraron elementos",
+    "no_items_description": "No hay elementos en esta biblioteca.",
+    "sort_name": "Nombre",
+    "sort_date_added": "Fecha Añadida",
+    "sort_premiere_date": "Fecha de Estreno",
+    "sort_community_rating": "Valoración de la Comunidad",
+    "sort_critic_rating": "Valoración de la Crítica",
+    "sort_runtime": "Duración",
+    "no_studios_found_title": "No se encontraron estudios.",
+    "no_studios_found_for_search": "No se encontraron estudios para '{{search}}'.",
+    "no_studios_found": "No hay estudios en esta biblioteca.",
+    "clear_search": "Limpiar Búsqueda",
+    "studios_search_placeholder": "Buscar estudios...",
+    "no_libraries_found": "No se encontraron bibliotecas."
+}

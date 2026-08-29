@@ -22,5 +22,11 @@
     "track_count": "{{count}} bài hát",
     "track_count_plural": "{{count}} bài hát",
     "libraries": "Thư viện",
-    "section_not_found": "Không tìm thấy mục này."
+    "section_not_found": "Không tìm thấy mục này.",
+    "seerr_trending": "Phim đang thịnh hành",
+    "seerr_popular_movies": "Phim bom tấn",
+    "seerr_popular_series": "Series bom tấn",
+    "error_loading_continue": "Lỗi tải nội dung Tiếp tục xem: {{error}}",
+    "continue_item_alt": "Tiếp tục xem",
+    "more": "Nhiều hơn..."
 }

@@ -1,0 +1,18 @@
+{
+    "title": "En Vivo",
+    "on_now": "Ahora: {{program}}",
+    "tab_channels": "Canales",
+    "tab_guide": "Guía",
+    "guide_now": "Ahora",
+    "guide_watch_channel": "Ver canal",
+    "guide_season": "Temporada {{number}}",
+    "guide_episode": "Episodio {{number}}",
+    "search_placeholder": "Buscar canales...",
+    "filter_all": "Todo",
+    "filter_favorites": "Favoritos",
+    "filter_movies": "Películas",
+    "filter_series": "Series",
+    "filter_news": "Noticias",
+    "filter_kids": "Infantil",
+    "filter_sports": "Deportes"
+}
