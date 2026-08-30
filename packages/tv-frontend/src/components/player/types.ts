@@ -11,7 +11,7 @@ export interface VideoPlayerProps {
     onReady?: (player: TvPlayer) => void;
     onPlaybackError?: (error: MediaError | null) => void;
     onPlaybackStalled?: () => void;
-    isAudioSwitchRef: React.MutableRefObject<boolean>;
+    pendingAudioSwitchSeekRef: React.MutableRefObject<number | null>;
     subtitleTrackIndex: number | null;
     /**
      * The `MediaStreams[].Index` of the audio track the caller wants active. Only used by

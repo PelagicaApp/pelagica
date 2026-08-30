@@ -28,7 +28,7 @@ const VideoPlayer = ({
     onReady,
     onPlaybackError,
     onPlaybackStalled,
-    isAudioSwitchRef,
+    pendingAudioSwitchSeekRef,
     subtitleTrackIndex,
 }: VideoPlayerProps) => {
     const containerRef = useRef<HTMLDivElement | null>(null);
@@ -120,9 +120,9 @@ const VideoPlayer = ({
 
         let seekTo: number | null = null;
 
-        if (isAudioSwitchRef.current) {
-            seekTo = player.currentTime() || null;
-            isAudioSwitchRef.current = false;
+        if (pendingAudioSwitchSeekRef.current !== null) {
+            seekTo = pendingAudioSwitchSeekRef.current;
+            pendingAudioSwitchSeekRef.current = null;
         }
 
         player.pause();
@@ -154,7 +154,7 @@ const VideoPlayer = ({
             player.off(['playing', 'timeupdate'], clearStallTimeout);
             clearStallTimeout();
         };
-    }, [src, srcType, isAudioSwitchRef]);
+    }, [src, srcType, pendingAudioSwitchSeekRef]);
 
     useEffect(() => {
         if (!playerRef.current) return;

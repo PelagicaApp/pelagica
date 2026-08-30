@@ -106,7 +106,7 @@ const PlayerPage = () => {
     const progressReportingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const lastPositionRef = useRef<number>(0);
     const liveStreamIdRef = useRef<string | undefined>(undefined);
-    const isAudioSwitchRef = useRef(false);
+    const pendingAudioSwitchSeekRef = useRef<number | null>(null);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const {
         data: adjacentItems,
@@ -177,7 +177,7 @@ const PlayerPage = () => {
         queueMicrotask(() => {
             hasUserSelectedAudioRef.current = false;
             hasUserSelectedSubtitleRef.current = false;
-            isAudioSwitchRef.current = false;
+            pendingAudioSwitchSeekRef.current = null;
             hasAttemptedTranscodeFallbackRef.current = false;
 
             setPlayer(null);
@@ -326,7 +326,7 @@ const PlayerPage = () => {
     );
 
     const handleAudioTrackChange = (index: number) => {
-        isAudioSwitchRef.current = true;
+        pendingAudioSwitchSeekRef.current = player?.currentTime() || null;
         hasUserSelectedAudioRef.current = true;
         setAudioTrackIndex(index);
     };
@@ -419,7 +419,7 @@ const PlayerPage = () => {
                 startTicks={item.UserData?.PlaybackPositionTicks || 0}
                 subtitles={subtitleTracks}
                 subtitleFonts={subtitleFonts}
-                isAudioSwitchRef={isAudioSwitchRef}
+                pendingAudioSwitchSeekRef={pendingAudioSwitchSeekRef}
                 subtitleTrackIndex={subtitleTrackIndex}
             />
             <PlayerControls
