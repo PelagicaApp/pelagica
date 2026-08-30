@@ -1,3 +1,5 @@
+import { randomUUID } from '@pelagica/core';
+
 export const EQUALIZER_PRESET_STORAGE_KEY = 'music_equalizer_preset';
 export const SLEEP_FADE_STORAGE_KEY = 'music_sleep_fade_enabled';
 export const SLEEP_FADE_DURATION_STORAGE_KEY = 'music_sleep_fade_duration_minutes';
@@ -110,7 +112,7 @@ export function getCustomPresetId(selection: EqualizerSelection): string | null 
 
 export function createDefaultCustomPreset(name: string): CustomEqualizerPreset {
     return {
-        id: crypto.randomUUID(),
+        id: randomUUID(),
         name,
         bands: EQUALIZER_BAND_TEMPLATE.map((band) => ({ ...band })),
     };

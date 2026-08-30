@@ -117,3 +117,4 @@ export * from './utils/directplayCollectionTypes';
 export * from './utils/continueWatchingLines';
 export * from './utils/timeConversion';
 export * from './utils/tmdbUrls';
+export * from './utils/randomUUID';
