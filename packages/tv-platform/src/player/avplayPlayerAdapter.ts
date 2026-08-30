@@ -127,10 +127,6 @@ export class AvPlayPlayerAdapter implements TvPlayer {
         }
     }
 
-    setSubtitleTrack() {
-        // No-op: AVPlay's own subtitle APIs only accept local file paths, so Tizen subtitles are rendered as an HTML overlay
-    }
-
     on(event: TvPlayerEventName, handler: Handler) {
         this.listeners[event].add(handler);
     }

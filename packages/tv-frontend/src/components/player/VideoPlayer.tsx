@@ -163,8 +163,8 @@ const VideoPlayer = ({
 
         const addSubtitles = (activeIndex: number | null) => {
             const tracks = player.remoteTextTracks();
-            while (tracks.tracks_.length > 0) {
-                const track = tracks.tracks_[0];
+            for (let i = tracks.tracks_.length - 1; i >= 0; i--) {
+                const track = tracks.tracks_[i];
                 if (track) player.removeRemoteTextTrack(track);
             }
 

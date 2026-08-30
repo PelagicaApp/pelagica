@@ -336,22 +336,6 @@ const PlayerPage = () => {
         setSubtitleTrackIndex(index);
     };
 
-    useEffect(() => {
-        if (!player) return;
-
-        const tracks = player.textTracks();
-        for (let i = 0; i < tracks.tracks_.length; i++) {
-            const track = tracks.tracks_[i];
-            if (subtitleTrackIndex === null) {
-                track.mode = 'disabled';
-            } else if (i === subtitleTrackIndex) {
-                track.mode = 'showing';
-            } else {
-                track.mode = 'disabled';
-            }
-        }
-    }, [player, subtitleTrackIndex]);
-
     const subtitleTracks = useMemo(() => {
         if (!item?.Id || !item?.MediaStreams) return [];
 

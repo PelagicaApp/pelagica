@@ -267,11 +267,6 @@ const Player = () => {
         setSubtitleTrackIndex(index);
     };
 
-    useEffect(() => {
-        if (!player) return;
-        player.setSubtitleTrack(subtitleTrackIndex);
-    }, [player, subtitleTrackIndex]);
-
     const subtitleTracks = useMemo(() => {
         if (!item?.Id || !item?.MediaStreams) return [];
 
