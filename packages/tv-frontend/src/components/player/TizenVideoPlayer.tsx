@@ -15,7 +15,7 @@ const TizenVideoPlayer = ({
     subtitles,
     onReady,
     onPlaybackStalled,
-    isAudioSwitchRef,
+    pendingAudioSwitchSeekRef,
     subtitleTrackIndex,
     audioTrackIndex,
     audioStreams,
@@ -129,13 +129,14 @@ const TizenVideoPlayer = ({
         if (!avplay || !adapter || !src) return;
 
         let cancelled = false;
-        const wasAudioSwitch = isAudioSwitchRef.current;
-        isAudioSwitchRef.current = false;
-        const resumeSeconds = wasAudioSwitch
-            ? adapter.getCurrentTime()
-            : !hasSeekedRef.current && startTicks > 0
-              ? startTicks / 10_000_000
-              : null;
+        const pendingSeek = pendingAudioSwitchSeekRef.current;
+        pendingAudioSwitchSeekRef.current = null;
+        const resumeSeconds =
+            pendingSeek !== null
+                ? pendingSeek
+                : !hasSeekedRef.current && startTicks > 0
+                  ? startTicks / 10_000_000
+                  : null;
 
         try {
             avplay.stop();
@@ -219,7 +220,7 @@ const TizenVideoPlayer = ({
             cancelled = true;
             clearStallTimeout();
         };
-    }, [src, startTicks, isAudioSwitchRef, armStallTimeout, clearStallTimeout]);
+    }, [src, startTicks, pendingAudioSwitchSeekRef, armStallTimeout, clearStallTimeout]);
 
     const activeSubtitle =
         subtitleTrackIndex !== null ? (subtitles?.[subtitleTrackIndex] ?? null) : null;

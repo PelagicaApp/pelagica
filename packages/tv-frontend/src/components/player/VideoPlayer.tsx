@@ -28,7 +28,7 @@ const VideoPlayer = ({
     onReady,
     onPlaybackError,
     onPlaybackStalled,
-    isAudioSwitchRef,
+    pendingAudioSwitchSeekRef,
     subtitleTrackIndex,
 }: VideoPlayerProps) => {
     const containerRef = useRef<HTMLDivElement | null>(null);
@@ -120,9 +120,9 @@ const VideoPlayer = ({
 
         let seekTo: number | null = null;
 
-        if (isAudioSwitchRef.current) {
-            seekTo = player.currentTime() || null;
-            isAudioSwitchRef.current = false;
+        if (pendingAudioSwitchSeekRef.current !== null) {
+            seekTo = pendingAudioSwitchSeekRef.current;
+            pendingAudioSwitchSeekRef.current = null;
         }
 
         player.pause();
@@ -154,7 +154,7 @@ const VideoPlayer = ({
             player.off(['playing', 'timeupdate'], clearStallTimeout);
             clearStallTimeout();
         };
-    }, [src, srcType, isAudioSwitchRef]);
+    }, [src, srcType, pendingAudioSwitchSeekRef]);
 
     useEffect(() => {
         if (!playerRef.current) return;
@@ -163,8 +163,8 @@ const VideoPlayer = ({
 
         const addSubtitles = (activeIndex: number | null) => {
             const tracks = player.remoteTextTracks();
-            while (tracks.tracks_.length > 0) {
-                const track = tracks.tracks_[0];
+            for (let i = tracks.tracks_.length - 1; i >= 0; i--) {
+                const track = tracks.tracks_[i];
                 if (track) player.removeRemoteTextTrack(track);
             }
 

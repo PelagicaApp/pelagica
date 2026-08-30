@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Trash2, Plus, Edit, GripVertical } from 'lucide-react';
-import type { AppConfig, HomeScreenSection } from '@pelagica/core';
+import { randomUUID, type AppConfig, type HomeScreenSection } from '@pelagica/core';
 import { SectionEditor } from '../components/SectionEditor';
 import {
     DndContext,
@@ -23,7 +23,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-const generateSectionId = () => crypto.randomUUID();
+const generateSectionId = () => randomUUID();
 
 const SortableSectionRow = ({
     id,

@@ -98,7 +98,7 @@ const Player = () => {
     const progressReportingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const lastPositionRef = useRef<number>(0);
     const liveStreamIdRef = useRef<string | undefined>(undefined);
-    const isAudioSwitchRef = useRef(false);
+    const pendingAudioSwitchSeekRef = useRef<number | null>(null);
     const {
         data: adjacentItems,
         isLoading: isLoadingAdjacentItems,
@@ -143,7 +143,7 @@ const Player = () => {
         queueMicrotask(() => {
             hasUserSelectedAudioRef.current = false;
             hasUserSelectedSubtitleRef.current = false;
-            isAudioSwitchRef.current = false;
+            pendingAudioSwitchSeekRef.current = null;
             hasAttemptedTranscodeFallbackRef.current = false;
 
             setPlayer(null);
@@ -257,7 +257,7 @@ const Player = () => {
     }, [attemptTranscodeFallback]);
 
     const handleAudioTrackChange = (index: number) => {
-        isAudioSwitchRef.current = true;
+        pendingAudioSwitchSeekRef.current = player?.getCurrentTime() || null;
         hasUserSelectedAudioRef.current = true;
         setAudioTrackIndex(index);
     };
@@ -266,11 +266,6 @@ const Player = () => {
         hasUserSelectedSubtitleRef.current = true;
         setSubtitleTrackIndex(index);
     };
-
-    useEffect(() => {
-        if (!player) return;
-        player.setSubtitleTrack(subtitleTrackIndex);
-    }, [player, subtitleTrackIndex]);
 
     const subtitleTracks = useMemo(() => {
         if (!item?.Id || !item?.MediaStreams) return [];
@@ -366,7 +361,7 @@ const Player = () => {
                 startTicks={item.UserData?.PlaybackPositionTicks || 0}
                 subtitles={subtitleTracks}
                 subtitleFonts={subtitleFonts}
-                isAudioSwitchRef={isAudioSwitchRef}
+                pendingAudioSwitchSeekRef={pendingAudioSwitchSeekRef}
                 subtitleTrackIndex={subtitleTrackIndex}
                 audioTrackIndex={audioTrackIndex}
                 audioStreams={audioStreams}

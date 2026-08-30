@@ -39,13 +39,6 @@ export function createVideoJsPlayerAdapter(player: VideoJsPlayer): TvPlayer {
         getVolume() {
             return player.volume() ?? 1;
         },
-        setSubtitleTrack(index) {
-            const tracks = player.textTracks();
-            for (let i = 0; i < tracks.tracks_.length; i++) {
-                const track = tracks.tracks_[i];
-                if (track) track.mode = index !== null && i === index ? 'showing' : 'disabled';
-            }
-        },
         on(event: TvPlayerEventName, handler: () => void) {
             player.on(event, handler);
         },
