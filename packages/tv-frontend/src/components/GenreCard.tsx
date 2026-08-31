@@ -51,7 +51,7 @@ const GenreCard = ({ genreWithItem, autoFocus, className }: GenresCardProps) => 
                                 <div
                                     role="img"
                                     aria-label={genreWithItem.item?.Name || t('unknown_item')}
-                                    className="absolute inset-0 w-full h-full grayscale transition-all group-hover:scale-105 group-hover:opacity-75"
+                                    className="absolute inset-0 w-full h-full grayscale"
                                     style={{
                                         backgroundImage: `linear-gradient(to top, rgb(0 0 0 / 0.8), rgb(0 0 0 / 0.4), transparent), url(${posterUrl})`,
                                         backgroundSize: 'cover',
