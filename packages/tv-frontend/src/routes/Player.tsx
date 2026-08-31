@@ -11,7 +11,6 @@ import {
     useAdjacentItems,
     useUserConfiguration,
     usePlayerItem,
-    getPrimaryImageUrl,
     getSubtitleUrl,
     getPlaybackStreamUrl,
     getAttachmentUrl,
@@ -171,11 +170,6 @@ const Player = () => {
 
         setAudioTrackIndex(resolvedAudio.index);
     }, [resolvedAudio.index]);
-
-    const posterUrl = useMemo(() => {
-        if (!item?.Id) return undefined;
-        return getPrimaryImageUrl(item?.Id, { width: 1920 });
-    }, [item?.Id]);
 
     const startTicks = item?.UserData?.PlaybackPositionTicks || 0;
 
@@ -354,7 +348,6 @@ const Player = () => {
                 key={itemId}
                 src={streamResult.url}
                 srcType={streamResult.mimeType}
-                poster={posterUrl}
                 onReady={setPlayer}
                 onPlaybackError={handlePlaybackError}
                 onPlaybackStalled={handlePlaybackStalled}

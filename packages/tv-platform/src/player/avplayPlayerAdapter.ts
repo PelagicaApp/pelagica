@@ -17,6 +17,8 @@ export class AvPlayPlayerAdapter implements TvPlayer {
         progress: new Set(),
         volumechange: new Set(),
         ended: new Set(),
+        waiting: new Set(),
+        playing: new Set(),
     };
 
     constructor(avplay: AVPlayObject) {
@@ -43,6 +45,14 @@ export class AvPlayPlayerAdapter implements TvPlayer {
     notifyEnded() {
         this.paused = true;
         this.emit('ended');
+    }
+
+    notifyWaiting() {
+        this.emit('waiting');
+    }
+
+    notifyPlaying() {
+        this.emit('playing');
     }
 
     dispose() {

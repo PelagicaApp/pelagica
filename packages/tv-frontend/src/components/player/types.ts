@@ -4,7 +4,6 @@ import type { SubtitleTrack, TvPlayer } from '@pelagica/tv-platform';
 export interface VideoPlayerProps {
     src: string;
     srcType?: string;
-    poster?: string;
     startTicks: number;
     subtitles?: SubtitleTrack[];
     subtitleFonts?: string[];
