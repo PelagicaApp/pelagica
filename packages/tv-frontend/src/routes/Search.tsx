@@ -17,9 +17,11 @@ import GenreCard from '../components/GenreCard';
 import { Skeleton } from '../components/ui/skeleton';
 import ItemCardGrid from '../components/ItemCardGrid';
 
+const SEARCH_GENRE_GRID_LIMIT = 20;
+
 const Search = () => {
     const { t } = useTranslation('search');
-    const { data: genres } = useGenresWithItems();
+    const { data: genres } = useGenresWithItems({ limit: SEARCH_GENRE_GRID_LIMIT });
     const [query, setQuery] = useState('');
     const [debouncedQuery, setDebouncedQuery] = useState('');
     const searchInputFocusKey = `${useLayerId()}:search-page-input`;
