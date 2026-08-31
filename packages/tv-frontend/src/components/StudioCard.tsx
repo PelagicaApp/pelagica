@@ -2,7 +2,7 @@ import { buildTmdbImageUrl, type StudioSummary } from '@pelagica/core';
 import FocusableCard from './FocusableCard';
 import { cn } from '../lib/utils';
 import { FOCUS_RING_LARGE } from '../lib/focus-styles';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { useStudioLogo } from '../hooks/useStudioLogo';
 import { getItemLink } from '../lib/getItemLink';
 
@@ -14,7 +14,7 @@ interface StudioCardProps {
     autoFocus?: boolean;
 }
 
-const StudioCard = ({ studio, className, autoFocus }: StudioCardProps) => {
+const StudioCard = memo(function StudioCard({ studio, className, autoFocus }: StudioCardProps) {
     const [imageFailed, setImageFailed] = useState(false);
     const { logoPath, isLoading } = useStudioLogo(String(studio.name));
 
@@ -61,6 +61,6 @@ const StudioCard = ({ studio, className, autoFocus }: StudioCardProps) => {
             )}
         </FocusableCard>
     );
-};
+});
 
 export default StudioCard;

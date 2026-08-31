@@ -11,7 +11,7 @@ import { FocusContext } from '@noriginmedia/norigin-spatial-navigation';
 import { useLayerFocusable } from '@/router/useLayerFocusable';
 import { useLayerId } from '@/router';
 import { CircleQuestionMark, SearchIcon, TriangleAlert } from 'lucide-react';
-import { startTransition, useEffect, useState } from 'react';
+import { startTransition, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import GenreCard from '../components/GenreCard';
 import { Skeleton } from '../components/ui/skeleton';
@@ -37,6 +37,14 @@ const Search = () => {
         limit: 50,
         userId: getUserId() || undefined,
     });
+
+    const sortedGenres = useMemo(
+        () =>
+            genres
+                ? [...genres].sort((a, b) => (b.item?.totalItems || 0) - (a.item?.totalItems || 0))
+                : undefined,
+        [genres]
+    );
 
     useEffect(() => {
         const handler = setTimeout(() => {
@@ -88,20 +96,15 @@ const Search = () => {
                 )}
                 {!query && !isLoading && !error && (
                     <div className="grid grid-cols-[repeat(auto-fill,minmax(13rem,1fr))] gap-4">
-                        {genres
-                            ? genres
-                                  .sort(
-                                      (a, b) =>
-                                          (b.item?.totalItems || 0) - (a.item?.totalItems || 0)
-                                  )
-                                  .map((genre) => (
-                                      <GenreCard
-                                          key={genre.id}
-                                          genreWithItem={genre}
-                                          className="w-full"
-                                          autoFocus={false}
-                                      />
-                                  ))
+                        {sortedGenres
+                            ? sortedGenres.map((genre) => (
+                                  <GenreCard
+                                      key={genre.id}
+                                      genreWithItem={genre}
+                                      className="w-full"
+                                      autoFocus={false}
+                                  />
+                              ))
                             : Array.from({ length: 12 }).map((_, i) => (
                                   <div
                                       key={i}

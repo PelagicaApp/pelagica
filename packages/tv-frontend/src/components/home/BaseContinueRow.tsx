@@ -8,7 +8,7 @@ import {
     type ContinueWatchingDetailLine,
     type ContinueWatchingTitleLine,
 } from '@pelagica/core';
-import { useState } from 'react';
+import { memo, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import FocusableCard from '../FocusableCard';
 import { cn } from '@/lib/utils';
@@ -28,7 +28,7 @@ interface BaseContinueRowProps {
 }
 type ImageState = 'thumb' | 'backdrop' | 'primary' | 'failed';
 
-const ContinueEpisodeCard = ({
+const ContinueEpisodeCard = memo(function ContinueEpisodeCard({
     item,
     imageState,
     onImageError,
@@ -44,7 +44,7 @@ const ContinueEpisodeCard = ({
     className?: string;
     titleLine?: ContinueWatchingTitleLine;
     detailLine?: ContinueWatchingDetailLine[];
-}) => {
+}) {
     const { t } = useTranslation('home');
     const watched = item.UserData?.PlaybackPositionTicks ?? 0;
     const runtime = item.RunTimeTicks ?? 0;
@@ -131,7 +131,7 @@ const ContinueEpisodeCard = ({
             )}
         </FocusableCard>
     );
-};
+});
 
 const BaseContinueRow = ({
     items,
@@ -144,47 +144,23 @@ const BaseContinueRow = ({
     const { t } = useTranslation('home');
     const [imageStates, setImageStates] = useState<Record<string, ImageState>>({});
 
-    const handleImageError = (item: BaseItemDto) => {
+    const handleImageError = useCallback((item: BaseItemDto) => {
         const id = item.Id;
         if (!id) return;
 
-        const state = imageStates[id] ?? 'thumb';
+        setImageStates((prev) => {
+            const state = prev[id] ?? 'thumb';
+            let next: ImageState = 'failed';
 
-        switch (state) {
-            case 'thumb':
-                if (item.BackdropImageTags?.length) {
-                    setImageStates((prev) => ({
-                        ...prev,
-                        [id]: 'backdrop',
-                    }));
-                    return;
-                }
+            if (state === 'thumb' && item.BackdropImageTags?.length) {
+                next = 'backdrop';
+            } else if ((state === 'thumb' || state === 'backdrop') && item.ImageTags?.Primary) {
+                next = 'primary';
+            }
 
-                if (item.ImageTags?.Primary) {
-                    setImageStates((prev) => ({
-                        ...prev,
-                        [id]: 'primary',
-                    }));
-                    return;
-                }
-                break;
-
-            case 'backdrop':
-                if (item.ImageTags?.Primary) {
-                    setImageStates((prev) => ({
-                        ...prev,
-                        [id]: 'primary',
-                    }));
-                    return;
-                }
-                break;
-        }
-
-        setImageStates((prev) => ({
-            ...prev,
-            [id]: 'failed',
-        }));
-    };
+            return { ...prev, [id]: next };
+        });
+    }, []);
 
     return (
         <>

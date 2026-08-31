@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { memo, useState, type ReactNode } from 'react';
 import { getPrimaryImageUrl, getThumbUrl } from '@pelagica/core';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { useTranslation } from 'react-i18next';
@@ -8,7 +8,7 @@ import { FOCUS_RING_LARGE } from '@/lib/focus-styles';
 import FocusableCard from './FocusableCard';
 import { getItemLink } from '../lib/getItemLink';
 
-const ItemCard = ({
+const ItemCard = memo(function ItemCard({
     item,
     autoFocus,
     className,
@@ -20,7 +20,7 @@ const ItemCard = ({
     className?: string;
     useThumb?: boolean;
     detail?: ReactNode;
-}) => {
+}) {
     const { t } = useTranslation('item');
     const [imageError, setImageError] = useState(false);
 
@@ -69,6 +69,6 @@ const ItemCard = ({
             )}
         </FocusableCard>
     );
-};
+});
 
 export default ItemCard;

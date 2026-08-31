@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import FocusableCard from '../FocusableCard';
 import { cn } from '../../lib/utils';
 import { FOCUS_RING_LARGE } from '../../lib/focus-styles';
@@ -12,7 +13,7 @@ interface MoreCardProps {
     autoFocus?: boolean;
 }
 
-const MoreCard = ({ to, type, className, autoFocus }: MoreCardProps) => {
+const MoreCard = memo(function MoreCard({ to, type, className, autoFocus }: MoreCardProps) {
     const { t } = useTranslation('home');
 
     return (
@@ -35,6 +36,6 @@ const MoreCard = ({ to, type, className, autoFocus }: MoreCardProps) => {
             )}
         </FocusableCard>
     );
-};
+});
 
 export default MoreCard;

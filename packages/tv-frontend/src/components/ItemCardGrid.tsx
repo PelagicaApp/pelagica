@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import ItemCard from './ItemCard';
 
@@ -9,7 +10,13 @@ interface ItemCardGridProps {
     className?: string;
 }
 
-const ItemCardGrid = ({ ref, items, isLoading, autoFocusFirst, className }: ItemCardGridProps) => {
+const ItemCardGrid = memo(function ItemCardGrid({
+    ref,
+    items,
+    isLoading,
+    autoFocusFirst,
+    className,
+}: ItemCardGridProps) {
     if ((!items || items.length === 0) && !isLoading) return null;
 
     return (
@@ -34,6 +41,6 @@ const ItemCardGrid = ({ ref, items, isLoading, autoFocusFirst, className }: Item
                   ))}
         </div>
     );
-};
+});
 
 export default ItemCardGrid;
