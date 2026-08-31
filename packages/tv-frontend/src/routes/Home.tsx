@@ -32,6 +32,7 @@ const Home = () => {
     return (
         <div className="flex flex-col items-start gap-6">
             {config.homeScreenSections?.map((section, index) => {
+                if (section.enabled === false) return null;
                 switch (section.type) {
                     case 'mediaBar':
                         return (
