@@ -27,8 +27,14 @@ function reducer(state: StackState, action: StackAction): StackState {
             return { layers: [...state.layers.slice(0, -1), action.layer] };
         case 'POP':
             return state.layers.length > 1 ? { layers: state.layers.slice(0, -1) } : state;
-        case 'RESET':
-            return { layers: action.layers };
+        case 'RESET': {
+            const root = state.layers[0];
+            const { pathname, search } = parsePath(action.to);
+            if (root && root.pathname === pathname && root.search === search) {
+                return { layers: [root] };
+            }
+            return { layers: [buildLayer(action.to)] };
+        }
     }
 }
 
