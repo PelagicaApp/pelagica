@@ -38,6 +38,11 @@ body {
     display: none;
 }
 
+/* VideoPlayer renders its own buffering spinner, so hide video.js's builtin one. */
+.vjs-loading-spinner {
+    display: none !important;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

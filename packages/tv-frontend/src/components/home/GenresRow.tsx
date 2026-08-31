@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useGenresWithItems } from '@pelagica/core';
 import ScrollableHomeSection from './ScrollableHomeSection';
 import GenreCard from '../GenreCard';
@@ -11,16 +12,22 @@ interface GenresRowProps {
 const GenresRow = ({ title, limit }: GenresRowProps) => {
     const { data: genres, isLoading } = useGenresWithItems({ limit });
 
+    const sortedGenres = useMemo(
+        () =>
+            genres
+                ? [...genres].sort((a, b) => (b.item?.totalItems || 0) - (a.item?.totalItems || 0))
+                : undefined,
+        [genres]
+    );
+
     if ((!genres || genres.length === 0) && !isLoading) {
         return null;
     }
 
     return (
         <ScrollableHomeSection title={title || 'Genres'} focusable={!!genres}>
-            {genres
-                ? genres
-                      .sort((a, b) => (b.item?.totalItems || 0) - (a.item?.totalItems || 0))
-                      .map((genre) => <GenreCard key={genre.id} genreWithItem={genre} />)
+            {sortedGenres
+                ? sortedGenres.map((genre) => <GenreCard key={genre.id} genreWithItem={genre} />)
                 : Array.from({ length: 12 }).map((_, i) => (
                       <div
                           key={i}

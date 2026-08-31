@@ -4,7 +4,7 @@ import type { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models';
 import FocusableCard from './FocusableCard';
 import { cn } from '../lib/utils';
 import { FOCUS_RING_LARGE } from '../lib/focus-styles';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { ImageOff, Star, TrendingUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Badge } from './ui/badge';
@@ -14,7 +14,10 @@ interface RecommendedItemCardProps {
     showSimilarity: boolean;
 }
 
-const RecommendedItemCard = ({ recommendation, showSimilarity }: RecommendedItemCardProps) => {
+const RecommendedItemCard = memo(function RecommendedItemCard({
+    recommendation,
+    showSimilarity,
+}: RecommendedItemCardProps) {
     const { t } = useTranslation('item');
     const { item, similarity } = recommendation;
     const [imageError, setImageError] = useState(false);
@@ -77,6 +80,6 @@ const RecommendedItemCard = ({ recommendation, showSimilarity }: RecommendedItem
             )}
         </FocusableCard>
     );
-};
+});
 
 export default RecommendedItemCard;

@@ -27,16 +27,15 @@ export function useNavigate() {
                 return;
             }
 
-            const layer = buildLayer(to);
             switch (options?.mode ?? 'push') {
                 case 'replace':
-                    dispatch({ type: 'REPLACE', layer });
+                    dispatch({ type: 'REPLACE', layer: buildLayer(to) });
                     break;
                 case 'reset':
-                    dispatch({ type: 'RESET', layers: [layer] });
+                    dispatch({ type: 'RESET', to });
                     break;
                 default:
-                    dispatch({ type: 'PUSH', layer });
+                    dispatch({ type: 'PUSH', layer: buildLayer(to) });
             }
         },
         [dispatch]

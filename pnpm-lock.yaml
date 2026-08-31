@@ -379,6 +379,58 @@ importers:
         specifier: ^8.2.0
         version: 8.2.1(@types/node@24.13.3)(jiti@2.7.0)
 
+  webos:
+    dependencies:
+      '@noriginmedia/norigin-spatial-navigation':
+        specifier: ^3.3.0
+        version: 3.3.0(react@19.2.8)
+      '@pelagica/core':
+        specifier: workspace:*
+        version: link:../packages/core
+      '@pelagica/tv-frontend':
+        specifier: workspace:*
+        version: link:../packages/tv-frontend
+      '@pelagica/tv-platform':
+        specifier: workspace:*
+        version: link:../packages/tv-platform
+      '@tailwindcss/vite':
+        specifier: ^4.3.3
+        version: 4.3.3(vite@8.2.1(@types/node@24.13.3)(jiti@2.7.0))
+      react:
+        specifier: ^19.2.8
+        version: 19.2.8
+      react-dom:
+        specifier: ^19.2.8
+        version: 19.2.8(react@19.2.8)
+      tailwindcss:
+        specifier: ^4.3.3
+        version: 4.3.3
+    devDependencies:
+      '@types/node':
+        specifier: ^24.13.3
+        version: 24.13.3
+      '@types/react':
+        specifier: ^19.2.17
+        version: 19.2.18
+      '@types/react-dom':
+        specifier: ^19.2.3
+        version: 19.2.4(@types/react@19.2.18)
+      '@vitejs/plugin-react':
+        specifier: ^6.0.4
+        version: 6.0.5(vite@8.2.1(@types/node@24.13.3)(jiti@2.7.0))
+      oxlint:
+        specifier: ^1.75.0
+        version: 1.78.0
+      prettier:
+        specifier: 3.8.4
+        version: 3.8.4
+      typescript:
+        specifier: ~6.0.2
+        version: 6.0.3
+      vite:
+        specifier: ^8.2.0
+        version: 8.2.1(@types/node@24.13.3)(jiti@2.7.0)
+
 packages:
 
   '@babel/code-frame@7.29.7':

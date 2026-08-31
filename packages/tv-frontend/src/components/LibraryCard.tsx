@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { getPrimaryImageUrl } from '@pelagica/core';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { useTranslation } from 'react-i18next';
@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import { FOCUS_RING_LARGE } from '@/lib/focus-styles';
 import FocusableCard from './FocusableCard';
 
-const LibraryCard = ({
+const LibraryCard = memo(function LibraryCard({
     item,
     autoFocus,
     className,
@@ -15,7 +15,7 @@ const LibraryCard = ({
     item: BaseItemDto;
     autoFocus?: boolean;
     className?: string;
-}) => {
+}) {
     const { t } = useTranslation('item');
     const [imageError, setImageError] = useState(false);
 
@@ -51,6 +51,6 @@ const LibraryCard = ({
             )}
         </FocusableCard>
     );
-};
+});
 
 export default LibraryCard;

@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import pkg from '../../package.json' with { type: 'json' };
 import { clearLogosCache } from '../lib/studio-logos';
 import { toast } from '../components/ui/toast';
+import { useQueryClient } from '@tanstack/react-query';
 
 const SettingsSection = ({
     title,
@@ -41,6 +42,7 @@ const SettingsSection = ({
 
 const Settings = () => {
     const { t } = useTranslation(['settings', 'sidebar', 'common']);
+    const queryClient = useQueryClient();
     const serverUrl = getServerUrl();
     const { data: user, isLoading } = useCurrentUser();
     const navigate = useNavigate();
@@ -98,14 +100,15 @@ const Settings = () => {
                 <FocusableButton
                     onClick={() => {
                         clearLogosCache();
+                        queryClient.clear();
                         toast.add({
-                            title: t('settings:clear_logo_cache_success'),
+                            title: t('settings:clear_app_cache_success'),
                             type: 'success',
                         });
                     }}
                 >
                     <Eraser />
-                    {t('settings:clear_logo_cache_button')}
+                    {t('settings:clear_app_cache_button')}
                 </FocusableButton>
             </SettingsSection>
 

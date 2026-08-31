@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { Loader2 } from 'lucide-react';
 import { AvPlayPlayerAdapter, createAvPlayPlayerAdapter } from '@pelagica/tv-platform';
 import { useLayerActive } from '@/router';
 import type { VideoPlayerProps } from './types';
@@ -29,6 +30,7 @@ const TizenVideoPlayer = ({
     const audioTrackIndexRef = useRef(audioTrackIndex);
     const audioStreamsRef = useRef(audioStreams);
     const [activeCueText, setActiveCueText] = useState('');
+    const [isBuffering, setIsBuffering] = useState(true);
     const isLayerActive = useLayerActive();
 
     useEffect(() => {
@@ -83,8 +85,12 @@ const TizenVideoPlayer = ({
         adapterRef.current = adapter;
 
         avplay.setListener({
+            onbufferingstart: () => adapter.notifyWaiting(),
             onbufferingprogress: (percent) => adapter.notifyBufferingProgress(percent),
-            onbufferingcomplete: () => clearStallTimeout(),
+            onbufferingcomplete: () => {
+                clearStallTimeout();
+                adapter.notifyPlaying();
+            },
             oncurrentplaytime: (currentTime) => {
                 clearStallTimeout();
                 adapter.notifyCurrentTime(currentTime);
@@ -103,9 +109,16 @@ const TizenVideoPlayer = ({
             },
         });
 
+        const handleWaiting = () => setIsBuffering(true);
+        const handlePlaying = () => setIsBuffering(false);
+        adapter.on('waiting', handleWaiting);
+        adapter.on('playing', handlePlaying);
+
         onReady?.(adapter);
 
         return () => {
+            adapter.off('waiting', handleWaiting);
+            adapter.off('playing', handlePlaying);
             clearStallTimeout();
             adapter.dispose();
             adapterRef.current = null;
@@ -128,6 +141,7 @@ const TizenVideoPlayer = ({
         const adapter = adapterRef.current;
         if (!avplay || !adapter || !src) return;
 
+        setIsBuffering(true);
         let cancelled = false;
         const pendingSeek = pendingAudioSwitchSeekRef.current;
         pendingAudioSwitchSeekRef.current = null;
@@ -192,6 +206,7 @@ const TizenVideoPlayer = ({
                     const startPlayback = () => {
                         if (cancelled) return;
                         adapter.play();
+                        adapter.notifyPlaying();
                         selectPreferredAudioTrack();
                     };
 
@@ -280,6 +295,11 @@ const TizenVideoPlayer = ({
                     <span className="max-w-3xl text-center text-white text-2xl font-medium whitespace-pre-line [text-shadow:0_1px_4px_rgb(0_0_0_/_80%)]">
                         {activeCueText}
                     </span>
+                </div>
+            )}
+            {isBuffering && (
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                    <Loader2 className="h-10 w-10 animate-spin text-white" />
                 </div>
             )}
         </div>

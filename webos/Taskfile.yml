@@ -1,0 +1,121 @@
+version: '3'
+
+vars:
+    APP_ID: app.pelagica.pelagica
+    BUILD_DIR: www
+    DEVICE: pelagica-tv
+
+tasks:
+    default:
+        desc: List all available tasks
+        cmds:
+            - task --list
+        silent: true
+
+    install:
+        desc: Install JS dependencies
+        cmds:
+            - pnpm install
+
+    set-webos-version:
+        internal: true
+        cmds:
+            - pnpm pkg set version={{.VERSION}}
+            - perl -i -pe 's/("version":\s*")[^"]*(")/${1}{{.VERSION}}$2/' public/appinfo.json
+
+    dev:
+        desc: Start the Vite dev server (fast iteration in a plain browser)
+        cmds:
+            - pnpm dev
+
+    build:
+        desc: Type-check and build the webOS-ready bundle to www/
+        cmds:
+            - pnpm build
+
+    lint:
+        desc: Run oxlint
+        cmds:
+            - pnpm lint
+
+    format:
+        desc: Format code with Prettier
+        cmds:
+            - pnpm format
+
+    format:check:
+        desc: Check code formatting with Prettier
+        cmds:
+            - pnpm format:check
+
+    preview:
+        desc: Preview the production build with Vite
+        cmds:
+            - pnpm preview
+
+    clean:
+        desc: Remove build output
+        cmds:
+            - rm -rf {{.BUILD_DIR}} *.ipk
+
+    ui:add:
+        desc: 'Add a shadcn/ui component to @pelagica/tv-frontend, e.g. task ui:add -- button'
+        dir: ../packages/tv-frontend
+        cmds:
+            - pnpm dlx shadcn@latest add {{.CLI_ARGS}}
+
+    package:
+        desc: Package www/ into an unsigned .ipk (requires the webOS TV CLI, `@webosose/ares-cli`)
+        deps: [build]
+        cmds:
+            # --no-minify: ares-package's bundled uglify-js (an ES5 minifier) can't parse the
+            # modern JS Vite/Rolldown already emitted, and errors out trying to re-minify it.
+            - ares-package {{.BUILD_DIR}} -o . --no-minify
+
+    device:add:
+        desc: >-
+            Register a TV in Developer Mode as a CLI target (task webos:device:add TV_IP=... PASSPHRASE=...).
+            Get the IP and passphrase from the Developer Mode app on the TV.
+        requires:
+            vars: [TV_IP, PASSPHRASE]
+        cmds:
+            - >
+                ares-setup-device -a {{.DEVICE}}
+                -i "host={{.TV_IP}}" -i "port=9922" -i "username=prisoner"
+                -i "passphrase={{.PASSPHRASE}}" -i "default=true"
+            - ares-novacom --device {{.DEVICE}} --getkey
+
+    device:list:
+        desc: List registered CLI devices
+        cmds:
+            - ares-setup-device -F
+
+    tv:install:
+        desc: 'Build, package, and install the .ipk on a registered device (task webos:tv:install DEVICE=...)'
+        deps: [package]
+        cmds:
+            - ares-install -d {{.DEVICE}} "$(find . -maxdepth 1 -name '*.ipk' -print -quit)"
+
+    tv:run:
+        desc: 'Launch the installed app on a registered device (task webos:tv:run DEVICE=...)'
+        cmds:
+            - ares-launch {{.APP_ID}} -d {{.DEVICE}}
+
+    tv:deploy:
+        desc: Build, package, install, and run on a registered TV in one shot
+        cmds:
+            - task: tv:install
+            - task: tv:run
+
+    tv:hosted:
+        desc: >-
+            Run the built www/ directly from disk without installing/packaging
+            (fastest iteration loop on a real TV; task webos:tv:hosted DEVICE=...)
+        deps: [build]
+        cmds:
+            - ares-launch -H {{.BUILD_DIR}} -d {{.DEVICE}}
+
+    tv:close:
+        desc: Close the running app on a registered device
+        cmds:
+            - ares-launch -c {{.APP_ID}} -d {{.DEVICE}}

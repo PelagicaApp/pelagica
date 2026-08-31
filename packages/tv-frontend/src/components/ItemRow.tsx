@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import ItemCard from './ItemCard';
 import { FocusContext } from '@noriginmedia/norigin-spatial-navigation';
@@ -11,7 +12,7 @@ const ItemCardSkeleton = () => (
     </div>
 );
 
-const ItemRow = ({
+const ItemRow = memo(function ItemRow({
     title,
     items,
     isLoading = false,
@@ -19,7 +20,7 @@ const ItemRow = ({
     title: string;
     items?: BaseItemDto[];
     isLoading?: boolean;
-}) => {
+}) {
     const { ref, focusKey } = useFocusable<object, HTMLDivElement>({
         focusable: !isLoading && (items?.length ?? 0) > 0,
         saveLastFocusedChild: true,
@@ -44,6 +45,6 @@ const ItemRow = ({
             </FocusContext.Provider>
         </div>
     );
-};
+});
 
 export default ItemRow;

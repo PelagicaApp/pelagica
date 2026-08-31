@@ -1,5 +1,5 @@
 import { getPrimaryImageUrl, type GenreWithItem } from '@pelagica/core';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import FocusableCard from './FocusableCard';
 import { getItemLink } from '../lib/getItemLink';
 import { cn } from '../lib/utils';
@@ -13,7 +13,7 @@ interface GenresCardProps {
     className?: string;
 }
 
-const GenreCard = ({ genreWithItem, autoFocus, className }: GenresCardProps) => {
+const GenreCard = memo(function GenreCard({ genreWithItem, autoFocus, className }: GenresCardProps) {
     const { t } = useTranslation('item');
     const [posterError, setPosterError] = useState(false);
     const posterUrl = getPrimaryImageUrl(genreWithItem.item?.Id || '', {
@@ -51,7 +51,7 @@ const GenreCard = ({ genreWithItem, autoFocus, className }: GenresCardProps) => 
                                 <div
                                     role="img"
                                     aria-label={genreWithItem.item?.Name || t('unknown_item')}
-                                    className="absolute inset-0 w-full h-full grayscale transition-all group-hover:scale-105 group-hover:opacity-75"
+                                    className="absolute inset-0 w-full h-full grayscale"
                                     style={{
                                         backgroundImage: `linear-gradient(to top, rgb(0 0 0 / 0.8), rgb(0 0 0 / 0.4), transparent), url(${posterUrl})`,
                                         backgroundSize: 'cover',
@@ -80,6 +80,6 @@ const GenreCard = ({ genreWithItem, autoFocus, className }: GenresCardProps) => 
             )}
         </FocusableCard>
     );
-};
+});
 
 export default GenreCard;

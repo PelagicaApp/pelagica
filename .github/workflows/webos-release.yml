@@ -1,0 +1,55 @@
+name: Build and Publish webOS App
+
+on:
+    release:
+        types: [published]
+
+permissions:
+    contents: write
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.event.release.tag_name }}
+    cancel-in-progress: true
+
+jobs:
+    webos:
+        name: Build and package webOS app
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 24
+
+            - name: Install pnpm
+              run: npm install -g pnpm
+
+            - name: Install go-task
+              uses: arduino/setup-task@v2
+              with:
+                  version: 3.x
+                  repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Install webOS TV CLI
+              run: npm install -g @webos-tools/cli
+
+            - name: Install dependencies
+              run: task webos:install
+
+            - name: Build webOS bundle
+              run: task webos:build
+
+            - name: Package .ipk
+              run: task webos:package
+
+            - name: Rename asset
+              run: mv webos/*.ipk pelagica-webos.ipk
+
+            - name: Upload asset to release
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: gh release upload "${{ github.event.release.tag_name }}" pelagica-webos.ipk --clobber

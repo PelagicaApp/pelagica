@@ -13,7 +13,7 @@ import {
     useQuickConnectStatus,
     useServerAddress,
 } from '@pelagica/core';
-import { getTizenLocalIpAddress } from '@pelagica/tv-platform';
+import { getLocalIpAddress } from '@pelagica/tv-platform';
 import FocusableButton from '@/components/FocusableButton';
 import FocusableField from '@/components/FocusableField';
 import { AlertTriangle, Loader2, Server } from 'lucide-react';
@@ -71,7 +71,7 @@ const Login = () => {
     useEffect(() => {
         if (step !== 'server' || predefinedServerAddress || discoveryStartedRef.current) return;
         discoveryStartedRef.current = true;
-        getTizenLocalIpAddress().then((localIp) => discovery.start(localIp));
+        getLocalIpAddress().then((localIp) => discovery.start(localIp));
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [step, predefinedServerAddress]);
 

@@ -12,9 +12,7 @@
   <a href="https://twoglot.com/@KartoffelChipss/pelagica"><img src="https://twoglot.com/api/projects/by-owner/KartoffelChipss/pelagica/badge.svg" alt="Translations"></a>
 </p>
 
-<p align="center">Pelagica is a web, desktop, and TV client for <a href="https://jellyfin.org">Jellyfin</a> built using React. It aims to provide a fast, modern, and customizable user experience for browsing and watching your media library. It's available as a self-hosted web app, a native desktop app for macOS, Windows, and Linux, and a TV app for Samsung Tizen.</p>
-
-<!-- p align="center">A fast, modern web frontend for Jellyfin</p> -->
+<p align="center">Pelagica is a web, desktop, and TV client for <a href="https://jellyfin.org">Jellyfin</a> built using React. It aims to provide a fast, modern, and customizable user experience for browsing and watching your media library. It's available as a self-hosted web app, a native desktop app for macOS, Windows, and Linux, and a TV app for Samsung Tizen and LG webOS.</p>
 
 ![Home](./.github/assets/home.webp)
 
@@ -106,6 +104,10 @@ See the [desktop README](./desktop/README.md) for build and packaging instructio
 ### Samsung Tizen
 
 Pelagica is available as a Tizen app for Samsung Smart TVs. See the [Tizen Documentation](https://pelagica.app/docs/tizen) for installation instructions.
+
+### LG webOS
+
+Pelagica is available as a webOS app for LG Smart TVs. See the [webOS Documentation](https://pelagica.app/docs/webos) for installation instructions.
 
 ## Discord
 

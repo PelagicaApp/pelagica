@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { useNavigate, useParams } from '@/router';
 import { useTranslation } from 'react-i18next';
 import { FocusContext } from '@noriginmedia/norigin-spatial-navigation';
@@ -28,7 +28,13 @@ import { Skeleton } from '../components/ui/skeleton';
 import TrailerButton from '../components/TrailerButton';
 import { buildPlayerUrl } from '@/lib/playerUrl';
 
-const EpisodeCard = ({ episode, autoFocus }: { episode: BaseItemDto; autoFocus?: boolean }) => {
+const EpisodeCard = memo(function EpisodeCard({
+    episode,
+    autoFocus,
+}: {
+    episode: BaseItemDto;
+    autoFocus?: boolean;
+}) {
     const [imageError, setImageError] = useState(false);
     const navigate = useNavigate();
     const { t } = useTranslation('item');
@@ -127,7 +133,7 @@ const EpisodeCard = ({ episode, autoFocus }: { episode: BaseItemDto; autoFocus?:
             </div>
         </button>
     );
-};
+});
 
 const EpisodeCardSkeleton = () => (
     <div className="w-64 shrink-0">
@@ -145,7 +151,13 @@ const EpisodeCardSkeleton = () => (
     </div>
 );
 
-const EpisodeRow = ({ episodes, isLoading }: { episodes: BaseItemDto[]; isLoading: boolean }) => {
+const EpisodeRow = memo(function EpisodeRow({
+    episodes,
+    isLoading,
+}: {
+    episodes: BaseItemDto[];
+    isLoading: boolean;
+}) {
     const { ref, focusKey } = useFocusable<object, HTMLDivElement>({
         focusable: !isLoading && episodes.length > 0,
         saveLastFocusedChild: true,
@@ -162,9 +174,9 @@ const EpisodeRow = ({ episodes, isLoading }: { episodes: BaseItemDto[]; isLoadin
             </div>
         </FocusContext.Provider>
     );
-};
+});
 
-const SeasonsRow = ({
+const SeasonsRow = memo(function SeasonsRow({
     seasons,
     isLoading,
     selectedSeasonId,
@@ -174,7 +186,7 @@ const SeasonsRow = ({
     isLoading: boolean;
     selectedSeasonId?: string;
     onSelectSeason: (seasonId: string | undefined) => void;
-}) => {
+}) {
     const { t } = useTranslation('item');
     const { ref, focusKey } = useFocusable<object, HTMLDivElement>({
         focusable: !isLoading && seasons.length > 1,
@@ -211,7 +223,7 @@ const SeasonsRow = ({
             </div>
         </FocusContext.Provider>
     );
-};
+});
 
 const SeriesDetail = () => {
     const { itemId } = useParams<{ itemId: string }>();

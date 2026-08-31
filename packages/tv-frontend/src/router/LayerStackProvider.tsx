@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useReducer, useRef } from 'react';
 import type { Dispatch, ReactNode } from 'react';
 import { getAccessToken, getServerUrl } from '@pelagica/core';
-import { onBackKey, tizenNavigationAdapter } from '@pelagica/tv-platform';
+import { getNavigationAdapter, onBackKey } from '@pelagica/tv-platform';
 import { routes } from './routes';
 import { matchRoute, parsePath } from './match';
 import type { Layer, StackAction, StackState } from './types';
@@ -27,8 +27,14 @@ function reducer(state: StackState, action: StackAction): StackState {
             return { layers: [...state.layers.slice(0, -1), action.layer] };
         case 'POP':
             return state.layers.length > 1 ? { layers: state.layers.slice(0, -1) } : state;
-        case 'RESET':
-            return { layers: action.layers };
+        case 'RESET': {
+            const root = state.layers[0];
+            const { pathname, search } = parsePath(action.to);
+            if (root && root.pathname === pathname && root.search === search) {
+                return { layers: [root] };
+            }
+            return { layers: [buildLayer(action.to)] };
+        }
     }
 }
 
@@ -57,7 +63,7 @@ export function LayerStackProvider({ children }: { children: ReactNode }) {
             if (interceptRef.current?.()) return;
 
             if (state.layers.length === 1) {
-                tizenNavigationAdapter.exitApp();
+                getNavigationAdapter().exitApp();
             } else {
                 dispatch({ type: 'POP' });
             }

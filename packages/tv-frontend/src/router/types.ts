@@ -29,7 +29,7 @@ export type StackAction =
     | { type: 'PUSH'; layer: Layer }
     | { type: 'REPLACE'; layer: Layer }
     | { type: 'POP' }
-    | { type: 'RESET'; layers: Layer[] };
+    | { type: 'RESET'; to: string };
 
 /**
  * How a navigation affects the stack:

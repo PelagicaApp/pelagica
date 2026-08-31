@@ -13,7 +13,9 @@ export type TvPlayerEventName =
     | 'loadedmetadata'
     | 'progress'
     | 'volumechange'
-    | 'ended';
+    | 'ended'
+    | 'waiting'
+    | 'playing';
 
 export interface TvPlayer {
     play(): void;

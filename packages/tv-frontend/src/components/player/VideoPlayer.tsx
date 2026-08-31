@@ -1,7 +1,8 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import videojs from 'video.js';
 import 'video.js/dist/video-js.css';
 import JASSUB from 'jassub';
+import { Loader2 } from 'lucide-react';
 import { createVideoJsPlayerAdapter } from '@pelagica/tv-platform';
 import type { VideoPlayerProps } from './types';
 
@@ -21,7 +22,6 @@ function isJassubSupported() {
 const VideoPlayer = ({
     src,
     srcType = 'application/x-mpegURL',
-    poster,
     startTicks,
     subtitles,
     subtitleFonts,
@@ -39,6 +39,7 @@ const VideoPlayer = ({
     const onPlaybackErrorRef = useRef(onPlaybackError);
     const onPlaybackStalledRef = useRef(onPlaybackStalled);
     const stallTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const [isBuffering, setIsBuffering] = useState(true);
 
     useEffect(() => {
         onPlaybackErrorRef.current = onPlaybackError;
@@ -65,7 +66,6 @@ const VideoPlayer = ({
             controls: false,
             autoplay: false,
             preload: 'auto',
-            poster: poster,
             responsive: false,
             fluid: false,
             html5: {
@@ -80,8 +80,12 @@ const VideoPlayer = ({
         player.on('error', () => {
             const mediaError = player.error() as unknown as MediaError | null;
             console.error('video.js playback error:', mediaError);
+            setIsBuffering(false);
             onPlaybackErrorRef.current?.(mediaError);
         });
+
+        player.on('waiting', () => setIsBuffering(true));
+        player.on('playing', () => setIsBuffering(false));
 
         player.ready(() => {
             onReady?.(createVideoJsPlayerAdapter(player));
@@ -96,7 +100,7 @@ const VideoPlayer = ({
             }
             videoRef.current = null;
         };
-    }, [onReady, poster]);
+    }, [onReady]);
 
     useEffect(() => {
         if (!playerRef.current) return;
@@ -117,6 +121,8 @@ const VideoPlayer = ({
         if (!playerRef.current || !src) return;
 
         const player = playerRef.current;
+
+        setIsBuffering(true);
 
         let seekTo: number | null = null;
 
@@ -259,11 +265,18 @@ const VideoPlayer = ({
     }, [subtitleTrackIndex, subtitles, subtitleFonts]);
 
     return (
-        <div
-            ref={containerRef}
-            className="w-full h-full overflow-hidden"
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-        />
+        <div className="relative w-full h-full overflow-hidden">
+            <div
+                ref={containerRef}
+                className="w-full h-full overflow-hidden"
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            />
+            {isBuffering && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/50 pointer-events-none">
+                    <Loader2 className="h-10 w-10 animate-spin text-white" />
+                </div>
+            )}
+        </div>
     );
 };
 
