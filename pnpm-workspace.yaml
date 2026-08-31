@@ -1,6 +1,7 @@
 packages:
   - frontend
   - tizen
+  - webos
   - packages/*
 
 allowBuilds:

@@ -1,0 +1,13 @@
+{
+    "id": "app.pelagica.pelagica",
+    "version": "4.5.2",
+    "vendor": "Pelagica",
+    "type": "web",
+    "main": "index.html",
+    "title": "Pelagica",
+    "appDescription": "A modern Jellyfin client",
+    "icon": "icon.png",
+    "largeIcon": "largeIcon.png",
+    "resolution": "1920x1080",
+    "disableBackHistoryAPI": true
+}

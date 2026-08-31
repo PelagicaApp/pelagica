@@ -1,0 +1,35 @@
+{
+    "name": "@pelagica/webos",
+    "private": true,
+    "version": "4.5.2",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "tsc -b && vite build",
+        "lint": "oxlint",
+        "format": "prettier --write .",
+        "format:check": "prettier --check .",
+        "preview": "vite preview",
+        "webos:package": "ares-package www -o . --no-minify"
+    },
+    "dependencies": {
+        "@noriginmedia/norigin-spatial-navigation": "^3.3.0",
+        "@pelagica/core": "workspace:*",
+        "@pelagica/tv-frontend": "workspace:*",
+        "@pelagica/tv-platform": "workspace:*",
+        "@tailwindcss/vite": "^4.3.3",
+        "react": "^19.2.8",
+        "react-dom": "^19.2.8",
+        "tailwindcss": "^4.3.3"
+    },
+    "devDependencies": {
+        "@types/node": "^24.13.3",
+        "@types/react": "^19.2.17",
+        "@types/react-dom": "^19.2.3",
+        "@vitejs/plugin-react": "^6.0.4",
+        "oxlint": "^1.75.0",
+        "prettier": "3.8.4",
+        "typescript": "~6.0.2",
+        "vite": "^8.2.0"
+    }
+}

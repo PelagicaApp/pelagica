@@ -29,7 +29,7 @@ import { cn } from '@/lib/utils';
 import { FOCUS_RING_COMPACT } from '@/lib/focus-styles';
 import { formatPlayTime, ticksToReadableTime, ticksToSeconds } from '@/lib/timeConversion';
 import { getLogoUrl, getPrimaryImageUrl, useReportPlaybackProgress } from '@pelagica/core';
-import { tizenNavigationAdapter, type TvPlayer } from '@pelagica/tv-platform';
+import { getNavigationAdapter, type TvPlayer } from '@pelagica/tv-platform';
 import {
     removeLastSubtitleLanguage,
     setLastAudioLanguage,
@@ -250,7 +250,7 @@ const PlayerControls = forwardRef<PlayerControlsHandle, PlayerControlsProps>(
         );
 
         useEffect(() => {
-            tizenNavigationAdapter.registerMediaKeys();
+            getNavigationAdapter().registerMediaKeys();
         }, []);
 
         useEffect(() => {

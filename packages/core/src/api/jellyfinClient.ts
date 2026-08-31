@@ -1,7 +1,7 @@
 import { Jellyfin } from '@jellyfin/sdk';
 import { getDeviceId } from '../utils/deviceId';
 
-export type Platform = 'web' | 'tizen';
+export type Platform = 'web' | 'tizen' | 'webos';
 
 export interface PlatformCapabilities {
     /** Direct-play containers this platforms player supports beyond the browser default mp4/webm. */
@@ -19,10 +19,15 @@ const PLATFORM_CAPABILITIES: Record<Platform, PlatformCapabilities> = {
         extraDirectPlayContainers: ['mkv'],
         extraDirectPlayAudioCodecs: ['ac3', 'eac3'],
     },
+    webos: {
+        extraDirectPlayContainers: [],
+        extraDirectPlayAudioCodecs: [],
+    },
 };
 
 function getBrowserName(): string {
     if (platform === 'tizen') return 'Samsung Smart TV';
+    if (platform === 'webos') return 'LG webOS';
 
     const ua = navigator.userAgent;
     if (ua.includes('Firefox/')) return 'Firefox';
