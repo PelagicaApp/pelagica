@@ -7,6 +7,8 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY frontend/package.json frontend/package.json
 COPY tizen/package.json tizen/package.json
 COPY packages/core/package.json packages/core/package.json
+COPY packages/tv-frontend/package.json packages/tv-frontend/package.json
+COPY packages/tv-platform/package.json packages/tv-platform/package.json
 RUN npm install -g pnpm \
     && pnpm install --frozen-lockfile --filter pelagica...
 
