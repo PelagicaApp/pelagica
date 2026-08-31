@@ -183,5 +183,7 @@
     "version_label": "Pelagica Version",
     "application_section_title": "Application",
     "clear_logo_cache_button": "Clear Logo Cache",
-    "clear_logo_cache_success": "Logo cache cleared successfully!"
+    "clear_logo_cache_success": "Logo cache cleared successfully!",
+    "clear_app_cache_button": "Clear App Cache",
+    "clear_app_cache_success": "App cache cleared successfully!"
 }
