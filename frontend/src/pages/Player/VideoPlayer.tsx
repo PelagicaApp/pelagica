@@ -94,6 +94,10 @@ const VideoPlayer = ({
     }, [startTicks]);
 
     useEffect(() => {
+        hasSeekedRef.current = false;
+    }, [src]);
+
+    useEffect(() => {
         if (!playerRef.current || !src) return;
 
         const player = playerRef.current;
