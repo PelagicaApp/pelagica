@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-appimage="$1"
+appimage="$(cd "$(dirname "$1")" && pwd)/$(basename "$1")"
 arch="$(uname -m)"
 workdir="$(mktemp -d)"
 trap 'rm -rf "$workdir"' EXIT
