@@ -22,6 +22,7 @@ webkit_proc="$(find "$appdir/usr/lib" -name WebKitNetworkProcess 2>/dev/null | h
 if [ -n "$webkit_proc" ]; then
     export WEBKIT_EXEC_PATH="$(dirname "$webkit_proc")"
 fi
+export WEBKIT_DISABLE_SANDBOX=1
 exec "$here/pelagica.bin" "$@"
 EOF
 chmod +x "$binary"
