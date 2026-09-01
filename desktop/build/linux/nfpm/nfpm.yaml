@@ -16,8 +16,8 @@ contents:
       dst: "/usr/local/bin/pelagica"
     - src: "./build/appicon.png"
       dst: "/usr/share/icons/hicolor/512x512/apps/pelagica.png"
-    - src: "./build/linux/pelagica.desktop"
-      dst: "/usr/share/applications/pelagica.desktop"
+    - src: "./build/linux/org.wails.pelagica.desktop"
+      dst: "/usr/share/applications/org.wails.pelagica.desktop"
 
 # Dependencies for the GTK4 + WebKitGTK 6.0 stack (Ubuntu 24.04+ / Debian 13+)
 depends:

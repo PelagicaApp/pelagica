@@ -146,7 +146,7 @@ tasks:
         cmds:
             # AppImage requires the icon file's basename to match the desktop entry's Icon= value.
             - cp build/appicon.png build/linux/pelagica.png
-            - wails3 generate appimage -binary bin/pelagica -icon build/linux/pelagica.png -desktopfile build/linux/pelagica.desktop -outputdir bin -builddir build/linux/appimage/build
+            - wails3 generate appimage -binary bin/pelagica -icon build/linux/pelagica.png -desktopfile build/linux/org.wails.pelagica.desktop -outputdir bin -builddir build/linux/appimage/build
 
     install:
         internal: true
