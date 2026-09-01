@@ -16,9 +16,11 @@ import {
     MEDIABAR_SIZES,
     SEERR_DISCOVER_VARIANTS,
     type ContinueWatchingDetailLine,
+    type ContinueWatchingTitleLine,
     type DetailField,
     type HomeScreenSection,
     type RecentlyAddedSection,
+    type RecentEpisodesSection,
 } from '@pelagica/core';
 import { useUserViews } from '@pelagica/core';
 import {
@@ -40,6 +42,7 @@ const HOMESCREEN_SECTION_TYPES = [
     { value: 'genres', label: 'Genres' },
     { value: 'libraries', label: 'Libraries' },
     { value: 'studios', label: 'Studios' },
+    { value: 'recentEpisodes', label: 'Recent Episodes' },
     { value: 'seerrDiscover', label: 'Seerr Discover' },
 ];
 
@@ -65,6 +68,70 @@ const RecentlyAddedConfigEditor = ({
                 selected={section.libraryIds || []}
                 onChange={(selected) => onChange({ ...section, libraryIds: selected })}
                 description={t('recently_added_libraries_description')}
+            />
+            <ImmediateStringInput
+                label={t('section_limit_label')}
+                value={String(section.limit || '')}
+                onChange={(value) =>
+                    onChange({ ...section, limit: value ? parseInt(value) : undefined })
+                }
+                placeholder={t('section_limit_placeholder')}
+            />
+        </div>
+    );
+};
+
+const RecentEpisodesConfigEditor = ({
+    section,
+    onChange,
+}: {
+    section: RecentEpisodesSection;
+    onChange: (section: RecentEpisodesSection) => void;
+}) => {
+    const { t } = useTranslation('settings');
+    const { data: userViews } = useUserViews();
+
+    const libraryOptions: Option[] = (userViews?.Items || [])
+        .filter((v) => v.Id && v.Name && v.CollectionType === 'tvshows')
+        .map((v) => ({ value: v.Id!, label: v.Name! }));
+
+    return (
+        <div className="mt-6 space-y-4">
+            <SelectInput
+                label={t('recent_episodes_library_label')}
+                options={libraryOptions}
+                value={section.libraryId || ''}
+                onChange={(value) => onChange({ ...section, libraryId: value })}
+                description={t('recent_episodes_library_description')}
+            />
+            <SelectInput
+                label={t('title_line')}
+                options={[
+                    { value: 'ItemTitle', label: 'Item Title' },
+                    { value: 'ParentTitle', label: 'Parent Title' },
+                    {
+                        value: 'ItemTitleWithEpisodeInfo',
+                        label: 'Item Title with Episode Info',
+                    },
+                ]}
+                value={section.titleLine || 'ItemTitle'}
+                onChange={(value) =>
+                    onChange({ ...section, titleLine: value as ContinueWatchingTitleLine })
+                }
+            />
+            <MultiSelectInput
+                label={t('detail_line')}
+                options={CONTINUE_WATCHING_DETAIL_LINES.map((l) => ({
+                    value: l,
+                    label: l,
+                }))}
+                selected={section.detailLine || []}
+                onChange={(selected) =>
+                    onChange({
+                        ...section,
+                        detailLine: selected as ContinueWatchingDetailLine[],
+                    })
+                }
             />
             <ImmediateStringInput
                 label={t('section_limit_label')}
@@ -122,8 +189,8 @@ export const SectionEditor = ({
                         onChange={(value) => {
                             setEditedSection({
                                 ...editedSection,
-                                type: value as HomeScreenSection['type'],
-                            });
+                                type: value,
+                            } as HomeScreenSection);
                         }}
                     />
 
@@ -131,6 +198,7 @@ export const SectionEditor = ({
                         editedSection.type !== 'mediaBar' &&
                         editedSection.type !== 'items' &&
                         editedSection.type !== 'libraries' &&
+                        editedSection.type !== 'recentEpisodes' &&
                         editedSection.type !== 'seerrDiscover' && (
                             <ImmediateStringInput
                                 label={t('section_limit_label')}
@@ -151,6 +219,13 @@ export const SectionEditor = ({
 
                     {editedSection.type === 'recentlyAdded' && (
                         <RecentlyAddedConfigEditor
+                            section={editedSection}
+                            onChange={setEditedSection}
+                        />
+                    )}
+
+                    {editedSection.type === 'recentEpisodes' && (
+                        <RecentEpisodesConfigEditor
                             section={editedSection}
                             onChange={setEditedSection}
                         />

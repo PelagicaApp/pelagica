@@ -8,3 +8,4 @@ Comment=Watch Movies and TV Shows from your Jellyfin server.
 Terminal=false
 Version=1.0
 StartupNotify=false
+StartupWMClass=org.wails.pelagica

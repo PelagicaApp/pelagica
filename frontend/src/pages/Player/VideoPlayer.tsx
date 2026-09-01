@@ -87,15 +87,10 @@ const VideoPlayer = ({
         };
     }, [onReady, poster]);
 
+    const startTicksRef = useRef(startTicks);
+
     useEffect(() => {
-        if (!playerRef.current) return;
-        if (!startTicks || startTicks <= 0) return;
-        if (hasSeekedRef.current) return;
-
-        const seconds = startTicks / 10_000_000;
-
-        playerRef.current.currentTime(seconds);
-        hasSeekedRef.current = true;
+        startTicksRef.current = startTicks;
     }, [startTicks]);
 
     useEffect(() => {
@@ -112,14 +107,26 @@ const VideoPlayer = ({
         if (pendingAudioSwitchSeekRef.current !== null) {
             seekTo = pendingAudioSwitchSeekRef.current;
             pendingAudioSwitchSeekRef.current = null;
+        } else if (!hasSeekedRef.current && startTicksRef.current > 0) {
+            seekTo = startTicksRef.current / 10_000_000;
+            hasSeekedRef.current = true;
         }
 
         player.pause();
         player.src({ src, type: srcType });
-        player.load();
 
         if (seekTo !== null) {
-            player.currentTime(seekTo);
+            const target = seekTo;
+            const seekOnCanPlay = () => {
+                player.currentTime(target);
+                player.play()?.catch(console.error);
+            };
+
+            player.one('canplay', seekOnCanPlay);
+
+            return () => {
+                player.off('canplay', seekOnCanPlay);
+            };
         }
 
         player.play()?.catch(console.error);

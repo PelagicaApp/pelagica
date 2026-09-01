@@ -18,6 +18,7 @@ import {
     SeerrPopularSeriesRow,
     SeerrTrendingRow,
 } from './SeerrDiscoverRows';
+import RecentEpisodesRow from './RecentEpisodesRow';
 
 function getDetailFieldsForCollectionType(type: CollectionType | undefined): DetailField[] {
     switch (type) {
@@ -217,6 +218,22 @@ const HomePage = () => {
                                         />
                                     );
                             }
+
+                        case 'recentEpisodes':
+                            return (
+                                <RecentEpisodesRow
+                                    key={index}
+                                    title={section.title || t('recent_episodes')}
+                                    limit={section.limit}
+                                    view={
+                                        userViews?.Items?.find(
+                                            (view) => view.Id === section.libraryId
+                                        ) || undefined
+                                    }
+                                    titleLine={section.titleLine}
+                                    detailLine={section.detailLine}
+                                />
+                            );
 
                         default:
                             return null;

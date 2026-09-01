@@ -104,9 +104,10 @@ tasks:
             CGO_ENABLED: 1
 
     installer:linux:
-        desc: Build both the .deb and AppImage installers for the desktop app
+        desc: Build the .deb, .pkg.tar.zst, and AppImage installers for the desktop app
         cmds:
             - task: installer:linux:deb
+            - task: installer:linux:pkg
             - task: installer:linux:appimage
 
     installer:linux:deb:
@@ -122,6 +123,19 @@ tasks:
             GOARCH:
                 sh: go env GOARCH
 
+    installer:linux:pkg:
+        desc: Build an Arch Linux .pkg.tar.zst package for the desktop app
+        deps:
+            - package:linux
+        preconditions:
+            - sh: '[ "{{OS}}" = "linux" ]'
+              msg: desktop:installer:linux:pkg only supports Linux
+        cmds:
+            - wails3 tool package -name pelagica -format archlinux -config build/linux/nfpm/nfpm.yaml -out bin
+        env:
+            GOARCH:
+                sh: go env GOARCH
+
     installer:linux:appimage:
         desc: Build an AppImage for the desktop app
         deps:
@@ -132,7 +146,7 @@ tasks:
         cmds:
             # AppImage requires the icon file's basename to match the desktop entry's Icon= value.
             - cp build/appicon.png build/linux/pelagica.png
-            - wails3 generate appimage -binary bin/pelagica -icon build/linux/pelagica.png -desktopfile build/linux/pelagica.desktop -outputdir bin -builddir build/linux/appimage/build
+            - wails3 generate appimage -binary bin/pelagica -icon build/linux/pelagica.png -desktopfile build/linux/org.wails.pelagica.desktop -outputdir bin -builddir build/linux/appimage/build
 
     install:
         internal: true

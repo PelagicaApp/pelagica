@@ -2,7 +2,7 @@
 <widget xmlns="http://www.w3.org/ns/widgets"
         xmlns:tizen="http://tizen.org/ns/widgets"
         id="https://pelagica.app/pelagica"
-        version="4.7.0"
+        version="4.8.0"
         viewmodes="maximized">
     <tizen:application id="Pel4g1c4Ap.pelagica"
                         package="Pel4g1c4Ap"
