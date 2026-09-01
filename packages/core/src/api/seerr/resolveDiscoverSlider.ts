@@ -2,8 +2,8 @@ import type { SeerrDiscoverSlider, SeerrResolvedSlider } from './sliderResolve.t
 import { resolveSeerrDiscoverSlider } from './sliderTypes.ts';
 
 /**
- * Maps a Seerr Discover slider to a title row, or null to skip.
- * Unknown types are skipped so a future Seerr slider cannot crash home.
+ * Maps a Discover slider to a title row, or null to skip.
+ * Unknown types are skipped so a future slider cannot crash home.
  */
 export function resolveDiscoverSlider(
     slider: SeerrDiscoverSlider
