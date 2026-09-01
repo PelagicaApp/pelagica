@@ -8,7 +8,7 @@ tasks:
         cmds:
             - go run .
         env:
-            WEBKIT_DISABLE_SANDBOX: "1"
+            WEBKIT_DISABLE_SANDBOX: '1'
 
     build:
         desc: Build the desktop app binary
@@ -133,6 +133,7 @@ tasks:
             # AppImage requires the icon file's basename to match the desktop entry's Icon= value.
             - cp build/appicon.png build/linux/pelagica.png
             - wails3 generate appimage -binary bin/pelagica -icon build/linux/pelagica.png -desktopfile build/linux/pelagica.desktop -outputdir bin -builddir build/linux/appimage/build
+            - build/linux/fix-appimage-webkit.sh "bin/pelagica-$(uname -m).AppImage"
 
     install:
         internal: true
