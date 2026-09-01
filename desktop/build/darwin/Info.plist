@@ -10,9 +10,9 @@
         <key>CFBundleIdentifier</key>
             <string>app.pelagica.desktop</string>
         <key>CFBundleVersion</key>
-            <string>4.7.0</string>
+            <string>4.8.0</string>
         <key>CFBundleShortVersionString</key>
-            <string>4.7.0</string>
+            <string>4.8.0</string>
         <key>CFBundleIconFile</key>
             <string>icons</string>
         <key>CFBundleIconName</key>
