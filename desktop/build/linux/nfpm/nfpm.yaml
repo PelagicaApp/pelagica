@@ -27,3 +27,9 @@ depends:
 scripts:
     postinstall: "./build/linux/nfpm/scripts/postinstall.sh"
     postremove: "./build/linux/nfpm/scripts/postremove.sh"
+
+overrides:
+    archlinux:
+        depends:
+            - gtk4
+            - webkitgtk-6.0

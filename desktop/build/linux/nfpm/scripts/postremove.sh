@@ -5,7 +5,7 @@ APP_BIN="pelagica"
 APPARMOR_PROFILE="/etc/apparmor.d/${APP_BIN}"
 
 case "$1" in
-    remove|purge)
+    remove|purge|"")
         if [ -f "${APPARMOR_PROFILE}" ]; then
             echo "Removing AppArmor profile for ${APP_BIN}..."
             rm -f "${APPARMOR_PROFILE}"

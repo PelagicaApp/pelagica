@@ -48,7 +48,8 @@ The `.exe` has the app icon and version info embedded via a generated `.syso` re
 ```bash
 task desktop:package:linux             # produces desktop/bin/pelagica
 task desktop:installer:linux:deb       # also produces desktop/bin/pelagica.deb
+task desktop:installer:linux:pkg       # also produces desktop/bin/pelagica.pkg.tar.zst
 task desktop:installer:linux:appimage  # also produces desktop/bin/pelagica-x86_64.AppImage
 ```
 
-Building requires a C compiler and the GTK4 + WebKitGTK 6.0 dev headers (Ubuntu/Debian: `apt install build-essential pkg-config libgtk-4-dev libwebkitgtk-6.0-dev`), since the Linux build uses cgo. The `.deb` is built with nfpm (bundled in the `wails3` CLI, no separate install needed) from [build/linux/nfpm/nfpm.yaml](build/linux/nfpm/nfpm.yaml), and depends on `libgtk-4-1`/`libwebkitgtk-6.0-4` at install time. The AppImage is built via `wails3 generate appimage`, which downloads [linuxdeploy](https://github.com/linuxdeploy/linuxdeploy) on first run. Neither package is signed.
+Building requires a C compiler and the GTK4 + WebKitGTK 6.0 dev headers (Ubuntu/Debian: `apt install build-essential pkg-config libgtk-4-dev libwebkitgtk-6.0-dev`), since the Linux build uses cgo. The `.deb` and `.pkg.tar.zst` are built with nfpm (bundled in the `wails3` CLI, no separate install needed) from [build/linux/nfpm/nfpm.yaml](build/linux/nfpm/nfpm.yaml). The `.deb` depends on `libgtk-4-1`/`libwebkitgtk-6.0-4`, while the `.pkg.tar.zst` (via the `archlinux` override in the same config) depends on `gtk4`/`webkitgtk-6.0` at install time. The AppImage is built via `wails3 generate appimage`, which downloads [linuxdeploy](https://github.com/linuxdeploy/linuxdeploy) on first run. None of the packages are signed.

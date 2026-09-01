@@ -97,7 +97,7 @@ Pelagica is also available as a native desktop app for macOS, Windows, and Linux
 
 - **macOS:** Not notarized, so Gatekeeper will flag it — right-click the app and choose "Open" to bypass.
 - **Windows:** Not signed with an Authenticode certificate, so SmartScreen will flag it.
-- **Linux:** Available as a `.deb` package or an `.AppImage`.
+- **Linux:** Available as a `.deb` package, a `.pkg.tar.zst` package (Arch Linux), or an `.AppImage`.
 
 See the [desktop README](./desktop/README.md) for build and packaging instructions if you'd rather build it yourself.
 
