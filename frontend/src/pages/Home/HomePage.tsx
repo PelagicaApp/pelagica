@@ -14,6 +14,7 @@ import LibrariesRow from './LibrariesRow';
 import StudiosRow from './StudiosRow';
 import RecentlyAddedRow from './RecentlyAddedRow';
 import {
+    SeerrDiscoverSliderRow,
     SeerrPopularMoviesRow,
     SeerrPopularSeriesRow,
     SeerrTrendingRow,
@@ -194,6 +195,15 @@ const HomePage = () => {
                             );
 
                         case 'seerrDiscover':
+                            if (section.sliderId != null) {
+                                return (
+                                    <SeerrDiscoverSliderRow
+                                        key={index}
+                                        sliderId={section.sliderId}
+                                        title={section.title}
+                                    />
+                                );
+                            }
                             switch (section.variant) {
                                 case 'popularMovies':
                                     return (

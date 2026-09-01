@@ -14,6 +14,7 @@ const StudioDetailPage = lazy(() => import('@/routes/StudioDetail'));
 const PlayerPage = lazy(() => import('@/routes/Player'));
 const SettingsPage = lazy(() => import('@/routes/Settings'));
 const SearchPage = lazy(() => import('@/routes/Search'));
+const SeerrItemPage = lazy(() => import('@/routes/SeerrItem'));
 
 export const routes: RouteDef[] = [
     { pattern: '/login', component: LoginPage, chrome: 'none' },
@@ -34,4 +35,5 @@ export const routes: RouteDef[] = [
     { pattern: '/studios', component: StudiosPage, chrome: 'shell' },
     { pattern: '/studio/:itemId', component: StudioDetailPage, chrome: 'shell' },
     { pattern: '/search', component: SearchPage, chrome: 'shell', activeItem: 'search' },
+    { pattern: '/seerr/:mediaType/:tmdbId', component: SeerrItemPage, chrome: 'shell' },
 ];

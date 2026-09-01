@@ -84,6 +84,7 @@ func main() {
 	api.Get("/seerr/discover/trending", handlers.GetSeerDiscoverTrending)
 	api.Get("/seerr/discover/movies", handlers.GetSeerDiscoverMovies)
 	api.Get("/seerr/discover/tv", handlers.GetSeerDiscoverTv)
+	api.Get("/seerr/catalog", handlers.GetSeerCatalog)
 
 	slog.Info("Server starting", "port", getPort(), "fiber", fiber.Version)
 	if err := app.Listen(getPort(), fiber.ListenConfig{

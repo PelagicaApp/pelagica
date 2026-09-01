@@ -40,6 +40,7 @@
     "recomm_series": "Series",
     "seerr_variant_popularMovies": "Películas Populares",
     "seerr_variant_popularSeries": "Series Populares",
+    "seerr_discover_slider_description": "Una fila de Seerr Discover por sección de inicio. Inicia sesión en Seerr para cargar sliders personalizados.",
     "seerr_url_label": "Seerr URL",
     "seerr_url_placeholder": "http://tu-servidor-seerr",
     "show_logo_in_player_controls": "Mostrar el Logo en los Controles del Reproductor",

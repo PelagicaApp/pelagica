@@ -3,7 +3,13 @@ import type React from 'react';
 import SectionScroller from '@/components/SectionScroller';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useSeerrLoginStatus } from '@pelagica/core';
-import { useSeerrPopularMovies, useSeerrPopularSeries, useSeerrTrending } from '@pelagica/core';
+import {
+    useSeerrPopularMovies,
+    useSeerrPopularSeries,
+    useSeerrResolvedSlider,
+    useSeerrSliderItems,
+    useSeerrTrending,
+} from '@pelagica/core';
 import type { SeerrSearchResultItem } from '@pelagica/core';
 import { SeerrRecommendationPoster } from '../Item/SeerrRecommendationsRow';
 import { ChevronRight } from 'lucide-react';
@@ -133,3 +139,42 @@ export const SeerrPopularSeriesRow: React.FC<SeerrDiscoverRowProps> = memo(({ ti
     );
 });
 SeerrPopularSeriesRow.displayName = 'SeerrPopularSeriesRow';
+
+const sliderAllLink = (seerrUrl: string | undefined, linkPath: string) => {
+    if (!seerrUrl) return undefined;
+    return `${seerrUrl.replace(/\/$/, '')}${linkPath.startsWith('/') ? linkPath : `/${linkPath}`}`;
+};
+
+const SeerrSliderRow: React.FC<{
+    sliderId: number;
+    title?: string;
+    seerrUrl?: string;
+}> = memo(({ sliderId, title, seerrUrl }) => {
+    const { data: isLoggedIn, isLoading: isLoadingLoginStatus } = useSeerrLoginStatus();
+    const { slider, isLoading: isLoadingSlider } = useSeerrResolvedSlider(sliderId, !!isLoggedIn);
+    const { data: items, isLoading } = useSeerrSliderItems(slider, !!isLoggedIn && !!slider);
+
+    if (isLoadingLoginStatus || !isLoggedIn) return null;
+
+    if (isLoadingSlider || !slider) {
+        return <SeerrDiscoverRowBase title={title} items={undefined} isLoading={isLoadingSlider} />;
+    }
+
+    return (
+        <SeerrDiscoverRowBase
+            title={title || slider.title}
+            allLink={sliderAllLink(seerrUrl, slider.linkPath)}
+            items={items}
+            isLoading={isLoading}
+        />
+    );
+});
+SeerrSliderRow.displayName = 'SeerrSliderRow';
+
+export const SeerrDiscoverSliderRow = memo(
+    ({ sliderId, title }: { sliderId: number; title?: string }) => {
+        const { config } = useConfig();
+        return <SeerrSliderRow sliderId={sliderId} title={title} seerrUrl={config.seerrUrl} />;
+    }
+);
+SeerrDiscoverSliderRow.displayName = 'SeerrDiscoverSliderRow';

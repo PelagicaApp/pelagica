@@ -173,11 +173,13 @@ export interface RecentEpisodesSection extends BaseHomeScreenSection {
 export const SEERR_DISCOVER_VARIANTS = ['trending', 'popularMovies', 'popularSeries'] as const;
 export type SeerrDiscoverVariant = (typeof SEERR_DISCOVER_VARIANTS)[number];
 
-/** A section showing a Seerr discovery list (trending, popular movies, popular series) */
+/** A section showing a Seerr discovery list (trending, popular movies, popular series, or one custom slider) */
 export interface SeerrDiscoverSection extends BaseHomeScreenSection {
     type: 'seerrDiscover';
-    /** Which Seerr discovery list to show */
+    /** Built-in list when `sliderId` is unset */
     variant?: SeerrDiscoverVariant;
+    /** One Seerr Discover slider (`GET /api/v1/settings/discover`) */
+    sliderId?: number;
 }
 
 export type HomeScreenSection =

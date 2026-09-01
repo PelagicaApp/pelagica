@@ -11,6 +11,12 @@ import GenresRow from '../components/home/GenresRow';
 import RecommendedItemsRow from '../components/home/RecommendedItemsRow';
 import StudiosRow from '../components/home/StudiosRow';
 import MediaBarRow from '../components/home/MediaBarRow';
+import {
+    SeerrDiscoverSliderRow,
+    SeerrPopularMoviesRow,
+    SeerrPopularSeriesRow,
+    SeerrTrendingRow,
+} from '../components/home/SeerrDiscoverRows';
 import { getHomerowItemLimit } from '../lib/limit-homerow-items';
 
 function getDetailFieldsForCollectionType(type: CollectionType | undefined): DetailField[] {
@@ -143,6 +149,40 @@ const Home = () => {
                                 limit={getHomerowItemLimit(section.limit)}
                             />
                         );
+                    case 'seerrDiscover':
+                        if (section.sliderId != null) {
+                            return (
+                                <SeerrDiscoverSliderRow
+                                    key={index}
+                                    sliderId={section.sliderId}
+                                    title={section.title}
+                                />
+                            );
+                        }
+                        switch (section.variant) {
+                            case 'popularMovies':
+                                return (
+                                    <SeerrPopularMoviesRow
+                                        key={index}
+                                        title={section.title || t('seerr_popular_movies')}
+                                    />
+                                );
+                            case 'popularSeries':
+                                return (
+                                    <SeerrPopularSeriesRow
+                                        key={index}
+                                        title={section.title || t('seerr_popular_series')}
+                                    />
+                                );
+                            case 'trending':
+                            default:
+                                return (
+                                    <SeerrTrendingRow
+                                        key={index}
+                                        title={section.title || t('seerr_trending')}
+                                    />
+                                );
+                        }
                     default:
                         return null;
                 }

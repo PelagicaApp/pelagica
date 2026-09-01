@@ -338,6 +338,48 @@ func handleSeerDiscoverTv(w http.ResponseWriter, r *http.Request) {
 	proxySeerGet(w, r, "/api/v1/discover/tv")
 }
 
+func allowedSeerCatalogPath(path string) bool {
+	path = strings.Trim(strings.TrimSpace(path), "/")
+	if path == "" || strings.Contains(path, "..") || strings.ContainsAny(path, `\#?%`) {
+		return false
+	}
+	for _, r := range path {
+		if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9') || r == '/' || r == '-' || r == '_' {
+			continue
+		}
+		return false
+	}
+	switch path {
+	case "settings/discover", "search", "discover":
+		return true
+	}
+	return strings.HasPrefix(path, "discover/")
+}
+
+func handleSeerCatalog(w http.ResponseWriter, r *http.Request) {
+	path := r.URL.Query().Get("path")
+	if !allowedSeerCatalogPath(path) {
+		writeJSONError(w, http.StatusBadRequest, "Invalid catalog path")
+		return
+	}
+
+	query := url.Values{}
+	for key, values := range r.URL.Query() {
+		if key == "path" || key == "jellyfin_url" {
+			continue
+		}
+		for _, value := range values {
+			query.Add(key, value)
+		}
+	}
+
+	seerPath := "/api/v1/" + strings.Trim(path, "/")
+	if encoded := query.Encode(); encoded != "" {
+		seerPath += "?" + strings.ReplaceAll(encoded, "+", "%20")
+	}
+	proxySeerGet(w, r, seerPath)
+}
+
 func handleSeerSearch(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query().Get("query")
 	if query == "" {
@@ -453,4 +495,5 @@ func registerSeerRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("GET /api/seerr/discover/trending", handleSeerDiscoverTrending)
 	mux.HandleFunc("GET /api/seerr/discover/movies", handleSeerDiscoverMovies)
 	mux.HandleFunc("GET /api/seerr/discover/tv", handleSeerDiscoverTv)
+	mux.HandleFunc("GET /api/seerr/catalog", handleSeerCatalog)
 }

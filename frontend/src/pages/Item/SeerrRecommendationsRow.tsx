@@ -1,6 +1,6 @@
 import SectionScroller from '@/components/SectionScroller';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useSeerrRecommendations } from '@pelagica/core';
+import { useSeerrItemDetails, useSeerrRecommendations } from '@pelagica/core';
 import { useSeerrLoginStatus } from '@pelagica/core';
 import type { SeerrMediaInfo, SeerrMediaType } from '@pelagica/core';
 import { ImageOff } from 'lucide-react';
@@ -41,6 +41,8 @@ export const SeerrRecommendationPoster = ({
 }) => {
     const [posterFailed, setPosterFailed] = useState(false);
     const handleClick = useSeerrItemClick();
+    const { data: details } = useSeerrItemDetails(mediaType, tmdbId, !posterPath);
+    const resolvedPoster = posterPath || details?.posterPath;
 
     return (
         <button
@@ -49,9 +51,9 @@ export const SeerrRecommendationPoster = ({
             className="w-36 lg:w-44 2xl:w-52 shrink-0 text-left cursor-pointer"
         >
             <div className="relative overflow-hidden rounded-md group w-36 h-54 lg:w-44 lg:h-64 2xl:w-52 2xl:h-80 bg-muted">
-                {posterPath && !posterFailed ? (
+                {resolvedPoster && !posterFailed ? (
                     <img
-                        src={getSeerrItemPosterUrl(posterPath)}
+                        src={getSeerrItemPosterUrl(resolvedPoster)}
                         alt={title}
                         className="w-full h-full object-cover rounded-md group-hover:opacity-75 transition-all group-hover:scale-105 transform-gpu will-change-transform"
                         loading="lazy"

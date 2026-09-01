@@ -15,12 +15,17 @@ import {
     DETAIL_FIELDS,
     MEDIABAR_SIZES,
     SEERR_DISCOVER_VARIANTS,
+    SEERR_VARIANT_SLIDER_TYPES,
     type ContinueWatchingDetailLine,
     type ContinueWatchingTitleLine,
     type DetailField,
     type HomeScreenSection,
     type RecentlyAddedSection,
     type RecentEpisodesSection,
+    type SeerrDiscoverSection,
+    type SeerrDiscoverVariant,
+    useSeerrDiscoverSliders,
+    useSeerrLoginStatus,
 } from '@pelagica/core';
 import { useUserViews } from '@pelagica/core';
 import {
@@ -45,6 +50,74 @@ const HOMESCREEN_SECTION_TYPES = [
     { value: 'recentEpisodes', label: 'Recent Episodes' },
     { value: 'seerrDiscover', label: 'Seerr Discover' },
 ];
+
+const SLIDER_VALUE_PREFIX = 'slider:';
+
+const SeerrDiscoverPicker = ({
+    section,
+    onChange,
+}: {
+    section: SeerrDiscoverSection;
+    onChange: (section: SeerrDiscoverSection) => void;
+}) => {
+    const { t } = useTranslation('settings');
+    const { data: isLoggedIn } = useSeerrLoginStatus();
+    const { data: sliders } = useSeerrDiscoverSliders(!!isLoggedIn);
+
+    const builtinOptions = SEERR_DISCOVER_VARIANTS.map((variant) => ({
+        value: variant,
+        label: t(`seerr_variant_${variant}`),
+    }));
+
+    const customOptions = (sliders || [])
+        .filter((slider) => !SEERR_VARIANT_SLIDER_TYPES.includes(slider.type))
+        .map((slider) => ({
+            value: `${SLIDER_VALUE_PREFIX}${slider.id}`,
+            label: slider.title,
+        }));
+
+    const selectedValue =
+        section.sliderId != null
+            ? `${SLIDER_VALUE_PREFIX}${section.sliderId}`
+            : section.variant || 'trending';
+
+    if (
+        section.sliderId != null &&
+        !customOptions.some((option) => option.value === selectedValue)
+    ) {
+        customOptions.push({
+            value: selectedValue,
+            label: section.title || `Slider ${section.sliderId}`,
+        });
+    }
+
+    return (
+        <SelectInput
+            label={t('seerr_discover_variant')}
+            description={t('seerr_discover_slider_description')}
+            options={[...builtinOptions, ...customOptions]}
+            value={selectedValue}
+            onChange={(value) => {
+                if (value.startsWith(SLIDER_VALUE_PREFIX)) {
+                    const sliderId = Number(value.slice(SLIDER_VALUE_PREFIX.length));
+                    const slider = sliders?.find((item) => item.id === sliderId);
+                    onChange({
+                        ...section,
+                        sliderId,
+                        variant: undefined,
+                        title: slider?.title || section.title,
+                    });
+                    return;
+                }
+                onChange({
+                    ...section,
+                    sliderId: undefined,
+                    variant: value as SeerrDiscoverVariant,
+                });
+            }}
+        />
+    );
+};
 
 const RecentlyAddedConfigEditor = ({
     section,
@@ -165,7 +238,12 @@ export const SectionEditor = ({
     if (!editedSection) return null;
 
     return (
-        <Dialog open={!!section} onOpenChange={onClose}>
+        <Dialog
+            open={!!section}
+            onOpenChange={(open) => {
+                if (!open) onClose();
+            }}
+        >
             <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>{t('edit_section')}</DialogTitle>
@@ -435,19 +513,9 @@ export const SectionEditor = ({
                     )}
 
                     {editedSection.type === 'seerrDiscover' && (
-                        <SelectInput
-                            label={t('seerr_discover_variant')}
-                            options={SEERR_DISCOVER_VARIANTS.map((variant) => ({
-                                value: variant,
-                                label: t(`seerr_variant_${variant}`),
-                            }))}
-                            value={(editedSection as any).variant || 'trending'}
-                            onChange={(value) =>
-                                setEditedSection({
-                                    ...editedSection,
-                                    variant: value as any,
-                                })
-                            }
+                        <SeerrDiscoverPicker
+                            section={editedSection}
+                            onChange={(section) => setEditedSection(section)}
                         />
                     )}
                 </div>

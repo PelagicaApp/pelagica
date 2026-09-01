@@ -96,6 +96,7 @@
     "show_similarity": "Show Similarity",
     "show_based_on": "Show Based On",
     "seerr_discover_variant": "Discovery List",
+    "seerr_discover_slider_description": "Pick one Seerr Discover row per home section. Log in to Seerr to load custom sliders (keywords, studios, streaming, upcoming).",
     "seerr_variant_trending": "Trending",
     "seerr_variant_popularMovies": "Popular Movies",
     "seerr_variant_popularSeries": "Popular Series",

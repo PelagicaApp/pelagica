@@ -221,6 +221,46 @@ func GetSeerDiscoverTv(c fiber.Ctx) error {
 	return proxySeerRequest(c, "/api/v1/discover/tv")
 }
 
+func allowedSeerCatalogPath(path string) bool {
+	path = strings.Trim(strings.TrimSpace(path), "/")
+	if path == "" || strings.Contains(path, "..") || strings.ContainsAny(path, `\#?%`) {
+		return false
+	}
+	for _, r := range path {
+		if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9') || r == '/' || r == '-' || r == '_' {
+			continue
+		}
+		return false
+	}
+	switch path {
+	case "settings/discover", "search", "discover":
+		return true
+	}
+	return strings.HasPrefix(path, "discover/")
+}
+
+func GetSeerCatalog(c fiber.Ctx) error {
+	path := c.Query("path")
+	if !allowedSeerCatalogPath(path) {
+		return c.Status(fiber.StatusBadRequest).JSON(models.APIError{Error: "Invalid catalog path"})
+	}
+
+	query := url.Values{}
+	c.Request().URI().QueryArgs().VisitAll(func(key, value []byte) {
+		k := string(key)
+		if k == "path" || k == "jellyfin_url" {
+			return
+		}
+		query.Add(k, string(value))
+	})
+
+	seerPath := "/api/v1/" + strings.Trim(path, "/")
+	if encoded := query.Encode(); encoded != "" {
+		seerPath += "?" + strings.ReplaceAll(encoded, "+", "%20")
+	}
+	return proxySeerRequest(c, seerPath)
+}
+
 func PostSeerRequest(c fiber.Ctx) error {
 	body := c.Body()
 
