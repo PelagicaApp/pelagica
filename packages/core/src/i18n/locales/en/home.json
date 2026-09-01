@@ -22,6 +22,7 @@
     "track_count": "{{count}} Track",
     "track_count_plural": "{{count}} Tracks",
     "libraries": "Libraries",
+    "recent_episodes": "Recent Episodes",
     "section_not_found": "This section could not be found.",
     "seerr_trending": "Trending",
     "seerr_popular_movies": "Popular Movies",

@@ -5,7 +5,7 @@ import type { SectionItemsConfig } from './useConfig';
 import { ItemFilter, type BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models';
 import { getRetryConfig } from '../utils/authErrorHandler';
 
-export function useRowItems(items?: SectionItemsConfig) {
+export function useRowItems(items?: SectionItemsConfig, enabled: boolean | undefined = true) {
     const sectionTypes = items?.types?.length
         ? items.types
         : (['Movie', 'Series'] as BaseItemKind[]);
@@ -37,6 +37,7 @@ export function useRowItems(items?: SectionItemsConfig) {
             });
             return response.data.Items;
         },
+        enabled: enabled,
         ...getRetryConfig(),
     });
 }

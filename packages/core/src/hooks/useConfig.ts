@@ -160,6 +160,16 @@ export interface StudiosSection extends BaseHomeScreenSection {
     limit?: number;
 }
 
+export interface RecentEpisodesSection extends BaseHomeScreenSection {
+    type: 'recentEpisodes';
+    /** Maximum number of episodes to display */
+    limit?: number;
+    /** The ID of the library to show episodes from */
+    libraryId: string;
+    titleLine?: ContinueWatchingTitleLine;
+    detailLine?: ContinueWatchingDetailLine[];
+}
+
 export const SEERR_DISCOVER_VARIANTS = ['trending', 'popularMovies', 'popularSeries'] as const;
 export type SeerrDiscoverVariant = (typeof SEERR_DISCOVER_VARIANTS)[number];
 
@@ -181,6 +191,7 @@ export type HomeScreenSection =
     | GenresSection
     | LibrariesSection
     | StudiosSection
+    | RecentEpisodesSection
     | SeerrDiscoverSection;
 
 export const EPISODE_DISPLAYS = ['grid', 'row'] as const;
