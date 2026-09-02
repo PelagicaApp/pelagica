@@ -6,46 +6,12 @@ import { Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { createVideoJsPlayerAdapter } from '@pelagica/tv-platform';
 import { toast } from '@/components/ui/toast';
+import { getJassubUnsupportedReason, installVideoFrameCallbackFallback } from './jassub';
 import type { VideoPlayerProps } from './types';
 
 type VideoJsPlayer = ReturnType<typeof videojs>;
 
 const STALL_TIMEOUT_MS = 20_000;
-
-function getJassubUnsupportedReason(): string | null {
-    if (typeof WebAssembly === 'undefined') return 'WebAssembly';
-    if (typeof Worker === 'undefined') return 'Web Workers';
-    if (
-        typeof HTMLCanvasElement === 'undefined' ||
-        !('transferControlToOffscreen' in HTMLCanvasElement.prototype)
-    ) {
-        return 'OffscreenCanvas';
-    }
-    if (
-        !('requestVideoFrameCallback' in HTMLVideoElement.prototype) &&
-        !('getVideoPlaybackQuality' in HTMLVideoElement.prototype) &&
-        typeof requestAnimationFrame === 'undefined'
-    ) {
-        return 'requestVideoFrameCallback/getVideoPlaybackQuality';
-    }
-    return null;
-}
-
-function installVideoFrameCallbackFallback(video: HTMLVideoElement) {
-    video.requestVideoFrameCallback = (callback) =>
-        requestAnimationFrame((now) =>
-            callback(now, {
-                presentationTime: now,
-                expectedDisplayTime: now,
-                width: video.videoWidth,
-                height: video.videoHeight,
-                mediaTime: video.currentTime,
-                presentedFrames: 0,
-                processingDuration: 0,
-            })
-        );
-    video.cancelVideoFrameCallback = (handle) => cancelAnimationFrame(handle);
-}
 
 const VideoPlayer = ({
     src,
