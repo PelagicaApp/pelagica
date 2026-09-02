@@ -23,5 +23,10 @@
             <string>true</string>
         <key>NSHumanReadableCopyright</key>
             <string>© Pelagica</string>
+        <key>NSAppTransportSecurity</key>
+            <dict>
+                <key>NSAllowsArbitraryLoads</key>
+                    <true/>
+            </dict>
     </dict>
 </plist>
