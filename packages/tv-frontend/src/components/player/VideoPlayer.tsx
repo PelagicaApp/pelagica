@@ -266,7 +266,6 @@ const VideoPlayer = ({
 
             try {
                 installVideoFrameCallbackFallback(videoEl);
-                console.log('[JASSUB] creating renderer for', activeTrack.src);
                 const renderer = new JASSUB({
                     video: videoEl,
                     subUrl: activeTrack.src,
@@ -282,10 +281,7 @@ const VideoPlayer = ({
                 }, 8000);
 
                 renderer.ready
-                    .then(() => {
-                        clearTimeout(readyTimeout);
-                        console.log('[JASSUB] renderer ready');
-                    })
+                    .then(() => clearTimeout(readyTimeout))
                     .catch((error) => {
                         clearTimeout(readyTimeout);
                         console.error('Error initializing ASS subtitle renderer:', error);
