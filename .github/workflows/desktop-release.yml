@@ -99,7 +99,7 @@ jobs:
 
             - name: Install NSIS
               run: choco install nsis -y
-              
+
             - name: Add NSIS to PATH
               shell: bash
               run: echo "C:\Program Files (x86)\NSIS" >> "$GITHUB_PATH"
@@ -174,3 +174,17 @@ jobs:
                     "desktop/bin/pelagica-linux-amd64.pkg.tar.zst" \
                     "desktop/bin/pelagica-linux-amd64.AppImage" \
                     --clobber
+
+    notify-tap:
+        name: Notify homebrew tap
+        needs: [macos, windows, linux]
+        if: success()
+        runs-on: ubuntu-latest
+        steps:
+            - name: Trigger cask bump
+              uses: peter-evans/repository-dispatch@v4
+              with:
+                  token: ${{ secrets.TAP_DISPATCH_TOKEN }}
+                  repository: PelagicaApp/homebrew-tap
+                  event-type: pelagica-released
+                  client-payload: '{"tag": "${{ github.event.release.tag_name }}"}'

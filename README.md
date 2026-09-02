@@ -101,6 +101,24 @@ Pelagica is also available as a native desktop app for macOS, Windows, and Linux
 
 See the [desktop README](./desktop/README.md) for build and packaging instructions if you'd rather build it yourself.
 
+#### Homebrew (macOS)
+
+On Apple Silicon, Pelagica can be installed and kept up to date through the [Homebrew tap](https://github.com/PelagicaApp/homebrew-pelagica):
+
+```sh
+brew tap PelagicaApp/pelagica
+brew trust PelagicaApp/pelagica
+brew install --cask pelagica
+```
+
+Since the app is not notarized, clear the quarantine attribute once after installing:
+
+```sh
+xattr -dr com.apple.quarantine "/Applications/Pelagica.app"
+```
+
+Later updates are just `brew upgrade --cask pelagica`.
+
 ### Samsung Tizen
 
 Pelagica is available as a Tizen app for Samsung Smart TVs. See the [Tizen Documentation](https://pelagica.app/docs/tizen) for installation instructions.
