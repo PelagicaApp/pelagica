@@ -119,3 +119,10 @@ tasks:
         desc: Close the running app on a registered device
         cmds:
             - ares-launch -c {{.APP_ID}} -d {{.DEVICE}}
+
+    tv:inspect:
+        desc: >-
+            Open the web inspector for the running app on a registered device
+            (task webos:tv:inspect DEVICE=...)
+        cmds:
+            - ares-inspect {{.APP_ID}} -d {{.DEVICE}} -o

@@ -3,20 +3,48 @@ import videojs from 'video.js';
 import 'video.js/dist/video-js.css';
 import JASSUB from 'jassub';
 import { Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { createVideoJsPlayerAdapter } from '@pelagica/tv-platform';
+import { toast } from '@/components/ui/toast';
 import type { VideoPlayerProps } from './types';
 
 type VideoJsPlayer = ReturnType<typeof videojs>;
 
 const STALL_TIMEOUT_MS = 20_000;
 
-function isJassubSupported() {
-    return (
-        typeof WebAssembly !== 'undefined' &&
-        typeof Worker !== 'undefined' &&
-        typeof HTMLCanvasElement !== 'undefined' &&
-        'transferControlToOffscreen' in HTMLCanvasElement.prototype
-    );
+function getJassubUnsupportedReason(): string | null {
+    if (typeof WebAssembly === 'undefined') return 'WebAssembly';
+    if (typeof Worker === 'undefined') return 'Web Workers';
+    if (
+        typeof HTMLCanvasElement === 'undefined' ||
+        !('transferControlToOffscreen' in HTMLCanvasElement.prototype)
+    ) {
+        return 'OffscreenCanvas';
+    }
+    if (
+        !('requestVideoFrameCallback' in HTMLVideoElement.prototype) &&
+        !('getVideoPlaybackQuality' in HTMLVideoElement.prototype) &&
+        typeof requestAnimationFrame === 'undefined'
+    ) {
+        return 'requestVideoFrameCallback/getVideoPlaybackQuality';
+    }
+    return null;
+}
+
+function installVideoFrameCallbackFallback(video: HTMLVideoElement) {
+    video.requestVideoFrameCallback = (callback) =>
+        requestAnimationFrame((now) =>
+            callback(now, {
+                presentationTime: now,
+                expectedDisplayTime: now,
+                width: video.videoWidth,
+                height: video.videoHeight,
+                mediaTime: video.currentTime,
+                presentedFrames: 0,
+                processingDuration: 0,
+            })
+        );
+    video.cancelVideoFrameCallback = (handle) => cancelAnimationFrame(handle);
 }
 
 const VideoPlayer = ({
@@ -31,6 +59,7 @@ const VideoPlayer = ({
     pendingAudioSwitchSeekRef,
     subtitleTrackIndex,
 }: VideoPlayerProps) => {
+    const { t } = useTranslation('player');
     const containerRef = useRef<HTMLDivElement | null>(null);
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const playerRef = useRef<VideoJsPlayer | null>(null);
@@ -226,25 +255,47 @@ const VideoPlayer = ({
         if (!assRendererRef.current) {
             if (!activeTrack || activeTrack.format !== 'ass') return;
 
-            if (!isJassubSupported()) {
+            const unsupportedReason = getJassubUnsupportedReason();
+            if (unsupportedReason) {
                 console.error(
-                    'ASS subtitles unsupported on this device (missing WebAssembly, module Worker, or OffscreenCanvas support)'
+                    `ASS subtitles unsupported on this device (missing ${unsupportedReason})`
                 );
+                toast.add({ title: t('assSubtitlesUnsupported'), type: 'error' });
                 return;
             }
 
             try {
+                installVideoFrameCallbackFallback(videoEl);
+                console.log('[JASSUB] creating renderer for', activeTrack.src);
                 const renderer = new JASSUB({
                     video: videoEl,
                     subUrl: activeTrack.src,
                     fonts: subtitleFonts,
                 });
                 assRendererRef.current = renderer;
-                renderer.ready.catch((error) =>
-                    console.error('Error initializing ASS subtitle renderer:', error)
-                );
+
+                const readyTimeout = setTimeout(() => {
+                    console.error(
+                        '[JASSUB] renderer.ready did not settle within 8s - the worker likely hung during init'
+                    );
+                    toast.add({ title: t('assSubtitlesUnsupported'), type: 'error' });
+                }, 8000);
+
+                renderer.ready
+                    .then(() => {
+                        clearTimeout(readyTimeout);
+                        console.log('[JASSUB] renderer ready');
+                    })
+                    .catch((error) => {
+                        clearTimeout(readyTimeout);
+                        console.error('Error initializing ASS subtitle renderer:', error);
+                        toast.add({ title: t('assSubtitlesUnsupported'), type: 'error' });
+                    });
+
+                return () => clearTimeout(readyTimeout);
             } catch (error) {
                 console.error('Failed to create ASS subtitle renderer:', error);
+                toast.add({ title: t('assSubtitlesUnsupported'), type: 'error' });
             }
             return;
         }
@@ -262,7 +313,7 @@ const VideoPlayer = ({
                 }
             })
             .catch((error) => console.error('Error updating ASS subtitles:', error));
-    }, [subtitleTrackIndex, subtitles, subtitleFonts]);
+    }, [subtitleTrackIndex, subtitles, subtitleFonts, t]);
 
     return (
         <div className="relative w-full h-full overflow-hidden">

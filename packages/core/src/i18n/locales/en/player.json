@@ -62,5 +62,6 @@
     "rewind10": "Rewind 10 seconds",
     "forward10": "Forward 10 seconds",
     "nextItemPoster": "Next item poster",
-    "errorLoadingItem": "Error loading item: {{message}}"
+    "errorLoadingItem": "Error loading item: {{message}}",
+    "assSubtitlesUnsupported": "This subtitle format isn't supported on this device."
 }
