@@ -205,7 +205,7 @@ const LoginPage = () => {
         const usernameInput = form.querySelector('#username') as HTMLInputElement;
         const passwordInput = form.querySelector('#password') as HTMLInputElement;
         const username = usernameInput?.value?.trim();
-        const password = passwordInput?.value?;
+        const password = passwordInput?.value;
 
         if (!username) {
             setLoginError(t('enter_at_least_username'));
