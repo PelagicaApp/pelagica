@@ -51,6 +51,9 @@ func main() {
 		Mac: application.MacOptions{
 			ApplicationShouldTerminateAfterLastWindowClosed: true,
 		},
+		Windows: application.WindowsOptions{
+			AdditionalBrowserArgs: []string{"--autoplay-policy=no-user-gesture-required"},
+		},
 		OnShutdown: stateTracker.flush,
 		SingleInstance: &application.SingleInstanceOptions{
 			UniqueID: "app.pelagica.desktop",
@@ -72,7 +75,10 @@ func main() {
 			TitleBar:                application.MacTitleBarHiddenInset,
 			InvisibleTitleBarHeight: 50,
 			WebviewPreferences: application.MacWebviewPreferences{
-				FullscreenEnabled: application.Enabled,
+				FullscreenEnabled:               application.Enabled,
+				EnableAutoplayWithoutUserAction: application.Enabled,
+				AllowsAirPlayForMediaPlayback:   application.Enabled,
+				ApplicationNameForUserAgent:     "Pelagica",
 			},
 		},
 	}
