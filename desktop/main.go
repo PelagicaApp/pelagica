@@ -14,6 +14,9 @@ import (
 //go:embed all:frontend/dist
 var assets embed.FS
 
+//go:embed build/appicon.png
+var appIcon []byte
+
 const (
 	windowMinWidth  = 640
 	windowMinHeight = 480
@@ -37,6 +40,7 @@ func main() {
 	app := application.New(application.Options{
 		Name:        "Pelagica",
 		Description: "A modern cross-platform desktop client for Jellyfin",
+		Icon:        appIcon,
 		Services: []application.Service{
 			application.NewService(windowService),
 			application.NewService(appIconService),
