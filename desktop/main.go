@@ -48,6 +48,12 @@ func main() {
 			ApplicationShouldTerminateAfterLastWindowClosed: true,
 		},
 		OnShutdown: stateTracker.flush,
+		SingleInstance: &application.SingleInstanceOptions{
+			UniqueID: "app.pelagica.desktop",
+			OnSecondInstanceLaunch: func(application.SecondInstanceData) {
+				windowService.raise()
+			},
+		},
 	})
 
 	windowOptions := application.WebviewWindowOptions{

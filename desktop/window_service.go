@@ -35,6 +35,17 @@ func (s *WindowService) positionTrafficLights() {
 	})
 }
 
+// raise brings the existing window to the front. Restore() is avoided: it would drop the
+// window out of fullscreen.
+func (s *WindowService) raise() {
+	if s.window == nil {
+		return
+	}
+	s.window.UnMinimise()
+	s.window.Show()
+	s.window.Focus()
+}
+
 // ToggleFullscreen toggles native window fullscreen.
 func (s *WindowService) ToggleFullscreen() {
 	s.window.ToggleFullscreen()
