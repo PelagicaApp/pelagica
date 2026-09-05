@@ -5,6 +5,10 @@ import JASSUB from 'jassub';
 
 type VideoJsPlayer = ReturnType<typeof videojs>;
 
+const SUPPORTS_AIRPLAY =
+    typeof document !== 'undefined' &&
+    'webkitShowPlaybackTargetPicker' in document.createElement('video');
+
 export interface SubtitleTrack {
     src: string;
     srclang: string;
@@ -60,7 +64,7 @@ const VideoPlayer = ({
             fluid: false,
             html5: {
                 nativeControlsForTouch: false,
-                hls: { overrideNative: true },
+                ...(SUPPORTS_AIRPLAY ? { vhs: { overrideNative: false } } : {}),
                 nativeTextTracks: false, // Force video.js to render text tracks
             },
         });
