@@ -205,6 +205,7 @@ export function getVideoStreamUrl(
         playSessionId?: string;
         audioStreamIndex?: number;
         mediaSourceId?: string;
+        burnInSubtitleStreamIndex?: number;
     }
 ) {
     try {
@@ -232,6 +233,13 @@ export function getVideoStreamUrl(
             url.searchParams.append('PlaySessionId', options.playSessionId);
         if (options.audioStreamIndex !== undefined)
             url.searchParams.append('AudioStreamIndex', options.audioStreamIndex.toString());
+        if (options.burnInSubtitleStreamIndex !== undefined) {
+            url.searchParams.append(
+                'SubtitleStreamIndex',
+                options.burnInSubtitleStreamIndex.toString()
+            );
+            url.searchParams.append('SubtitleMethod', 'Encode');
+        }
 
         return url.toString();
     } catch {
@@ -291,6 +299,7 @@ export function getPlaybackStreamUrl(
         mediaSourceId?: string;
         container?: string;
         transcodingUrl?: string | null;
+        burnInSubtitleStreamIndex?: number;
     }
 ): PlaybackStreamResult {
     const creds = resolveCredentials();
@@ -318,6 +327,13 @@ export function getPlaybackStreamUrl(
         if (options.audioStreamIndex !== undefined) {
             url.searchParams.set('AudioStreamIndex', options.audioStreamIndex.toString());
         }
+        if (options.burnInSubtitleStreamIndex !== undefined) {
+            url.searchParams.set(
+                'SubtitleStreamIndex',
+                options.burnInSubtitleStreamIndex.toString()
+            );
+            url.searchParams.set('SubtitleMethod', 'Encode');
+        }
         return {
             url: url.toString(),
             mimeType: 'application/x-mpegURL',
@@ -329,6 +345,7 @@ export function getPlaybackStreamUrl(
             audioStreamIndex: options.audioStreamIndex,
             playSessionId: options.playSessionId,
             mediaSourceId: options.mediaSourceId,
+            burnInSubtitleStreamIndex: options.burnInSubtitleStreamIndex,
         }),
         mimeType: 'application/x-mpegURL',
     };

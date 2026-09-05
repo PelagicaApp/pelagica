@@ -22,7 +22,7 @@ interface VideoPlayerProps {
     subtitleFonts?: string[];
     onReady?: (player: VideoJsPlayer) => void;
     onPlaybackError?: (error: MediaError | null) => void;
-    pendingAudioSwitchSeekRef: React.MutableRefObject<number | null>;
+    pendingSeekRef: React.MutableRefObject<number | null>;
     subtitleTrackIndex: number | null;
 }
 
@@ -35,7 +35,7 @@ const VideoPlayer = ({
     subtitleFonts,
     onReady,
     onPlaybackError,
-    pendingAudioSwitchSeekRef,
+    pendingSeekRef,
     subtitleTrackIndex,
 }: VideoPlayerProps) => {
     const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -104,9 +104,9 @@ const VideoPlayer = ({
 
         let seekTo: number | null = null;
 
-        if (pendingAudioSwitchSeekRef.current !== null) {
-            seekTo = pendingAudioSwitchSeekRef.current;
-            pendingAudioSwitchSeekRef.current = null;
+        if (pendingSeekRef.current !== null) {
+            seekTo = pendingSeekRef.current;
+            pendingSeekRef.current = null;
         } else if (!hasSeekedRef.current && startTicksRef.current > 0) {
             seekTo = startTicksRef.current / 10_000_000;
             hasSeekedRef.current = true;
@@ -130,7 +130,7 @@ const VideoPlayer = ({
         }
 
         player.play()?.catch(console.error);
-    }, [src, srcType, pendingAudioSwitchSeekRef]);
+    }, [src, srcType, pendingSeekRef]);
 
     useEffect(() => {
         if (!playerRef.current) return;

@@ -15,7 +15,11 @@ export interface PlaybackDecision {
     liveStreamId?: string;
 }
 
-function buildDeviceProfile(options?: { liveTvContainer?: boolean; excludeHevc?: boolean }) {
+function buildDeviceProfile(options?: {
+    liveTvContainer?: boolean;
+    excludeHevc?: boolean;
+    burnInSubtitles?: boolean;
+}) {
     const codecs = detectSupportedCodecs();
 
     const videoCodecs: string[] = [];
@@ -95,23 +99,44 @@ function buildDeviceProfile(options?: { liveTvContainer?: boolean; excludeHevc?:
         TranscodingProfiles: transcodingProfiles,
         ContainerProfiles: [],
         CodecProfiles: codecProfiles,
-        SubtitleProfiles: [
-            { Format: 'vtt', Method: 'External' as const },
-            { Format: 'srt', Method: 'External' as const },
-            { Format: 'ass', Method: 'External' as const },
-            { Format: 'ssa', Method: 'External' as const },
-        ],
+        SubtitleProfiles: options?.burnInSubtitles
+            ? []
+            : [
+                  { Format: 'vtt', Method: 'External' as const },
+                  { Format: 'srt', Method: 'External' as const },
+                  { Format: 'ass', Method: 'External' as const },
+                  { Format: 'ssa', Method: 'External' as const },
+              ],
     };
+}
+
+export interface PlaybackOptions {
+    forceHls?: boolean;
+    burnInSubtitleStreamIndex?: number;
+    /** Set false to hold the request back, e.g. to warm a variant only once it is wanted. */
+    enabled?: boolean;
 }
 
 export function usePlaybackInfo(
     itemId: string | null | undefined,
     userId: string | undefined,
     audioStreamIndex?: number,
-    forceTranscode?: boolean
+    forceTranscode?: boolean,
+    options?: PlaybackOptions
 ) {
+    const burnInSubtitleStreamIndex = options?.burnInSubtitleStreamIndex;
+    const skipDirectPlay =
+        !!forceTranscode || !!options?.forceHls || burnInSubtitleStreamIndex !== undefined;
+
     return useQuery<PlaybackDecision>({
-        queryKey: ['playbackInfo', itemId, audioStreamIndex, forceTranscode],
+        queryKey: [
+            'playbackInfo',
+            itemId,
+            audioStreamIndex,
+            forceTranscode,
+            options?.forceHls,
+            burnInSubtitleStreamIndex,
+        ],
         queryFn: async (): Promise<PlaybackDecision> => {
             const api = getApi();
             const mediaInfoApi = getMediaInfoApi(api);
@@ -121,13 +146,17 @@ export function usePlaybackInfo(
                 userId,
                 maxStreamingBitrate: 80_000_000,
                 audioStreamIndex,
-                enableDirectPlay: !forceTranscode,
-                enableDirectStream: !forceTranscode,
+                subtitleStreamIndex: burnInSubtitleStreamIndex,
+                enableDirectPlay: !skipDirectPlay,
+                enableDirectStream: !skipDirectPlay,
                 enableTranscoding: true,
                 allowVideoStreamCopy: !forceTranscode,
                 allowAudioStreamCopy: true,
                 playbackInfoDto: {
-                    DeviceProfile: buildDeviceProfile({ excludeHevc: forceTranscode }),
+                    DeviceProfile: buildDeviceProfile({
+                        excludeHevc: forceTranscode,
+                        burnInSubtitles: burnInSubtitleStreamIndex !== undefined,
+                    }),
                 },
             });
 
@@ -150,12 +179,14 @@ export function usePlaybackInfo(
                         PlaySessionId: playSessionId,
                         ItemId: itemId,
                         AudioStreamIndex: audioStreamIndex,
+                        SubtitleStreamIndex: burnInSubtitleStreamIndex,
                         MaxStreamingBitrate: 80_000_000,
-                        EnableDirectPlay: !forceTranscode,
-                        EnableDirectStream: !forceTranscode,
+                        EnableDirectPlay: !skipDirectPlay,
+                        EnableDirectStream: !skipDirectPlay,
                         DeviceProfile: buildDeviceProfile({
                             liveTvContainer: true,
                             excludeHevc: forceTranscode,
+                            burnInSubtitles: burnInSubtitleStreamIndex !== undefined,
                         }),
                     },
                 });
@@ -177,7 +208,7 @@ export function usePlaybackInfo(
 
             return { playMethod, mediaSource: source, playSessionId, liveStreamId };
         },
-        enabled: !!itemId,
+        enabled: !!itemId && options?.enabled !== false,
         staleTime: 30_000,
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,

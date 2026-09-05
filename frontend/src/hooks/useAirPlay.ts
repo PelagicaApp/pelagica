@@ -24,10 +24,18 @@ export interface AirPlayState {
     showPicker: () => void;
 }
 
-export const useAirPlay = (player: VideoJsPlayer | null): AirPlayState => {
+export const useAirPlay = (
+    player: VideoJsPlayer | null,
+    onRouteChange?: (isWireless: boolean) => void
+): AirPlayState => {
     const [isAvailable, setIsAvailable] = useState(false);
     const [isActive, setIsActive] = useState(false);
     const videoRef = useRef<AirPlayVideoElement | null>(null);
+    const onRouteChangeRef = useRef(onRouteChange);
+
+    useEffect(() => {
+        onRouteChangeRef.current = onRouteChange;
+    }, [onRouteChange]);
 
     useEffect(() => {
         const video = player?.el()?.querySelector('video') ?? null;
@@ -40,12 +48,15 @@ export const useAirPlay = (player: VideoJsPlayer | null): AirPlayState => {
             setIsAvailable((event as PlaybackTargetAvailabilityEvent).availability === 'available');
         };
         const handleTargetChange = () => {
-            setIsActive(video.webkitCurrentPlaybackTargetIsWireless);
+            const isWireless = video.webkitCurrentPlaybackTargetIsWireless;
+            // Runs before React re-renders, so listeners still see the pre-swap position.
+            onRouteChangeRef.current?.(isWireless);
+            setIsActive(isWireless);
         };
 
         video.addEventListener('webkitplaybacktargetavailabilitychanged', handleAvailabilityChange);
         video.addEventListener('webkitcurrentplaybacktargetiswirelesschanged', handleTargetChange);
-        handleTargetChange();
+        setIsActive(video.webkitCurrentPlaybackTargetIsWireless);
 
         return () => {
             video.removeEventListener(
