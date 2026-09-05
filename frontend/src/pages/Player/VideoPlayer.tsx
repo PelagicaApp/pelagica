@@ -228,6 +228,7 @@ const VideoPlayer = ({
                 ref={videoRef}
                 className="video-js vjs-default-skin"
                 data-testid="video-player"
+                x-webkit-airplay="allow"
                 style={{ maxWidth: '100%', maxHeight: '100%', width: '100%', height: '100%' }}
             />
         </div>

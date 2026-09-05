@@ -24,6 +24,7 @@ import { getLastAudioLanguage, getLastSubtitleLanguage } from '@/utils/localstor
 import { useUserConfiguration } from '@pelagica/core';
 import { usePlayerItem } from '@pelagica/core';
 import { useMusicPlayback } from '@/hooks/useMusicPlayback';
+import { useAirPlay } from '@/hooks/useAirPlay';
 import { clearCodecCache } from '@pelagica/core';
 import {
     hideTrafficLights,
@@ -137,6 +138,8 @@ const PlayerPage = () => {
             transcodingUrl: playbackInfo.mediaSource.TranscodingUrl,
         });
     }, [itemId, playbackInfo, audioTrackIndex]);
+
+    const airPlay = useAirPlay(player);
 
     const { reportProgress } = useReportPlaybackProgress();
     const { startPlayback } = usePlaybackStart();
@@ -431,6 +434,7 @@ const PlayerPage = () => {
                 onSubtitleTrackChange={handleSubtitleTrackChange}
                 isFullscreen={isFullscreen}
                 onFullscreenToggle={handleToggleFullscreen}
+                airPlay={airPlay}
                 mediaSegments={mediaSegments}
                 previousItem={adjacentItems?.previousItem}
                 nextItem={adjacentItems?.nextItem}
