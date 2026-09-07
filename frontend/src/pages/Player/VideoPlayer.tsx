@@ -150,6 +150,10 @@ const VideoPlayer = ({
                 if (track) player.removeRemoteTextTrack(track);
             }
 
+            // Leaving them attached lets the tech re-enable a `default` track on the next
+            // source reload, drawing subtitles locally over a burnt-in stream.
+            if (activeIndex === null) return;
+
             if (subtitles && subtitles.length > 0) {
                 let addedCount = 0;
                 subtitles.forEach((subtitle, index) => {
@@ -162,7 +166,7 @@ const VideoPlayer = ({
                             src: subtitle.src,
                             srclang: subtitle.srclang,
                             label: subtitle.label,
-                            default: subtitle.default,
+                            default: index === activeIndex,
                         },
                         false // Don't add to DOM manually
                     );
