@@ -209,7 +209,9 @@ export function usePlaybackInfo(
             return { playMethod, mediaSource: source, playSessionId, liveStreamId };
         },
         enabled: !!itemId && options?.enabled !== false,
-        staleTime: 30_000,
+        // Returning to a variant used earlier in the same playback must come from cache: a
+        // refetch hands back a fresh PlaySessionId, which changes the url and reloads the video.
+        staleTime: 5 * 60_000,
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
         ...getRetryConfig(),
