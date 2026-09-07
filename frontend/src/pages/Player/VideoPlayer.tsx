@@ -110,7 +110,6 @@ const VideoPlayer = ({
 
         if (pendingSeekRef.current !== null) {
             seekTo = pendingSeekRef.current;
-            pendingSeekRef.current = null;
         } else if (!hasSeekedRef.current && startTicksRef.current > 0) {
             seekTo = startTicksRef.current / 10_000_000;
             hasSeekedRef.current = true;
@@ -122,6 +121,9 @@ const VideoPlayer = ({
         if (seekTo !== null) {
             const target = seekTo;
             const seekOnCanPlay = () => {
+                // Held until the seek lands: a second source change before canplay would
+                // otherwise find the position spent and restart from zero.
+                pendingSeekRef.current = null;
                 player.currentTime(target);
                 player.play()?.catch(console.error);
             };
