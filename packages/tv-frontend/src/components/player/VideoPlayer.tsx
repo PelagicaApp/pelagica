@@ -97,15 +97,10 @@ const VideoPlayer = ({
         };
     }, [onReady]);
 
+    const startTicksRef = useRef(startTicks);
+
     useEffect(() => {
-        if (!playerRef.current) return;
-        if (!startTicks || startTicks <= 0) return;
-        if (hasSeekedRef.current) return;
-
-        const seconds = startTicks / 10_000_000;
-
-        playerRef.current.currentTime(seconds);
-        hasSeekedRef.current = true;
+        startTicksRef.current = startTicks;
     }, [startTicks]);
 
     useEffect(() => {
@@ -124,15 +119,13 @@ const VideoPlayer = ({
         if (pendingAudioSwitchSeekRef.current !== null) {
             seekTo = pendingAudioSwitchSeekRef.current;
             pendingAudioSwitchSeekRef.current = null;
+        } else if (!hasSeekedRef.current && startTicksRef.current > 0) {
+            seekTo = startTicksRef.current / 10_000_000;
+            hasSeekedRef.current = true;
         }
 
         player.pause();
         player.src({ src, type: srcType });
-        player.load();
-
-        if (seekTo !== null) {
-            player.currentTime(seekTo);
-        }
 
         const clearStallTimeout = () => {
             if (stallTimeoutRef.current) {
@@ -149,9 +142,23 @@ const VideoPlayer = ({
 
         player.one(['playing', 'timeupdate'], clearStallTimeout);
 
-        player.play()?.catch(console.error);
+        let seekOnCanPlay: (() => void) | null = null;
+
+        if (seekTo !== null) {
+            const target = seekTo;
+
+            seekOnCanPlay = () => {
+                player.currentTime(target);
+                player.play()?.catch(console.error);
+            };
+
+            player.one('canplay', seekOnCanPlay);
+        } else {
+            player.play()?.catch(console.error);
+        }
 
         return () => {
+            if (seekOnCanPlay) player.off('canplay', seekOnCanPlay);
             player.off(['playing', 'timeupdate'], clearStallTimeout);
             clearStallTimeout();
         };
