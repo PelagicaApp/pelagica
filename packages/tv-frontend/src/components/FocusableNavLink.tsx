@@ -26,6 +26,7 @@ const FocusableNavLink = ({
     const location = useLocation();
     const { ref, focused, focusSelf } = useLayerFocusable<object, HTMLAnchorElement>({
         focusKey,
+        focusOnHover: true,
         onEnterPress: () => ref.current?.click(),
     });
 

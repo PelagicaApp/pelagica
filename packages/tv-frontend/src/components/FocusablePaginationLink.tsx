@@ -19,6 +19,7 @@ const FocusablePaginationLink = ({
     text?: string;
 }) => {
     const { ref, focused } = useFocusable<object, HTMLAnchorElement>({
+        focusOnHover: true,
         onEnterPress: () => ref.current?.click(),
     });
 

@@ -39,6 +39,7 @@ const EpisodeCard = memo(function EpisodeCard({
     const navigate = useNavigate();
     const { t } = useTranslation('item');
     const { ref, focused, focusSelf } = useFocusable<object, HTMLButtonElement>({
+        focusOnHover: true,
         onEnterPress: () => ref.current?.click(),
     });
 

@@ -22,6 +22,7 @@ const FocusableButton = ({
 }) => {
     const { ref, focused, focusSelf } = useFocusable<object, HTMLButtonElement>({
         focusKey,
+        focusOnHover: true,
         onEnterPress: () => ref.current?.click(),
     });
     const isLayerActive = useLayerActive();
