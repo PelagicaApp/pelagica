@@ -4,7 +4,9 @@
         "episodeDisplay": "grid",
         "detailBadges": ["ReleaseYear", "CommunityRating", "AgeRating", "EpisodeNumber"],
         "favoriteButton": ["Movie", "Series"],
-        "showWatchlistButton": true
+        "showWatchlistButton": true,
+        "showCollections": true,
+        "collectionSort": "PremiereDateAsc"
     },
     "homeScreenSections": [
         {

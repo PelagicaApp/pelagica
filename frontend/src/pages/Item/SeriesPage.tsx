@@ -18,6 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { Skeleton } from '@/components/ui/skeleton';
 import PeopleRow from './PeopleRow';
 import BaseMediaPage from './BaseMediaPage';
+import CollectionRows from './CollectionRows';
 import MoreLikeThisRow from './MoreLikeThisRow';
 import SeerRecommendationsRow from './SeerrRecommendationsRow';
 import { type AppConfig } from '@pelagica/core';
@@ -258,6 +259,7 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
                     people={item.People || []}
                     loading={isLoading}
                 />
+                <CollectionRows itemId={item.Id || ''} config={config} />
                 <MoreLikeThisRow
                     title={<h3 className="text-3xl font-bold">{t('more_like_this')}</h3>}
                     itemId={item.Id || ''}

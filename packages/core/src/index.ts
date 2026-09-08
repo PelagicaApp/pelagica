@@ -59,6 +59,7 @@ export * from './hooks/useEditItemMetadata';
 export * from './hooks/useEpisodes';
 export * from './hooks/useFavorite';
 export * from './hooks/useItem';
+export * from './hooks/useItemCollections';
 export * from './hooks/useLibraryItems';
 export * from './hooks/useLike';
 export * from './hooks/useLiveTvChannels';
