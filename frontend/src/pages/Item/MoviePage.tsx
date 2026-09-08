@@ -20,6 +20,8 @@ import { useState } from 'react';
 import { TrailerButton } from '../../components/TrailerButton';
 import ItemDownloadButton from '../../components/ItemDownloadButton';
 import SourcePickerButton from '@/components/SourcePickerButton';
+import TrackSelectors from '@/components/TrackSelectors';
+import { useTrackSelection } from '@/hooks/useTrackSelection';
 import ItemMetadataBadges from './ItemMetadataBadges';
 import Overview from './Overview';
 
@@ -33,6 +35,18 @@ const MoviePage = ({ item, config }: MoviePageProps) => {
     const [postersFailed, setPostersFailed] = useState(false);
     const [isPosterLoaded, setIsPosterLoaded] = useState(false);
     const [failedLogo, setFailedLogo] = useState(false);
+
+    const [selectedSourceId, setSelectedSourceId] = useState<string | undefined>(
+        item.MediaSources?.[0]?.Id ?? undefined
+    );
+    const selectedSource =
+        item.MediaSources?.find((source) => source.Id === selectedSourceId) ??
+        item.MediaSources?.[0];
+    const trackSelection = useTrackSelection(
+        item.Id,
+        selectedSource?.Id ?? item.Id,
+        selectedSource?.MediaStreams ?? item.MediaStreams
+    );
 
     const isCurrentlyPlaying =
         item.UserData?.PlaybackPositionTicks &&
@@ -109,7 +123,11 @@ const MoviePage = ({ item, config }: MoviePageProps) => {
                                 isCurrentlyPlaying={Boolean(isCurrentlyPlaying)}
                                 playLabel={t('play')}
                                 resumeLabel={t('resume')}
+                                selectedSourceId={selectedSourceId}
+                                onSourceChange={setSelectedSourceId}
+                                trackSelection={trackSelection.trackSelection}
                             />
+                            <TrackSelectors selection={trackSelection} />
                             <TrailerButton item={item} />
                             <FavoriteButton
                                 item={item}

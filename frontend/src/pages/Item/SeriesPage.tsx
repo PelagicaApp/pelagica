@@ -30,6 +30,8 @@ import PlayStateButton from '../../components/PlayStateButton';
 import { getUserId } from '@pelagica/core';
 import ItemAdminButton from '@/components/ItemAdminButton';
 import SeerrItemButton from '@/components/SeerrItemButton';
+import TrackSelectors from '@/components/TrackSelectors';
+import { useTrackSelection } from '@/hooks/useTrackSelection';
 import { TrailerButton } from '../../components/TrailerButton';
 import { useUpcomingEpisodes } from '@pelagica/core';
 import UpcomingEpisodeComponent from './UpcomingEpisodeComponent';
@@ -71,6 +73,12 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
         firstSeasonEpisodes?.find(
             (ep) => !ep.UserData?.Played || (ep.UserData?.PlaybackPositionTicks ?? 0) > 0
         ) || firstSeasonEpisodes?.[0];
+
+    const trackSelection = useTrackSelection(
+        item.Id,
+        episodeToContinue?.Id,
+        episodeToContinue?.MediaSources?.[0]?.MediaStreams ?? episodeToContinue?.MediaStreams
+    );
 
     return (
         <BaseMediaPage
@@ -136,28 +144,32 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
                         {/* Actions */}
                         <div className="flex flex-wrap gap-2.5 items-center mt-2">
                             {episodeToContinue ? (
-                                <Button
-                                    className="w-fit bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-4 py-2 shadow-lg hover:scale-105 active:scale-95 transition-transform duration-200 ease-out"
-                                    asChild
-                                >
-                                    <Link
-                                        to={buildPlayerUrl(
-                                            episodeToContinue.Id!,
-                                            location.pathname + location.search
-                                        )}
+                                <>
+                                    <Button
+                                        className="w-fit bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-4 py-2 shadow-lg hover:scale-105 active:scale-95 transition-transform duration-200 ease-out"
+                                        asChild
                                     >
-                                        <Play />
-                                        {episodeToContinue.UserData?.PlaybackPositionTicks
-                                            ? t('continue_episode', {
-                                                  season: episodeToContinue.ParentIndexNumber,
-                                                  episode: episodeToContinue.IndexNumber,
-                                              })
-                                            : t('play_episode', {
-                                                  season: episodeToContinue.ParentIndexNumber,
-                                                  episode: episodeToContinue.IndexNumber,
-                                              })}
-                                    </Link>
-                                </Button>
+                                        <Link
+                                            to={buildPlayerUrl(
+                                                episodeToContinue.Id!,
+                                                location.pathname + location.search,
+                                                trackSelection.trackSelection
+                                            )}
+                                        >
+                                            <Play />
+                                            {episodeToContinue.UserData?.PlaybackPositionTicks
+                                                ? t('continue_episode', {
+                                                      season: episodeToContinue.ParentIndexNumber,
+                                                      episode: episodeToContinue.IndexNumber,
+                                                  })
+                                                : t('play_episode', {
+                                                      season: episodeToContinue.ParentIndexNumber,
+                                                      episode: episodeToContinue.IndexNumber,
+                                                  })}
+                                        </Link>
+                                    </Button>
+                                    <TrackSelectors selection={trackSelection} />
+                                </>
                             ) : (
                                 <Button className="w-fit" disabled>
                                     <Play />

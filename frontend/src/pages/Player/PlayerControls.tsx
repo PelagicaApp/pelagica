@@ -44,10 +44,10 @@ import { useReportPlaybackProgress } from '@pelagica/core';
 import { getRuntimePlaybackStats, type RuntimePlaybackStats } from '@/utils/playbackStats';
 import { useSession } from '@pelagica/core';
 import {
-    removeLastSubtitleLanguage,
-    setLastAudioLanguage,
-    setLastSubtitleLanguage,
-} from '@/utils/localstorageLastlanguage';
+    mediaTrackKey,
+    setLastAudioSelection,
+    setLastSubtitleSelection,
+} from '@/utils/trackMemory';
 import { useConfig } from '@pelagica/core';
 
 function getPrimaryTrickplayInfo(trickplay?: BaseItemDto['Trickplay']) {
@@ -351,17 +351,29 @@ const PlayerControls = ({
     const handleAudioTrackChange = (value: string) => {
         const index = parseInt(value, 10);
         onAudioTrackChange(index);
-        setLastAudioLanguage(item.Id || '', index);
+        const stream = item.MediaStreams?.find((s) => s.Type === 'Audio' && s.Index === index);
+        setLastAudioSelection(mediaTrackKey(item), {
+            language: stream?.Language ?? null,
+            index,
+            itemId: item.Id ?? '',
+        });
     };
 
     const handleSubtitleTrackChange = (value: string) => {
         if (value === 'off') {
             onSubtitleTrackChange(null);
-            removeLastSubtitleLanguage(item.Id || '');
+            setLastSubtitleSelection(mediaTrackKey(item), 'off');
         } else {
             const index = parseInt(value, 10);
             onSubtitleTrackChange(index);
-            setLastSubtitleLanguage(item.Id || '', index);
+            const stream = item.MediaStreams?.filter((s) => s.Type === 'Subtitle')[index];
+            setLastSubtitleSelection(mediaTrackKey(item), {
+                language: stream?.Language ?? null,
+                index: stream?.Index ?? index,
+                itemId: item.Id ?? '',
+                isForced: stream?.IsForced ?? false,
+                isHearingImpaired: stream?.IsHearingImpaired ?? false,
+            });
         }
     };
 
