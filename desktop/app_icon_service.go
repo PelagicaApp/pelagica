@@ -3,7 +3,6 @@ package main
 import (
 	"embed"
 	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
@@ -74,15 +73,7 @@ func applySavedAppIcon() {
 }
 
 func appIconPreferencePath() (string, error) {
-	dir, err := os.UserConfigDir()
-	if err != nil {
-		return "", err
-	}
-	dir = filepath.Join(dir, "Pelagica")
-	if err := os.MkdirAll(dir, 0o755); err != nil {
-		return "", err
-	}
-	return filepath.Join(dir, "app-icon.txt"), nil
+	return configFilePath("app-icon.txt")
 }
 
 func readAppIconPreference() (string, error) {
