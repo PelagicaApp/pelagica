@@ -42,6 +42,7 @@ const MoviePage = ({ item, config }: MoviePageProps) => {
     const selectedSource =
         item.MediaSources?.find((source) => source.Id === selectedSourceId) ??
         item.MediaSources?.[0];
+    const showTrackSelectors = config.itemPage?.showTrackSelectors === true;
     const trackSelection = useTrackSelection(
         item.Id,
         selectedSource?.Id ?? item.Id,
@@ -125,9 +126,11 @@ const MoviePage = ({ item, config }: MoviePageProps) => {
                                 resumeLabel={t('resume')}
                                 selectedSourceId={selectedSourceId}
                                 onSourceChange={setSelectedSourceId}
-                                trackSelection={trackSelection.trackSelection}
+                                trackSelection={
+                                    showTrackSelectors ? trackSelection.trackSelection : undefined
+                                }
                             />
-                            <TrackSelectors selection={trackSelection} />
+                            {showTrackSelectors && <TrackSelectors selection={trackSelection} />}
                             <TrailerButton item={item} />
                             <FavoriteButton
                                 item={item}

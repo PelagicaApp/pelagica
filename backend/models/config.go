@@ -74,6 +74,7 @@ type ItemPageSettings struct {
 	ShowWatchlistButton *bool          `json:"showWatchlistButton,omitempty"`
 	DeleteButton        []BaseItemKind `json:"deleteButton,omitempty"`
 	AutoPlayTrailers    *bool          `json:"autoPlayTrailers,omitempty"`
+	ShowTrackSelectors  *bool          `json:"showTrackSelectors,omitempty"`
 }
 
 type SectionItemsConfig struct {

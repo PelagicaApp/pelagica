@@ -231,6 +231,8 @@ export interface ItemPageSettings {
     showWatchlistButton?: boolean;
     /** Whether to autoplay a local trailer as a background video on item detail pages */
     autoPlayTrailers?: boolean;
+    /** Whether to show audio/subtitle track selectors next to the play button on item pages */
+    showTrackSelectors?: boolean;
 }
 
 export interface ConfigLink {
@@ -287,6 +289,7 @@ const DEFAULT_ITEM_PAGE_SETTINGS: ItemPageSettings = {
     showWatchlistButton: true,
     showDownloadButton: true,
     autoPlayTrailers: false,
+    showTrackSelectors: false,
 };
 
 const DEFAULT_CONFIG: AppConfig = {

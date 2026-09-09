@@ -61,6 +61,7 @@ const EpisodePage = ({ item, config }: EpisodePageProps) => {
     const selectedSource =
         item.MediaSources?.find((source) => source.Id === selectedSourceId) ??
         item.MediaSources?.[0];
+    const showTrackSelectors = config.itemPage?.showTrackSelectors === true;
     const trackSelection = useTrackSelection(
         item.SeriesId ?? item.Id,
         selectedSource?.Id ?? item.Id,
@@ -162,9 +163,11 @@ const EpisodePage = ({ item, config }: EpisodePageProps) => {
                                 resumeLabel={t('resume')}
                                 selectedSourceId={selectedSourceId}
                                 onSourceChange={setSelectedSourceId}
-                                trackSelection={trackSelection.trackSelection}
+                                trackSelection={
+                                    showTrackSelectors ? trackSelection.trackSelection : undefined
+                                }
                             />
-                            <TrackSelectors selection={trackSelection} />
+                            {showTrackSelectors && <TrackSelectors selection={trackSelection} />}
                             <FavoriteButton
                                 item={item}
                                 showFavoriteButton={

@@ -74,6 +74,7 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
             (ep) => !ep.UserData?.Played || (ep.UserData?.PlaybackPositionTicks ?? 0) > 0
         ) || firstSeasonEpisodes?.[0];
 
+    const showTrackSelectors = config.itemPage?.showTrackSelectors === true;
     const trackSelection = useTrackSelection(
         item.Id,
         episodeToContinue?.Id,
@@ -153,7 +154,9 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
                                             to={buildPlayerUrl(
                                                 episodeToContinue.Id!,
                                                 location.pathname + location.search,
-                                                trackSelection.trackSelection
+                                                showTrackSelectors
+                                                    ? trackSelection.trackSelection
+                                                    : undefined
                                             )}
                                         >
                                             <Play />
@@ -168,7 +171,9 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
                                                   })}
                                         </Link>
                                     </Button>
-                                    <TrackSelectors selection={trackSelection} />
+                                    {showTrackSelectors && (
+                                        <TrackSelectors selection={trackSelection} />
+                                    )}
                                 </>
                             ) : (
                                 <Button className="w-fit" disabled>

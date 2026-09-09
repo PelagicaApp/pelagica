@@ -30,6 +30,7 @@
     "series_view_description": "Choose whether series detail pages show a list of episodes or a grid of seasons by default. Only applies to series with more than one season.",
     "show_watchlist_button_label": "Show Watchlist Button",
     "auto_play_trailers_label": "Autoplay Trailer on Item Page",
+    "show_track_selectors_label": "Show Audio & Subtitle Selectors",
     "favorite_button_types_label": "Favorite Button Item Types",
     "favorite_button_types_description": "Select the item types for which the favorite button should be displayed.",
     "detail_badges_label": "Detail Badges",
