@@ -1,5 +1,6 @@
 import type { BaseItemDto, MediaStream } from '@jellyfin/sdk/lib/generated-client/models';
 import { iso6392 } from 'iso-639-2';
+import { isImageBasedSubtitle } from '@/utils/subtitleStreams';
 
 // Keyed by series id (episodes) or item id (movies) so selections carry across episodes
 const STORAGE_KEY = 'lastTracksByMedia';
@@ -85,7 +86,10 @@ function sameLanguage(a: string | null | undefined, b: string | null | undefined
     return normalizedA !== null && normalizedA === normalizeLanguage(b);
 }
 
-/** Preference order within a language: normal, then HI, then forced; embedded before external */
+/**
+ * Preference order within a language, most significant first:
+ * embedded before external, then normal < HI < forced, then text before image-based
+ */
 export function subtitleStreamRank(stream: MediaStream): number {
     const flagTier =
         stream.IsForced && stream.IsHearingImpaired
@@ -95,7 +99,7 @@ export function subtitleStreamRank(stream: MediaStream): number {
               : stream.IsHearingImpaired
                 ? 1
                 : 0;
-    return flagTier * 2 + (stream.IsExternal ? 1 : 0);
+    return (stream.IsExternal ? 8 : 0) + flagTier * 2 + (isImageBasedSubtitle(stream) ? 1 : 0);
 }
 
 function bestSubtitlePosition(
