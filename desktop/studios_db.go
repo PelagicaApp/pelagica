@@ -60,13 +60,12 @@ func normalizeStudioName(name string) string {
 }
 
 // studiosDBDir returns (and creates) the per-user directory used to cache the
-// downloaded studios database, mirroring appIconPreferencePath's convention.
+// downloaded studios database.
 func studiosDBDir() (string, error) {
-	dir, err := os.UserConfigDir()
+	dir, err := configFilePath("studios-db")
 	if err != nil {
 		return "", err
 	}
-	dir = filepath.Join(dir, "Pelagica", "studios-db")
 	if err := os.MkdirAll(filepath.Join(dir, studiosDBTempSubdir), 0o755); err != nil {
 		return "", err
 	}
