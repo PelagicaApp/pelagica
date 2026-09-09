@@ -46,7 +46,9 @@ const Settings = () => {
     const serverUrl = getServerUrl();
     const { data: user, isLoading } = useCurrentUser();
     const navigate = useNavigate();
-    const { ref: aboutRef, focused: aboutFocused } = useFocusable<object, HTMLDivElement>({});
+    const { ref: aboutRef, focused: aboutFocused } = useFocusable<object, HTMLDivElement>({
+        focusOnHover: true,
+    });
     useScrollIntoViewOnFocus(aboutRef, aboutFocused);
 
     return (

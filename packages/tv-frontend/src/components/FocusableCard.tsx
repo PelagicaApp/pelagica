@@ -28,6 +28,7 @@ const FocusableCard = ({
     const cardFocusKey = `${layerId}:${rowIdentity}:${to}`;
     const { ref, focused, focusSelf } = useLayerFocusable<object, HTMLAnchorElement>({
         focusKey: cardFocusKey,
+        focusOnHover: true,
         onEnterPress: () => ref.current?.click(),
         onFocus: () => rememberFocusedKey(pathname, cardFocusKey),
     });

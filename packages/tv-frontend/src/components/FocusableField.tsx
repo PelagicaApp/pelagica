@@ -17,6 +17,7 @@ const FocusableField = ({
 }) => {
     const { ref, focused, focusSelf } = useFocusable<object, HTMLInputElement>({
         focusKey,
+        focusOnHover: true,
         onEnterPress: () => ref.current?.focus(),
         onBlur: () => ref.current?.blur(),
     });
