@@ -24,6 +24,8 @@ import PlayStateButton from '../../components/PlayStateButton';
 import ItemAdminButton from '@/components/ItemAdminButton';
 import ItemDownloadButton from '../../components/ItemDownloadButton';
 import SourcePickerButton from '@/components/SourcePickerButton';
+import TrackSelectors from '@/components/TrackSelectors';
+import { useTrackSelection } from '@/hooks/useTrackSelection';
 import { Link } from 'react-router';
 import { Skeleton } from '@/components/ui/skeleton';
 import Overview from './Overview';
@@ -52,6 +54,19 @@ const EpisodePage = ({ item, config }: EpisodePageProps) => {
     const runtime = item.RunTimeTicks ?? 0;
     const progress = runtime > 0 ? (watched / runtime) * 100 : 0;
     const isCurrentlyPlaying = watched > 0 && runtime > 0 && watched < runtime;
+
+    const [selectedSourceId, setSelectedSourceId] = useState<string | undefined>(
+        item.MediaSources?.[0]?.Id ?? undefined
+    );
+    const selectedSource =
+        item.MediaSources?.find((source) => source.Id === selectedSourceId) ??
+        item.MediaSources?.[0];
+    const showTrackSelectors = config.itemPage?.showTrackSelectors === true;
+    const trackSelection = useTrackSelection(
+        item.SeriesId ?? item.Id,
+        selectedSource?.Id ?? item.Id,
+        selectedSource?.MediaStreams ?? item.MediaStreams
+    );
 
     return (
         <BaseMediaPage
@@ -146,7 +161,13 @@ const EpisodePage = ({ item, config }: EpisodePageProps) => {
                                 isCurrentlyPlaying={isCurrentlyPlaying}
                                 playLabel={t('play')}
                                 resumeLabel={t('resume')}
+                                selectedSourceId={selectedSourceId}
+                                onSourceChange={setSelectedSourceId}
+                                trackSelection={
+                                    showTrackSelectors ? trackSelection.trackSelection : undefined
+                                }
                             />
+                            {showTrackSelectors && <TrackSelectors selection={trackSelection} />}
                             <FavoriteButton
                                 item={item}
                                 showFavoriteButton={

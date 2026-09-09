@@ -3,7 +3,7 @@ import { useReportPlaybackProgress } from '@pelagica/core';
 import { usePlaybackStart } from '@pelagica/core';
 import { usePlaybackStop } from '@pelagica/core';
 import { useCloseLiveStream } from '@pelagica/core';
-import { useParams } from 'react-router';
+import { useParams, useSearchParams } from 'react-router';
 import VideoPlayer, { type SubtitleTrack } from '@/pages/Player/VideoPlayer';
 import PlayerControls from '@/pages/Player/PlayerControls';
 import PlayerLoading from '@/pages/Player/PlayerLoading';
@@ -20,7 +20,11 @@ import { usePlaybackInfo } from '@pelagica/core';
 import { useMediaSegments } from '@pelagica/core';
 import { useAdjacentItems } from '@pelagica/core';
 import { getUserId } from '@pelagica/core';
-import { getLastAudioLanguage, getLastSubtitleLanguage } from '@/utils/localstorageLastlanguage';
+import {
+    mediaTrackKey,
+    resolveDefaultAudioIndex,
+    resolveDefaultSubtitleIndex,
+} from '@/utils/trackMemory';
 import { useUserConfiguration } from '@pelagica/core';
 import { usePlayerItem } from '@pelagica/core';
 import { useMusicPlayback } from '@/hooks/useMusicPlayback';
@@ -43,6 +47,18 @@ const PlayerPage = () => {
     const { t } = useTranslation('player');
     const params = useParams<{ itemId: string }>();
     const itemId = params.itemId;
+    const [searchParams] = useSearchParams();
+
+    // Track overrides passed from the item detail pages
+    const audioParam = searchParams.get('audio');
+    const parsedAudio = audioParam !== null ? Number.parseInt(audioParam, 10) : Number.NaN;
+    const requestedAudioIndex: number | null = Number.isNaN(parsedAudio) ? null : parsedAudio;
+    const subtitleParam = searchParams.get('subtitle');
+    const parsedSubtitle = subtitleParam !== null ? Number.parseInt(subtitleParam, 10) : Number.NaN;
+    // null = explicitly disabled, undefined = not requested
+    const requestedSubtitleIndex: number | null | undefined =
+        subtitleParam === 'none' ? null : Number.isNaN(parsedSubtitle) ? undefined : parsedSubtitle;
+
     const hasUserSelectedSubtitleRef = useRef(false);
     const hasUserSelectedAudioRef = useRef(false);
     const hasAttemptedTranscodeFallbackRef = useRef(false);
@@ -55,52 +71,35 @@ const PlayerPage = () => {
     } = useUserConfiguration(getUserId());
     const { data: item, isLoading, error } = usePlayerItem(itemId, true);
 
-    const resolvedAudio = useMemo(() => {
-        if (!item || !userConfiguration) {
-            return { index: 1, matchedPreferred: false };
-        }
-
-        const lastAudio = getLastAudioLanguage(item.Id!);
-        if (lastAudio !== null) {
-            return { index: lastAudio, matchedPreferred: false };
-        }
-
-        const preferred = userConfiguration.AudioLanguagePreference;
-        if (!preferred) {
-            return { index: 1, matchedPreferred: false };
-        }
-
-        const audioStreams = item.MediaStreams?.filter((s) => s.Type === 'Audio');
-
-        const match = audioStreams?.find((s) => s.Language === preferred);
-
-        if (match?.Index != null) {
-            return { index: match.Index, matchedPreferred: true };
-        }
-
-        return { index: 1, matchedPreferred: false };
+    const resolvedAudioIndex = useMemo(() => {
+        if (!item) return 1;
+        const audioStreams = item.MediaStreams?.filter((s) => s.Type === 'Audio') ?? [];
+        return (
+            resolveDefaultAudioIndex(
+                audioStreams,
+                mediaTrackKey(item),
+                item.Id ?? null,
+                userConfiguration?.AudioLanguagePreference
+            ) ?? 1
+        );
     }, [item, userConfiguration]);
 
     const resolvedSubtitleTrackIndex = useMemo(() => {
-        if (!item || !userConfiguration) return null;
-
-        const lastSubtitle = getLastSubtitleLanguage(item.Id!);
-        if (lastSubtitle !== null) return lastSubtitle;
-
-        const preferred = userConfiguration.SubtitleLanguagePreference;
-        if (!preferred) return null;
-
-        const subtitleStreams = item.MediaStreams?.filter((s) => s.Type === 'Subtitle');
-
-        const match = subtitleStreams?.findIndex((s) => s.Language === preferred);
-
-        if (match !== undefined && match >= 0) return match;
-        return null;
+        if (!item) return null;
+        const subtitleStreams = item.MediaStreams?.filter((s) => s.Type === 'Subtitle') ?? [];
+        return resolveDefaultSubtitleIndex(
+            subtitleStreams,
+            mediaTrackKey(item),
+            item.Id ?? null,
+            userConfiguration?.SubtitleLanguagePreference
+        );
     }, [item, userConfiguration]);
 
-    const [audioTrackIndex, setAudioTrackIndex] = useState<number>(resolvedAudio.index);
+    const [audioTrackIndex, setAudioTrackIndex] = useState<number>(
+        requestedAudioIndex ?? resolvedAudioIndex
+    );
     const [subtitleTrackIndex, setSubtitleTrackIndex] = useState<number | null>(
-        resolvedSubtitleTrackIndex
+        requestedSubtitleIndex !== undefined ? requestedSubtitleIndex : resolvedSubtitleTrackIndex
     );
     const containerRef = useRef<HTMLDivElement>(null);
     const progressReportingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -175,15 +174,19 @@ const PlayerPage = () => {
     // Reset everything when navigating to a new item
     useEffect(() => {
         queueMicrotask(() => {
-            hasUserSelectedAudioRef.current = false;
-            hasUserSelectedSubtitleRef.current = false;
+            hasUserSelectedAudioRef.current = requestedAudioIndex !== null;
+            hasUserSelectedSubtitleRef.current = requestedSubtitleIndex !== undefined;
             pendingAudioSwitchSeekRef.current = null;
             hasAttemptedTranscodeFallbackRef.current = false;
 
             setPlayer(null);
             setForceTranscode(false);
-            setAudioTrackIndex(resolvedAudio.index);
-            setSubtitleTrackIndex(resolvedSubtitleTrackIndex);
+            setAudioTrackIndex(requestedAudioIndex ?? resolvedAudioIndex);
+            setSubtitleTrackIndex(
+                requestedSubtitleIndex !== undefined
+                    ? requestedSubtitleIndex
+                    : resolvedSubtitleTrackIndex
+            );
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [itemId]);
@@ -192,19 +195,14 @@ const PlayerPage = () => {
         if (resolvedSubtitleTrackIndex === null) return;
         if (hasUserSelectedSubtitleRef.current) return;
 
-        // Don't enable subtitles if the audio matched preferred language
-        if (resolvedAudio.matchedPreferred) return;
-
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setSubtitleTrackIndex(resolvedSubtitleTrackIndex);
-    }, [resolvedSubtitleTrackIndex, resolvedAudio.matchedPreferred]);
+    }, [resolvedSubtitleTrackIndex]);
 
     useEffect(() => {
-        if (resolvedAudio.index === null) return;
         if (hasUserSelectedAudioRef.current) return;
 
-        setAudioTrackIndex(resolvedAudio.index);
-    }, [resolvedAudio.index]);
+        setAudioTrackIndex(resolvedAudioIndex);
+    }, [resolvedAudioIndex]);
 
     const posterUrl = useMemo(() => {
         if (!item?.Id) return undefined;

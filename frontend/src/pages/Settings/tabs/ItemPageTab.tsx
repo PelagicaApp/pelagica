@@ -68,6 +68,11 @@ export const ItemPageTab = ({
                 checked={itemPage.autoPlayTrailers || false}
                 onChange={(checked) => updateItemPage({ autoPlayTrailers: checked })}
             />
+            <BooleanInput
+                label={t('show_track_selectors_label')}
+                checked={itemPage.showTrackSelectors || false}
+                onChange={(checked) => updateItemPage({ showTrackSelectors: checked })}
+            />
             <MultiSelectInput
                 label={t('favorite_button_types_label')}
                 options={[

@@ -2,7 +2,7 @@ import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { useState } from 'react';
 import { Check, ChevronDown, Play } from 'lucide-react';
 import { Link, useLocation } from 'react-router';
-import { buildPlayerUrl } from '@/utils/playerUrl';
+import { buildPlayerUrl, type PlayerTrackSelection } from '@/utils/playerUrl';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -22,6 +22,10 @@ interface SourcePickerButtonProps {
     isCurrentlyPlaying: boolean;
     playLabel: string;
     resumeLabel: string;
+    /** When provided, source selection is controlled by the parent */
+    selectedSourceId?: string;
+    onSourceChange?: (sourceId: string | undefined) => void;
+    trackSelection?: PlayerTrackSelection;
 }
 
 const SourcePickerButton = ({
@@ -30,13 +34,22 @@ const SourcePickerButton = ({
     isCurrentlyPlaying,
     playLabel,
     resumeLabel,
+    selectedSourceId: controlledSourceId,
+    onSourceChange,
+    trackSelection,
 }: SourcePickerButtonProps) => {
     const location = useLocation();
-    const [selectedSourceId, setSelectedSourceId] = useState<string | undefined>(
+    const [internalSourceId, setInternalSourceId] = useState<string | undefined>(
         mediaSources?.[0]?.Id ?? undefined
     );
+    const selectedSourceId = controlledSourceId ?? internalSourceId;
     const selectedSource =
         mediaSources?.find((source) => source.Id === selectedSourceId) ?? mediaSources?.[0];
+
+    const handleSourceSelect = (sourceId: string | undefined) => {
+        setInternalSourceId(sourceId);
+        onSourceChange?.(sourceId);
+    };
 
     const hasMultipleSources = (mediaSources?.length ?? 0) > 1;
 
@@ -46,7 +59,8 @@ const SourcePickerButton = ({
                 <Link
                     to={buildPlayerUrl(
                         selectedSource?.Id ?? itemId,
-                        location.pathname + location.search
+                        location.pathname + location.search,
+                        trackSelection
                     )}
                 >
                     <Play />
@@ -67,7 +81,7 @@ const SourcePickerButton = ({
                             {mediaSources?.map((source) => (
                                 <DropdownMenuItem
                                     key={source.Id}
-                                    onSelect={() => setSelectedSourceId(source.Id ?? undefined)}
+                                    onSelect={() => handleSourceSelect(source.Id ?? undefined)}
                                 >
                                     <Check
                                         className={cn(
