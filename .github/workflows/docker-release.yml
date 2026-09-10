@@ -124,9 +124,9 @@ jobs:
           
           docker buildx imagetools create \
             -t ${{ env.DOCKER_IMAGE }}:${{ github.ref_name }}${{ matrix.variant.suffix }} \
-            -t ${{ env.DOCKER_IMAGE }}:latest-${{ matrix.variant.suffix }} \
+            -t ${{ env.DOCKER_IMAGE }}:latest${{ matrix.variant.suffix }} \
             "${refs[@]}"
 
       - name: Inspect manifest
         run: |
-          docker buildx imagetools inspect ${{ env.DOCKER_IMAGE }}:${{ github.ref_name }}${{ matrix.variant.name }}
+          docker buildx imagetools inspect ${{ env.DOCKER_IMAGE }}:${{ github.ref_name }}${{ matrix.variant.suffix }}
