@@ -47,6 +47,8 @@ RUN apk add --no-cache ca-certificates tzdata
 
 # frontend
 ARG BASE_PATH=
+# drop the nginx default page so a base-path build serves nothing at /
+RUN rm -f /usr/share/nginx/html/index.html /usr/share/nginx/html/50x.html
 COPY --from=frontend-builder /app/frontend/dist /usr/share/nginx/html${BASE_PATH}
 
 # backend
