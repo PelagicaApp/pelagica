@@ -1,0 +1,17 @@
+{
+    "title": "Bibliotecă",
+    "no_items_title": "Niciun titlu găsit",
+    "no_items_description": "Nu există titluri în această bibliotecă.",
+    "sort_name": "Nume",
+    "sort_date_added": "Data adăugării",
+    "sort_premiere_date": "Data premierei",
+    "sort_community_rating": "Evaluarea comunității",
+    "sort_critic_rating": "Evaluarea criticilor",
+    "sort_runtime": "Durată",
+    "no_studios_found_title": "Niciun studio găsit",
+    "no_studios_found_for_search": "Niciun studio găsit pentru „{{search}}”.",
+    "no_studios_found": "Nu există studiouri în această bibliotecă.",
+    "clear_search": "Șterge căutarea",
+    "studios_search_placeholder": "Caută studiouri...",
+    "no_libraries_found": "Nicio bibliotecă găsită."
+}
