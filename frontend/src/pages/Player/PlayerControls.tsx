@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
+    Airplay,
     Play,
     Pause,
     Volume2,
@@ -38,6 +39,7 @@ import { buildPlayerUrl } from '@/utils/playerUrl';
 import { isDesktopApp } from '@/utils/desktopApp';
 import { useTranslation } from 'react-i18next';
 import { usePlayerKeyboardControls } from '@/hooks/usePlayerKeyboardControls';
+import type { AirPlayState } from '@/hooks/useAirPlay';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getLogoUrl, getPrimaryImageUrl, getTrickplayImageUrl } from '@pelagica/core';
 import { useReportPlaybackProgress } from '@pelagica/core';
@@ -102,6 +104,7 @@ interface PlayerControlsProps {
     onSubtitleTrackChange: (index: number | null) => void;
     isFullscreen: boolean;
     onFullscreenToggle?: () => void;
+    airPlay: AirPlayState;
     mediaSegments?: MediaSegmentDto[];
     previousItem?: BaseItemDto | null;
     nextItem?: BaseItemDto | null;
@@ -118,6 +121,7 @@ const PlayerControls = ({
     onSubtitleTrackChange,
     isFullscreen,
     onFullscreenToggle,
+    airPlay,
     mediaSegments,
     previousItem,
     nextItem,
@@ -923,6 +927,20 @@ const PlayerControls = ({
                                 <PictureInPicture2
                                     size={20}
                                     className={isPiP ? 'text-brand' : ''}
+                                />
+                            </Button>
+                        )}
+                        {airPlay.isAvailable && (
+                            <Button
+                                variant={'ghost'}
+                                size={'icon-lg'}
+                                onClick={airPlay.showPicker}
+                                className="cursor-pointer"
+                                title="AirPlay"
+                            >
+                                <Airplay
+                                    size={20}
+                                    className={airPlay.isActive ? 'text-brand' : ''}
                                 />
                             </Button>
                         )}
