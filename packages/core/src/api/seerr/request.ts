@@ -1,9 +1,10 @@
+import { withBasePath } from '../../utils/basePath';
 import { getServerUrl } from '../../utils/localstorageCredentials';
 import type { SeerrRequestPayload } from './types';
 
 export async function requestSeerrItem(payload: SeerrRequestPayload): Promise<void> {
     const response = await fetch(
-        `/api/seerr/request?jellyfin_url=${encodeURIComponent(getServerUrl() || '')}`,
+        withBasePath(`/api/seerr/request?jellyfin_url=${encodeURIComponent(getServerUrl() || '')}`),
         {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

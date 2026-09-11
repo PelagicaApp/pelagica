@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
-import { getServerUrl } from '@pelagica/core';
+import { getServerUrl, withBasePath } from '@pelagica/core';
 import type { AppConfig } from '@pelagica/core';
 import {
     fetchPluginConfig,
@@ -28,7 +28,9 @@ async function resolvePluginStatus(serverUrl: string): Promise<PelagicaPluginSta
 
 async function fetchLegacyConfig(serverUrl: string): Promise<Record<string, unknown> | null> {
     try {
-        const response = await fetch('/api/config?jellyfin_url=' + encodeURIComponent(serverUrl));
+        const response = await fetch(
+            withBasePath('/api/config?jellyfin_url=' + encodeURIComponent(serverUrl))
+        );
         if (!response.ok) return null;
         return await response.json();
     } catch {

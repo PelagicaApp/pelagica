@@ -1,3 +1,4 @@
+import { withBasePath } from '../../utils/basePath';
 import { getServerUrl } from '../../utils/localstorageCredentials';
 import type {
     SeerrMediaType,
@@ -10,7 +11,9 @@ export async function getSeerrMovieRecommendations(
     tmdbId: string
 ): Promise<SeerrRecommendationItem[]> {
     const response = await fetch(
-        `/api/seerr/movie/${tmdbId}/recommendations?jellyfin_url=${encodeURIComponent(getServerUrl() || '')}`
+        withBasePath(
+            `/api/seerr/movie/${tmdbId}/recommendations?jellyfin_url=${encodeURIComponent(getServerUrl() || '')}`
+        )
     );
     if (!response.ok) {
         throw new Error(`API request failed: ${response.statusText}`);
@@ -27,7 +30,9 @@ export async function getSeerrMovieRecommendations(
 
 export async function getSeerrTvRecommendations(tvId: string): Promise<SeerrRecommendationItem[]> {
     const response = await fetch(
-        `/api/seerr/tv/${tvId}/recommendations?jellyfin_url=${encodeURIComponent(getServerUrl() || '')}`
+        withBasePath(
+            `/api/seerr/tv/${tvId}/recommendations?jellyfin_url=${encodeURIComponent(getServerUrl() || '')}`
+        )
     );
     if (!response.ok) {
         throw new Error(`API request failed: ${response.statusText}`);

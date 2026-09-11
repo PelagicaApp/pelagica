@@ -1,3 +1,5 @@
+import { withBasePath } from '../utils/basePath';
+
 export type StatsConsent = 'granted' | 'denied' | 'unknown';
 
 const numberToStatsConsent = (value: number): StatsConsent => {
@@ -14,7 +16,7 @@ const numberToStatsConsent = (value: number): StatsConsent => {
 };
 
 export const getStatsConsent = async (): Promise<StatsConsent> => {
-    const res = await fetch('/api/stats-consent');
+    const res = await fetch(withBasePath('/api/stats-consent'));
     if (!res.ok) {
         throw new Error('Failed to fetch stats consent');
     }
@@ -23,7 +25,7 @@ export const getStatsConsent = async (): Promise<StatsConsent> => {
 };
 
 export const setStatsConsent = async (consent: boolean): Promise<void> => {
-    const res = await fetch('/api/stats-consent?consent=' + consent, {
+    const res = await fetch(withBasePath('/api/stats-consent?consent=' + consent), {
         method: 'POST',
     });
     if (!res.ok) {

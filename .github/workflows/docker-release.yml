@@ -22,10 +22,17 @@ jobs:
         platform:
           - linux/amd64
           - linux/arm64
+        variant:
+          - name: default
+            suffix: ''
+            base_path: ''
+          - name: basepath
+            suffix: '-basepath'
+            base_path: '/pelagica'
 
     runs-on: ${{ matrix.platform == 'linux/amd64' && 'ubuntu-latest' || matrix.platform == 'linux/arm64' && 'ubuntu-24.04-arm' }}
 
-    name: Build Docker image for ${{ matrix.platform }}
+    name: Build Docker ${{ matrix.variant.name }} image for ${{ matrix.platform }}
 
     steps:
       - name: Set PLATFORM_PAIR
@@ -58,14 +65,15 @@ jobs:
           push: true
           platforms: ${{ matrix.platform }}
           tags: |
-            ${{ env.DOCKER_IMAGE }}:${{ github.ref_name }}-${{ env.PLATFORM_PAIR }}
-            ${{ env.DOCKER_IMAGE }}:latest-${{ env.PLATFORM_PAIR }}
+            ${{ env.DOCKER_IMAGE }}:${{ github.ref_name }}${{ matrix.variant.suffix }}-${{ env.PLATFORM_PAIR }}
+            ${{ env.DOCKER_IMAGE }}:latest${{ matrix.variant.suffix }}-${{ env.PLATFORM_PAIR }}
           build-args: |
             APP_VERSION=${{ github.ref_name }}
             COLLECTOR_PING_TOKEN=${{ secrets.STATS_TOKEN }}
+            BASE_PATH=${{ matrix.variant.base_path }}
           outputs: type=registry
-          cache-from: type=gha,scope=${{ github.repository }}-${{ github.ref_name }}-${{ env.PLATFORM_PAIR }}
-          cache-to: type=gha,scope=${{ github.repository }}-${{ github.ref_name }}-${{ env.PLATFORM_PAIR }}
+          cache-from: type=gha,scope=${{ github.repository }}-${{ github.ref_name }}-${{ matrix.variant.name }}-${{ env.PLATFORM_PAIR }}
+          cache-to: type=gha,scope=${{ github.repository }}-${{ github.ref_name }}-${{ matrix.variant.name }}-${{ env.PLATFORM_PAIR }}
 
       - name: Export digest
         run: |
@@ -75,16 +83,23 @@ jobs:
       - name: Upload digest
         uses: actions/upload-artifact@v6
         with:
-          name: digests-${{ env.PLATFORM_PAIR }}
+          name: digests-${{ matrix.variant.name }}-${{ env.PLATFORM_PAIR }}
           path: /tmp/digests/*
           if-no-files-found: error
           retention-days: 1
 
   merge:
-    name: Create Multi-Arch Manifest
+    name: Create ${{ matrix.variant.name }} Multi-Arch Manifest
     runs-on: ubuntu-latest
     needs: build
-
+    strategy:
+      fail-fast: false
+      matrix:
+        variant:
+          - name: default
+            suffix: ''
+          - name: basepath
+            suffix: '-basepath'
     steps:
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
@@ -96,7 +111,7 @@ jobs:
         uses: actions/download-artifact@v7
         with:
           path: /tmp/digests
-          pattern: digests-*
+          pattern: digests-${{ matrix.variant.name }}-*
           merge-multiple: true
 
       - name: Create multi-arch manifest
@@ -108,10 +123,10 @@ jobs:
           done
           
           docker buildx imagetools create \
-            -t ${{ env.DOCKER_IMAGE }}:${{ github.ref_name }} \
-            -t ${{ env.DOCKER_IMAGE }}:latest \
+            -t ${{ env.DOCKER_IMAGE }}:${{ github.ref_name }}${{ matrix.variant.suffix }} \
+            -t ${{ env.DOCKER_IMAGE }}:latest${{ matrix.variant.suffix }} \
             "${refs[@]}"
 
       - name: Inspect manifest
         run: |
-          docker buildx imagetools inspect ${{ env.DOCKER_IMAGE }}:${{ github.ref_name }}
+          docker buildx imagetools inspect ${{ env.DOCKER_IMAGE }}:${{ github.ref_name }}${{ matrix.variant.suffix }}

@@ -1,6 +1,7 @@
 import { logoutFromSeerr } from '../api/seerr/logout';
 import { clearDeviceId } from './deviceId';
 import { clearCredentials } from './localstorageCredentials';
+import { withBasePath } from './basePath';
 
 export function isAuthError(error: unknown): boolean {
     if (error && typeof error === 'object' && 'status' in error) {
@@ -11,7 +12,7 @@ export function isAuthError(error: unknown): boolean {
 }
 
 let onAuthRedirect: () => void = () => {
-    window.location.href = '/login';
+    window.location.href = withBasePath('/login');
 };
 
 export function setAuthRedirectHandler(handler: () => void) {

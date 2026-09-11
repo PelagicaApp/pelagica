@@ -79,6 +79,7 @@ import { useTheme } from '@/components/theme-provider';
 import { getEffectiveTheme } from '@/utils/effectiveTheme';
 import { logout } from '@pelagica/core';
 import { getUserProfileImageUrl } from '@pelagica/core';
+import { withBasePath } from '@pelagica/core';
 import { SUPPORTED_LIBRARY_COLLECTION_TYPES } from '../utils/itemTypes';
 import { DynamicIcon, type IconName } from 'lucide-react/dynamic';
 import { useTranslation } from 'react-i18next';
@@ -686,7 +687,7 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
         return onWindowMaximiseChange(setIsMaximised);
     }, [isWindowsOrLinux]);
 
-    const defaultLogo = effectiveTheme === 'dark' ? '/logo.svg' : '/logo-dark.svg';
+    const defaultLogo = withBasePath(effectiveTheme === 'dark' ? '/logo.svg' : '/logo-dark.svg');
     const configuredLogo =
         effectiveTheme === 'dark' ? config?.logoDarkUrl || '' : config?.logoLightUrl || '';
     const logoSrc = configuredLogo || defaultLogo;

@@ -1,3 +1,4 @@
+import { withBasePath } from '../../utils/basePath';
 import { getServerUrl } from '../../utils/localstorageCredentials';
 import type {
     SeerrMovieRecommendationsResponse,
@@ -8,7 +9,7 @@ import type {
 
 async function fetchSeerr<T>(path: string): Promise<T> {
     const response = await fetch(
-        `${path}?jellyfin_url=${encodeURIComponent(getServerUrl() || '')}`
+        withBasePath(`${path}?jellyfin_url=${encodeURIComponent(getServerUrl() || '')}`)
     );
     if (!response.ok) {
         throw new Error(`API request failed: ${response.statusText}`);
