@@ -12,7 +12,7 @@
   <a href="https://twoglot.com/@KartoffelChipss/pelagica"><img src="https://twoglot.com/api/projects/by-owner/KartoffelChipss/pelagica/badge.svg" alt="Translations"></a>
 </p>
 
-<p align="center">Pelagica is a web, desktop, and TV client for <a href="https://jellyfin.org">Jellyfin</a> built using React. It aims to provide a fast, modern, and customizable user experience for browsing and watching your media library. It's available as a self-hosted web app, a native desktop app for macOS, Windows, and Linux, and a TV app for Samsung Tizen and LG webOS.</p>
+<p align="center">Pelagica is a web, desktop, and TV client for <a href="https://jellyfin.org">Jellyfin</a> built using React. It aims to provide a fast, modern, and customizable user experience for browsing and watching your media library. It's available as a self-hosted web app, a native desktop app for macOS, Windows, and Linux, and a TV app for Samsung Tizen, LG webOS and Apple TV.</p>
 
 ![Home](./.github/assets/home.webp)
 
