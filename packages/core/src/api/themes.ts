@@ -1,3 +1,4 @@
+import { withBasePath } from '../utils/basePath';
 import { getServerUrl } from '../utils/localstorageCredentials';
 import { getAuthorizationHeader } from './getApi';
 
@@ -27,7 +28,7 @@ export interface Colors {
 
 export const fetchThemes = async (): Promise<ThemeSummary[]> => {
     const response = await fetch(
-        '/api/themes?jellyfin_url=' + encodeURIComponent(getServerUrl() || '')
+        withBasePath('/api/themes?jellyfin_url=' + encodeURIComponent(getServerUrl() || ''))
     );
     if (!response.ok) {
         throw new Error('Failed to fetch themes');
@@ -37,7 +38,7 @@ export const fetchThemes = async (): Promise<ThemeSummary[]> => {
 
 export const fetchThemeById = async (id: string): Promise<Theme> => {
     const response = await fetch(
-        `/api/themes/${id}?jellyfin_url=` + encodeURIComponent(getServerUrl() || '')
+        withBasePath(`/api/themes/${id}?jellyfin_url=` + encodeURIComponent(getServerUrl() || ''))
     );
     if (!response.ok) {
         throw new Error(`Failed to fetch theme with id: ${id}`);
@@ -47,7 +48,7 @@ export const fetchThemeById = async (id: string): Promise<Theme> => {
 
 export const createTheme = async (theme: string): Promise<{ id: string }> => {
     const response = await fetch(
-        '/api/themes?jellyfin_url=' + encodeURIComponent(getServerUrl() || ''),
+        withBasePath('/api/themes?jellyfin_url=' + encodeURIComponent(getServerUrl() || '')),
         {
             method: 'POST',
             headers: {
@@ -65,7 +66,7 @@ export const createTheme = async (theme: string): Promise<{ id: string }> => {
 
 export const deleteTheme = async (id: string): Promise<void> => {
     const response = await fetch(
-        `/api/themes/${id}?jellyfin_url=` + encodeURIComponent(getServerUrl() || ''),
+        withBasePath(`/api/themes/${id}?jellyfin_url=` + encodeURIComponent(getServerUrl() || '')),
         {
             method: 'DELETE',
             headers: {
@@ -80,7 +81,7 @@ export const deleteTheme = async (id: string): Promise<void> => {
 
 export const updateTheme = async (id: string, theme: Theme): Promise<void> => {
     const response = await fetch(
-        `/api/themes/${id}?jellyfin_url=` + encodeURIComponent(getServerUrl() || ''),
+        withBasePath(`/api/themes/${id}?jellyfin_url=` + encodeURIComponent(getServerUrl() || '')),
         {
             method: 'PUT',
             headers: {
@@ -97,7 +98,10 @@ export const updateTheme = async (id: string, theme: Theme): Promise<void> => {
 
 export const installThemeFromRepository = async (themeId: string): Promise<void> => {
     const response = await fetch(
-        `/api/themes/${themeId}/install?jellyfin_url=` + encodeURIComponent(getServerUrl() || ''),
+        withBasePath(
+            `/api/themes/${themeId}/install?jellyfin_url=` +
+                encodeURIComponent(getServerUrl() || '')
+        ),
         {
             method: 'POST',
             headers: {

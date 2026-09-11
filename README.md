@@ -127,6 +127,10 @@ Pelagica is available as a Tizen app for Samsung Smart TVs. See the [Tizen Docum
 
 Pelagica is available as a webOS app for LG Smart TVs. See the [webOS Documentation](https://pelagica.app/docs/webos) for installation instructions.
 
+### Apple TV
+
+Pelagica is available as a tvOS app for Apple TV. You can find the repository for the tvOS app with installation instructions [here](https://github.com/PelagicaApp/pelagica-atv).
+
 ## Discord
 
 For discussions about Pelagica, join the [JellyfinCommunity](https://discord.gg/VKqprjh3Wr) and head to the `#pelagica` channel.

@@ -1,3 +1,4 @@
+import { withBasePath } from '../../utils/basePath';
 import { getServerUrl } from '../../utils/localstorageCredentials';
 import type {
     SeerrItemDetails,
@@ -11,7 +12,9 @@ export async function getSeerrItemDetails(
     id: number
 ): Promise<SeerrItemDetails> {
     const response = await fetch(
-        `/api/seerr/${mediaType}/${id}?jellyfin_url=${encodeURIComponent(getServerUrl() || '')}`
+        withBasePath(
+            `/api/seerr/${mediaType}/${id}?jellyfin_url=${encodeURIComponent(getServerUrl() || '')}`
+        )
     );
     if (!response.ok) {
         throw new Error(`API request failed: ${response.statusText}`);

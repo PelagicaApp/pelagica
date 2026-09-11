@@ -59,6 +59,7 @@ export * from './hooks/useEditItemMetadata';
 export * from './hooks/useEpisodes';
 export * from './hooks/useFavorite';
 export * from './hooks/useItem';
+export * from './hooks/useItemCollections';
 export * from './hooks/useLibraryItems';
 export * from './hooks/useLike';
 export * from './hooks/useLiveTvChannels';
@@ -118,3 +119,5 @@ export * from './utils/continueWatchingLines';
 export * from './utils/timeConversion';
 export * from './utils/tmdbUrls';
 export * from './utils/randomUUID';
+export * from './utils/basePath';
+

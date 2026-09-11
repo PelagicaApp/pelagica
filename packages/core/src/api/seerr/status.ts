@@ -1,9 +1,10 @@
+import { withBasePath } from '../../utils/basePath';
 import { getServerUrl } from '../../utils/localstorageCredentials';
 
 export async function getSeerrLoginStatus(): Promise<boolean> {
     try {
         const response = await fetch(
-            '/api/seerr/status?jellyfin_url=' + encodeURIComponent(getServerUrl() || ''),
+            withBasePath('/api/seerr/status?jellyfin_url=' + encodeURIComponent(getServerUrl() || '')),
             { credentials: 'include' }
         );
         if (!response.ok) {

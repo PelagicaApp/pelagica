@@ -163,8 +163,16 @@ const PlayerControls = forwardRef<PlayerControlsHandle, PlayerControlsProps>(
                 resetHideTimeout();
             }
 
+            function handlePointerActivity() {
+                resetHideTimeout();
+            }
+
             window.addEventListener('keydown', handleKeyDown);
-            return () => window.removeEventListener('keydown', handleKeyDown);
+            window.addEventListener('mousemove', handlePointerActivity);
+            return () => {
+                window.removeEventListener('keydown', handleKeyDown);
+                window.removeEventListener('mousemove', handlePointerActivity);
+            };
         }, [resetHideTimeout, showControls, playPauseFocusKey]);
 
         useImperativeHandle(
@@ -685,6 +693,7 @@ function TrackOption({
     onClick: () => void;
 }) {
     const { ref, focused, focusSelf } = useLayerFocusable<object, HTMLButtonElement>({
+        focusOnHover: true,
         onEnterPress: () => ref.current?.click(),
     });
 

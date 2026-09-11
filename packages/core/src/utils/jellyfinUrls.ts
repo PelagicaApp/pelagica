@@ -1,3 +1,4 @@
+import { withBasePath } from './basePath';
 import { getAccessToken, getServerUrl } from './localstorageCredentials';
 import { getSupportedVideoCodecs } from './videoCodecDetection';
 import type { PlayMethod } from '../hooks/usePlaybackInfo';
@@ -437,5 +438,5 @@ export function getBackendStudioImageUrl(
     monoColor2: string
 ) {
     const params = new URLSearchParams({ mono: 'true', color: monoColor, color2: monoColor2 });
-    return `/api/studios/${encodeURIComponent(studioName)}/logo?${params.toString()}`;
+    return withBasePath(`/api/studios/${encodeURIComponent(studioName)}/logo?${params.toString()}`);
 }

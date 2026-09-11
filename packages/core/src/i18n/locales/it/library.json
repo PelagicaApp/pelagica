@@ -1,0 +1,17 @@
+{
+    "title": "Libreria",
+    "no_items_title": "Nessun elemento trovato",
+    "no_items_description": "Non ci sono elementi in questa libreria.",
+    "sort_name": "Nome",
+    "sort_date_added": "Data di aggiunta",
+    "sort_premiere_date": "Data di uscita",
+    "sort_community_rating": "Valutazione della community",
+    "sort_critic_rating": "Valutazione della critica",
+    "sort_runtime": "Durata",
+    "no_studios_found_title": "Nessuno studio trovato",
+    "no_studios_found_for_search": "Nessuno studio trovato per '{{search}}'.",
+    "no_studios_found": "Non ci sono studi in questa libreria.",
+    "clear_search": "Cancella ricerca",
+    "studios_search_placeholder": "Cerca studi...",
+    "no_libraries_found": "Nessuna libreria trovata."
+}

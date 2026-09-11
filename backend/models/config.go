@@ -67,13 +67,15 @@ type HomeScreenSection struct {
 }
 
 type ItemPageSettings struct {
-	DetailBadges        []DetailBadge  `json:"detailBadges,omitempty"`
-	EpisodeDisplay      EpisodeDisplay `json:"episodeDisplay,omitempty"`
-	ShowDownloadButton  *bool          `json:"showDownloadButton,omitempty"`
-	FavoriteButton      []BaseItemKind `json:"favoriteButton"`
-	ShowWatchlistButton *bool          `json:"showWatchlistButton,omitempty"`
-	DeleteButton        []BaseItemKind `json:"deleteButton,omitempty"`
-	AutoPlayTrailers    *bool          `json:"autoPlayTrailers,omitempty"`
+	DetailBadges        []DetailBadge        `json:"detailBadges,omitempty"`
+	EpisodeDisplay      EpisodeDisplay       `json:"episodeDisplay,omitempty"`
+	ShowDownloadButton  *bool                `json:"showDownloadButton,omitempty"`
+	FavoriteButton      []BaseItemKind       `json:"favoriteButton"`
+	ShowWatchlistButton *bool                `json:"showWatchlistButton,omitempty"`
+	DeleteButton        []BaseItemKind       `json:"deleteButton,omitempty"`
+	AutoPlayTrailers    *bool                `json:"autoPlayTrailers,omitempty"`
+	ShowCollections     *bool                `json:"showCollections,omitempty"`
+	CollectionSort      CollectionSortOption `json:"collectionSort,omitempty"`
 }
 
 type SectionItemsConfig struct {
@@ -98,6 +100,10 @@ type DetailBadge string
 type DetailField string
 
 type EpisodeDisplay string
+
+// CollectionSortOption controls the order of items within collection rows
+// on item detail pages: "PremiereDateAsc", "PremiereDateDesc" or "Random".
+type CollectionSortOption string
 
 type ItemSortBy string
 

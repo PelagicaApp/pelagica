@@ -1,9 +1,11 @@
 import { useTranslation } from 'react-i18next';
 import {
+    COLLECTION_SORT_OPTIONS,
     DETAIL_BADGES,
     EPISODE_DISPLAYS,
     SERIES_VIEWS,
     type AppConfig,
+    type CollectionSortOption,
     type DetailBadge,
 } from '@pelagica/core';
 import type { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models';
@@ -68,6 +70,25 @@ export const ItemPageTab = ({
                 checked={itemPage.autoPlayTrailers || false}
                 onChange={(checked) => updateItemPage({ autoPlayTrailers: checked })}
             />
+            <BooleanInput
+                label={t('show_collections_label')}
+                checked={itemPage.showCollections !== false}
+                onChange={(checked) => updateItemPage({ showCollections: checked })}
+            />
+            {itemPage.showCollections !== false && (
+                <SelectInput
+                    label={t('collection_sort_label')}
+                    options={COLLECTION_SORT_OPTIONS.map((option) => ({
+                        value: option,
+                        label: t(`collection_sort_${option}`),
+                    }))}
+                    value={itemPage.collectionSort || 'PremiereDateAsc'}
+                    onChange={(value) =>
+                        updateItemPage({ collectionSort: value as CollectionSortOption })
+                    }
+                    description={t('collection_sort_description')}
+                />
+            )}
             <MultiSelectInput
                 label={t('favorite_button_types_label')}
                 options={[

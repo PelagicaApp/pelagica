@@ -13,6 +13,7 @@ import { ScrollToTop } from './components/ScrollToTop.tsx';
 import { DesktopDragRegion } from './components/DesktopDragRegion.tsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from './components/theme-provider.tsx';
+import { BASE_PATH } from '@pelagica/core';
 
 const HomePage = lazy(() => import('./pages/Home/HomePage.tsx'));
 const LoginPage = lazy(() => import('./pages/Login/LoginPage.tsx'));
@@ -44,7 +45,7 @@ export default function App() {
             <ThemeProvider>
                 <MusicPlaybackProvider>
                     <SearchProvider>
-                        <BrowserRouter>
+                        <BrowserRouter basename={BASE_PATH || undefined}>
                             <AdminItemDialogsProvider>
                                 <SeerrItemDialogProvider>
                                     <ScrollToTop />

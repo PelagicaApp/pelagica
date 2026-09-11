@@ -1,9 +1,12 @@
+import { withBasePath } from '../../utils/basePath';
 import { getServerUrl } from '../../utils/localstorageCredentials';
 import type { SeerrSearchResponse, SeerrSearchResultItem } from './types';
 
 export async function searchSeerr(query: string): Promise<SeerrSearchResultItem[]> {
     const response = await fetch(
-        `/api/seerr/search?query=${encodeURIComponent(query)}&jellyfin_url=${encodeURIComponent(getServerUrl() || '')}`
+        withBasePath(
+            `/api/seerr/search?query=${encodeURIComponent(query)}&jellyfin_url=${encodeURIComponent(getServerUrl() || '')}`
+        )
     );
     if (!response.ok) {
         throw new Error(`API request failed: ${response.statusText}`);

@@ -3,8 +3,11 @@ import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
+const basePath = (process.env.BASE_PATH ?? '').replace(/\/+$/, '');
+
 // https://vite.dev/config/
 export default defineConfig({
+    base: `${basePath}/`,
     plugins: [react(), tailwindcss()],
     resolve: {
         alias: {
@@ -15,10 +18,10 @@ export default defineConfig({
         port: 3000,
         allowedHosts: ['mbjan.local'],
         proxy: {
-            '/api': {
+            [`${basePath}/api`]: {
                 target: 'http://localhost:4321/api',
                 changeOrigin: true,
-                rewrite: (path) => path.replace(/^\/api/, ''), // remove /api prefix when forwarding to backend
+                rewrite: (path) => path.replace(new RegExp(`^${basePath}/api`), ''), // remove /api prefix when forwarding to backend
             },
         },
     },
