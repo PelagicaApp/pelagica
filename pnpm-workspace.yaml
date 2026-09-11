@@ -7,3 +7,9 @@ packages:
 allowBuilds:
   esbuild: false
   lfa-ponyfill: false
+
+overrides:
+  '@xmldom/xmldom': '>=0.8.15 <0.9.0'
+  hono: '>=4.13.5'
+  fast-uri: '>=3.1.6 <4.0.0'
+  qs: '>=6.16.0'
