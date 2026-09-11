@@ -1,0 +1,1 @@
+import{fr as e}from"./useMusicPlayback-NwTqiK8v.js";import{r as t,t as n}from"./MusicItemContextMenu-OyUr8NrN.js";import{t as r}from"./GeneraItemContextMenu-D0uEHxOF.js";var i=e(),a=({item:e,children:a,playLink:o})=>t(e.Type)?(0,i.jsx)(n,{item:e,children:a}):(0,i.jsx)(r,{item:e,playLink:o,children:a});export{a as t};
