@@ -13,7 +13,11 @@ interface GenresCardProps {
     className?: string;
 }
 
-const GenreCard = memo(function GenreCard({ genreWithItem, autoFocus, className }: GenresCardProps) {
+const GenreCard = memo(function GenreCard({
+    genreWithItem,
+    autoFocus,
+    className,
+}: GenresCardProps) {
     const { t } = useTranslation('item');
     const [posterError, setPosterError] = useState(false);
     const posterUrl = getPrimaryImageUrl(genreWithItem.item?.Id || '', {
