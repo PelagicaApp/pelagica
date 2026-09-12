@@ -71,7 +71,7 @@ const Settings = () => {
 
     return (
         <div className="flex flex-col items-start gap-6">
-            <h1 className="text-2xl font-semibold">Pelagica</h1>
+            <h1 className="text-2xl font-semibold -mb-2">{t('settings:title')}</h1>
 
             <SettingsSection title={t('settings:account_section_title')}>
                 <div className="flex items-center justify-between gap-2">
