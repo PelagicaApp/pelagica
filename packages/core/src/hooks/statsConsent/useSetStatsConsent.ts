@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { setStatsConsent } from '../../api/stats';
+import { checkAndSendTvStatsPing } from '../../collector/tvStatsCollector';
 
 export function useSetStatsConsent() {
     const queryClient = useQueryClient();
@@ -10,6 +11,7 @@ export function useSetStatsConsent() {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['stats-consent'] });
+            checkAndSendTvStatsPing();
         },
     });
 }

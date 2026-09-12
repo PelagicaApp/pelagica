@@ -40,6 +40,8 @@ jobs:
               run: task tizen:install
 
             - name: Build Tizen bundle
+              env:
+                  VITE_PING_TOKEN: ${{ secrets.STATS_TOKEN }}
               run: task tizen:build
 
             - name: Cache Tizen Studio CLI installer

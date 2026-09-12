@@ -43,6 +43,8 @@ jobs:
               run: task webos:install
 
             - name: Build webOS bundle
+              env:
+                  VITE_PING_TOKEN: ${{ secrets.STATS_TOKEN }}
               run: task webos:build
 
             - name: Package .ipk
