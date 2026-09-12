@@ -2,6 +2,7 @@
     "previous": "Précédent",
     "next": "Suivant",
     "stats_consent_title": "Aidez-nous à compter",
+    "stats_consent_message": "Nous n'avons aucun moyen de savoir combien de personnes utilisent Pelagica, à moins que vous ne nous le disiez. En acceptant, un ping quotidien est envoyé avec votre version, votre plateforme et un identifiant aléatoire. C'est tout. Les résultats sont publics sur <anchor>stats.pelagica.app</anchor>.",
     "stats_consent_reject": "Non merci",
     "stats_consent_accept": "Accepter",
     "cancel": "Annuler",

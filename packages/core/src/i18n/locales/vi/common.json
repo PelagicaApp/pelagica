@@ -2,7 +2,7 @@
     "previous": "Trước đó",
     "next": "Tiếp theo",
     "stats_consent_title": "Hỗ trợ thống kê",
-    "stats_consent_message": "Chúng tôi không thể biết có bao nhiêu người dùng Pelagica nếu bạn không cho chúng tôi biết. Nếu đồng ý, ứng dụng sẽ gửi dữ liệu hằng ngày gồm phiên bản đang dùng và một ID ngẫu nhiên. Không có dữ liệu nào khác được gửi. Kết quả thống kê được công khai tại <anchor>stats.pelagica.app</anchor>.",
+    "stats_consent_message": "Chúng tôi không thể biết có bao nhiêu người dùng Pelagica nếu bạn không cho chúng tôi biết. Nếu đồng ý, ứng dụng sẽ gửi dữ liệu hằng ngày gồm phiên bản đang dùng, nền tảng thiết bị và một ID ngẫu nhiên. Không có dữ liệu nào khác được gửi. Kết quả thống kê được công khai tại <anchor>stats.pelagica.app</anchor>.",
     "stats_consent_reject": "Từ chối",
     "stats_consent_accept": "Chấp nhận",
     "cancel": "Hủy",
