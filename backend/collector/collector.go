@@ -147,6 +147,7 @@ func sendPing(baseURL, instanceID, version, token string) error {
 	body := map[string]string{
 		"instance_id": instanceID,
 		"version":     version,
+		"client_type": "web",
 	}
 	if token != "" {
 		body["token"] = token
