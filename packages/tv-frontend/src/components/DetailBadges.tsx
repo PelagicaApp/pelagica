@@ -25,7 +25,7 @@ const DetailBadges = ({ item, appConfig }: DetailBadgesProps) => {
                 <Badge key={badgeType} variant={'outline'}>
                     {badgeValue.kind === 'icon-text' ? (
                         <div className="flex items-center gap-1">
-                            {badgeValue.icon === 'star' ? <Star size={14} /> : <Award size={14} />}
+                            {badgeValue.icon === 'star' ? <Star /> : <Award />}
                             {badgeValue.text}
                         </div>
                     ) : (

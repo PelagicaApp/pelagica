@@ -254,13 +254,6 @@ const SeriesDetail = () => {
             <ItemHero
                 item={item}
                 isLoading={isLoading}
-                extraBadge={
-                    item?.ChildCount && (
-                        <Badge variant="outline">
-                            {t('common:season_count', { count: item.ChildCount })}
-                        </Badge>
-                    )
-                }
                 mainButtonRow={
                     item && (
                         <>

@@ -106,6 +106,7 @@ export * from './hooks/useUserViews';
 export * from './types/items';
 export * from './types/locales';
 export * from './utils/authErrorHandler';
+export * from './utils/detailBadges';
 export * from './utils/deviceId';
 export * from './utils/discoverServers';
 export * from './utils/genreItemCache';
@@ -120,4 +121,5 @@ export * from './utils/timeConversion';
 export * from './utils/tmdbUrls';
 export * from './utils/randomUUID';
 export * from './utils/basePath';
+export * from './utils/videoQuality';
 
