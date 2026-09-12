@@ -27,6 +27,7 @@ import ItemRow from '../components/ItemRow';
 import { Skeleton } from '../components/ui/skeleton';
 import TrailerButton from '../components/TrailerButton';
 import { buildPlayerUrl } from '@/lib/playerUrl';
+import PlayStateButton from '../components/PlayStateButton';
 
 const EpisodeCard = memo(function EpisodeCard({
     episode,
@@ -261,6 +262,7 @@ const SeriesDetail = () => {
                             <TrailerButton item={item} />
                             <WatchlistButton item={item} />
                             <FavoriteButton item={item} />
+                            <PlayStateButton itemId={item.Id || ''} userId={getUserId() || ''} />
                         </>
                     )
                 }
