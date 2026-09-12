@@ -26,12 +26,14 @@ func newAssetHandler() http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /api/studios/{name}/logo", handleStudioLogo)
 	registerSeerRoutes(mux)
+	registerStatsRoutes(mux)
 	mux.Handle("/", application.AssetFileServerFS(assets))
 	return mux
 }
 
 func main() {
 	initStudiosDB()
+	startStatsCollector()
 
 	windowService := &WindowService{}
 	appIconService := &AppIconService{}
