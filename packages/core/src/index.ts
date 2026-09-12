@@ -122,4 +122,4 @@ export * from './utils/tmdbUrls';
 export * from './utils/randomUUID';
 export * from './utils/basePath';
 export * from './utils/videoQuality';
-
+export * from './utils/sortCollectionItems';
