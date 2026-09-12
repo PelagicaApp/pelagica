@@ -95,9 +95,6 @@ const DetailBadges = ({ item, appConfig }: DetailBadgesProps) => {
     const { t } = useTranslation('item');
     const detailBadges = appConfig.itemPage?.detailBadges;
 
-    console.log('DetailBadges:', detailBadges);
-    console.log('Item:', item.CriticRating);
-
     if (!detailBadges || detailBadges.length === 0) return null;
 
     const badgeElements = detailBadges
