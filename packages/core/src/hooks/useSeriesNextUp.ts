@@ -8,9 +8,9 @@ export function useSeriesNextUp(
     seriesId: string | null | undefined,
     userId: string | null | undefined
 ) {
-    return useQuery<BaseItemDto | undefined>({
+    return useQuery<BaseItemDto | null>({
         queryKey: ['seriesNextUp', seriesId, userId],
-        queryFn: async (): Promise<BaseItemDto | undefined> => {
+        queryFn: async (): Promise<BaseItemDto | null> => {
             const api = getApi();
             const tvShowsApi = getShowApi(api);
             const response = await tvShowsApi.getNextUp({
@@ -19,7 +19,7 @@ export function useSeriesNextUp(
                 limit: 1,
                 enableUserData: true,
             });
-            return response.data.Items?.[0];
+            return response.data.Items?.[0] ?? null;
         },
         enabled: !!seriesId && !!userId,
         ...getRetryConfig(),
