@@ -96,6 +96,7 @@ export * from './hooks/useSeerrSearch';
 export * from './hooks/useSeriesNextUp';
 export * from './hooks/useServerAddress';
 export * from './hooks/useServerBranding';
+export * from './hooks/useServerInfo';
 export * from './hooks/useSession';
 export * from './hooks/useSimilarItems';
 export * from './hooks/useStudioItems';

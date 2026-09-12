@@ -1,4 +1,10 @@
-import { clearCredentials, getServerUrl, useCurrentUser } from '@pelagica/core';
+import {
+    clearCredentials,
+    getServerUrl,
+    getUserProfileImageUrl,
+    useCurrentUser,
+    useServerInfo,
+} from '@pelagica/core';
 import i18n, { SUPPORTED_LANGUAGES } from '@pelagica/core/i18n';
 import { useTranslation } from 'react-i18next';
 import FocusableButton from '../components/FocusableButton';
@@ -14,6 +20,7 @@ import pkg from '../../package.json' with { type: 'json' };
 import { clearLogosCache } from '../lib/studio-logos';
 import { toast } from '../components/ui/toast';
 import { useQueryClient } from '@tanstack/react-query';
+import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 
 const SettingsSection = ({
     title,
@@ -44,28 +51,42 @@ const Settings = () => {
     const { t } = useTranslation(['settings', 'sidebar', 'common']);
     const queryClient = useQueryClient();
     const serverUrl = getServerUrl();
-    const { data: user, isLoading } = useCurrentUser();
+    const { data: user } = useCurrentUser();
+    const { data: serverInfo } = useServerInfo();
     const navigate = useNavigate();
     const { ref: aboutRef, focused: aboutFocused } = useFocusable<object, HTMLDivElement>({
         focusOnHover: true,
     });
     useScrollIntoViewOnFocus(aboutRef, aboutFocused);
 
+    const profileImageUrl = getUserProfileImageUrl(user?.Id ?? '');
+    const userName = user?.Name ?? '';
+    const initials = userName
+        .split(' ')
+        .map((n) => n[0])
+        .join('')
+        .toUpperCase();
+
+    const serverInfoLine = serverInfo ? `${serverInfo.ServerName} ⋅ ${serverUrl}` : serverUrl;
+
     return (
         <div className="flex flex-col items-start gap-6">
             <h1 className="text-2xl font-semibold">Pelagica</h1>
 
             <SettingsSection title={t('settings:account_section_title')}>
-                <div className="flex flex-col gap-2">
-                    <p className="text-muted-foreground">
-                        {t('settings:server_label')}: {serverUrl || t('settings:not_configured')}
-                    </p>
-                    <p className="text-muted-foreground">
-                        {t('settings:signed_in_as')}:{' '}
-                        {isLoading
-                            ? t('common:loading')
-                            : (user?.Name ?? t('sidebar:unknown_user'))}
-                    </p>
+                <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                        <Avatar className="h-11 w-11 rounded-lg">
+                            <AvatarImage src={profileImageUrl} alt={userName} />
+                            <AvatarFallback className="rounded-lg text-xs">
+                                {initials}
+                            </AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col">
+                            <span className="text-lg font-medium">{userName}</span>
+                            <span className="text-xs text-muted-foreground">{serverInfoLine}</span>
+                        </div>
+                    </div>
                     <div className="flex flex-wrap gap-2">
                         <FocusableButton
                             onClick={() => {
