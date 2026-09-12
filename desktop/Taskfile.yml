@@ -23,7 +23,7 @@ tasks:
             - wails3 generate bindings -ts -d ../frontend/src/bindings ./...
 
     package:macos:
-        desc: Build a macOS .app bundle for the desktop app (unsigned/ad-hoc)
+        desc: 'Build a macOS .app bundle for the desktop app (ad-hoc signed by default; set CODESIGN_IDENTITY/CODESIGN_OPTIONS env vars for real signing, e.g. in CI)'
         deps:
             - assets
         preconditions:
@@ -38,7 +38,7 @@ tasks:
             - cp bin/pelagica bin/Pelagica.app/Contents/MacOS/
             - cp build/darwin/Info.plist bin/Pelagica.app/Contents/
             - xattr -cr bin/Pelagica.app # strips resource forks/quarantine flags icon tools leave behind, which codesign rejects
-            - codesign --force --deep --sign - bin/Pelagica.app
+            - codesign --force --deep ${CODESIGN_OPTIONS:+--options "$CODESIGN_OPTIONS"} --sign "${CODESIGN_IDENTITY:--}" bin/Pelagica.app
 
     installer:macos:
         desc: Build a macOS .dmg installer for the desktop app (unsigned), with a drag-to-Applications layout

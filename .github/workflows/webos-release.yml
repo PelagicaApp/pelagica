@@ -15,6 +15,8 @@ jobs:
     webos:
         name: Build and package webOS app
         runs-on: ubuntu-latest
+        env:
+            TAG: ${{ github.event.release.tag_name }}
 
         steps:
             - name: Checkout repository
@@ -47,7 +49,7 @@ jobs:
               run: task webos:package
 
             - name: Rename asset
-              run: mv webos/*.ipk pelagica-webos.ipk
+              run: mv webos/*.ipk "pelagica-webos-${TAG}.ipk"
 
             - name: Generate homebrew app store manifest
               run: |
@@ -55,7 +57,8 @@ jobs:
                   VERSION=$(jq -r '.version' webos/public/appinfo.json)
                   TITLE=$(jq -r '.title' webos/public/appinfo.json)
                   DESCRIPTION=$(jq -r '.appDescription' webos/public/appinfo.json)
-                  SHA256=$(sha256sum pelagica-webos.ipk | cut -d ' ' -f1)
+                  IPK_NAME="pelagica-webos-${TAG}.ipk"
+                  SHA256=$(sha256sum "$IPK_NAME" | cut -d ' ' -f1)
 
                   jq -n \
                       --arg id "$APP_ID" \
@@ -63,6 +66,7 @@ jobs:
                       --arg title "$TITLE" \
                       --arg description "$DESCRIPTION" \
                       --arg sha256 "$SHA256" \
+                      --arg ipkUrl "$IPK_NAME" \
                       '{
                           id: $id,
                           version: $version,
@@ -72,13 +76,14 @@ jobs:
                           iconUri: "https://raw.githubusercontent.com/PelagicaApp/pelagica/refs/heads/main/.github/assets/logo/logo_webOS_160.png",
                           sourceUrl: "https://github.com/PelagicaApp/pelagica",
                           rootRequired: false,
-                          ipkUrl: "pelagica-webos.ipk",
+                          ipkUrl: $ipkUrl,
                           ipkHash: { sha256: $sha256 }
                       }' > "$APP_ID.manifest.json"
 
                   echo "MANIFEST_FILE=$APP_ID.manifest.json" >> "$GITHUB_ENV"
+                  echo "IPK_NAME=$IPK_NAME" >> "$GITHUB_ENV"
 
             - name: Upload assets to release
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: gh release upload "${{ github.event.release.tag_name }}" pelagica-webos.ipk "$MANIFEST_FILE" --clobber
+              run: gh release upload "$TAG" "$IPK_NAME" "$MANIFEST_FILE" --clobber
