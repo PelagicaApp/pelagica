@@ -4,7 +4,7 @@ import { getEndsAt, ticksToReadableTime } from '@pelagica/core';
 import { getVideoQualityLabel } from '@/utils/videoQuality';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import type { TFunction } from 'i18next';
-import { Star } from 'lucide-react';
+import { Award, Star } from 'lucide-react';
 import type React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -36,6 +36,13 @@ function getDetailBadge(
                 <div className="flex items-center gap-1">
                     <Star size={14} />
                     {item.CommunityRating.toFixed(1)}
+                </div>
+            ) : null;
+        case 'CriticsRating':
+            return item.CriticRating ? (
+                <div className="flex items-center gap-1">
+                    <Award size={14} />
+                    {item.CriticRating.toFixed(0)}%
                 </div>
             ) : null;
         case 'PlayDuration':
@@ -87,6 +94,9 @@ interface DetailBadgesProps {
 const DetailBadges = ({ item, appConfig }: DetailBadgesProps) => {
     const { t } = useTranslation('item');
     const detailBadges = appConfig.itemPage?.detailBadges;
+
+    console.log('DetailBadges:', detailBadges);
+    console.log('Item:', item.CriticRating);
 
     if (!detailBadges || detailBadges.length === 0) return null;
 
