@@ -15,6 +15,8 @@ jobs:
     macos:
         name: Build macOS app and installer
         runs-on: macos-latest
+        env:
+            TAG: ${{ github.event.release.tag_name }}
 
         steps:
             - name: Checkout repository
@@ -116,16 +118,16 @@ jobs:
                   arch=$(uname -m)
                   if [ "$arch" = "x86_64" ]; then arch="amd64"; fi
                   echo "ARCH=$arch" >> "$GITHUB_ENV"
-                  zip -r "pelagica-macos-${arch}.zip" Pelagica.app
-                  mv Pelagica.dmg "pelagica-macos-${arch}.dmg"
+                  zip -r "pelagica-macos-${arch}-${TAG}.zip" Pelagica.app
+                  mv Pelagica.dmg "pelagica-macos-${arch}-${TAG}.dmg"
 
             - name: Upload assets to release
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: |
-                  gh release upload "${{ github.event.release.tag_name }}" \
-                    "desktop/bin/pelagica-macos-${ARCH}.zip" \
-                    "desktop/bin/pelagica-macos-${ARCH}.dmg" \
+                  gh release upload "$TAG" \
+                    "desktop/bin/pelagica-macos-${ARCH}-${TAG}.zip" \
+                    "desktop/bin/pelagica-macos-${ARCH}-${TAG}.dmg" \
                     --clobber
 
             - name: Clean up keychain
@@ -135,6 +137,8 @@ jobs:
     windows:
         name: Build Windows installer
         runs-on: windows-latest
+        env:
+            TAG: ${{ github.event.release.tag_name }}
 
         steps:
             - name: Checkout repository
@@ -179,16 +183,19 @@ jobs:
             - name: Rename asset
               working-directory: desktop/bin
               shell: bash
-              run: mv Pelagica-amd64-installer.exe pelagica-windows-amd64-installer.exe
+              run: mv Pelagica-amd64-installer.exe "pelagica-windows-amd64-installer-${TAG}.exe"
 
             - name: Upload asset to release
+              shell: bash
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: gh release upload "${{ github.event.release.tag_name }}" desktop/bin/pelagica-windows-amd64-installer.exe --clobber
+              run: gh release upload "$TAG" "desktop/bin/pelagica-windows-amd64-installer-${TAG}.exe" --clobber
 
     linux:
         name: Build Linux installers
         runs-on: ubuntu-latest
+        env:
+            TAG: ${{ github.event.release.tag_name }}
 
         steps:
             - name: Checkout repository
@@ -230,18 +237,18 @@ jobs:
             - name: Rename assets
               working-directory: desktop/bin
               run: |
-                  mv pelagica.deb pelagica-linux-amd64.deb
-                  mv pelagica.pkg.tar.zst pelagica-linux-amd64.pkg.tar.zst
-                  mv pelagica-x86_64.AppImage pelagica-linux-amd64.AppImage
+                  mv pelagica.deb "pelagica-linux-amd64-${TAG}.deb"
+                  mv pelagica.pkg.tar.zst "pelagica-linux-amd64-${TAG}.pkg.tar.zst"
+                  mv pelagica-x86_64.AppImage "pelagica-linux-amd64-${TAG}.AppImage"
 
             - name: Upload assets to release
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: |
-                  gh release upload "${{ github.event.release.tag_name }}" \
-                    "desktop/bin/pelagica-linux-amd64.deb" \
-                    "desktop/bin/pelagica-linux-amd64.pkg.tar.zst" \
-                    "desktop/bin/pelagica-linux-amd64.AppImage" \
+                  gh release upload "$TAG" \
+                    "desktop/bin/pelagica-linux-amd64-${TAG}.deb" \
+                    "desktop/bin/pelagica-linux-amd64-${TAG}.pkg.tar.zst" \
+                    "desktop/bin/pelagica-linux-amd64-${TAG}.AppImage" \
                     --clobber
 
     notify-tap:
