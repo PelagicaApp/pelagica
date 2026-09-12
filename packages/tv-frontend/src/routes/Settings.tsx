@@ -9,7 +9,7 @@ import { useLayerFocusable as useFocusable } from '@/router/useLayerFocusable';
 import { cn } from '@/lib/utils';
 import { FOCUS_RING_LARGE } from '@/lib/focus-styles';
 import { useScrollIntoViewOnFocus } from '@/lib/use-scroll-into-view-on-focus';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import pkg from '../../package.json' with { type: 'json' };
 import { clearLogosCache } from '../lib/studio-logos';
 import { toast } from '../components/ui/toast';
@@ -30,12 +30,12 @@ const SettingsSection = ({
 
     return (
         <FocusContext.Provider value={focusKey}>
-            <Card className="w-full max-w-2xl" ref={ref}>
-                <CardHeader>
-                    <CardTitle>{title}</CardTitle>
-                </CardHeader>
-                <CardContent>{children}</CardContent>
-            </Card>
+            <div className="flex flex-col gap-2 w-full">
+                <span className="text-xs text-muted-foreground">{title}</span>
+                <Card className="w-full" ref={ref}>
+                    <CardContent>{children}</CardContent>
+                </Card>
+            </div>
         </FocusContext.Provider>
     );
 };
@@ -124,7 +124,7 @@ const Settings = () => {
                     )}
                 >
                     <p className="text-muted-foreground">
-                        {t('settings:version_label')}: {pkg.version}
+                        {t('settings:version_label')} {pkg.version}
                     </p>
                 </div>
             </SettingsSection>
