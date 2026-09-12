@@ -111,12 +111,6 @@ brew trust PelagicaApp/pelagica
 brew install --cask pelagica
 ```
 
-Since the app is not notarized, clear the quarantine attribute once after installing:
-
-```sh
-xattr -dr com.apple.quarantine "/Applications/Pelagica.app"
-```
-
 Later updates are just `brew upgrade --cask pelagica`.
 
 ### Samsung Tizen
