@@ -1,6 +1,6 @@
 import { getApi } from '../api/getApi';
 import { useQuery } from '@tanstack/react-query';
-import { getMediaSegmentsApi } from '@jellyfin/sdk/lib/utils/api/media-segments-api';
+import { getMediaSegmentApi } from '@jellyfin/sdk/lib/utils/api/media-segment-api';
 import type { MediaSegmentDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { getRetryConfig } from '../utils/authErrorHandler';
 
@@ -9,7 +9,7 @@ export function useMediaSegments(itemId: string | null | undefined) {
         queryKey: ['mediaSegments', itemId],
         queryFn: async (): Promise<MediaSegmentDto[]> => {
             const api = getApi();
-            const mediaSegmentsApi = getMediaSegmentsApi(api);
+            const mediaSegmentsApi = getMediaSegmentApi(api);
             const response = await mediaSegmentsApi.getItemSegments({
                 itemId: itemId!,
             });

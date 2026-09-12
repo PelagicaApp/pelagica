@@ -1,6 +1,6 @@
 import { getApi } from '../api/getApi';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { getUserLibraryApi } from '@jellyfin/sdk/lib/utils/api/user-library-api';
+import { getUserDataApi } from '@jellyfin/sdk/lib/utils/api/user-data-api';
 import { useUserLibraryItem } from './useUserLibraryItem';
 
 export function useLike(itemId: string | null | undefined) {
@@ -14,8 +14,8 @@ export function useLike(itemId: string | null | undefined) {
         mutationFn: async (like: boolean) => {
             if (!itemId) throw new Error('Item ID is required');
             const api = getApi();
-            const userLibraryApi = getUserLibraryApi(api);
-            await userLibraryApi.updateUserItemRating({ itemId, likes: like });
+            const userDataApi = getUserDataApi(api);
+            await userDataApi.updateUserItemRating({ itemId, likes: like });
             return like;
         },
         onSuccess: () => {

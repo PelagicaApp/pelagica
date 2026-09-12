@@ -1,6 +1,6 @@
 import { getApi } from '../api/getApi';
 import { getRetryConfig } from '../utils/authErrorHandler';
-import { getItemsApi } from '@jellyfin/sdk/lib/utils/api/items-api';
+import { getLibraryApi } from '@jellyfin/sdk/lib/utils/api/library-api';
 import { useQuery } from '@tanstack/react-query';
 
 export function usePersonFilmography(personId: string | null | undefined, userId?: string) {
@@ -8,7 +8,7 @@ export function usePersonFilmography(personId: string | null | undefined, userId
         queryKey: ['personFilmography', personId, userId],
         queryFn: async () => {
             const api = getApi();
-            const itemsApi = getItemsApi(api);
+            const itemsApi = getLibraryApi(api);
 
             const response = await itemsApi.getItems({
                 personIds: [personId!],

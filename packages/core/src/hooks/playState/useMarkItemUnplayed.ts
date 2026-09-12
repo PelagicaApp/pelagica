@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { getPlaystateApi } from '@jellyfin/sdk/lib/utils/api/playstate-api';
+import { getUserDataApi } from '@jellyfin/sdk/lib/utils/api/user-data-api';
 import { getApi } from '../../api/getApi';
 
 interface MarkUnplayedInput {
@@ -15,7 +15,7 @@ export function useMarkItemUnplayed() {
             if (!userId) throw new Error('User ID is required');
 
             const api = getApi();
-            const playstateApi = getPlaystateApi(api);
+            const playstateApi = getUserDataApi(api);
 
             await playstateApi.markUnplayedItem({
                 userId,

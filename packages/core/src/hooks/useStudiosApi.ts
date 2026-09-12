@@ -1,7 +1,7 @@
 import { getApi } from '../api/getApi';
 import { withBasePath } from '../utils/basePath';
 import { getAccessToken, getServerUrl } from '../utils/localstorageCredentials';
-import { getItemsApi } from '@jellyfin/sdk/lib/utils/api/items-api';
+import { getLibraryApi } from '@jellyfin/sdk/lib/utils/api/library-api';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 export interface StudioSummary {
@@ -32,7 +32,7 @@ async function fetchStudiosDirectlyFromJellyfin({
     search,
 }: StudiosQueryOptions): Promise<StudiosResult> {
     const api = getApi();
-    const itemsApi = getItemsApi(api);
+    const itemsApi = getLibraryApi(api);
 
     const counts = new Map<string, StudioSummary>();
     let pageStart = 0;

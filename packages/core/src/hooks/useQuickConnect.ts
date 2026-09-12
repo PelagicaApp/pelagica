@@ -1,15 +1,14 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createApi } from '../api/jellyfinClient';
 import { getApi } from '../api/getApi';
-import { getQuickConnectApi } from '@jellyfin/sdk/lib/utils/api/quick-connect-api';
-import { getUserApi } from '@jellyfin/sdk/lib/utils/api/user-api';
+import { getAuthenticationApi } from '@jellyfin/sdk/lib/utils/api/authentication-api';
 import { saveCredentials } from '../utils/localstorageCredentials';
 
 export function useQuickConnectInitiate() {
     return useMutation({
         mutationFn: async (server: string) => {
             const api = createApi(server);
-            const res = await getQuickConnectApi(api).initiateQuickConnect();
+            const res = await getAuthenticationApi(api).initiateQuickConnect();
             return res.data;
         },
     });
@@ -25,7 +24,7 @@ export function useQuickConnectStatus(
         queryFn: async () => {
             if (!secret) throw new Error('No secret provided');
             const api = createApi(server);
-            const res = await getQuickConnectApi(api).getQuickConnectState({ secret });
+            const res = await getAuthenticationApi(api).getQuickConnectState({ secret });
             return res.data;
         },
         enabled: enabled && !!secret,
@@ -38,7 +37,7 @@ export function useQuickConnectAuthenticate() {
     return useMutation({
         mutationFn: async ({ server, secret }: { server: string; secret: string }) => {
             const api = createApi(server);
-            const res = await getUserApi(api).authenticateWithQuickConnect({
+            const res = await getAuthenticationApi(api).authenticateWithQuickConnect({
                 quickConnectDto: {
                     Secret: secret,
                 },
@@ -59,7 +58,7 @@ export function useAuthorizeQuickConnect() {
         mutationFn: async ({ code }: { code: string }) => {
             if (!code) throw new Error('No code provided');
             const api = getApi();
-            const res = await getQuickConnectApi(api).authorizeQuickConnect({ code });
+            const res = await getAuthenticationApi(api).authorizeQuickConnect({ code });
             return res.data;
         },
     });

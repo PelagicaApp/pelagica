@@ -1,6 +1,6 @@
 import { getApi } from '../api/getApi';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { getItemRefreshApi } from '@jellyfin/sdk/lib/utils/api/item-refresh-api';
+import { getLibraryApi } from '@jellyfin/sdk/lib/utils/api/library-api';
 import type { MetadataRefreshMode } from '@jellyfin/sdk/lib/generated-client/models';
 
 export interface RefreshItemMetadataInput {
@@ -27,7 +27,7 @@ export function useRefreshItemMetadata(onSuccess?: () => void) {
             if (!itemId) throw new Error('Item ID is required');
 
             const api = getApi();
-            const itemRefreshApi = getItemRefreshApi(api);
+            const itemRefreshApi = getLibraryApi(api);
 
             await itemRefreshApi.refreshItem({
                 itemId,

@@ -1,6 +1,6 @@
 import { getApi } from '../api/getApi';
 import { useQuery } from '@tanstack/react-query';
-import { getItemsApi } from '@jellyfin/sdk/lib/utils/api/items-api';
+import { getLibraryApi } from '@jellyfin/sdk/lib/utils/api/library-api';
 import type { SectionItemsConfig } from './useConfig';
 import type { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models';
 import { getRetryConfig } from '../utils/authErrorHandler';
@@ -14,7 +14,7 @@ export function useMediaBarItems(items?: SectionItemsConfig) {
         queryKey: ['mediaBarItems', items],
         queryFn: async () => {
             const api = getApi();
-            const itemsApi = getItemsApi(api);
+            const itemsApi = getLibraryApi(api);
             const response = await itemsApi.getItems({
                 parentId: items?.libraryId,
                 sortBy: items?.sortBy || ['Random'],

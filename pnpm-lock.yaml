@@ -26,8 +26,8 @@ importers:
         specifier: ^3.2.2
         version: 3.2.2(react@19.2.8)
       '@jellyfin/sdk':
-        specifier: ^0.13.0
-        version: 0.13.0(axios@1.19.0)
+        specifier: ^1.0.0
+        version: 1.0.0(axios@1.19.0)
       '@pelagica/core':
         specifier: workspace:*
         version: link:../packages/core
@@ -207,8 +207,8 @@ importers:
   packages/core:
     dependencies:
       '@jellyfin/sdk':
-        specifier: ^0.13.0
-        version: 0.13.0(axios@1.19.0)
+        specifier: ^1.0.0
+        version: 1.0.0(axios@1.19.0)
       '@tanstack/react-query':
         specifier: ^5.101.0
         version: 5.101.4(react@19.2.8)
@@ -247,8 +247,8 @@ importers:
         specifier: ^5.3.0
         version: 5.3.0
       '@jellyfin/sdk':
-        specifier: ^0.13.0
-        version: 0.13.0(axios@1.19.0)
+        specifier: ^1.0.0
+        version: 1.0.0(axios@1.19.0)
       '@noriginmedia/norigin-spatial-navigation':
         specifier: ^3.3.0
         version: 3.3.0(react@19.2.8)
@@ -711,8 +711,8 @@ packages:
     resolution: {integrity: sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==}
     engines: {node: '>=18.18'}
 
-  '@jellyfin/sdk@0.13.0':
-    resolution: {integrity: sha512-oiBAOXH6s+dKdReSsYgNktBDzbxtg4JVWhEzIxZSxKcWMdSKmBtK41MhXRO7IWAC40DguKUm3nU/Z493qPAlWA==}
+  '@jellyfin/sdk@1.0.0':
+    resolution: {integrity: sha512-bu7EbMxEz+mH2N/v8Oj/dDCQQvTmEVTZBzKhYgwpKrL9l63LMZvjY2gvnU4imMi9389kzh0LQD75MzMtcoDJtA==}
     peerDependencies:
       axios: ^1.12.0
 
@@ -4143,7 +4143,7 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.3': {}
 
-  '@jellyfin/sdk@0.13.0(axios@1.19.0)':
+  '@jellyfin/sdk@1.0.0(axios@1.19.0)':
     dependencies:
       axios: 1.19.0
 

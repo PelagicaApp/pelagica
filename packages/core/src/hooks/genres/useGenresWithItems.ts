@@ -1,7 +1,7 @@
 import { getApi } from '../../api/getApi';
 import { useQuery } from '@tanstack/react-query';
-import { getGenresApi } from '@jellyfin/sdk/lib/utils/api/genres-api';
-import { getItemsApi } from '@jellyfin/sdk/lib/utils/api/items-api';
+import { getGenreApi } from '@jellyfin/sdk/lib/utils/api/genre-api';
+import { getLibraryApi } from '@jellyfin/sdk/lib/utils/api/library-api';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { getRetryConfig } from '../../utils/authErrorHandler';
 import { getGenreTint } from '../../utils/genreTint';
@@ -29,8 +29,8 @@ export function useGenresWithItems(options?: GenresWithItemsOptions) {
         queryKey: ['genres-with-random-item', options?.limit],
         queryFn: async () => {
             const api = getApi();
-            const genresApi = getGenresApi(api);
-            const itemsApi = getItemsApi(api);
+            const genresApi = getGenreApi(api);
+            const itemsApi = getLibraryApi(api);
 
             const genresResponse = await genresApi.getGenres({
                 limit: options?.limit || 50,

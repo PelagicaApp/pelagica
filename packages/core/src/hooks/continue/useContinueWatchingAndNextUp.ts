@@ -1,7 +1,7 @@
 import { getApi } from '../../api/getApi';
 import { useQuery } from '@tanstack/react-query';
-import { getItemsApi } from '@jellyfin/sdk/lib/utils/api/items-api';
-import { getTvShowsApi } from '@jellyfin/sdk/lib/utils/api/tv-shows-api';
+import { getLibraryApi } from '@jellyfin/sdk/lib/utils/api/library-api';
+import { getShowApi } from '@jellyfin/sdk/lib/utils/api/show-api';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { getRetryConfig } from '../../utils/authErrorHandler';
 
@@ -27,8 +27,8 @@ export function useContinueWatchingAndNextUp(
         queryKey: ['continueWatchingAndNextUp', userId, limit, accurateSorting],
         queryFn: async (): Promise<ContinueWatchingAndNextUpResult> => {
             const api = getApi();
-            const itemsApi = getItemsApi(api);
-            const tvShowsApi = getTvShowsApi(api);
+            const itemsApi = getLibraryApi(api);
+            const tvShowsApi = getShowApi(api);
 
             const resumeLimit = limit * 2;
 
@@ -96,8 +96,10 @@ export function useContinueWatchingAndNextUp(
                     const previousEpisode = episodes[currentItemIndex - 1];
 
                     if (previousEpisode?.UserData?.LastPlayedDate) {
-                        item.UserData = item.UserData || {};
-                        item.UserData.LastPlayedDate = previousEpisode.UserData.LastPlayedDate;
+                        item.UserData = {
+                            ...item.UserData,
+                            LastPlayedDate: previousEpisode.UserData.LastPlayedDate,
+                        } as BaseItemDto['UserData'];
                     }
                 });
             }

@@ -1,6 +1,6 @@
 import { getApi } from '../api/getApi';
 import { useQuery } from '@tanstack/react-query';
-import { getUserViewsApi } from '@jellyfin/sdk/lib/utils/api/user-views-api';
+import { getUserViewApi } from '@jellyfin/sdk/lib/utils/api/user-view-api';
 import { getRetryConfig } from '../utils/authErrorHandler';
 
 export function useUserViews() {
@@ -8,7 +8,7 @@ export function useUserViews() {
         queryKey: ['userViews'],
         queryFn: async () => {
             const api = getApi();
-            const userViewsApi = getUserViewsApi(api);
+            const userViewsApi = getUserViewApi(api);
             const response = await userViewsApi.getUserViews();
             return response.data;
         },

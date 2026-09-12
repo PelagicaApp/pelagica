@@ -1,6 +1,6 @@
 import { getApi } from '../api/getApi';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { getUserLibraryApi } from '@jellyfin/sdk/lib/utils/api/user-library-api';
+import { getUserDataApi } from '@jellyfin/sdk/lib/utils/api/user-data-api';
 import { useUserLibraryItem } from './useUserLibraryItem';
 
 export function useFavorite(itemId: string | null | undefined) {
@@ -14,11 +14,11 @@ export function useFavorite(itemId: string | null | undefined) {
         mutationFn: async (favorite: boolean) => {
             if (!itemId) throw new Error('Item ID is required');
             const api = getApi();
-            const userLibraryApi = getUserLibraryApi(api);
+            const userDataApi = getUserDataApi(api);
             if (favorite) {
-                await userLibraryApi.markFavoriteItem({ itemId });
+                await userDataApi.markFavoriteItem({ itemId });
             } else {
-                await userLibraryApi.unmarkFavoriteItem({ itemId });
+                await userDataApi.unmarkFavoriteItem({ itemId });
             }
             return favorite;
         },

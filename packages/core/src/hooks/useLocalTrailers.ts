@@ -1,6 +1,6 @@
 import { getApi } from '../api/getApi';
 import { useQuery } from '@tanstack/react-query';
-import { getUserLibraryApi } from '@jellyfin/sdk/lib/utils/api/user-library-api';
+import { getLibraryApi } from '@jellyfin/sdk/lib/utils/api/library-api';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { getRetryConfig } from '../utils/authErrorHandler';
 
@@ -9,8 +9,8 @@ export function useLocalTrailers(itemId: string | undefined, enabled: boolean) {
         queryKey: ['localTrailers', itemId],
         queryFn: async () => {
             const api = getApi();
-            const userLibraryApi = getUserLibraryApi(api);
-            const response = await userLibraryApi.getLocalTrailers({ itemId: itemId! });
+            const libraryApi = getLibraryApi(api);
+            const response = await libraryApi.getLocalTrailers({ itemId: itemId! });
             return response.data;
         },
         enabled: !!itemId && enabled,

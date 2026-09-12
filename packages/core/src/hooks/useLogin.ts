@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createApi } from '../api/jellyfinClient';
-import { getUserApi } from '@jellyfin/sdk/lib/utils/api/user-api';
+import { getAuthenticationApi } from '@jellyfin/sdk/lib/utils/api/authentication-api';
 import { saveCredentials } from '../utils/localstorageCredentials';
 import { loginToSeerr } from '../api/seerr/login';
 
@@ -18,7 +18,7 @@ export function useLogin() {
             password: string;
         }) => {
             const api = createApi(server);
-            const res = await getUserApi(api).authenticateUserByName({
+            const res = await getAuthenticationApi(api).authenticateUserByName({
                 authenticateUserByName: {
                     Pw: password,
                     Username: username,

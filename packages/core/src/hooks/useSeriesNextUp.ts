@@ -1,6 +1,6 @@
 import { getApi } from '../api/getApi';
 import { useQuery } from '@tanstack/react-query';
-import { getTvShowsApi } from '@jellyfin/sdk/lib/utils/api/tv-shows-api';
+import { getShowApi } from '@jellyfin/sdk/lib/utils/api/show-api';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { getRetryConfig } from '../utils/authErrorHandler';
 
@@ -12,7 +12,7 @@ export function useSeriesNextUp(
         queryKey: ['seriesNextUp', seriesId, userId],
         queryFn: async (): Promise<BaseItemDto | undefined> => {
             const api = getApi();
-            const tvShowsApi = getTvShowsApi(api);
+            const tvShowsApi = getShowApi(api);
             const response = await tvShowsApi.getNextUp({
                 userId: userId!,
                 seriesId: seriesId!,

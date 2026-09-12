@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { getPlaylistsApi } from '@jellyfin/sdk/lib/utils/api/playlists-api';
+import { getPlaylistApi } from '@jellyfin/sdk/lib/utils/api/playlist-api';
 import { getApi } from '../../api/getApi';
 
 interface AddToPlaylistInput {
@@ -14,7 +14,7 @@ export function useAddToPlaylist() {
     return useMutation({
         mutationFn: async ({ playlistId, itemIds, userId }: AddToPlaylistInput) => {
             const api = getApi();
-            const playlistsApi = getPlaylistsApi(api);
+            const playlistsApi = getPlaylistApi(api);
 
             await playlistsApi.addItemToPlaylist({
                 playlistId,

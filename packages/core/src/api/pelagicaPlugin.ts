@@ -1,5 +1,4 @@
-import { getPackageApi } from '@jellyfin/sdk/lib/utils/api/package-api';
-import { getPluginsApi } from '@jellyfin/sdk/lib/utils/api/plugins-api';
+import { getPluginApi } from '@jellyfin/sdk/lib/utils/api/plugin-api';
 import { getSystemApi } from '@jellyfin/sdk/lib/utils/api/system-api';
 import type { PluginInfo } from '@jellyfin/sdk/lib/generated-client/models';
 import { getApi, getAuthorizationHeader } from './getApi';
@@ -52,7 +51,7 @@ export async function savePluginConfig(serverUrl: string, config: AppConfig): Pr
 }
 
 export async function getInstalledPluginInfo(): Promise<PluginInfo | undefined> {
-    const { data: plugins } = await getPluginsApi(getApi()).getPlugins();
+    const { data: plugins } = await getPluginApi(getApi()).getPlugins();
     return plugins.find(
         (p) => !!p.Id && normalizeGuid(p.Id) === normalizeGuid(PELAGICA_PLUGIN_GUID)
     );
@@ -60,7 +59,7 @@ export async function getInstalledPluginInfo(): Promise<PluginInfo | undefined> 
 
 export async function installPelagicaPlugin(): Promise<void> {
     const api = getApi();
-    const packageApi = getPackageApi(api);
+    const packageApi = getPluginApi(api);
 
     const { data: repositories } = await packageApi.getRepositories();
     const alreadyAdded = repositories.some((repo) => repo.Url === PELAGICA_MANIFEST_URL);

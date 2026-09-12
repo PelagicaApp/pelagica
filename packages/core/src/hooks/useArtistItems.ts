@@ -1,6 +1,6 @@
 import { getApi } from '../api/getApi';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
-import { getItemsApi } from '@jellyfin/sdk/lib/utils/api/items-api';
+import { getLibraryApi } from '@jellyfin/sdk/lib/utils/api/library-api';
 import { useQuery } from '@tanstack/react-query';
 import { getRetryConfig } from '../utils/authErrorHandler';
 import type { ItemsQueryParams, ItemsQueryResult } from '../types/items';
@@ -10,7 +10,7 @@ export function useArtistAlbumCount(artistId: string | null | undefined) {
         queryKey: ['artist-album-count', artistId],
         queryFn: async () => {
             const api = getApi();
-            const itemsApi = getItemsApi(api);
+            const itemsApi = getLibraryApi(api);
             const response = await itemsApi.getItems({
                 artistIds: [artistId!],
                 includeItemTypes: ['MusicAlbum'],
@@ -30,7 +30,7 @@ export function useArtistTracks(artistId: string | null | undefined) {
         queryKey: ['artist-tracks', artistId],
         queryFn: async () => {
             const api = getApi();
-            const itemsApi = getItemsApi(api);
+            const itemsApi = getLibraryApi(api);
             const response = await itemsApi.getItems({
                 artistIds: [artistId!],
                 includeItemTypes: ['Audio'],
@@ -53,7 +53,7 @@ export function useArtistItems(artistId: string, params: ItemsQueryParams): Item
         queryKey: ['artist-items', artistId, params],
         queryFn: async () => {
             const api = getApi();
-            const itemsApi = getItemsApi(api);
+            const itemsApi = getLibraryApi(api);
 
             const itemsResponse = await itemsApi.getItems({
                 artistIds: [artistId],

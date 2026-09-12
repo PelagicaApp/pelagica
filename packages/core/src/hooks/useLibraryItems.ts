@@ -1,6 +1,6 @@
 import { getApi } from '../api/getApi';
 import { useQuery } from '@tanstack/react-query';
-import { getItemsApi } from '@jellyfin/sdk/lib/utils/api/items-api';
+import { getLibraryApi } from '@jellyfin/sdk/lib/utils/api/library-api';
 import type {
     BaseItemDto,
     BaseItemKind,
@@ -41,7 +41,7 @@ export function useLibraryItems(
         ],
         queryFn: async (): Promise<LibraryItemsResponse> => {
             const api = getApi();
-            const itemsApi = getItemsApi(api);
+            const itemsApi = getLibraryApi(api);
             const response = await itemsApi.getItems({
                 parentId: libraryId!,
                 sortBy: options?.sortBy || ['SortName'],

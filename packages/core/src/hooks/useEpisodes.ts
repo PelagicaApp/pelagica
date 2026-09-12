@@ -1,6 +1,6 @@
 import { getApi } from '../api/getApi';
 import { useQuery } from '@tanstack/react-query';
-import { getTvShowsApi } from '@jellyfin/sdk/lib/utils/api/tv-shows-api';
+import { getShowApi } from '@jellyfin/sdk/lib/utils/api/show-api';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { getRetryConfig } from '../utils/authErrorHandler';
 
@@ -9,7 +9,7 @@ export function useEpisodes(seriesId: string | null, seasonId?: string | null) {
         queryKey: ['episodes', seriesId, seasonId],
         queryFn: async (): Promise<BaseItemDto[]> => {
             const api = getApi();
-            const tvShowsApi = getTvShowsApi(api);
+            const tvShowsApi = getShowApi(api);
             const response = await tvShowsApi.getEpisodes({
                 seriesId: seriesId!,
                 seasonId: seasonId ?? undefined,

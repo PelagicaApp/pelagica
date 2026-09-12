@@ -54,8 +54,9 @@ function getPrimaryTrickplayInfo(trickplay?: BaseItemDto['Trickplay']) {
     if (!trickplay) return null;
 
     const entries = Object.values(trickplay);
-    if (entries.length === 0) return null;
-    const subEntries = Object.values(entries[0]);
+    const first = entries[0];
+    if (!first) return null;
+    const subEntries = Object.values(first);
     return subEntries[0] || null;
 }
 
