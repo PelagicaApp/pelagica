@@ -1,0 +1,1 @@
+import{T as e,mr as t}from"./useMusicPlayback-D23TaSSo.js";var n=t();function r({className:t,...r}){return(0,n.jsx)(`div`,{"data-slot":`skeleton`,className:e(`bg-accent animate-pulse rounded-md`,t),...r})}export{r as t};
