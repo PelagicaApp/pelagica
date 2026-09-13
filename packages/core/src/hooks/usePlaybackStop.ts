@@ -1,6 +1,6 @@
 import { getApi } from '../api/getApi';
 import { useMutation } from '@tanstack/react-query';
-import { getPlaystateApi } from '@jellyfin/sdk/lib/utils/api/playstate-api';
+import { getSessionApi } from '@jellyfin/sdk/lib/utils/api/session-api';
 import { useCurrentSessionId } from './useCurrentSessionId';
 
 interface StopPlayback {
@@ -17,9 +17,9 @@ export function usePlaybackStop() {
             if (!sessionId) return;
 
             const api = getApi();
-            const playstateApi = getPlaystateApi(api);
+            const sessionApi = getSessionApi(api);
 
-            await playstateApi.reportPlaybackStopped({
+            await sessionApi.reportPlaybackStopped({
                 playbackStopInfo: {
                     ItemId: itemId,
                     SessionId: sessionId,

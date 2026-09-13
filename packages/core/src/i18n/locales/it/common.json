@@ -2,7 +2,7 @@
     "previous": "Precedente",
     "next": "Successivo",
     "stats_consent_title": "Aiutaci a contare gli utenti",
-    "stats_consent_message": "Non abbiamo modo di sapere quante persone usano Pelagica a meno che tu non ce lo dica. Accettando, verrà inviato ogni giorno un ping con la tua versione e un ID casuale. Tutto qui. I risultati sono pubblici su <anchor>stats.pelagica.app</anchor>.",
+    "stats_consent_message": "Non abbiamo modo di sapere quante persone usano Pelagica a meno che tu non ce lo dica. Accettando, verrà inviato ogni giorno un ping con la tua versione, la tua piattaforma e un ID casuale. Tutto qui. I risultati sono pubblici su <anchor>stats.pelagica.app</anchor>.",
     "stats_consent_reject": "No, grazie",
     "stats_consent_accept": "Accetta",
     "cancel": "Annulla",

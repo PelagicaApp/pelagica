@@ -17,6 +17,8 @@ jobs:
         runs-on: macos-latest
         env:
             TAG: ${{ github.event.release.tag_name }}
+            APP_VERSION: ${{ github.event.release.tag_name }}
+            PING_TOKEN: ${{ secrets.STATS_TOKEN }}
 
         steps:
             - name: Checkout repository
@@ -139,6 +141,8 @@ jobs:
         runs-on: windows-latest
         env:
             TAG: ${{ github.event.release.tag_name }}
+            APP_VERSION: ${{ github.event.release.tag_name }}
+            PING_TOKEN: ${{ secrets.STATS_TOKEN }}
 
         steps:
             - name: Checkout repository
@@ -196,6 +200,8 @@ jobs:
         runs-on: ubuntu-latest
         env:
             TAG: ${{ github.event.release.tag_name }}
+            APP_VERSION: ${{ github.event.release.tag_name }}
+            PING_TOKEN: ${{ secrets.STATS_TOKEN }}
 
         steps:
             - name: Checkout repository

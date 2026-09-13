@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
-import { getUserLibraryApi } from '@jellyfin/sdk/lib/utils/api/user-library-api';
+import { getLibraryApi } from '@jellyfin/sdk/lib/utils/api/library-api';
 import { getApi } from '../api/getApi';
 import { getRetryConfig } from '../utils/authErrorHandler';
 import { getUserId } from '../utils/localstorageCredentials';
@@ -25,9 +25,9 @@ export function useUserLibraryItem(
             }
 
             const api = getApi();
-            const userLibraryApi = getUserLibraryApi(api);
+            const libraryApi = getLibraryApi(api);
 
-            const response = await userLibraryApi.getItem({
+            const response = await libraryApi.getItem({
                 itemId,
                 userId: resolvedUserId,
             });

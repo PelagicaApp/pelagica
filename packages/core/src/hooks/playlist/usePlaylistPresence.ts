@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { getApi } from '../../api/getApi';
-import { getPlaylistsApi } from '@jellyfin/sdk/lib/utils/api/playlists-api';
+import { getPlaylistApi } from '@jellyfin/sdk/lib/utils/api/playlist-api';
 import { getRetryConfig } from '../../utils/authErrorHandler';
 
 export type PlaylistPresence = Record<
@@ -21,7 +21,7 @@ export function usePlaylistPresence(
         enabled: !!itemId && !!userId && !!playlistIds?.length,
         queryFn: async () => {
             const api = getApi();
-            const playlistsApi = getPlaylistsApi(api);
+            const playlistsApi = getPlaylistApi(api);
 
             const results = await Promise.all(
                 (playlistIds || []).map(async (playlistId) => {

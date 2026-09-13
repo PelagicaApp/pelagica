@@ -1,6 +1,6 @@
 import { getApi } from '../api/getApi';
 import type { BaseItemDto, ItemSortBy, SortOrder } from '@jellyfin/sdk/lib/generated-client/models';
-import { getItemsApi } from '@jellyfin/sdk/lib/utils/api/items-api';
+import { getLibraryApi } from '@jellyfin/sdk/lib/utils/api/library-api';
 import { useQuery } from '@tanstack/react-query';
 
 interface StudioItemsOptions {
@@ -20,7 +20,7 @@ export function useStudioItems(studioId: string, options?: StudioItemsOptions) {
         queryKey: ['studio-items', studioId, options],
         queryFn: async () => {
             const api = getApi();
-            const itemsApi = getItemsApi(api);
+            const itemsApi = getLibraryApi(api);
 
             const itemsResponse = await itemsApi.getItems({
                 studioIds: [studioId],

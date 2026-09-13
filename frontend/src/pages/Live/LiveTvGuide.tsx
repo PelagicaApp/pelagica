@@ -88,7 +88,7 @@ const ChannelLogo = ({
     alt,
 }: {
     channelId: string;
-    imageTag?: string | undefined;
+    imageTag?: string | null;
     alt: string;
 }) => {
     const [error, setError] = useState(false);

@@ -1,6 +1,6 @@
 import { getApi } from '../api/getApi';
 import { useMutation } from '@tanstack/react-query';
-import { getPlaystateApi } from '@jellyfin/sdk/lib/utils/api/playstate-api';
+import { getSessionApi } from '@jellyfin/sdk/lib/utils/api/session-api';
 import { useCurrentSessionId } from './useCurrentSessionId';
 
 interface StartPlaybackPayload {
@@ -18,9 +18,9 @@ export function usePlaybackStart() {
             if (!sessionId) throw new Error('Session ID is required');
 
             const api = getApi();
-            const playstateApi = getPlaystateApi(api);
+            const sessionApi = getSessionApi(api);
 
-            await playstateApi.reportPlaybackStart({
+            await sessionApi.reportPlaybackStart({
                 playbackStartInfo: {
                     ItemId: itemId,
                     // SessionId: sessionId,

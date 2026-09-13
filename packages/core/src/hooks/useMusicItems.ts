@@ -1,6 +1,6 @@
 import { getApi } from '../api/getApi';
 import { useQuery } from '@tanstack/react-query';
-import { getItemsApi } from '@jellyfin/sdk/lib/utils/api/items-api';
+import { getLibraryApi } from '@jellyfin/sdk/lib/utils/api/library-api';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { getRetryConfig } from '../utils/authErrorHandler';
 import { getUserId } from '../utils/localstorageCredentials';
@@ -10,7 +10,7 @@ export function useRecentlyAddedAlbums(limit = 10) {
         queryKey: ['recentlyAddedAlbums', limit],
         queryFn: async () => {
             const api = getApi();
-            const itemsApi = getItemsApi(api);
+            const itemsApi = getLibraryApi(api);
             const response = await itemsApi.getItems({
                 userId: getUserId() || undefined,
                 includeItemTypes: ['MusicAlbum'],
@@ -33,7 +33,7 @@ export function useRecentlyPlayedSongs(limit = 10) {
         queryKey: ['recentlyPlayedSongs', limit],
         queryFn: async () => {
             const api = getApi();
-            const itemsApi = getItemsApi(api);
+            const itemsApi = getLibraryApi(api);
             const response = await itemsApi.getItems({
                 userId: getUserId() || undefined,
                 includeItemTypes: ['Audio'],
@@ -57,7 +57,7 @@ export function useFrequentlyPlayedSongs(limit = 10) {
         queryKey: ['frequentlyPlayedSongs', limit],
         queryFn: async () => {
             const api = getApi();
-            const itemsApi = getItemsApi(api);
+            const itemsApi = getLibraryApi(api);
             const response = await itemsApi.getItems({
                 userId: getUserId() || undefined,
                 includeItemTypes: ['Audio'],
@@ -81,7 +81,7 @@ export function useFavoriteArtists(limit = 50) {
         queryKey: ['favoriteArtists', limit],
         queryFn: async () => {
             const api = getApi();
-            const itemsApi = getItemsApi(api);
+            const itemsApi = getLibraryApi(api);
             const response = await itemsApi.getItems({
                 userId: getUserId() || undefined,
                 includeItemTypes: ['MusicArtist'],
@@ -103,7 +103,7 @@ export function useFavoriteAlbums(limit = 50) {
         queryKey: ['favoriteAlbums', limit],
         queryFn: async () => {
             const api = getApi();
-            const itemsApi = getItemsApi(api);
+            const itemsApi = getLibraryApi(api);
             const response = await itemsApi.getItems({
                 userId: getUserId() || undefined,
                 includeItemTypes: ['MusicAlbum'],
@@ -126,7 +126,7 @@ export function useFavoriteSongs(limit = 50) {
         queryKey: ['favoriteSongs', limit],
         queryFn: async () => {
             const api = getApi();
-            const itemsApi = getItemsApi(api);
+            const itemsApi = getLibraryApi(api);
             const response = await itemsApi.getItems({
                 userId: getUserId() || undefined,
                 includeItemTypes: ['Audio'],
@@ -150,7 +150,7 @@ export function useAllAlbums(limit = 100, startIndex = 0) {
         queryKey: ['allAlbums', limit, startIndex],
         queryFn: async () => {
             const api = getApi();
-            const itemsApi = getItemsApi(api);
+            const itemsApi = getLibraryApi(api);
             const response = await itemsApi.getItems({
                 userId: getUserId() || undefined,
                 includeItemTypes: ['MusicAlbum'],
@@ -176,7 +176,7 @@ export function useAllArtists(limit = 100, startIndex = 0) {
         queryKey: ['allArtists', limit, startIndex],
         queryFn: async () => {
             const api = getApi();
-            const itemsApi = getItemsApi(api);
+            const itemsApi = getLibraryApi(api);
             const response = await itemsApi.getItems({
                 userId: getUserId() || undefined,
                 includeItemTypes: ['MusicArtist'],
@@ -202,7 +202,7 @@ export function useMusicSearch(searchTerm: string, limit = 20) {
         queryKey: ['musicSearch', searchTerm, limit],
         queryFn: async () => {
             const api = getApi();
-            const itemsApi = getItemsApi(api);
+            const itemsApi = getLibraryApi(api);
             const response = await itemsApi.getItems({
                 userId: getUserId() || undefined,
                 searchTerm: searchTerm.trim(),

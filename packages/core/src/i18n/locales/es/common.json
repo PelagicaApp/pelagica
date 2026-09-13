@@ -1,7 +1,7 @@
 {
     "previous": "Anterior",
     "next": "Siguiente",
-    "stats_consent_message": "No tenemos forma de saber cuánta gente usa Pelagica hasta que nos lo comunicas. Al darte de alta, se envía un mensaje diario con tu versión y un identificador aleatorio. Eso es todo. Los resultados se pueden consultar públicamente en <anchor>stats.pelagica.app</anchor>.",
+    "stats_consent_message": "No tenemos forma de saber cuánta gente usa Pelagica hasta que nos lo comunicas. Al darte de alta, se envía un mensaje diario con tu versión, tu plataforma y un identificador aleatorio. Eso es todo. Los resultados se pueden consultar públicamente en <anchor>stats.pelagica.app</anchor>.",
     "stats_consent_reject": "No gracias",
     "stats_consent_accept": "Aceptar",
     "cancel": "Cancelar",

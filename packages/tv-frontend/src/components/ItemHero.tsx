@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
-import { getBackdropUrl, getLogoUrl, getPrimaryImageUrl } from '@pelagica/core';
+import { getBackdropUrl, getLogoUrl, getPrimaryImageUrl, useConfig } from '@pelagica/core';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { useTranslation } from 'react-i18next';
-import { ImageOff, Star } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { ImageOff } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { FocusContext } from '@noriginmedia/norigin-spatial-navigation';
 import { useLayerFocusable as useFocusable } from '@/router/useLayerFocusable';
+import DetailBadges from './DetailBadges';
 
 const MainButtonRow = ({
     children,
@@ -37,15 +37,14 @@ const MainButtonRow = ({
 const ItemHero = ({
     item,
     isLoading,
-    extraBadge,
     mainButtonRow,
 }: {
     item?: BaseItemDto;
     isLoading: boolean;
-    extraBadge?: ReactNode;
     mainButtonRow?: ReactNode;
 }) => {
     const { t } = useTranslation('item');
+    const { config } = useConfig();
     const [backdropError, setBackdropError] = useState(false);
     const [postersFailed, setPostersFailed] = useState(false);
     const [isPosterLoaded, setIsPosterLoaded] = useState(false);
@@ -154,20 +153,7 @@ const ItemHero = ({
                         </h1>
                     )}
 
-                    <div className="flex flex-wrap gap-2">
-                        {item.ProductionYear && (
-                            <Badge variant="outline">{item.ProductionYear}</Badge>
-                        )}
-                        {item.CommunityRating && (
-                            <Badge variant="outline">
-                                <Star /> {item.CommunityRating.toFixed(1)}
-                            </Badge>
-                        )}
-                        {extraBadge}
-                        {item.OfficialRating && (
-                            <Badge variant="outline">{item.OfficialRating}</Badge>
-                        )}
-                    </div>
+                    <DetailBadges item={item} appConfig={config} />
 
                     {item.Genres && item.Genres.length > 0 && (
                         <p className="text-sm text-muted-foreground">{item.Genres.join(', ')}</p>

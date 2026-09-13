@@ -1,6 +1,6 @@
 import { getApi } from '../api/getApi';
 import { useQuery } from '@tanstack/react-query';
-import { getItemsApi } from '@jellyfin/sdk/lib/utils/api/items-api';
+import { getLibraryApi } from '@jellyfin/sdk/lib/utils/api/library-api';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { getRetryConfig } from '../utils/authErrorHandler';
 
@@ -9,7 +9,7 @@ export function useBoxSetItems(boxSetId: string | null | undefined) {
         queryKey: ['boxSetItems', boxSetId],
         queryFn: async (): Promise<BaseItemDto[]> => {
             const api = getApi();
-            const itemsApi = getItemsApi(api);
+            const itemsApi = getLibraryApi(api);
             const response = await itemsApi.getItems({
                 parentId: boxSetId!,
                 fields: ['Overview', 'MediaSources'],

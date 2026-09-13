@@ -208,6 +208,7 @@ export const DETAIL_BADGES = [
     'ReleaseYearAndMonth',
     'ReleaseDate',
     'CommunityRating',
+    'CriticsRating',
     'PlayDuration',
     'PlayEnd',
     'SeasonCount',

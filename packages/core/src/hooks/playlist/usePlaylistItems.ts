@@ -1,6 +1,6 @@
 import { getApi } from '../../api/getApi';
 import { useQuery } from '@tanstack/react-query';
-import { getPlaylistsApi } from '@jellyfin/sdk/lib/utils/api/playlists-api';
+import { getPlaylistApi } from '@jellyfin/sdk/lib/utils/api/playlist-api';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { getRetryConfig } from '../../utils/authErrorHandler';
 
@@ -12,7 +12,7 @@ export function usePlaylistItems(
         queryKey: ['playlistItems', playlistId, userId],
         queryFn: async (): Promise<BaseItemDto[]> => {
             const api = getApi();
-            const playlistsApi = getPlaylistsApi(api);
+            const playlistsApi = getPlaylistApi(api);
             const response = await playlistsApi.getPlaylistItems({
                 playlistId: playlistId!,
                 userId: userId!,

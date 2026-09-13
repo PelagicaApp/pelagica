@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { getPlaylistsApi } from '@jellyfin/sdk/lib/utils/api/playlists-api';
+import { getPlaylistApi } from '@jellyfin/sdk/lib/utils/api/playlist-api';
 import { getApi } from '../../api/getApi';
 
 interface RemoveFromPlaylistInput {
@@ -13,7 +13,7 @@ export function useRemoveFromPlaylist() {
     return useMutation({
         mutationFn: async ({ playlistId, entryIds }: RemoveFromPlaylistInput) => {
             const api = getApi();
-            const playlistsApi = getPlaylistsApi(api);
+            const playlistsApi = getPlaylistApi(api);
 
             await playlistsApi.removeItemFromPlaylist({
                 playlistId,

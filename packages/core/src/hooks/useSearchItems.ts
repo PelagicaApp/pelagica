@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { getApi } from '../api/getApi';
-import { getItemsApi } from '@jellyfin/sdk/lib/utils/api/items-api';
+import { getLibraryApi } from '@jellyfin/sdk/lib/utils/api/library-api';
 import type { BaseItemDto, BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models';
 import { getRetryConfig } from '../utils/authErrorHandler';
 
@@ -22,7 +22,7 @@ export function useSearchItems(searchTerm: string, options?: UseSearchItemsOptio
         queryFn: async (): Promise<BaseItemDto[]> => {
             try {
                 const api = getApi();
-                const itemsApi = getItemsApi(api);
+                const itemsApi = getLibraryApi(api);
 
                 const response = await itemsApi.getItems({
                     userId: options?.userId,

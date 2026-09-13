@@ -30,7 +30,7 @@ tasks:
             - sh: '[ "{{OS}}" = "darwin" ]'
               msg: desktop:package only supports macOS
         cmds:
-            - go build -o bin/pelagica .
+            - go build -ldflags="-X main.appVersion=${APP_VERSION:-0.0.0} -X main.pingToken=${PING_TOKEN:-}" -o bin/pelagica .
             - rm -rf bin/Pelagica.app
             - mkdir -p bin/Pelagica.app/Contents/MacOS
             - mkdir -p bin/Pelagica.app/Contents/Resources
@@ -66,7 +66,7 @@ tasks:
               msg: desktop:package:windows only supports Windows
         cmds:
             - wails3 generate syso -arch amd64 -icon build/windows/icon.ico -manifest build/windows/wails.exe.manifest -info build/windows/info.json -out wails_windows_amd64.syso
-            - go build -trimpath -ldflags="-w -s -H windowsgui" -o bin/pelagica.exe .
+            - go build -trimpath -ldflags="-w -s -H windowsgui -X main.appVersion=${APP_VERSION:-0.0.0} -X main.pingToken=${PING_TOKEN:-}" -o bin/pelagica.exe .
             - rm -f wails_windows_amd64.syso
 
     installer:windows:
@@ -99,7 +99,7 @@ tasks:
             - sh: '[ "{{OS}}" = "linux" ]'
               msg: desktop:package:linux only supports Linux
         cmds:
-            - go build -trimpath -ldflags="-w -s" -o bin/pelagica .
+            - go build -trimpath -ldflags="-w -s -X main.appVersion=${APP_VERSION:-0.0.0} -X main.pingToken=${PING_TOKEN:-}" -o bin/pelagica .
         env:
             CGO_ENABLED: 1
 

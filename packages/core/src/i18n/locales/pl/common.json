@@ -2,7 +2,7 @@
     "previous": "Poprzedni",
     "next": "Następny",
     "stats_consent_title": "Pomóż nam liczyć",
-    "stats_consent_message": "Nie mamy jak sprawdzić, ile osób korzysta z Pelagica, dopóki nam tego nie powiesz. Wyrażenie zgody wysyła codzienny sygnał z informacją o Twojej wersji i losowym identyfikatorem. To wszystko. Wyniki są publiczne na <anchor>stats.pelagica.app</anchor>.",
+    "stats_consent_message": "Nie mamy jak sprawdzić, ile osób korzysta z Pelagica, dopóki nam tego nie powiesz. Wyrażenie zgody wysyła codzienny sygnał z informacją o Twojej wersji, platformie i losowym identyfikatorem. To wszystko. Wyniki są publiczne na <anchor>stats.pelagica.app</anchor>.",
     "stats_consent_reject": "Nie, dziękuję",
     "stats_consent_accept": "Akceptuj",
     "cancel": "Anuluj",

@@ -27,6 +27,7 @@ import ItemRow from '../components/ItemRow';
 import { Skeleton } from '../components/ui/skeleton';
 import TrailerButton from '../components/TrailerButton';
 import { buildPlayerUrl } from '@/lib/playerUrl';
+import PlayStateButton from '../components/PlayStateButton';
 
 const EpisodeCard = memo(function EpisodeCard({
     episode,
@@ -254,13 +255,6 @@ const SeriesDetail = () => {
             <ItemHero
                 item={item}
                 isLoading={isLoading}
-                extraBadge={
-                    item?.ChildCount && (
-                        <Badge variant="outline">
-                            {t('common:season_count', { count: item.ChildCount })}
-                        </Badge>
-                    )
-                }
                 mainButtonRow={
                     item && (
                         <>
@@ -268,6 +262,7 @@ const SeriesDetail = () => {
                             <TrailerButton item={item} />
                             <WatchlistButton item={item} />
                             <FavoriteButton item={item} />
+                            <PlayStateButton itemId={item.Id || ''} userId={getUserId() || ''} />
                         </>
                     )
                 }

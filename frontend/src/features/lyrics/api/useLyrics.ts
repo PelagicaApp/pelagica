@@ -1,6 +1,6 @@
 import { getApi } from '@pelagica/core';
 import { useQuery } from '@tanstack/react-query';
-import { getLyricsApi } from '@jellyfin/sdk/lib/utils/api/lyrics-api';
+import { getLyricApi } from '@jellyfin/sdk/lib/utils/api/lyric-api';
 import type { LyricDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { getRetryConfig } from '@pelagica/core';
 
@@ -28,7 +28,7 @@ export function useLyrics(itemId: string | null | undefined) {
         queryKey: ['lyrics', itemId],
         queryFn: async (): Promise<LyricDto> => {
             const api = getApi();
-            const lyricsApi = getLyricsApi(api);
+            const lyricsApi = getLyricApi(api);
             const response = await lyricsApi.getLyrics({ itemId: itemId! });
             return response.data;
         },
