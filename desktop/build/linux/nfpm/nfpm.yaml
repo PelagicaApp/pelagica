@@ -1,7 +1,7 @@
 name: "pelagica"
 arch: ${GOARCH}
 platform: "linux"
-version: "4.10.1"
+version: "4.11.0"
 section: "default"
 priority: "extra"
 maintainer: "Pelagica <noreply@pelagicaapp.github.io>"
