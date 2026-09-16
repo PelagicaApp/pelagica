@@ -184,5 +184,16 @@
   "application_section_title": "Ứng dụng",
   "clear_logo_cache_button": "Xoá cache logo",
   "clear_logo_cache_success": "Xoá cache logo thành công!",
-  "recent_episodes_library_label": "Thư viện"
+  "clear_app_cache_button": "Xoá cache ứng dụng",
+  "clear_app_cache_success": "Xoá cache ứng dụng thành công!",
+  "collection_sort_description": "Chọn cách sắp xếp nội dung trong danh sách Bộ Sưu Tập.",
+  "collection_sort_label": "Sắp xếp thứ tự Bộ Sưu Tập",
+  "collection_sort_PremiereDateAsc": "Ngày phát hành lâu nhất trước",
+  "collection_sort_PremiereDateDesc": "Ngày phát hành mới nhất trước",
+  "collection_sort_Random": "Ngẫu nhiên",
+  "detail_badges_CriticsRating": "Giới phê bình đánh giá",
+  "recent_episodes_library_description": "Chọn thư viện Series để hiển thị tập mới nhất.",
+  "recent_episodes_library_label": "Chọn thư viện Series để hiển thị tập mới nhất.",
+  "section_type_recentEpisodes": "Tập mới nhất",
+  "show_collections_label": "Hiển thị Bộ Sưu Tập"
 }
