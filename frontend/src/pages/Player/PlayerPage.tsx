@@ -24,6 +24,7 @@ import { getLastAudioLanguage, getLastSubtitleLanguage } from '@/utils/localstor
 import { useUserConfiguration } from '@pelagica/core';
 import { usePlayerItem } from '@pelagica/core';
 import { useMusicPlayback } from '@/hooks/useMusicPlayback';
+import { useAirPlay } from '@/hooks/useAirPlay';
 import { clearCodecCache } from '@pelagica/core';
 import {
     hideTrafficLights,
@@ -36,6 +37,10 @@ import {
 const PLAYBACK_PROGRESS_REPORT_MIN_PLAYTIME_SECONDS = 5;
 const PLAYBACK_PROGRESS_REPORT_INTERVAL_MS = 5000;
 const FONT_ATTACHMENT_EXTENSION_PATTERN = /\.(ttf|otf|woff2?)$/i;
+const AIRPLAY_PLAYABLE_MIME_TYPES = new Set(['application/x-mpegURL', 'video/mp4']);
+// Budget for WebKit to re-take the route on a swapped source. Only applied while a swap is
+// in flight; a drop outside that window is a disconnect.
+const AIRPLAY_RELEASE_GRACE_MS = 15000;
 
 export type VideoJsPlayer = ReturnType<typeof import('video.js').default>;
 
@@ -98,6 +103,11 @@ const PlayerPage = () => {
         return null;
     }, [item, userConfiguration]);
 
+    const subtitleStreams = useMemo(
+        () => item?.MediaStreams?.filter((stream) => stream.Type === 'Subtitle') ?? [],
+        [item]
+    );
+
     const [audioTrackIndex, setAudioTrackIndex] = useState<number>(resolvedAudio.index);
     const [subtitleTrackIndex, setSubtitleTrackIndex] = useState<number | null>(
         resolvedSubtitleTrackIndex
@@ -106,7 +116,7 @@ const PlayerPage = () => {
     const progressReportingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const lastPositionRef = useRef<number>(0);
     const liveStreamIdRef = useRef<string | undefined>(undefined);
-    const pendingAudioSwitchSeekRef = useRef<number | null>(null);
+    const pendingSeekRef = useRef<number | null>(null);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const {
         data: adjacentItems,
@@ -118,11 +128,95 @@ const PlayerPage = () => {
         isLoading: isLoadingMediaSegments,
         error: mediaSegmentsError,
     } = useMediaSegments(itemId);
+    // A torn-down element reports 0, which would drop the resume point the swap needs.
+    const capturePosition = useCallback(() => {
+        if (!player || player.isDisposed?.()) return;
+        const position = player.currentTime() ?? 0;
+        if (position > 0) pendingSeekRef.current = position;
+    }, [player]);
+
+    const [airPlayForcedHls, setAirPlayForcedHls] = useState(false);
+    // The route drops while a new source loads, then WebKit re-takes it. Reading the stream
+    // decision off airPlay.isActive would revert inside that gap and flip-flop for ever.
+    const [airPlayEngaged, setAirPlayEngaged] = useState(false);
+    const [airPlayPrefetch, setAirPlayPrefetch] = useState(false);
+    const swapInFlightRef = useRef(false);
+
+    const handleAirPlayRouteChange = useCallback(
+        (isWireless: boolean) => {
+            // Only the hand-off carries a position; by the drop the element reports 0.
+            if (!isWireless) return;
+            capturePosition();
+            setAirPlayEngaged(true);
+        },
+        [capturePosition]
+    );
+
+    const airPlay = useAirPlay(player, handleAirPlayRouteChange);
+    const { showPicker } = airPlay;
+
+    // Reverting at once folds the reload into the hand-back the viewer is already seeing.
+    useEffect(() => {
+        if (airPlay.isActive || !airPlayEngaged) return;
+
+        const releaseTimer = setTimeout(
+            () => {
+                capturePosition();
+                setAirPlayEngaged(false);
+            },
+            swapInFlightRef.current ? AIRPLAY_RELEASE_GRACE_MS : 0
+        );
+        return () => clearTimeout(releaseTimer);
+    }, [airPlay.isActive, airPlayEngaged, capturePosition]);
+
+    const burnInSubtitleStreamIndex = useMemo(() => {
+        if (!airPlayEngaged || subtitleTrackIndex === null) return undefined;
+        return subtitleStreams[subtitleTrackIndex]?.Index ?? undefined;
+    }, [airPlayEngaged, subtitleTrackIndex, subtitleStreams]);
+
+    // A swap is in flight until the new source loads: the only window the route drops in.
+    useEffect(() => {
+        if (!player) return;
+
+        swapInFlightRef.current = true;
+        const settle = () => {
+            swapInFlightRef.current = false;
+        };
+        const settleCap = setTimeout(settle, AIRPLAY_RELEASE_GRACE_MS);
+        player.one('loadeddata', settle);
+
+        return () => {
+            clearTimeout(settleCap);
+            player.off('loadeddata', settle);
+        };
+    }, [player, burnInSubtitleStreamIndex, airPlayForcedHls]);
+
+    // A swap waiting on a playback-info round-trip arrives after WebKit has given the route
+    // up, so opening the picker warms that request and leaves the swap a cache read.
+    const prospectiveBurnIn = useMemo(() => {
+        if (subtitleTrackIndex === null) return undefined;
+        return subtitleStreams[subtitleTrackIndex]?.Index ?? undefined;
+    }, [subtitleTrackIndex, subtitleStreams]);
+
+    usePlaybackInfo(itemId, getUserId() || undefined, audioTrackIndex, forceTranscode, {
+        forceHls: airPlayForcedHls,
+        burnInSubtitleStreamIndex: prospectiveBurnIn,
+        enabled: airPlayPrefetch && prospectiveBurnIn !== undefined,
+    });
+
+    const handleAirPlayPick = useCallback(() => {
+        setAirPlayPrefetch(true);
+        showPicker();
+    }, [showPicker]);
+
     const {
         data: playbackInfo,
         isLoading: isLoadingPlaybackInfo,
         error: playbackInfoError,
-    } = usePlaybackInfo(itemId, getUserId() || undefined, audioTrackIndex, forceTranscode);
+    } = usePlaybackInfo(itemId, getUserId() || undefined, audioTrackIndex, forceTranscode, {
+        forceHls: airPlayForcedHls,
+        burnInSubtitleStreamIndex,
+    });
 
     const playSessionId = playbackInfo?.playSessionId || '';
 
@@ -135,8 +229,21 @@ const PlayerPage = () => {
             mediaSourceId: playbackInfo.mediaSource.Id || undefined,
             container: playbackInfo.mediaSource.Container?.split(',')[0] || undefined,
             transcodingUrl: playbackInfo.mediaSource.TranscodingUrl,
+            burnInSubtitleStreamIndex,
         });
-    }, [itemId, playbackInfo, audioTrackIndex]);
+    }, [itemId, playbackInfo, audioTrackIndex, burnInSubtitleStreamIndex]);
+
+    useEffect(() => {
+        if (!airPlayEngaged) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setAirPlayForcedHls(false);
+            return;
+        }
+
+        if (streamResult && !AIRPLAY_PLAYABLE_MIME_TYPES.has(streamResult.mimeType)) {
+            setAirPlayForcedHls(true);
+        }
+    }, [airPlayEngaged, streamResult]);
 
     const { reportProgress } = useReportPlaybackProgress();
     const { startPlayback } = usePlaybackStart();
@@ -177,7 +284,7 @@ const PlayerPage = () => {
         queueMicrotask(() => {
             hasUserSelectedAudioRef.current = false;
             hasUserSelectedSubtitleRef.current = false;
-            pendingAudioSwitchSeekRef.current = null;
+            pendingSeekRef.current = null;
             hasAttemptedTranscodeFallbackRef.current = false;
 
             setPlayer(null);
@@ -325,23 +432,23 @@ const PlayerPage = () => {
         [t]
     );
 
+    // Both re-source the element, so the position is captured before the swap resets it.
     const handleAudioTrackChange = (index: number) => {
-        pendingAudioSwitchSeekRef.current = player?.currentTime() || null;
+        capturePosition();
         hasUserSelectedAudioRef.current = true;
         setAudioTrackIndex(index);
     };
 
     const handleSubtitleTrackChange = (index: number | null) => {
+        capturePosition();
         hasUserSelectedSubtitleRef.current = true;
         setSubtitleTrackIndex(index);
     };
 
     const subtitleTracks = useMemo(() => {
-        if (!item?.Id || !item?.MediaStreams) return [];
+        if (!item?.Id) return [];
 
-        const subtitles = item.MediaStreams.filter((s) => s.Type === 'Subtitle');
-
-        return subtitles.map((subtitle): SubtitleTrack => {
+        return subtitleStreams.map((subtitle): SubtitleTrack => {
             const codec = subtitle.Codec?.toLowerCase();
             const isAss = codec === 'ass' || codec === 'ssa';
 
@@ -358,7 +465,7 @@ const PlayerPage = () => {
                 format: isAss ? 'ass' : 'vtt',
             };
         });
-    }, [item]);
+    }, [item, subtitleStreams]);
 
     const subtitleFonts = useMemo(() => {
         const attachments = playbackInfo?.mediaSource.MediaAttachments;
@@ -419,8 +526,10 @@ const PlayerPage = () => {
                 startTicks={item.UserData?.PlaybackPositionTicks || 0}
                 subtitles={subtitleTracks}
                 subtitleFonts={subtitleFonts}
-                pendingAudioSwitchSeekRef={pendingAudioSwitchSeekRef}
-                subtitleTrackIndex={subtitleTrackIndex}
+                pendingSeekRef={pendingSeekRef}
+                subtitleTrackIndex={
+                    burnInSubtitleStreamIndex === undefined ? subtitleTrackIndex : null
+                }
             />
             <PlayerControls
                 item={item}
@@ -431,6 +540,7 @@ const PlayerPage = () => {
                 onSubtitleTrackChange={handleSubtitleTrackChange}
                 isFullscreen={isFullscreen}
                 onFullscreenToggle={handleToggleFullscreen}
+                airPlay={{ ...airPlay, isActive: airPlayEngaged, showPicker: handleAirPlayPick }}
                 mediaSegments={mediaSegments}
                 previousItem={adjacentItems?.previousItem}
                 nextItem={adjacentItems?.nextItem}
