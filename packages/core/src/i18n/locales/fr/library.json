@@ -1,11 +1,17 @@
 {
-    "title": "Bibliothèque",
-    "no_items_title": "Aucun article trouvé",
-    "no_items_description": "Cette bibliothèque ne contient aucun article.",
-    "sort_name": "Nom",
-    "sort_date_added": "Date d'ajout",
-    "sort_premiere_date": "Date de première",
-    "sort_community_rating": "Évaluation de la communauté",
-    "sort_critic_rating": "Note des critiques",
-    "sort_runtime": "Durée"
+  "title": "Bibliothèque",
+  "no_items_title": "Aucun élément trouvé",
+  "no_items_description": "Cette bibliothèque ne contient aucun élément.",
+  "sort_name": "Nom",
+  "sort_date_added": "Date d’ajout",
+  "sort_premiere_date": "Date de première diffusion",
+  "sort_community_rating": "Note de la communauté",
+  "sort_critic_rating": "Note des critiques",
+  "sort_runtime": "Durée",
+  "clear_search": "Effacer la recherche",
+  "no_libraries_found": "Aucune bibliothèque trouvée.",
+  "no_studios_found": "Cette bibliothèque ne contient aucun studio.",
+  "no_studios_found_for_search": " Aucun studio trouvé pour « {{search}} ».",
+  "no_studios_found_title": "Aucun studio trouvé",
+  "studios_search_placeholder": "Rechercher des studios..."
 }
