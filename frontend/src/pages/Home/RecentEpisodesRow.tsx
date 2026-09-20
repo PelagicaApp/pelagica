@@ -1,8 +1,8 @@
-import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import {
     useRowItems,
     type ContinueWatchingDetailLine,
     type ContinueWatchingTitleLine,
+    type LibraryView,
 } from '@pelagica/core';
 import SectionScroller from '../../components/SectionScroller';
 import EpisodeCard from './EpisodeCard';
@@ -11,7 +11,7 @@ import { Skeleton } from '../../components/ui/skeleton';
 interface RecentEpisodesRowProps {
     title: string;
     limit?: number;
-    view?: BaseItemDto;
+    view?: LibraryView;
     titleLine?: ContinueWatchingTitleLine;
     detailLine?: ContinueWatchingDetailLine[];
 }

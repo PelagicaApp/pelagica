@@ -1,17 +1,12 @@
-import { useUserViews } from '@pelagica/core';
+import { isSupportedLibrary, useUserViews } from '@pelagica/core';
 import { useTranslation } from 'react-i18next';
 import LibraryCard from '../components/LibraryCard';
-import { SUPPORTED_LIBRARY_COLLECTION_TYPES } from '../utils/supportedLibraryCollectionTypes';
 
 const Library = () => {
     const { t } = useTranslation(['home', 'library']);
     const { data, isLoading } = useUserViews();
 
-    const libraries = (data?.Items ?? []).filter(
-        (library) =>
-            library.CollectionType &&
-            SUPPORTED_LIBRARY_COLLECTION_TYPES.includes(library.CollectionType)
-    );
+    const libraries = (data?.Items ?? []).filter(isSupportedLibrary);
 
     return (
         <div className="flex flex-col gap-6">

@@ -3,17 +3,17 @@ import LibrariesRow from '../components/home/LibrariesRow';
 import ContinueWatchingRow from '@/components/home/ContinueWatchingRow';
 import ResumeRow from '../components/home/ResumeRow';
 import NextUpRow from '../components/home/NextUpRow';
-import { useConfig, useUserViews, type DetailField } from '@pelagica/core';
+import { useConfig, useUserViews } from '@pelagica/core';
+import type { DetailField, LibraryCollectionType } from '@pelagica/core';
 import ItemsRow from '../components/home/ItemsRow';
 import RecentlyAddedRow from '../components/home/RecentlyAddedRow';
-import type { CollectionType } from '@jellyfin/sdk/lib/generated-client/models';
 import GenresRow from '../components/home/GenresRow';
 import RecommendedItemsRow from '../components/home/RecommendedItemsRow';
 import StudiosRow from '../components/home/StudiosRow';
 import MediaBarRow from '../components/home/MediaBarRow';
 import { getHomerowItemLimit } from '../lib/limit-homerow-items';
 
-function getDetailFieldsForCollectionType(type: CollectionType | undefined): DetailField[] {
+function getDetailFieldsForCollectionType(type?: LibraryCollectionType | null): DetailField[] {
     switch (type) {
         case 'music':
             return ['Artist'];

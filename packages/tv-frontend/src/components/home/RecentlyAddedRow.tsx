@@ -1,11 +1,10 @@
-import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
-import { COLLECTION_ITEM_TYPES, type DetailField, type RecentlyAddedSection } from '@pelagica/core';
+import { getRecentlyAddedItemTypes, isSupportedLibrary } from '@pelagica/core';
+import type { DetailField, LibraryView, RecentlyAddedSection } from '@pelagica/core';
 import { useTranslation } from 'react-i18next';
-import { SUPPORTED_LIBRARY_COLLECTION_TYPES } from '../../utils/supportedLibraryCollectionTypes';
 import ItemsRow from './ItemsRow';
 
 interface RecentlyAddedRowProps {
-    view: BaseItemDto;
+    view: LibraryView;
     section: RecentlyAddedSection;
     detailFields?: DetailField[];
 }
@@ -13,7 +12,7 @@ interface RecentlyAddedRowProps {
 const RecentlyAddedRow = ({ view, section, detailFields }: RecentlyAddedRowProps) => {
     const { t } = useTranslation('home');
 
-    if (!view.CollectionType || !SUPPORTED_LIBRARY_COLLECTION_TYPES.includes(view.CollectionType)) {
+    if (!isSupportedLibrary(view)) {
         return null;
     }
 
@@ -25,13 +24,15 @@ const RecentlyAddedRow = ({ view, section, detailFields }: RecentlyAddedRowProps
                         category: view.Name,
                     })}
                     items={{
+                        // Recently-added rows are recursive, unlike folder browsing.
                         libraryId: view.Id,
                         sortBy: ['DateCreated'],
                         sortOrder: 'Descending',
                         limit: section.limit || 10,
-                        types: COLLECTION_ITEM_TYPES[view.CollectionType],
+                        types: getRecentlyAddedItemTypes(view.CollectionType),
                     }}
                     detailFields={detailFields}
+                    libraryView={view}
                 />
             )}
         </>

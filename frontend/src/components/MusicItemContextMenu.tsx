@@ -14,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { useMusicPlayback } from '@/hooks/useMusicPlayback';
 import { useFavorite } from '@pelagica/core';
 import { useAlbumTracks } from '@pelagica/core';
+import { getUserId, usePlaylistItems } from '@pelagica/core';
 import { AddToPlaylistDialog } from '@/components/AddToPlaylistDialog';
 import type { MusicPlaybackTrack } from '@/context/MusicPlaybackContext';
 import {
@@ -38,7 +39,7 @@ const MusicItemContextMenu = ({
     startIndex = 0,
     actions,
 }: MusicItemContextMenuProps) => {
-    const resolvedScope = scope ?? getMusicContextKind(item.Type);
+    const resolvedScope = scope ?? getMusicContextKind(item);
     const resolvedActions = resolveMusicContextMenuActions(actions);
 
     if (!resolvedScope) {
@@ -86,9 +87,15 @@ const MusicItemContextMenuContent = ({
     const isSong = scope === 'song';
     const isCollection = isCollectionScope(scope);
 
-    const { data: collectionTracks, isLoading: isLoadingCollectionTracks } = useAlbumTracks(
-        isCollection ? item.Id : undefined
+    const albumTracks = useAlbumTracks(
+        isCollection && item.Type !== 'Playlist' ? item.Id : undefined
     );
+    const playlistTracks = usePlaylistItems(
+        isCollection && item.Type === 'Playlist' ? item.Id : undefined,
+        getUserId()
+    );
+    const { data: collectionTracks, isLoading: isLoadingCollectionTracks } =
+        item.Type === 'Playlist' ? playlistTracks : albumTracks;
 
     const tracks = useMemo(() => {
         if (isCollection) {

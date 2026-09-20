@@ -1,6 +1,8 @@
 {
     "continue_episode": "Continuer S{{season}} E{{episode}}",
     "play": "Voir",
+    "playback_unavailable": "La lecture de cet élément n'est pas disponible sur cet appareil. Vous pouvez télécharger le fichier original si vous y êtes autorisé.",
+    "download_unavailable": "Le téléchargement de cet élément n'est pas autorisé.",
     "play_episode": "Voir S{{season}} E{{episode}}",
     "writers": "Scénaristes",
     "directors": "Réalisateurs",

@@ -7,6 +7,9 @@
         ".": "./src/index.ts",
         "./i18n": "./src/i18n/index.ts"
     },
+    "scripts": {
+        "test": "node --experimental-strip-types --test test/*.test.mjs"
+    },
     "dependencies": {
         "@jellyfin/sdk": "^1.0.0",
         "axios": "^1.18.0",

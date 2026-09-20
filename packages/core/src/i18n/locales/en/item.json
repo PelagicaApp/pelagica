@@ -1,6 +1,8 @@
 {
     "continue_episode": "Continue S{{season}} E{{episode}}",
     "play": "Play",
+    "playback_unavailable": "Playback is not available for this item on this device. You can download the original file when permitted.",
+    "download_unavailable": "Downloading this item is not permitted.",
     "play_episode": "Play S{{season}} E{{episode}}",
     "writers": "Writers",
     "directors": "Directors",

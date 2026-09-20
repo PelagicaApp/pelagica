@@ -3,9 +3,15 @@ import type { MusicPlaybackTrack } from '@/context/MusicPlaybackContext';
 
 export type MusicContextMenuScope = 'song' | 'collection';
 
-export function getMusicContextKind(type?: string): MusicContextMenuScope | null {
-    if (type === 'Audio') return 'song';
-    if (type === 'MusicAlbum' || type === 'Playlist') return 'collection';
+export function getMusicContextKind(
+    item: Pick<BaseItemDto, 'Type' | 'MediaType'>
+): MusicContextMenuScope | null {
+    if (item.Type === 'Audio') return 'song';
+    if (
+        item.Type === 'MusicAlbum' ||
+        (item.Type === 'Playlist' && (!item.MediaType || item.MediaType === 'Audio'))
+    )
+        return 'collection';
     return null;
 }
 

@@ -1,11 +1,16 @@
 import type { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models';
+import { isLibraryContainer } from '@pelagica/core';
 
 export function getItemLink(
     type: BaseItemKind | null | undefined,
     id: string | null | undefined
 ): string {
-    if (!type || !id) {
+    if (!id) {
         return '/';
+    }
+
+    if (isLibraryContainer(type)) {
+        return `/library/${id}`;
     }
 
     switch (type) {
@@ -20,6 +25,6 @@ export function getItemLink(
         case 'Studio':
             return `/studio/${id}`;
         default:
-            return '/';
+            return `/item/${id}`;
     }
 }

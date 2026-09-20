@@ -1,4 +1,4 @@
-import type { CollectionType } from '@jellyfin/sdk/lib/generated-client/models';
+import type { LibraryCollectionType } from '@pelagica/core';
 import {
     Clapperboard,
     MonitorPlay,
@@ -14,7 +14,11 @@ import {
     Archive,
 } from 'lucide-react';
 
-const JellyfinLibraryIcon = ({ libraryType }: { libraryType: CollectionType | undefined }) => {
+const JellyfinLibraryIcon = ({
+    libraryType,
+}: {
+    libraryType: LibraryCollectionType | null | undefined;
+}) => {
     switch (libraryType) {
         case 'movies':
             return <Clapperboard />;

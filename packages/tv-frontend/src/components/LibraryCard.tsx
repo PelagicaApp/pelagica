@@ -1,6 +1,6 @@
 import { memo, useState } from 'react';
 import { getPrimaryImageUrl } from '@pelagica/core';
-import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
+import type { LibraryView } from '@pelagica/core';
 import { useTranslation } from 'react-i18next';
 import { ImageOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -12,7 +12,7 @@ const LibraryCard = memo(function LibraryCard({
     autoFocus,
     className,
 }: {
-    item: BaseItemDto;
+    item: LibraryView;
     autoFocus?: boolean;
     className?: string;
 }) {

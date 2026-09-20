@@ -1,6 +1,6 @@
 import Page from '../Page';
 import { useUserViews } from '@pelagica/core';
-import { useConfig, type DetailField } from '@pelagica/core';
+import { useConfig, type DetailField, type LibraryCollectionType } from '@pelagica/core';
 import MediaBar from './MediaBar';
 import ItemsRow from './ItemsRow';
 import ContinueWatchingRow from './ContinueWatchingRow';
@@ -8,7 +8,6 @@ import { useTranslation } from 'react-i18next';
 import RecommendedItemsRow from './RecommendedItemsRow';
 import NextUpRow from './NextUpRow';
 import ResumeRow from './ResumeRow';
-import type { CollectionType } from '@jellyfin/sdk/lib/generated-client/models';
 import GenresRow from './GenresRow';
 import LibrariesRow from './LibrariesRow';
 import StudiosRow from './StudiosRow';
@@ -20,7 +19,9 @@ import {
 } from './SeerrDiscoverRows';
 import RecentEpisodesRow from './RecentEpisodesRow';
 
-function getDetailFieldsForCollectionType(type: CollectionType | undefined): DetailField[] {
+function getDetailFieldsForCollectionType(
+    type: LibraryCollectionType | null | undefined
+): DetailField[] {
     switch (type) {
         case 'music':
             return ['Artist'];

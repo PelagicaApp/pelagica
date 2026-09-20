@@ -37,6 +37,8 @@
 - **Search:** Quickly find media across your library from anywhere using `Cmd+K` / `Ctrl+K`.
 - **Video Player:** Integrated video player for movies and TV shows.
 - **Music Player:** A music player that allows you to listen to your music albums or playlists while browsing your library.
+- **Library Navigation:** Browse all Jellyfin collection types, including mixed or untyped libraries, nested folders, photo albums, playlists, and live TV. The default homepage includes Libraries without changing saved layouts.
+- **Books and Audio Books:** Browse metadata and download originals when permitted. Web and desktop reuse the music player for audio books; TV clients show metadata and permitted downloads for unsupported playback. There is no built-in ebook reader.
 - **Responsive Design:** Works seamlessly on both desktop and mobile devices.
 - **Desktop App:** Native apps for macOS, Windows, and Linux, built with [Wails](https://v3.wails.io).
 - **Theming:** Light and dark mode support as well as custom themes

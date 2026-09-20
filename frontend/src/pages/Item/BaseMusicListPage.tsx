@@ -26,6 +26,7 @@ import ItemAdminButton from '@/components/ItemAdminButton';
 import MusicAlbumTrackRow from '@/components/MusicAlbumTrackRow';
 import MusicItemContextMenu from '@/components/MusicItemContextMenu';
 import { toPlaybackTracks } from '@/utils/musicPlaybackTrack';
+import LibraryItem from '../Library/LibraryItem';
 
 const MAX_ARTISTS_DISPLAYED = 5;
 
@@ -83,11 +84,15 @@ const BaseMusicListPage = ({
         ? isLoadingPlaylistTracksData
         : isLoadingAlbumTracksData;
     const albumTracksError = isPlaylist ? playlistTracksDataError : albumTracksDataError;
+    const audioOnly =
+        !isPlaylist ||
+        ((!item.MediaType || item.MediaType === 'Audio') &&
+            !albumTracks?.some((track) => track.Type !== 'Audio' && track.Type !== 'AudioBook'));
     const [failedCover, setFailedCover] = useState(false);
 
     const playbackTracks = useMemo(
-        () => (albumTracks ? toPlaybackTracks(albumTracks, item) : []),
-        [albumTracks, item]
+        () => (audioOnly && albumTracks ? toPlaybackTracks(albumTracks, item) : []),
+        [audioOnly, albumTracks, item]
     );
 
     useEffect(() => {
@@ -117,7 +122,7 @@ const BaseMusicListPage = ({
         const year = new Date(item.PremiereDate).getFullYear();
         detailItems.push(year.toString());
     }
-    if (item.ChildCount !== undefined && item.ChildCount !== null) {
+    if (audioOnly && item.ChildCount !== undefined && item.ChildCount !== null) {
         detailItems.push(
             t(`tracks_count${item.ChildCount > 1 ? '_plural' : ''}`, { count: item.ChildCount })
         );
@@ -188,10 +193,12 @@ const BaseMusicListPage = ({
                 </div>
             </div>
             <div className="flex flex-wrap gap-2">
-                <Button onClick={handlePlayAlbum}>
-                    <Play />
-                    {t('play')}
-                </Button>
+                {audioOnly && (
+                    <Button onClick={handlePlayAlbum} disabled={playbackTracks.length === 0}>
+                        <Play />
+                        {t('play')}
+                    </Button>
+                )}
                 <FavoriteButton
                     item={item}
                     size={'icon'}
@@ -208,7 +215,11 @@ const BaseMusicListPage = ({
                 <div
                     className={`bg-background/30 backdrop-blur-md p-3 rounded-md w-full flex flex-col gap-4`}
                 >
-                    <MusicItemContextMenu item={item}>{header}</MusicItemContextMenu>
+                    {audioOnly ? (
+                        <MusicItemContextMenu item={item}>{header}</MusicItemContextMenu>
+                    ) : (
+                        header
+                    )}
                     {isLoadingAlbumTracks && (
                         <div className="flex flex-col gap-0">
                             <div className="flex items-center p-2 px-8 group text-muted-foreground">
@@ -227,7 +238,24 @@ const BaseMusicListPage = ({
                     {albumTracksError && (
                         <div className="text-red-500">{t('error_loading_tracks')}</div>
                     )}
-                    {albumTracks && albumTracks.length > 0 && (
+                    {!audioOnly && albumTracks && (
+                        <div className="grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4">
+                            {albumTracks.map((entry, index) => (
+                                <LibraryItem
+                                    key={entry.PlaylistItemId ?? `${entry.Id}-${index}`}
+                                    item={entry}
+                                    posterUrl={getPrimaryImageUrl(
+                                        entry.Id || '',
+                                        { width: 320 },
+                                        entry.ImageTags?.Primary
+                                    )}
+                                    t={t}
+                                />
+                            ))}
+                            {albumTracks.length === 0 && <p>{t('common:no_results_found')}</p>}
+                        </div>
+                    )}
+                    {audioOnly && albumTracks && albumTracks.length > 0 && (
                         <div className="flex flex-col gap-0">
                             <div className="flex items-center p-2 px-8 group text-muted-foreground">
                                 <span className="text-sm mr-8 font-mono w-4">#</span>
@@ -244,7 +272,7 @@ const BaseMusicListPage = ({
 
                                     return (
                                         <MusicAlbumTrackRow
-                                            key={track.Id}
+                                            key={track.PlaylistItemId ?? `${track.Id}-${index}`}
                                             track={track}
                                             index={index}
                                             displayIndex={isPlaylist ? index + 1 : undefined}

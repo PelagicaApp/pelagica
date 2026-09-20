@@ -1,9 +1,7 @@
 import SectionScroller from '@/components/SectionScroller';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useUserViews } from '@pelagica/core';
+import { isSupportedLibrary, useUserViews, type LibraryView } from '@pelagica/core';
 import { getPrimaryImageUrl } from '@pelagica/core';
-import { SUPPORTED_LIBRARY_COLLECTION_TYPES } from '../../utils/itemTypes';
-import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { ImageOff } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
@@ -12,7 +10,7 @@ interface LibrariesRowProps {
     title?: string;
 }
 
-const LibraryDisplay = ({ item }: { item: BaseItemDto }) => {
+const LibraryDisplay = ({ item }: { item: LibraryView }) => {
     const [imageError, setImageError] = useState(false);
 
     return (
@@ -46,8 +44,9 @@ const LibraryDisplay = ({ item }: { item: BaseItemDto }) => {
 
 const LibrariesRow = ({ title }: LibrariesRowProps) => {
     const { data: libraries, isLoading } = useUserViews();
+    const visibleLibraries = libraries?.Items?.filter(isSupportedLibrary) ?? [];
 
-    if ((!libraries || !libraries.Items || libraries.Items?.length === 0) && !isLoading) {
+    if (visibleLibraries.length === 0 && !isLoading) {
         return null;
     }
 
@@ -57,11 +56,9 @@ const LibrariesRow = ({ title }: LibrariesRowProps) => {
             title={<h2 className="text-2xl font-bold flex items-center gap-2">{title}</h2>}
             items={
                 libraries
-                    ? libraries
-                          .Items!.filter((library) =>
-                              SUPPORTED_LIBRARY_COLLECTION_TYPES.includes(library.CollectionType!)
-                          )
-                          .map((library) => <LibraryDisplay item={library} key={library.Id} />)
+                    ? visibleLibraries.map((library) => (
+                          <LibraryDisplay item={library} key={library.Id} />
+                      ))
                     : Array.from({ length: 6 }).map((_, i) => (
                           <div key={i} className="w-min min-w-48 lg:min-w-64 2xl:min-w-80">
                               <Skeleton className="w-full aspect-video rounded-md" />

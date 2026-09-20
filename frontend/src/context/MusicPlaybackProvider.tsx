@@ -252,10 +252,12 @@ export const MusicPlaybackProvider = ({ children }: PropsWithChildren) => {
             startPlayback({ itemId: track.id, positionTicks: 0 });
 
             if (autoPlay) {
-                audio.play().catch(console.error);
+                resumeContext()
+                    .then(() => audio.play())
+                    .catch(console.error);
             }
         },
-        [currentTrack, startPlayback, stopPlayback]
+        [currentTrack, startPlayback, stopPlayback, resumeContext]
     );
 
     useEffect(() => {

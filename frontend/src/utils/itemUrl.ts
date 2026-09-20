@@ -1,10 +1,13 @@
 import type { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models';
+import { isLibraryContainer } from '@pelagica/core';
 
 const DIRECT_PLAY_ROUTES: Partial<Record<BaseItemKind, string>> = {
     MusicVideo: '/play',
     Video: '/play',
     Photo: '/photo',
     TvChannel: '/play',
+    LiveTvChannel: '/play',
+    Trailer: '/play',
 };
 
 const MUSIC_ROUTES: Partial<Record<BaseItemKind, string>> = {
@@ -22,6 +25,7 @@ const STANDALONE_ROUTES: Partial<Record<BaseItemKind, string>> = {
 
 export function getItemUrl(type: BaseItemKind | undefined, id: string | undefined): string {
     if (!id) return '/';
+    if (isLibraryContainer(type)) return `/library?library=${encodeURIComponent(id)}`;
     if (type && DIRECT_PLAY_ROUTES[type]) return `${DIRECT_PLAY_ROUTES[type]}/${id}`;
     if (type && MUSIC_ROUTES[type]) return `${MUSIC_ROUTES[type]}/${id}`;
     if (type && STANDALONE_ROUTES[type]) return `${STANDALONE_ROUTES[type]}/${id}`;

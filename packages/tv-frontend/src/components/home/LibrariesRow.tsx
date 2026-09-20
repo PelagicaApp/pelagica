@@ -1,17 +1,12 @@
-import { useUserViews } from '@pelagica/core';
+import { isSupportedLibrary, useUserViews } from '@pelagica/core';
 import LibraryCard from '../LibraryCard';
-import { SUPPORTED_LIBRARY_COLLECTION_TYPES } from '../../utils/supportedLibraryCollectionTypes';
 import ScrollableHomeSection from './ScrollableHomeSection';
 import { Skeleton } from '../ui/skeleton';
 
 const LibrariesRow = ({ title }: { title: string }) => {
     const { data, isLoading } = useUserViews();
 
-    const libraries = (data?.Items ?? []).filter(
-        (library) =>
-            library.CollectionType &&
-            SUPPORTED_LIBRARY_COLLECTION_TYPES.includes(library.CollectionType)
-    );
+    const libraries = (data?.Items ?? []).filter(isSupportedLibrary);
 
     if (!isLoading && libraries.length === 0) return null;
 

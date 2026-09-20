@@ -54,6 +54,8 @@ const GeneralItemContextMenu = ({ item, playLink, children }: GeneralItemContext
     const showDownloadButton =
         item.Type &&
         DOWNLOADABLE_ITEM_TYPES.includes(item.Type) &&
+        currentUser?.Policy?.EnableContentDownloading === true &&
+        item.CanDownload !== false &&
         config?.itemPage?.showDownloadButton;
 
     const isAdmin = currentUser?.Policy?.IsAdministrator ?? false;

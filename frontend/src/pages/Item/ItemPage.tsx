@@ -13,6 +13,9 @@ import SeasonPage from './SeasonPage';
 import { getUserId } from '@pelagica/core';
 import BoxSetPage from './BoxSetPage';
 import type { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models';
+import { isLibraryContainer } from '@pelagica/core';
+import { getItemUrl } from '@/utils/itemUrl';
+import MediaFilePage from './MediaFilePage';
 
 const ItemPageSkeleton = memo(() => {
     return (
@@ -82,7 +85,16 @@ const ItemPageSkeleton = memo(() => {
 
 ItemPageSkeleton.displayName = 'ItemPageSkeleton';
 
-const FULL_PAGE_ITEM_TYPES: BaseItemKind[] = ['Movie', 'Series', 'Episode', 'Season', 'BoxSet'];
+const FULL_PAGE_ITEM_TYPES: BaseItemKind[] = [
+    'Movie',
+    'Series',
+    'Episode',
+    'Season',
+    'BoxSet',
+    'Book',
+    'AudioBook',
+    'Audio',
+];
 
 const REDIRECT_ITEM_TYPES: Partial<Record<BaseItemKind, string>> = {
     Person: '/person',
@@ -91,6 +103,13 @@ const REDIRECT_ITEM_TYPES: Partial<Record<BaseItemKind, string>> = {
     Playlist: '/music/playlist',
     Genre: '/genre',
     Studio: '/studio',
+    MusicGenre: '/genre',
+    MusicVideo: '/play',
+    Video: '/play',
+    Trailer: '/play',
+    TvChannel: '/play',
+    LiveTvChannel: '/play',
+    Photo: '/photo',
 };
 
 const ItemPage = () => {
@@ -105,6 +124,10 @@ const ItemPage = () => {
     // the page renders with collection skeletons already reserved (no layout shift).
     const collectionsEnabled = !configLoading && config.itemPage?.showCollections !== false;
     const { isLoading: collectionsLoading } = useItemCollections(itemId, collectionsEnabled);
+
+    if (item && isLibraryContainer(item.Type)) {
+        return <Navigate to={getItemUrl(item.Type, item.Id)} replace />;
+    }
 
     const redirectPath =
         item?.Type && REDIRECT_ITEM_TYPES[item.Type]
@@ -137,6 +160,10 @@ const ItemPage = () => {
                             return <SeasonPage item={item} config={config} />;
                         case 'BoxSet':
                             return <BoxSetPage item={item} config={config} />;
+                        case 'Book':
+                        case 'AudioBook':
+                        case 'Audio':
+                            return <MediaFilePage key={item.Id} item={item} config={config} />;
                         default:
                             return (
                                 <p>

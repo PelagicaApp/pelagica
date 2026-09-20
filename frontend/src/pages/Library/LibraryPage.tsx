@@ -1,9 +1,17 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Page from '../Page';
-import { COLLECTION_ITEM_TYPES, DIRECT_PLAY_COLLECTION_TYPES, useUserViews } from '@pelagica/core';
+import {
+    DIRECT_PLAY_COLLECTION_TYPES,
+    getLibraryItemsOptions,
+    isLibraryContainer,
+    isSupportedLibrary,
+    useItem,
+    useUserViews,
+    type LibraryCollectionType,
+} from '@pelagica/core';
 import { useMemo, useState, useEffect } from 'react';
 import { useLibraryItems } from '@pelagica/core';
-import { useSearchParams } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { Skeleton } from '@/components/ui/skeleton';
 import ItemPagination from '@/components/ItemPagination';
@@ -32,11 +40,10 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import type { BaseItemDto, CollectionType, ItemSortBy, SortOrder } from '@jellyfin/sdk/lib/generated-client/models';
+import type { BaseItemDto, ItemSortBy, SortOrder } from '@jellyfin/sdk/lib/generated-client/models';
 import { ButtonGroup } from '@/components/ui/button-group';
 import LibraryItem from './LibraryItem';
 import HomeVideoGrid, { TARGET_ROW_HEIGHT } from './HomeVideoGrid';
-import { SUPPORTED_LIBRARY_COLLECTION_TYPES } from '../../utils/itemTypes';
 import { getPrimaryImageUrl, type ImageSize } from '@pelagica/core';
 
 const ITEM_ROWS = 5;
@@ -44,14 +51,14 @@ const HOME_VIDEO_PAGE_SIZE = 50;
 
 const DEFAULT_POSTER_SIZE = { width: 416, height: 640 };
 
-const ITEM_POSTER_SIZES: Partial<Record<CollectionType, ImageSize>> = {
+const ITEM_POSTER_SIZES: Partial<Record<LibraryCollectionType, ImageSize>> = {
     music: { width: 416, height: 416 },
     musicvideos: { width: 700, height: 394 },
 };
 
 const DEFAULT_POSTER_ASPECT_RATIO = '2/3';
 
-const ITEM_POSTER_ASPECT_RATIOS: Partial<Record<CollectionType, string>> = {
+const ITEM_POSTER_ASPECT_RATIOS: Partial<Record<LibraryCollectionType, string>> = {
     music: 'square',
     musicvideos: 'video',
 };
@@ -63,23 +70,23 @@ const DEFAULT_GRID_CONFIG: GridConfig = {
     breakpoints: [[1536, 9], [1280, 7], [1024, 5], [768, 4], [640, 3], [0, 2]],
 };
 
-const ITEM_GRID_CONFIG: Partial<Record<CollectionType, GridConfig>> = {
+const ITEM_GRID_CONFIG: Partial<Record<LibraryCollectionType, GridConfig>> = {
     musicvideos: {
         cols: 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6',
         breakpoints: [[1536, 6], [1280, 5], [1024, 4], [768, 3], [0, 2]],
     },
 };
 
-function getGridConfig(collectionType: CollectionType): GridConfig {
+function getGridConfig(collectionType: LibraryCollectionType): GridConfig {
     return ITEM_GRID_CONFIG[collectionType] ?? DEFAULT_GRID_CONFIG;
 }
 
-function getColumnCount(width: number, collectionType: CollectionType): number {
+function getColumnCount(width: number, collectionType: LibraryCollectionType): number {
     const { breakpoints } = getGridConfig(collectionType);
     return breakpoints.find(([minWidth]) => width >= minWidth)?.[1] ?? 2;
 }
 
-function getPageSize(width: number, collectionType: CollectionType): number {
+function getPageSize(width: number, collectionType: LibraryCollectionType): number {
     if (collectionType === 'homevideos') return HOME_VIDEO_PAGE_SIZE;
     return getColumnCount(width, collectionType) * ITEM_ROWS;
 }
@@ -103,7 +110,7 @@ const LibraryContent = ({
     sortBy: ItemSortBy;
     sortOrder: SortOrder;
     page: number;
-    collectionType: CollectionType;
+    collectionType: LibraryCollectionType;
     onPageChange: (p: number) => void;
 }) => {
     const { t } = useTranslation(['library', 'common']);
@@ -123,10 +130,10 @@ const LibraryContent = ({
         return () => window.removeEventListener('resize', handleResize);
     }, [onPageChange, collectionType]);
 
-    const { data: libraryData, isLoading } = useLibraryItems(libraryId, {
+    const { data: libraryData, isLoading, error } = useLibraryItems(libraryId, {
+        ...getLibraryItemsOptions(collectionType),
         limit: pageSize,
         startIndex: page * pageSize,
-        includeItemTypes: COLLECTION_ITEM_TYPES[collectionType],
         sortBy: [sortBy],
         sortOrder,
     });
@@ -149,11 +156,12 @@ const LibraryContent = ({
     const totalPages = libraryData?.totalCount ? Math.ceil(libraryData.totalCount / pageSize) : 0;
     const gridCols = getGridConfig(collectionType).cols;
     const posterAspectRatio = ITEM_POSTER_ASPECT_RATIOS[collectionType] || DEFAULT_POSTER_ASPECT_RATIO;
-    const isDirectPlay = DIRECT_PLAY_COLLECTION_TYPES.includes(collectionType);
+    const isDirectPlay = DIRECT_PLAY_COLLECTION_TYPES.some((type) => type === collectionType);
     const isHomeVideos = collectionType === 'homevideos';
 
     return (
         <div className="mb-4">
+            {error && <p role="alert">{String(error)}</p>}
             {isLoading && !isHomeVideos && (
                 <div className={`w-full gap-4 mt-2 grid ${gridCols}`}>
                     {Array.from({ length: pageSize }).map((_, i) => (
@@ -221,7 +229,7 @@ const LibraryContent = ({
 
 const LibraryPage = () => {
     const { t } = useTranslation('library');
-    const { data: libraries } = useUserViews();
+    const { data: libraries, isLoading: viewsLoading, error: viewsError } = useUserViews();
     const [searchParams, setSearchParams] = useSearchParams();
 
     const sortBy = (searchParams.get('sortBy') as ItemSortBy) || 'DateCreated';
@@ -230,20 +238,22 @@ const LibraryPage = () => {
 
     const libraryIdFromUrl = searchParams.get('library') || '';
 
-    const libraryItems = useMemo(() => {
-        return (
-            libraries?.Items?.filter((library) =>
-                SUPPORTED_LIBRARY_COLLECTION_TYPES.includes(library.CollectionType!)
-            ) ?? []
-        );
-    }, [libraries?.Items]);
-
-    const activeLibraryId = useMemo(() => {
-        if (!libraryItems.length) return libraryIdFromUrl;
-
-        const exists = libraryItems.some(l => l.Id === libraryIdFromUrl);
-        return exists ? libraryIdFromUrl : libraryItems[0]?.Id ?? '';
-    }, [libraryItems, libraryIdFromUrl]);
+    const rootLibraries = useMemo(
+        () => libraries?.Items?.filter(isSupportedLibrary) ?? [],
+        [libraries?.Items]
+    );
+    const isRootLibrary = rootLibraries.some((library) => library.Id === libraryIdFromUrl);
+    const {
+        data: container,
+        isLoading: containerLoading,
+        error: containerError,
+    } = useItem(libraries && libraryIdFromUrl && !isRootLibrary ? libraryIdFromUrl : undefined);
+    const nestedContainer = container && isLibraryContainer(container.Type) ? container : undefined;
+    const libraryItems = useMemo(
+        () => nestedContainer ? [...rootLibraries, nestedContainer] : rootLibraries,
+        [rootLibraries, nestedContainer]
+    );
+    const activeLibraryId = libraryIdFromUrl || rootLibraries[0]?.Id || '';
 
     const updateParams = (updates: Record<string, string>) => {
         const next = new URLSearchParams(searchParams);
@@ -283,6 +293,27 @@ const LibraryPage = () => {
 
     return (
         <Page title={t('title')} requiresAuth className="flex-1">
+            {nestedContainer && (
+                <nav className="mb-4 flex items-center gap-2">
+                    <Link
+                        to={nestedContainer.ParentId
+                            ? `/library?library=${encodeURIComponent(nestedContainer.ParentId)}`
+                            : '/library'}
+                        className="text-muted-foreground hover:text-foreground"
+                    >
+                        {t('title')}
+                    </Link>
+                    <span aria-hidden="true">/</span>
+                    <span>{nestedContainer.Name}</span>
+                </nav>
+            )}
+            {(viewsError || containerError) && (
+                <p role="alert">{String(viewsError || containerError)}</p>
+            )}
+            {(viewsLoading || containerLoading) && <Skeleton className="h-10 w-full mb-4" />}
+            {!viewsLoading && !containerLoading && libraryItems.length === 0 && !viewsError && !containerError && (
+                <p>{t('no_libraries_found')}</p>
+            )}
             <Tabs value={activeLibraryId} onValueChange={handleLibraryChange} className="w-full">
                 <div className="flex flex-col sm:items-center sm:justify-between sm:flex-row gap-2">
                     <TabsList className="max-w-full overflow-auto hidden sm:flex">
@@ -367,7 +398,7 @@ const LibraryPage = () => {
                                 sortOrder={sortOrder}
                                 page={page}
                                 onPageChange={handlePageChange}
-                                collectionType={library.CollectionType as CollectionType}
+                                collectionType={library.CollectionType ?? 'unknown'}
                             />
                         </TabsContent>
                     );

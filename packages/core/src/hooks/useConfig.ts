@@ -324,6 +324,9 @@ const DEFAULT_CONFIG: AppConfig = {
             autoPlayTrailers: true,
         },
         {
+            type: 'libraries',
+        },
+        {
             type: 'continueWatching',
             titleLine: 'ItemTitleWithEpisodeInfo',
             detailLine: ['TimeRemaining'],

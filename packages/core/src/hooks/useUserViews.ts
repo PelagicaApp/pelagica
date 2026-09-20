@@ -2,11 +2,12 @@ import { getApi } from '../api/getApi';
 import { useQuery } from '@tanstack/react-query';
 import { getUserViewApi } from '@jellyfin/sdk/lib/utils/api/user-view-api';
 import { getRetryConfig } from '../utils/authErrorHandler';
+import type { LibraryViewsQueryResult } from '../types/items';
 
 export function useUserViews() {
     return useQuery({
         queryKey: ['userViews'],
-        queryFn: async () => {
+        queryFn: async (): Promise<LibraryViewsQueryResult> => {
             const api = getApi();
             const userViewsApi = getUserViewApi(api);
             const response = await userViewsApi.getUserViews();

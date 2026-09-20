@@ -1,11 +1,14 @@
 import {
+    getLibraryItemsOptions,
     getEndsAt,
     ticksToReadableTime,
+    useLibraryItems,
     useRowItems,
     type DetailField,
     type SectionItemsConfig,
     type TranslateFn,
 } from '@pelagica/core';
+import type { LibraryView } from '@pelagica/core';
 import { useEffect, type ReactNode } from 'react';
 import ScrollableHomeSection from './ScrollableHomeSection';
 import ItemCard from '../ItemCard';
@@ -18,6 +21,7 @@ interface ItemsRowProps {
     title?: string;
     allLink?: string;
     items?: SectionItemsConfig;
+    libraryView?: LibraryView;
     detailFields?: DetailField[];
     useThumbImage?: boolean;
     autoPlayTrailers?: boolean;
@@ -95,9 +99,19 @@ function getDetailFieldsStringForItem(
     }
 }
 
-const ItemsRow = ({ title, items, detailFields, useThumbImage }: ItemsRowProps) => {
+const ItemsRow = ({ title, items, libraryView, detailFields, useThumbImage }: ItemsRowProps) => {
     const { t } = useTranslation('home');
-    const { data: recentItems, isLoading } = useRowItems(items);
+    const rowQuery = useRowItems(items, !libraryView);
+    const libraryQuery = useLibraryItems(libraryView?.Id, {
+        ...getLibraryItemsOptions(libraryView?.CollectionType),
+        includeItemTypes: items?.types,
+        recursive: true,
+        sortBy: items?.sortBy,
+        sortOrder: items?.sortOrder,
+        limit: items?.limit,
+    });
+    const recentItems = libraryView ? libraryQuery.data?.items : rowQuery.data;
+    const isLoading = libraryView ? libraryQuery.isLoading : rowQuery.isLoading;
 
     useEffect(() => {
         if (recentItems && recentItems.length === 0) {

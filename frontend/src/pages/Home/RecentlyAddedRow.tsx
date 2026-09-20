@@ -1,11 +1,15 @@
-import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
-import { SUPPORTED_LIBRARY_COLLECTION_TYPES } from '../../utils/itemTypes';
 import ItemsRow from './ItemsRow';
 import { useTranslation } from 'react-i18next';
-import { COLLECTION_ITEM_TYPES, type DetailField, type RecentlyAddedSection } from '@pelagica/core';
+import {
+    getRecentlyAddedItemTypes,
+    isSupportedLibrary,
+    type DetailField,
+    type LibraryView,
+    type RecentlyAddedSection,
+} from '@pelagica/core';
 
 interface RecentlyAddedRowProps {
-    view: BaseItemDto;
+    view: LibraryView;
     section: RecentlyAddedSection;
     detailFields?: DetailField[];
 }
@@ -13,7 +17,7 @@ interface RecentlyAddedRowProps {
 const RecentlyAddedRow = ({ view, section, detailFields }: RecentlyAddedRowProps) => {
     const { t } = useTranslation('home');
 
-    if (!view.CollectionType || !SUPPORTED_LIBRARY_COLLECTION_TYPES.includes(view.CollectionType)) {
+    if (!isSupportedLibrary(view) || view.CollectionType === 'livetv') {
         return null;
     }
 
@@ -29,7 +33,7 @@ const RecentlyAddedRow = ({ view, section, detailFields }: RecentlyAddedRowProps
                         sortBy: ['DateCreated'],
                         sortOrder: 'Descending',
                         limit: section.limit || 10,
-                        types: COLLECTION_ITEM_TYPES[view.CollectionType],
+                        types: getRecentlyAddedItemTypes(view.CollectionType),
                     }}
                     allLink={`/library?library=${view.Id}&page=0&sortBy=DateCreated&sortOrder=Descending`}
                     detailFields={detailFields}

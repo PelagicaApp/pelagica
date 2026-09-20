@@ -33,7 +33,7 @@ const ItemCardGrid = memo(function ItemCardGrid({
                   ))
                 : items?.map((item, i) => (
                       <ItemCard
-                          key={item.Id}
+                          key={item.PlaylistItemId ?? item.Id ?? i}
                           item={item}
                           autoFocus={autoFocusFirst && i === 0}
                           className="w-full"

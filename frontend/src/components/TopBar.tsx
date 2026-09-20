@@ -80,7 +80,7 @@ import { getEffectiveTheme } from '@/utils/effectiveTheme';
 import { logout } from '@pelagica/core';
 import { getUserProfileImageUrl } from '@pelagica/core';
 import { withBasePath } from '@pelagica/core';
-import { SUPPORTED_LIBRARY_COLLECTION_TYPES } from '../utils/itemTypes';
+import { isSupportedLibrary } from '@pelagica/core';
 import { DynamicIcon, type IconName } from 'lucide-react/dynamic';
 import { useTranslation } from 'react-i18next';
 import i18n from 'i18next';
@@ -692,10 +692,7 @@ const TopBar = ({ overlay = false }: { overlay?: boolean }) => {
         effectiveTheme === 'dark' ? config?.logoDarkUrl || '' : config?.logoLightUrl || '';
     const logoSrc = configuredLogo || defaultLogo;
 
-    const libraries =
-        views?.Items?.filter((lib) =>
-            SUPPORTED_LIBRARY_COLLECTION_TYPES.includes(lib.CollectionType!)
-        ) ?? [];
+    const libraries = views?.Items?.filter(isSupportedLibrary) ?? [];
 
     const hasMusicLibrary = libraries.some((lib) => lib.CollectionType === 'music');
     const hasLiveTvLibrary = views?.Items?.some((lib) => lib.CollectionType === 'livetv') ?? false;

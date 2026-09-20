@@ -11,7 +11,7 @@ interface ItemContextMenuProps {
 }
 
 const ItemContextMenu = ({ item, children, playLink }: ItemContextMenuProps) => {
-    if (getMusicContextKind(item.Type)) {
+    if (getMusicContextKind(item)) {
         return <MusicItemContextMenu item={item}>{children}</MusicItemContextMenu>;
     }
 
