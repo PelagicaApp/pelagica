@@ -12,6 +12,7 @@ import {
     IT,
     RO,
 } from "country-flag-icons/react/3x2";
+import { SUPPORTED_LANGUAGES as LANGUAGES } from "@pelagica/i18n";
 
 export interface SupportedLanguage {
     code: string;
@@ -19,16 +20,10 @@ export interface SupportedLanguage {
     label: string;
 }
 
-export const SUPPORTED_LANGUAGES: SupportedLanguage[] = [
-    { code: "en", Flag: US, label: "English" },
-    { code: "de", Flag: DE, label: "Deutsch" },
-    { code: "sv", Flag: SE, label: "Svenska" },
-    { code: "fr", Flag: FR, label: "Français" },
-    { code: "pl", Flag: PL, label: "Polski" },
-    { code: "pt", Flag: PT, label: "Português" },
-    { code: "ja", Flag: JP, label: "日本語" },
-    { code: "vi", Flag: VN, label: "Tiếng Việt" },
-    { code: "es", Flag: ES, label: "Español" },
-    { code: "it", Flag: IT, label: "Italiano" },
-    { code: "ro", Flag: RO, label: "Română" },
-];
+const FLAGS: Partial<Record<string, FlagComponent>> = { US, DE, SE, FR, PT, JP, VN, PL, ES, IT, RO };
+
+// Languages whose flag isn't imported above are skipped so the picker never shows a blank flag
+export const SUPPORTED_LANGUAGES: SupportedLanguage[] = LANGUAGES.flatMap(({ code, label, country }) => {
+    const Flag = FLAGS[country];
+    return Flag ? [{ code, Flag, label }] : [];
+});

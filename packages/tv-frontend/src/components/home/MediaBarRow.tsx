@@ -180,13 +180,7 @@ const MediaBarRow = ({
                                     )}
                                     {activeItem.Type === 'Series' && activeItem.ChildCount ? (
                                         <Badge variant="outline">
-                                            {activeItem.ChildCount === 1
-                                                ? t('season_count', {
-                                                      count: activeItem.ChildCount,
-                                                  })
-                                                : t('season_count_plural', {
-                                                      count: activeItem.ChildCount,
-                                                  })}
+                                            {t('season_count', { count: activeItem.ChildCount })}
                                         </Badge>
                                     ) : (
                                         activeItem.RunTimeTicks && (

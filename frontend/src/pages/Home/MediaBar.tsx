@@ -214,24 +214,14 @@ const MediaBar = ({
                                             )}
                                             {item.Type === 'Series' && item.ChildCount && (
                                                 <span>
-                                                    {item.ChildCount === 1
-                                                        ? t('season_count', {
-                                                              count: item.ChildCount,
-                                                          })
-                                                        : t('season_count_plural', {
-                                                              count: item.ChildCount,
-                                                          })}
+                                                    {t('season_count', { count: item.ChildCount })}
                                                 </span>
                                             )}
                                             {item.Type === 'Series' && item.RecursiveItemCount && (
                                                 <span>
-                                                    {item.RecursiveItemCount === 1
-                                                        ? t('episode_count', {
-                                                              count: item.RecursiveItemCount,
-                                                          })
-                                                        : t('episode_count_plural', {
-                                                              count: item.RecursiveItemCount,
-                                                          })}
+                                                    {t('episode_count', {
+                                                        count: item.RecursiveItemCount,
+                                                    })}
                                                 </span>
                                             )}
                                             {item.Type !== 'Series' &&

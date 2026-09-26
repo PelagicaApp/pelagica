@@ -118,9 +118,7 @@ const BaseMusicListPage = ({
         detailItems.push(year.toString());
     }
     if (item.ChildCount !== undefined && item.ChildCount !== null) {
-        detailItems.push(
-            t(`tracks_count${item.ChildCount > 1 ? '_plural' : ''}`, { count: item.ChildCount })
-        );
+        detailItems.push(t('tracks_count', { count: item.ChildCount }));
     }
     if (item.RunTimeTicks !== undefined && item.RunTimeTicks !== null) {
         detailItems.push(ticksToReadableTime(item.RunTimeTicks));
