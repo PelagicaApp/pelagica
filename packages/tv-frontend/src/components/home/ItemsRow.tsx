@@ -70,15 +70,11 @@ function getDetailFieldsStringForItem(
                 : t('ends_at_unknown');
         case 'SeasonCount':
             return item.ChildCount !== undefined && item.ChildCount !== null
-                ? item.ChildCount === 1
-                    ? t('season_count', { count: item.ChildCount })
-                    : t('season_count_plural', { count: item.ChildCount })
+                ? t('season_count', { count: item.ChildCount })
                 : t('not_available');
         case 'EpisodeCount':
             return item.RecursiveItemCount !== undefined && item.RecursiveItemCount !== null
-                ? item.RecursiveItemCount === 1
-                    ? t('episode_count', { count: item.RecursiveItemCount })
-                    : t('episode_count_plural', { count: item.RecursiveItemCount })
+                ? t('episode_count', { count: item.RecursiveItemCount })
                 : t('not_available');
         case 'AgeRating':
             return item.OfficialRating || t('not_rated');
@@ -86,9 +82,7 @@ function getDetailFieldsStringForItem(
             return item.AlbumArtist || t('unknown_artist');
         case 'TrackCount':
             return item.ChildCount !== undefined && item.ChildCount !== null
-                ? item.ChildCount === 1
-                    ? t('track_count', { count: item.ChildCount })
-                    : t('track_count_plural', { count: item.ChildCount })
+                ? t('track_count', { count: item.ChildCount })
                 : t('not_available');
         default:
             return '';

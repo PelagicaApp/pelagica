@@ -1,8 +1,0 @@
-{
-    "title": "メディアを検索",
-    "description": "映画、番組、その他のメディアアイテムを検索",
-    "input_placeholder": "メディアを検索...",
-    "failed_search": "検索に失敗しました",
-    "start_typing": "入力して検索を開始...",
-    "no_results": "結果が見つかりません"
-}

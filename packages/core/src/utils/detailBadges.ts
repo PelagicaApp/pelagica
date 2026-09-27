@@ -67,20 +67,14 @@ export function getDetailBadgeValue(
             return item.ChildCount !== undefined && item.ChildCount !== null
                 ? {
                       kind: 'text',
-                      text:
-                          item.ChildCount === 1
-                              ? t('season_count', { count: item.ChildCount })
-                              : t('season_count_plural', { count: item.ChildCount }),
+                      text: t('season_count', { count: item.ChildCount }),
                   }
                 : null;
         case 'EpisodeCount':
             return item.RecursiveItemCount !== undefined && item.RecursiveItemCount !== null
                 ? {
                       kind: 'text',
-                      text:
-                          item.RecursiveItemCount === 1
-                              ? t('episode_count', { count: item.RecursiveItemCount })
-                              : t('episode_count_plural', { count: item.RecursiveItemCount }),
+                      text: t('episode_count', { count: item.RecursiveItemCount }),
                   }
                 : null;
         case 'AgeRating':

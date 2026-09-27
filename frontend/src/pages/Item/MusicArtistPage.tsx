@@ -76,10 +76,7 @@ const MusicArtistPage = ({ item, config }: MusicArtistPageProps) => {
         );
     };
 
-    const albumCountLabel =
-        albumCount != null
-            ? t(albumCount === 1 ? 'album_count' : 'album_count_plural', { count: albumCount })
-            : null;
+    const albumCountLabel = albumCount != null ? t('album_count', { count: albumCount }) : null;
 
     const badgeClass = onPalette
         ? 'border-white/20 bg-white/15 text-white backdrop-blur-sm hover:bg-white/20'
