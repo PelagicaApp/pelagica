@@ -4,6 +4,9 @@ packages:
   - webos
   - packages/*
 
+minimumReleaseAgeExclude:
+  - '@pelagica/i18n'
+
 allowBuilds:
   esbuild: false
   lfa-ponyfill: false
