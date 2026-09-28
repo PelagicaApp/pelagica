@@ -5,6 +5,10 @@ import JASSUB from 'jassub';
 
 type VideoJsPlayer = ReturnType<typeof videojs>;
 
+const SUPPORTS_AIRPLAY =
+    typeof document !== 'undefined' &&
+    'webkitShowPlaybackTargetPicker' in document.createElement('video');
+
 export interface SubtitleTrack {
     src: string;
     srclang: string;
@@ -22,7 +26,7 @@ interface VideoPlayerProps {
     subtitleFonts?: string[];
     onReady?: (player: VideoJsPlayer) => void;
     onPlaybackError?: (error: MediaError | null) => void;
-    pendingAudioSwitchSeekRef: React.MutableRefObject<number | null>;
+    pendingSeekRef: React.MutableRefObject<number | null>;
     subtitleTrackIndex: number | null;
 }
 
@@ -35,7 +39,7 @@ const VideoPlayer = ({
     subtitleFonts,
     onReady,
     onPlaybackError,
-    pendingAudioSwitchSeekRef,
+    pendingSeekRef,
     subtitleTrackIndex,
 }: VideoPlayerProps) => {
     const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -60,7 +64,7 @@ const VideoPlayer = ({
             fluid: false,
             html5: {
                 nativeControlsForTouch: false,
-                hls: { overrideNative: true },
+                ...(SUPPORTS_AIRPLAY ? { vhs: { overrideNative: false } } : {}),
                 nativeTextTracks: false, // Force video.js to render text tracks
             },
         });
@@ -104,9 +108,8 @@ const VideoPlayer = ({
 
         let seekTo: number | null = null;
 
-        if (pendingAudioSwitchSeekRef.current !== null) {
-            seekTo = pendingAudioSwitchSeekRef.current;
-            pendingAudioSwitchSeekRef.current = null;
+        if (pendingSeekRef.current !== null) {
+            seekTo = pendingSeekRef.current;
         } else if (!hasSeekedRef.current && startTicksRef.current > 0) {
             seekTo = startTicksRef.current / 10_000_000;
             hasSeekedRef.current = true;
@@ -118,6 +121,9 @@ const VideoPlayer = ({
         if (seekTo !== null) {
             const target = seekTo;
             const seekOnCanPlay = () => {
+                // Held until the seek lands: a second source change before canplay would
+                // otherwise find the position spent and restart from zero.
+                pendingSeekRef.current = null;
                 player.currentTime(target);
                 player.play()?.catch(console.error);
             };
@@ -130,7 +136,7 @@ const VideoPlayer = ({
         }
 
         player.play()?.catch(console.error);
-    }, [src, srcType, pendingAudioSwitchSeekRef]);
+    }, [src, srcType, pendingSeekRef]);
 
     useEffect(() => {
         if (!playerRef.current) return;
@@ -144,6 +150,10 @@ const VideoPlayer = ({
                 if (track) player.removeRemoteTextTrack(track);
             }
 
+            // Leaving them attached lets the tech re-enable a `default` track on the next
+            // source reload, drawing subtitles locally over a burnt-in stream.
+            if (activeIndex === null) return;
+
             if (subtitles && subtitles.length > 0) {
                 let addedCount = 0;
                 subtitles.forEach((subtitle, index) => {
@@ -156,7 +166,7 @@ const VideoPlayer = ({
                             src: subtitle.src,
                             srclang: subtitle.srclang,
                             label: subtitle.label,
-                            default: subtitle.default,
+                            default: index === activeIndex,
                         },
                         false // Don't add to DOM manually
                     );
@@ -228,6 +238,7 @@ const VideoPlayer = ({
                 ref={videoRef}
                 className="video-js vjs-default-skin"
                 data-testid="video-player"
+                x-webkit-airplay="allow"
                 style={{ maxWidth: '100%', maxHeight: '100%', width: '100%', height: '100%' }}
             />
         </div>
