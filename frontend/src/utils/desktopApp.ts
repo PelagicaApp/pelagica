@@ -9,6 +9,14 @@ export function isMacOS(): boolean {
     return typeof navigator !== 'undefined' && /Mac/i.test(navigator.userAgent);
 }
 
+export function isWindows(): boolean {
+    return typeof navigator !== 'undefined' && /Win/i.test(navigator.userAgent);
+}
+
+export function isWindowsDesktop(): boolean {
+    return isDesktopApp() && isWindows();
+}
+
 export const isDesktopBuild = import.meta.env.VITE_IS_DESKTOP_BUILD === 'true';
 
 /**
