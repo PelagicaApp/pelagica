@@ -7,6 +7,7 @@ import { VERSION } from './utils/version.ts';
 import './index.css';
 import './theme.css';
 import '@pelagica/core/i18n';
+import './i18n/aboutTranslations.ts';
 
 if (isDesktopBuild) {
     setClientInfo({ name: 'Pelagica Desktop', version: VERSION, platform: 'desktop' });

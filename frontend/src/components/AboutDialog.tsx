@@ -30,6 +30,7 @@ import { useTheme } from '@/components/theme-provider';
 import { getEffectiveTheme } from '@/utils/effectiveTheme';
 import { withBasePath, useConfig } from '@pelagica/core';
 import { useAppUpdater, formatBytes } from '@/utils/updater';
+import '@/i18n/aboutTranslations';
 
 const GitHubIcon = ({ className = 'h-4 w-4' }: { className?: string }) => (
     <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
@@ -42,8 +43,7 @@ const GitHubIcon = ({ className = 'h-4 w-4' }: { className?: string }) => (
 );
 
 export const AboutDialog = ({ trigger }: { trigger: React.ReactNode }) => {
-    const { i18n } = useTranslation('sidebar');
-    const isTurkish = i18n.language?.startsWith('tr');
+    const { t } = useTranslation('about');
     const { config } = useConfig();
     const { theme } = useTheme();
     const effectiveTheme = getEffectiveTheme(theme);
@@ -107,11 +107,7 @@ export const AboutDialog = ({ trigger }: { trigger: React.ReactNode }) => {
                                 v{VERSION}
                             </Badge>
                         </div>
-                        <p className="text-xs text-muted-foreground max-w-xs">
-                            {isTurkish
-                                ? 'Jellyfin için modern, zarif ve performanslı medya istemcisi'
-                                : 'A modern, beautiful, and high-performance Jellyfin client'}
-                        </p>
+                        <p className="text-xs text-muted-foreground max-w-xs">{t('tagline')}</p>
                     </div>
 
                     {/* Quick Badges & Links */}
@@ -136,7 +132,7 @@ export const AboutDialog = ({ trigger }: { trigger: React.ReactNode }) => {
                         >
                             <ExternalAnchor href="https://github.com/PelagicaApp/pelagica/releases">
                                 <ExternalLink className="h-3.5 w-3.5" />
-                                {isTurkish ? 'Sürüm Notları' : 'Releases'}
+                                {t('releases')}
                             </ExternalAnchor>
                         </Button>
 
@@ -155,9 +151,7 @@ export const AboutDialog = ({ trigger }: { trigger: React.ReactNode }) => {
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                             <Sparkles className="h-4 w-4 text-primary" />
-                            <span className="text-sm font-semibold">
-                                {isTurkish ? 'Otomatik Güncelleme' : 'Auto Updater'}
-                            </span>
+                            <span className="text-sm font-semibold">{t('auto_updater')}</span>
                         </div>
 
                         {state !== 'downloading' && state !== 'installing' && (
@@ -171,7 +165,7 @@ export const AboutDialog = ({ trigger }: { trigger: React.ReactNode }) => {
                                 <RefreshCw
                                     className={`h-3 w-3 mr-1 ${state === 'checking' ? 'animate-spin' : ''}`}
                                 />
-                                {isTurkish ? 'Denetle' : 'Check'}
+                                {t('check_for_updates')}
                             </Button>
                         )}
                     </div>
@@ -180,11 +174,7 @@ export const AboutDialog = ({ trigger }: { trigger: React.ReactNode }) => {
                     {state === 'checking' && (
                         <div className="flex items-center justify-center gap-2 py-4 text-xs text-muted-foreground">
                             <Spinner className="h-4 w-4" />
-                            <span>
-                                {isTurkish
-                                    ? 'En yeni sürümler denetleniyor...'
-                                    : 'Checking for updates...'}
-                            </span>
+                            <span>{t('checking_for_updates')}</span>
                         </div>
                     )}
 
@@ -192,15 +182,9 @@ export const AboutDialog = ({ trigger }: { trigger: React.ReactNode }) => {
                         <div className="flex items-center gap-3 py-2 px-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400">
                             <CheckCircle2 className="h-5 w-5 shrink-0" />
                             <div className="text-xs">
-                                <p className="font-medium">
-                                    {isTurkish
-                                        ? 'Pelagica güncel!'
-                                        : 'You are on the latest version!'}
-                                </p>
+                                <p className="font-medium">{t('up_to_date_title')}</p>
                                 <p className="text-muted-foreground text-[11px]">
-                                    {isTurkish
-                                        ? `v${VERSION} sürümünü kullanıyorsunuz.`
-                                        : `Currently running v${VERSION}.`}
+                                    {t('up_to_date_desc', { version: VERSION })}
                                 </p>
                             </div>
                         </div>
@@ -210,14 +194,9 @@ export const AboutDialog = ({ trigger }: { trigger: React.ReactNode }) => {
                         <div className="flex items-start gap-2.5 py-2 px-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-xs">
                             <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
                             <div className="space-y-1">
-                                <p className="font-medium">
-                                    {isTurkish ? 'Güncelleme hatası' : 'Update check failed'}
-                                </p>
+                                <p className="font-medium">{t('error_title')}</p>
                                 <p className="text-muted-foreground text-[11px]">
-                                    {errorMessage ||
-                                        (isTurkish
-                                            ? 'GitHub bağlantısı kurulamadı.'
-                                            : 'Could not reach GitHub.')}
+                                    {errorMessage || t('error_desc')}
                                 </p>
                             </div>
                         </div>
@@ -232,7 +211,7 @@ export const AboutDialog = ({ trigger }: { trigger: React.ReactNode }) => {
                                 <div className="rounded-lg bg-primary/10 border border-primary/20 p-3 space-y-2">
                                     <div className="flex items-center justify-between">
                                         <Badge className="bg-primary text-primary-foreground font-semibold text-xs">
-                                            {isTurkish ? 'Yeni Sürüm Mevcut' : 'New Version'}
+                                            {t('update_available_badge')}
                                         </Badge>
                                         <span className="font-mono text-xs font-bold text-primary">
                                             v{updateInfo.version}
@@ -251,7 +230,7 @@ export const AboutDialog = ({ trigger }: { trigger: React.ReactNode }) => {
                                                 onClick={() => setShowChangelog(!showChangelog)}
                                                 className="flex items-center gap-0.5 text-primary hover:underline text-[11px] cursor-pointer"
                                             >
-                                                {isTurkish ? 'Değişiklikler' : 'Changelog'}
+                                                {t('changelog')}
                                                 {showChangelog ? (
                                                     <ChevronUp className="h-3 w-3" />
                                                 ) : (
@@ -275,18 +254,9 @@ export const AboutDialog = ({ trigger }: { trigger: React.ReactNode }) => {
                                     <div className="space-y-2">
                                         <div className="flex justify-between text-xs font-medium">
                                             <span>
-                                                {state === 'downloading' &&
-                                                    (isTurkish
-                                                        ? 'Güncelleme indiriliyor...'
-                                                        : 'Downloading update...')}
-                                                {state === 'downloaded' &&
-                                                    (isTurkish
-                                                        ? 'İndirme tamamlandı!'
-                                                        : 'Download complete!')}
-                                                {state === 'installing' &&
-                                                    (isTurkish
-                                                        ? 'Kurulum başlatılıyor...'
-                                                        : 'Launching installer...')}
+                                                {state === 'downloading' && t('downloading')}
+                                                {state === 'downloaded' && t('download_complete')}
+                                                {state === 'installing' && t('launching_installer')}
                                             </span>
                                             <span className="font-mono text-primary font-bold">
                                                 %{progress}
@@ -307,10 +277,7 @@ export const AboutDialog = ({ trigger }: { trigger: React.ReactNode }) => {
                                                 {formatBytes(totalBytes)}
                                             </span>
                                             <span>
-                                                {state === 'installing' &&
-                                                    (isTurkish
-                                                        ? 'Pelagica güncelleniyor...'
-                                                        : 'Installing...')}
+                                                {state === 'installing' && t('installing_status')}
                                             </span>
                                         </div>
                                     </div>
@@ -323,16 +290,14 @@ export const AboutDialog = ({ trigger }: { trigger: React.ReactNode }) => {
                                         onClick={() => startDownloadAndInstall()}
                                     >
                                         <Download className="h-4 w-4" />
-                                        {isTurkish ? 'Şimdi Güncelle ve Kur' : 'Update & Install'}
+                                        {t('update_and_install')}
                                     </Button>
                                 )}
 
                                 {state === 'installing' && (
                                     <Button disabled className="w-full gap-2 font-medium">
                                         <Spinner className="h-4 w-4" />
-                                        {isTurkish
-                                            ? 'Kurucu Başlatılıyor...'
-                                            : 'Launching Installer...'}
+                                        {t('launching_installer')}
                                     </Button>
                                 )}
                             </div>
@@ -342,7 +307,7 @@ export const AboutDialog = ({ trigger }: { trigger: React.ReactNode }) => {
                     <div className="pt-2 border-t border-border/40 flex items-center justify-between text-[11px] text-muted-foreground">
                         <span className="flex items-center gap-1">
                             <FlaskConical className="h-3 w-3" />
-                            {isTurkish ? 'Geliştirici Testi:' : 'Dev Preview:'}
+                            {t('dev_preview')}
                         </span>
                         <div className="flex gap-1.5">
                             {!isSimulated ? (
@@ -351,7 +316,7 @@ export const AboutDialog = ({ trigger }: { trigger: React.ReactNode }) => {
                                     onClick={() => simulateUpdate('4.12.0')}
                                     className="px-2 py-0.5 rounded bg-muted hover:bg-accent text-foreground text-[10px] font-medium transition cursor-pointer"
                                 >
-                                    {isTurkish ? 'Yeni Sürümü Simüle Et' : 'Simulate Update'}
+                                    {t('simulate_update')}
                                 </button>
                             ) : (
                                 <button
@@ -359,7 +324,7 @@ export const AboutDialog = ({ trigger }: { trigger: React.ReactNode }) => {
                                     onClick={() => resetToCurrent()}
                                     className="px-2 py-0.5 rounded bg-muted hover:bg-accent text-foreground text-[10px] font-medium transition cursor-pointer"
                                 >
-                                    {isTurkish ? 'Mevcut Sürüme Dön' : 'Reset'}
+                                    {t('reset')}
                                 </button>
                             )}
                         </div>
@@ -368,11 +333,7 @@ export const AboutDialog = ({ trigger }: { trigger: React.ReactNode }) => {
 
                 {/* Footer Credits */}
                 <div className="text-center text-[11px] text-muted-foreground">
-                    <p>
-                        {isTurkish
-                            ? 'Pelagica açık kaynak topluluğu tarafından geliştirildi ❤️'
-                            : 'Crafted with ❤️ by the Pelagica open source community'}
-                    </p>
+                    <p>{t('credits')}</p>
                 </div>
             </DialogContent>
         </Dialog>
