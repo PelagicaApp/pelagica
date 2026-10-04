@@ -14,7 +14,7 @@
     !define INFO_PRODUCTNAME "Pelagica"
 !endif
 !ifndef INFO_PRODUCTVERSION
-    !define INFO_PRODUCTVERSION "4.11.1"
+    !define INFO_PRODUCTVERSION "4.11.2"
 !endif
 !ifndef INFO_COPYRIGHT
     !define INFO_COPYRIGHT "© Pelagica"
