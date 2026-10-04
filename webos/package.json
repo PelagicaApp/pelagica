@@ -1,7 +1,7 @@
 {
     "name": "@pelagica/webos",
     "private": true,
-    "version": "4.11.1",
+    "version": "4.11.2",
     "type": "module",
     "scripts": {
         "dev": "vite",
