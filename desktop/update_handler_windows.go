@@ -11,6 +11,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"sync"
 	"syscall"
 	"time"
@@ -55,17 +56,22 @@ type downloadRequest struct {
 
 func handleUpdateStatus(w http.ResponseWriter, r *http.Request) {
 	currentUpdate.mu.RLock()
-	defer currentUpdate.mu.RUnlock()
+	status := currentUpdate.Status
+	progress := currentUpdate.Progress
+	downloaded := currentUpdate.BytesDownloaded
+	total := currentUpdate.TotalBytes
+	errMsg := currentUpdate.Error
+	currentUpdate.mu.RUnlock()
 
 	w.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(w).Encode(map[string]any{
 		"supported":       true,
 		"platform":        "windows",
-		"status":          currentUpdate.Status,
-		"progress":        currentUpdate.Progress,
-		"bytesDownloaded": currentUpdate.BytesDownloaded,
-		"totalBytes":      currentUpdate.TotalBytes,
-		"error":           currentUpdate.Error,
+		"status":          status,
+		"progress":        progress,
+		"bytesDownloaded": downloaded,
+		"totalBytes":      total,
+		"error":           errMsg,
 	})
 }
 
@@ -92,10 +98,23 @@ func handleUpdateDownload(w http.ResponseWriter, r *http.Request) {
 
 	go func(downloadURL, version string) {
 		tempDir := os.TempDir()
-		fileName := fmt.Sprintf("Pelagica-Update-%s-Setup.exe", version)
+
+		// Sanitize version to prevent path traversal
+		cleanVer := strings.Map(func(r rune) rune {
+			if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9') || r == '.' || r == '-' {
+				return r
+			}
+			return -1
+		}, version)
+		if cleanVer == "" {
+			cleanVer = "latest"
+		}
+
+		fileName := fmt.Sprintf("Pelagica-Update-%s-Setup.exe", cleanVer)
 		destPath := filepath.Join(tempDir, fileName)
 
-		resp, err := http.Get(downloadURL)
+		client := &http.Client{Timeout: 15 * time.Minute}
+		resp, err := client.Get(downloadURL)
 		if err != nil {
 			currentUpdate.mu.Lock()
 			currentUpdate.Status = "error"
@@ -126,7 +145,6 @@ func handleUpdateDownload(w http.ResponseWriter, r *http.Request) {
 			currentUpdate.mu.Unlock()
 			return
 		}
-		defer out.Close()
 
 		pw := &progressWriter{
 			total: total,
@@ -134,9 +152,21 @@ func handleUpdateDownload(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if _, err := io.Copy(out, io.TeeReader(resp.Body, pw)); err != nil {
+			_ = out.Close()
+			_ = os.Remove(destPath)
 			currentUpdate.mu.Lock()
 			currentUpdate.Status = "error"
 			currentUpdate.Error = fmt.Sprintf("Download interrupted: %v", err)
+			currentUpdate.mu.Unlock()
+			return
+		}
+
+		// Explicitly close file handle before signaling completion to prevent file-locking conflicts
+		if err := out.Close(); err != nil {
+			_ = os.Remove(destPath)
+			currentUpdate.mu.Lock()
+			currentUpdate.Status = "error"
+			currentUpdate.Error = fmt.Sprintf("Failed to close file: %v", err)
 			currentUpdate.mu.Unlock()
 			return
 		}
@@ -176,8 +206,8 @@ func handleUpdateInstall(w http.ResponseWriter, r *http.Request) {
 	currentUpdate.Status = "installing"
 	currentUpdate.mu.Unlock()
 
-	// Launch installer detached from current Pelagica process
-	cmd := exec.Command(installerPath)
+	// Launch installer via cmd.exe /c start to guarantee UAC elevation handling and complete process detachment
+	cmd := exec.Command("cmd.exe", "/c", "start", "", installerPath)
 	cmd.SysProcAttr = &syscall.SysProcAttr{
 		CreationFlags: syscall.CREATE_NEW_PROCESS_GROUP,
 	}
