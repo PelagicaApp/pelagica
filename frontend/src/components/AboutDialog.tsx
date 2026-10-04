@@ -1,12 +1,6 @@
 import type React from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-    ExternalLink,
-    ShieldCheck,
-    Bug,
-    Globe,
-    Monitor,
-} from 'lucide-react';
+import { ExternalLink, ShieldCheck, Bug, Globe, Monitor } from 'lucide-react';
 import {
     Dialog,
     DialogContent,
