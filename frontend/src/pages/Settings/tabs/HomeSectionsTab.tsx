@@ -5,6 +5,7 @@ import { Switch } from '@/components/ui/switch';
 import { Trash2, Plus, Edit, GripVertical } from 'lucide-react';
 import { randomUUID, type AppConfig, type HomeScreenSection } from '@pelagica/core';
 import { SectionEditor } from '../components/SectionEditor';
+import { useTranslatedSectionTitle } from '@/utils/sectionTitle';
 import {
     DndContext,
     type DragEndEvent,
@@ -39,6 +40,7 @@ const SortableSectionRow = ({
     onDelete: () => void;
 }) => {
     const { t } = useTranslation('settings');
+    const translateTitle = useTranslatedSectionTitle();
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
         id,
     });
@@ -68,7 +70,9 @@ const SortableSectionRow = ({
                 </button>
                 <div className="flex flex-col">
                     <span className="font-semibold">
-                        {section.title || t(`section_type_${section.type}`) || section.type}
+                        {translateTitle(section.title) ||
+                            t(`section_type_${section.type}`) ||
+                            section.type}
                     </span>
                     <span className="text-sm text-muted-foreground">
                         {t(`section_type_${section.type}`)}

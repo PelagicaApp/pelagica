@@ -19,6 +19,7 @@ import {
     SeerrTrendingRow,
 } from './SeerrDiscoverRows';
 import RecentEpisodesRow from './RecentEpisodesRow';
+import { useTranslatedSectionTitle } from '@/utils/sectionTitle';
 
 function getDetailFieldsForCollectionType(type: CollectionType | undefined): DetailField[] {
     switch (type) {
@@ -33,6 +34,7 @@ function getDetailFieldsForCollectionType(type: CollectionType | undefined): Det
 
 const HomePage = () => {
     const { t } = useTranslation('home');
+    const translateSectionTitle = useTranslatedSectionTitle();
     const { data: userViews } = useUserViews();
     const { config } = useConfig();
 
@@ -57,20 +59,26 @@ const HomePage = () => {
                             return (
                                 <StudiosRow
                                     key={index}
-                                    title={section.title || t('studios')}
+                                    title={translateSectionTitle(section.title, t('studios'))}
                                     limit={section.limit}
                                 />
                             );
                         case 'libraries':
                             return (
-                                <LibrariesRow key={index} title={section.title || t('libraries')} />
+                                <LibrariesRow
+                                    key={index}
+                                    title={translateSectionTitle(section.title, t('libraries'))}
+                                />
                             );
 
                         case 'continueWatching':
                             return (
                                 <ContinueWatchingRow
                                     key={index}
-                                    title={section.title || t('continue_watching')}
+                                    title={translateSectionTitle(
+                                        section.title,
+                                        t('continue_watching')
+                                    )}
                                     titleLine={section.titleLine}
                                     detailLine={
                                         section.detailLine !== undefined
@@ -86,7 +94,7 @@ const HomePage = () => {
                             return (
                                 <NextUpRow
                                     key={index}
-                                    title={section.title || t('next_up')}
+                                    title={translateSectionTitle(section.title, t('next_up'))}
                                     titleLine={section.titleLine}
                                     detailLine={
                                         section.detailLine !== undefined
@@ -101,7 +109,7 @@ const HomePage = () => {
                             return (
                                 <ResumeRow
                                     key={index}
-                                    title={section.title || t('resume')}
+                                    title={translateSectionTitle(section.title, t('resume'))}
                                     titleLine={section.titleLine}
                                     detailLine={
                                         section.detailLine !== undefined
@@ -118,7 +126,11 @@ const HomePage = () => {
                                     key={index}
                                     size={section.size}
                                     itemsConfig={section.items}
-                                    title={index != 0 ? section.title : undefined}
+                                    title={
+                                        index != 0
+                                            ? translateSectionTitle(section.title)
+                                            : undefined
+                                    }
                                     showFavoriteButton={section.showFavoriteButton}
                                     showWatchlistButton={section.showWatchlistButton}
                                     autoPlayTrailers={section.autoPlayTrailers}
@@ -159,7 +171,7 @@ const HomePage = () => {
                             return (
                                 <ItemsRow
                                     key={index}
-                                    title={section.title}
+                                    title={translateSectionTitle(section.title)}
                                     allLink={section.allLink}
                                     items={section.items}
                                     detailFields={
@@ -176,7 +188,10 @@ const HomePage = () => {
                             return (
                                 <RecommendedItemsRow
                                     key={index}
-                                    title={section.title || t('recommended_for_you')}
+                                    title={translateSectionTitle(
+                                        section.title,
+                                        t('recommended_for_you')
+                                    )}
                                     type={section.recommendationType}
                                     limit={section.limit}
                                     showSimilarity={section.showSimilarity}
@@ -188,7 +203,7 @@ const HomePage = () => {
                             return (
                                 <GenresRow
                                     key={index}
-                                    title={section.title || t('genres')}
+                                    title={translateSectionTitle(section.title, t('genres'))}
                                     limit={section.limit}
                                 />
                             );
@@ -199,14 +214,20 @@ const HomePage = () => {
                                     return (
                                         <SeerrPopularMoviesRow
                                             key={index}
-                                            title={section.title || t('seerr_popular_movies')}
+                                            title={translateSectionTitle(
+                                                section.title,
+                                                t('seerr_popular_movies')
+                                            )}
                                         />
                                     );
                                 case 'popularSeries':
                                     return (
                                         <SeerrPopularSeriesRow
                                             key={index}
-                                            title={section.title || t('seerr_popular_series')}
+                                            title={translateSectionTitle(
+                                                section.title,
+                                                t('seerr_popular_series')
+                                            )}
                                         />
                                     );
                                 case 'trending':
@@ -214,7 +235,10 @@ const HomePage = () => {
                                     return (
                                         <SeerrTrendingRow
                                             key={index}
-                                            title={section.title || t('seerr_trending')}
+                                            title={translateSectionTitle(
+                                                section.title,
+                                                t('seerr_trending')
+                                            )}
                                         />
                                     );
                             }
@@ -223,7 +247,10 @@ const HomePage = () => {
                             return (
                                 <RecentEpisodesRow
                                     key={index}
-                                    title={section.title || t('recent_episodes')}
+                                    title={translateSectionTitle(
+                                        section.title,
+                                        t('recent_episodes')
+                                    )}
                                     limit={section.limit}
                                     view={
                                         userViews?.Items?.find(
