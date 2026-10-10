@@ -27,6 +27,7 @@ func newAssetHandler() http.Handler {
 	mux.HandleFunc("GET /api/studios/{name}/logo", handleStudioLogo)
 	registerSeerRoutes(mux)
 	registerStatsRoutes(mux)
+	registerUpdateRoutes(mux)
 	mux.Handle("/", application.AssetFileServerFS(assets))
 	return mux
 }
