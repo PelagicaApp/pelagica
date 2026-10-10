@@ -48,9 +48,13 @@ func TestCheckDesktopUpdate(t *testing.T) {
 		{name: "prerelease tag", current: "4.11.0", tag: "v4.12.0-rc.1"},
 		{name: "invalid tag", current: "4.11.0", tag: "invalid"},
 		{name: "development", current: "0.0.0", tag: "v4.12.0", wantErr: true},
+		{name: "missing current", tag: "v4.12.0", wantErr: true},
+		{name: "missing release version", current: "4.11.0"},
+		{name: "missing installer", current: "4.11.0", tag: "v4.12.0", asset: "README.txt", wantErr: true},
 		{name: "invalid current", current: "unknown", tag: "v4.12.0", wantErr: true},
 		{name: "wrong arch", current: "4.11.0", tag: "v4.12.0", asset: "pelagica-macos-amd64-v4.12.0.dmg", wantErr: true},
 		{name: "mismatched tag", current: "4.11.0", tag: "v4.12.0", asset: "pelagica-macos-arm64-v4.11.0.dmg", wantErr: true},
+		{name: "GitHub forbidden", current: "4.11.0", status: 403, wantErr: true},
 		{name: "rate limited", current: "4.11.0", status: 429, wantErr: true},
 		{name: "server error", current: "4.11.0", status: 500, wantErr: true},
 		{name: "no release", current: "4.11.0", status: 404},
@@ -100,8 +104,25 @@ func TestDesktopPlatforms(t *testing.T) {
 		{"darwin", "amd64", "pelagica-macos-amd64-v4.12.0.dmg"},
 		{"windows", "amd64", "pelagica-windows-amd64-installer-v4.12.0.exe"},
 		{"linux", "amd64", "pelagica-linux-amd64-v4.12.0.deb"},
+		{"linux", "amd64", "pelagica-linux-amd64-v4.12.0.pkg.tar.zst"},
+		{"linux", "amd64", "pelagica-linux-amd64-v4.12.0.AppImage"},
 	} {
-		t.Run(tc.platform+tc.arch, func(t *testing.T) {
+		t.Run(tc.asset, func(t *testing.T) {
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if r.URL.Path != "/repos/PelagicaApp/pelagica/releases/latest" {
+					t.Errorf("unexpected request: %s", r.URL.Path)
+				}
+				_ = json.NewEncoder(w).Encode(map[string]any{"tag_name": "v4.12.0", "assets": []map[string]any{{"name": tc.asset, "size": 100}}})
+			}))
+			defer server.Close()
+			provider, err := github.New(github.Config{Repository: "PelagicaApp/pelagica", BaseURL: server.URL, AssetMatcher: desktopUpdateAsset})
+			if err != nil {
+				t.Fatal(err)
+			}
+			notice, err := checkDesktopUpdate(context.Background(), provider, "4.11.0", tc.platform, tc.arch)
+			if err != nil || notice == nil || notice.URL != releasesURL+"/tag/v4.12.0" {
+				t.Fatalf("notice=%v, error=%v", notice, err)
+			}
 			assets := []github.ReleaseAsset{{Name: tc.asset, Size: 100}}
 			if desktopUpdateAsset(updater.CheckRequest{Platform: tc.platform, Arch: tc.arch}, assets) != 0 {
 				t.Fatal("compatible asset rejected")

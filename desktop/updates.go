@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"regexp"
 	"runtime"
+	"slices"
 	"strings"
 
 	"github.com/wailsapp/wails/v3/pkg/updater"
@@ -25,34 +26,36 @@ type updateNotice struct {
 }
 
 // Match only installer names produced by the existing release workflow.
-func releaseAssetName(platform, arch, tag string) string {
+func releaseAssetNames(platform, arch, tag string) []string {
 	switch platform {
 	case "darwin":
 		if arch == "arm64" || arch == "amd64" {
-			return "pelagica-macos-" + arch + "-" + tag + ".dmg"
+			return []string{"pelagica-macos-" + arch + "-" + tag + ".dmg"}
 		}
 	case "windows":
 		if arch == "amd64" {
-			return "pelagica-windows-amd64-installer-" + tag + ".exe"
+			return []string{"pelagica-windows-amd64-installer-" + tag + ".exe"}
 		}
 	case "linux":
 		if arch == "amd64" {
-			return "pelagica-linux-amd64-" + tag + ".deb"
+			return []string{
+				"pelagica-linux-amd64-" + tag + ".deb",
+				"pelagica-linux-amd64-" + tag + ".pkg.tar.zst",
+				"pelagica-linux-amd64-" + tag + ".AppImage",
+			}
 		}
 	}
-	return ""
+	return nil
 }
 
 func desktopUpdateAsset(req updater.CheckRequest, assets []github.ReleaseAsset) int {
-	pattern := releaseAssetName(req.Platform, req.Arch, "TAG")
-	if pattern == "" {
-		return -1
-	}
-	prefix, suffix, _ := strings.Cut(pattern, "TAG")
-	for i, asset := range assets {
-		tag := strings.TrimSuffix(strings.TrimPrefix(asset.Name, prefix), suffix)
-		if strings.HasPrefix(asset.Name, prefix) && strings.HasSuffix(asset.Name, suffix) && tag != "" && asset.Size > 0 {
-			return i
+	for _, pattern := range releaseAssetNames(req.Platform, req.Arch, "TAG") {
+		prefix, suffix, _ := strings.Cut(pattern, "TAG")
+		for i, asset := range assets {
+			tag := strings.TrimSuffix(strings.TrimPrefix(asset.Name, prefix), suffix)
+			if strings.HasPrefix(asset.Name, prefix) && strings.HasSuffix(asset.Name, suffix) && tag != "" && asset.Size > 0 {
+				return i
+			}
 		}
 	}
 	return -1
@@ -73,7 +76,7 @@ func checkDesktopUpdate(ctx context.Context, provider updater.Provider, version,
 	if !ok || !stableVersion.MatchString(tag) || strings.TrimPrefix(tag, "v") != release.Version {
 		return nil, errors.New("invalid release tag")
 	}
-	if release.Artifact.Filename != releaseAssetName(platform, arch, tag) {
+	if !slices.Contains(releaseAssetNames(platform, arch, tag), release.Artifact.Filename) {
 		return nil, errors.New("release asset does not match its tag")
 	}
 	// Construct the destination ourselves, rather than opening URLs from release metadata.
