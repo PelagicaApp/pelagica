@@ -1,3 +1,4 @@
+import { AutomaticUpdatesPreferences } from './AutomaticUpdates';
 import { useState, useRef, useEffect, type CSSProperties } from 'react';
 import { Link, useNavigate } from 'react-router';
 import {
@@ -486,6 +487,7 @@ const UserMenu = () => {
                         <DialogHeader>
                             <DialogTitle>{t('preferences')}</DialogTitle>
                         </DialogHeader>
+                        <AutomaticUpdatesPreferences />
                         <div>
                             <Label className="mb-2 text-sm font-medium">
                                 {t('audio_language_preference')}
