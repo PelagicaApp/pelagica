@@ -119,6 +119,7 @@ export * from './utils/videoCodecDetection';
 export * from './utils/collectionItemTypes';
 export * from './utils/directplayCollectionTypes';
 export * from './utils/continueWatchingLines';
+export * from './utils/continueWatchingImages';
 export * from './utils/timeConversion';
 export * from './utils/tmdbUrls';
 export * from './utils/randomUUID';

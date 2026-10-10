@@ -7,6 +7,7 @@ interface ContinueWatchingRowProps {
     title: string;
     titleLine?: ContinueWatchingTitleLine;
     detailLine?: ContinueWatchingDetailLine[];
+    useSeriesImage?: boolean;
     limit?: number;
     accurateSorting?: boolean;
 }
@@ -15,6 +16,7 @@ const ContinueWatchingRow = ({
     title,
     titleLine,
     detailLine,
+    useSeriesImage,
     limit,
     accurateSorting = true,
 }: ContinueWatchingRowProps) => {
@@ -29,6 +31,7 @@ const ContinueWatchingRow = ({
             title={title}
             titleLine={titleLine}
             detailLine={detailLine}
+            useSeriesImage={useSeriesImage}
             items={continueWatchingData?.items || []}
             isLoading={isLoading}
             error={error}

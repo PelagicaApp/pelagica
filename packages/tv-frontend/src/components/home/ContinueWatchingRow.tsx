@@ -12,12 +12,14 @@ const ContinueWatchingRow = ({
     title,
     titleLine,
     detailLine,
+    useSeriesImage,
 }: {
     limit?: number;
     accurateSorting?: boolean;
     title: string;
     titleLine?: ContinueWatchingTitleLine;
     detailLine?: ContinueWatchingDetailLine[];
+    useSeriesImage?: boolean;
 }) => {
     const {
         data: continueWatchingData,
@@ -33,6 +35,7 @@ const ContinueWatchingRow = ({
             title={title}
             titleLine={titleLine}
             detailLine={detailLine}
+            useSeriesImage={useSeriesImage}
         />
     );
 };

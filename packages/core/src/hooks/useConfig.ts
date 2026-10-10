@@ -113,6 +113,8 @@ export interface ContinueWatchingSection extends BaseHomeScreenSection {
     type: 'continueWatching';
     titleLine?: ContinueWatchingTitleLine;
     detailLine?: ContinueWatchingDetailLine[];
+    /** Whether to show the series image instead of the episode image */
+    useSeriesImage?: boolean;
     limit?: number;
     /** Whether to use more accurate sorting that may involve additional API calls */
     accurateSorting?: boolean;
@@ -134,6 +136,8 @@ export interface NextUpSection extends BaseHomeScreenSection {
     type: 'nextUp';
     titleLine?: ContinueWatchingTitleLine;
     detailLine?: ContinueWatchingDetailLine[];
+    /** Whether to show the series image instead of the episode image */
+    useSeriesImage?: boolean;
     limit?: number;
 }
 
@@ -141,6 +145,8 @@ export interface ResumeSection extends BaseHomeScreenSection {
     type: 'resume';
     titleLine?: ContinueWatchingTitleLine;
     detailLine?: ContinueWatchingDetailLine[];
+    /** Whether to show the series image instead of the episode image */
+    useSeriesImage?: boolean;
     limit?: number;
 }
 

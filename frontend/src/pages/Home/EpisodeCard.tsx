@@ -8,57 +8,30 @@ import {
 } from '../../../../packages/core/src/utils/continueWatchingLines';
 import { buildPlayerUrl } from '@/utils/playerUrl';
 import { Dot, ImageOff, Play } from 'lucide-react';
-import { getPrimaryImageUrl, getThumbUrl, getBackdropUrl } from '@pelagica/core';
+import { getContinueWatchingImageUrls } from '@pelagica/core';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import GeneralItemContextMenu from '../../components/GeneraItemContextMenu';
-
-type ImageState = 'thumb' | 'backdrop' | 'primary' | 'failed';
 
 interface EpisodeCardProps {
     item: BaseItemDto;
     titleLine?: ContinueWatchingTitleLine;
     detailLine?: ContinueWatchingDetailLine[];
+    useSeriesImage?: boolean;
 }
 
-function getInitialImageState(item: BaseItemDto): ImageState {
-    if (item.ImageTags?.Thumb) return 'thumb';
-    if (item.BackdropImageTags?.length) return 'backdrop';
-    if (item.ImageTags?.Primary) return 'primary';
-    return 'failed';
-}
-
-export function EpisodeCard({ item, titleLine, detailLine }: EpisodeCardProps) {
+export function EpisodeCard({ item, titleLine, detailLine, useSeriesImage }: EpisodeCardProps) {
     const { t } = useTranslation('home');
     const navigate = useNavigate();
     const location = useLocation();
 
-    const [imageState, setImageState] = useState<ImageState>(() => getInitialImageState(item));
+    const [imageIndex, setImageIndex] = useState(0);
+    const imageSrc = getContinueWatchingImageUrls(item, useSeriesImage)[imageIndex];
 
-    const handleImageError = () => {
-        setImageState((state) => {
-            if (state === 'thumb') {
-                if (item.BackdropImageTags?.length) return 'backdrop';
-                if (item.ImageTags?.Primary) return 'primary';
-            }
-            if (state === 'backdrop') {
-                if (item.ImageTags?.Primary) return 'primary';
-            }
-            return 'failed';
-        });
-    };
+    const handleImageError = () => setImageIndex((index) => index + 1);
 
     const watched = item.UserData?.PlaybackPositionTicks ?? 0;
     const runtime = item.RunTimeTicks ?? 0;
     const progress = runtime > 0 ? (watched / runtime) * 100 : 0;
-
-    const imageSrc =
-        imageState === 'thumb'
-            ? getThumbUrl(item.Id!, { width: 416 }, item.ImageTags?.Thumb)
-            : imageState === 'backdrop'
-              ? getBackdropUrl(item.Id!, { width: 416 }, item.BackdropImageTags?.[0])
-              : imageState === 'primary'
-                ? getPrimaryImageUrl(item.Id!, { width: 416 }, item.ImageTags?.Primary)
-                : '';
 
     const playLink = buildPlayerUrl(item.Id!, location.pathname + location.search);
 
@@ -66,7 +39,7 @@ export function EpisodeCard({ item, titleLine, detailLine }: EpisodeCardProps) {
         <GeneralItemContextMenu item={item} playLink={playLink}>
             <Link to={`/item/${item.Id}`} className="group w-min min-w-48 lg:min-w-64 2xl:min-w-80">
                 <div className="relative w-full aspect-video rounded-md overflow-hidden">
-                    {imageState === 'failed' ? (
+                    {!imageSrc ? (
                         <div className="w-full h-full bg-muted flex items-center justify-center rounded-md">
                             <ImageOff className="w-12 h-12 text-muted-foreground" />
                         </div>

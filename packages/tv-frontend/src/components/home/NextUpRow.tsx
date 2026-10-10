@@ -11,11 +11,13 @@ const NextUpRow = ({
     title,
     titleLine,
     detailLine,
+    useSeriesImage,
 }: {
     limit?: number;
     title: string;
     titleLine?: ContinueWatchingTitleLine;
     detailLine?: ContinueWatchingDetailLine[];
+    useSeriesImage?: boolean;
 }) => {
     const { data: nextUpData, isLoading, error } = useNextUp(getUserId(), limit);
 
@@ -27,6 +29,7 @@ const NextUpRow = ({
             title={title}
             titleLine={titleLine}
             detailLine={detailLine}
+            useSeriesImage={useSeriesImage}
         />
     );
 };

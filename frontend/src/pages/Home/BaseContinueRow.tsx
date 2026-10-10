@@ -8,6 +8,7 @@ interface BaseContinueRowProps {
     title: string;
     titleLine?: ContinueWatchingTitleLine;
     detailLine?: ContinueWatchingDetailLine[];
+    useSeriesImage?: boolean;
     items: BaseItemDto[];
     isLoading: boolean;
     error: unknown;
@@ -17,6 +18,7 @@ export function BaseContinueRow({
     title,
     titleLine,
     detailLine,
+    useSeriesImage,
     items,
     isLoading,
     error,
@@ -41,10 +43,11 @@ export function BaseContinueRow({
                               ))
                             : items.map((item) => (
                                   <EpisodeCard
-                                      key={item.Id}
+                                      key={`${item.Id}-${useSeriesImage}`}
                                       item={item}
                                       titleLine={titleLine}
                                       detailLine={detailLine}
+                                      useSeriesImage={useSeriesImage}
                                   />
                               ))
                     }

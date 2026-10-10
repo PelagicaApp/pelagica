@@ -328,6 +328,16 @@ export const SectionEditor = ({
                                     } as any)
                                 }
                             />
+                            <BooleanInput
+                                label={t('use_series_image', 'Use Series Image')}
+                                checked={(editedSection as any).useSeriesImage || false}
+                                onChange={(value) =>
+                                    setEditedSection({
+                                        ...editedSection,
+                                        useSeriesImage: value,
+                                    })
+                                }
+                            />
                         </>
                     )}
 
