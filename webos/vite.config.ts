@@ -22,6 +22,9 @@ export default defineConfig({
     },
     build: {
         outDir: 'www',
+        // Vite's default target needs Chrome 111+, too new for webOS
+        target: 'chrome108',
+        cssTarget: 'chrome108',
         rolldownOptions: {
             output: {
                 codeSplitting: {
