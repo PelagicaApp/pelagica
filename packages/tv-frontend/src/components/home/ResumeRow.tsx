@@ -11,11 +11,13 @@ const ResumeRow = ({
     title,
     titleLine,
     detailLine,
+    useSeriesImage,
 }: {
     limit?: number;
     title: string;
     titleLine?: ContinueWatchingTitleLine;
     detailLine?: ContinueWatchingDetailLine[];
+    useSeriesImage?: boolean;
 }) => {
     const { data: resumeData, isLoading, error } = useResumeItems(getUserId(), limit);
 
@@ -27,6 +29,7 @@ const ResumeRow = ({
             title={title}
             titleLine={titleLine}
             detailLine={detailLine}
+            useSeriesImage={useSeriesImage}
         />
     );
 };

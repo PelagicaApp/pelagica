@@ -54,6 +54,7 @@ const Home = () => {
                                 accurateSorting={section.accurateSorting}
                                 titleLine={section.titleLine}
                                 detailLine={section.detailLine}
+                                useSeriesImage={section.useSeriesImage}
                                 limit={getHomerowItemLimit(section.limit)}
                             />
                         );
@@ -64,6 +65,7 @@ const Home = () => {
                                 title={t('resume')}
                                 titleLine={section.titleLine}
                                 detailLine={section.detailLine}
+                                useSeriesImage={section.useSeriesImage}
                                 limit={getHomerowItemLimit(section.limit)}
                             />
                         );
@@ -74,6 +76,7 @@ const Home = () => {
                                 title={t('next_up')}
                                 titleLine={section.titleLine}
                                 detailLine={section.detailLine}
+                                useSeriesImage={section.useSeriesImage}
                                 limit={getHomerowItemLimit(section.limit)}
                             />
                         );

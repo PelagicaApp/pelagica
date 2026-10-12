@@ -1,6 +1,6 @@
 {
     "id": "app.pelagica.pelagica",
-    "version": "4.11.2",
+    "version": "4.12.0",
     "vendor": "Pelagica",
     "type": "web",
     "main": "index.html",

@@ -7,9 +7,10 @@ interface ResumeRowProps {
     title: string;
     titleLine?: ContinueWatchingTitleLine;
     detailLine?: ContinueWatchingDetailLine[];
+    useSeriesImage?: boolean;
     limit?: number;
 }
-export function ResumeRow({ title, titleLine, detailLine, limit }: ResumeRowProps) {
+export function ResumeRow({ title, titleLine, detailLine, useSeriesImage, limit }: ResumeRowProps) {
     const { data, isLoading, error } = useResumeItems(getUserId(), limit);
 
     return (
@@ -17,6 +18,7 @@ export function ResumeRow({ title, titleLine, detailLine, limit }: ResumeRowProp
             title={title}
             titleLine={titleLine}
             detailLine={detailLine}
+            useSeriesImage={useSeriesImage}
             items={data || []}
             isLoading={isLoading}
             error={error}

@@ -7,9 +7,10 @@ interface NextUpRowProps {
     title: string;
     titleLine?: ContinueWatchingTitleLine;
     detailLine?: ContinueWatchingDetailLine[];
+    useSeriesImage?: boolean;
     limit?: number;
 }
-export function NextUpRow({ title, titleLine, detailLine, limit }: NextUpRowProps) {
+export function NextUpRow({ title, titleLine, detailLine, useSeriesImage, limit }: NextUpRowProps) {
     const { data: nextUpData, isLoading, error } = useNextUp(getUserId(), limit);
 
     return (
@@ -17,6 +18,7 @@ export function NextUpRow({ title, titleLine, detailLine, limit }: NextUpRowProp
             title={title}
             titleLine={titleLine}
             detailLine={detailLine}
+            useSeriesImage={useSeriesImage}
             items={nextUpData || []}
             isLoading={isLoading}
             error={error}

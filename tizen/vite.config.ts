@@ -22,6 +22,9 @@ export default defineConfig({
     },
     build: {
         outDir: 'www',
+        // Vite's default target needs Chrome 111+; Tizen 6.5 ships Chromium 85
+        target: 'chrome85',
+        cssTarget: 'chrome85',
         rolldownOptions: {
             output: {
                 codeSplitting: {

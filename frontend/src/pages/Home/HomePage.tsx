@@ -78,6 +78,7 @@ const HomePage = () => {
                                             : ['TimeRemaining']
                                     }
                                     limit={section.limit || 20}
+                                    useSeriesImage={section.useSeriesImage}
                                     accurateSorting={section.accurateSorting}
                                 />
                             );
@@ -94,6 +95,7 @@ const HomePage = () => {
                                             : ['TimeRemaining']
                                     }
                                     limit={section.limit || 20}
+                                    useSeriesImage={section.useSeriesImage}
                                 />
                             );
 
@@ -109,6 +111,7 @@ const HomePage = () => {
                                             : ['TimeRemaining']
                                     }
                                     limit={section.limit || 20}
+                                    useSeriesImage={section.useSeriesImage}
                                 />
                             );
 

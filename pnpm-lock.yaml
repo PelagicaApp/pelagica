@@ -27,7 +27,7 @@ importers:
         version: 3.2.2(react@19.2.8)
       '@jellyfin/sdk':
         specifier: ^1.0.0
-        version: 1.0.0(axios@1.19.0)
+        version: 1.0.0(axios@1.19.0(debug@4.4.3))
       '@pelagica/core':
         specifier: workspace:*
         version: link:../packages/core
@@ -84,7 +84,7 @@ importers:
         version: 3.0.0-alpha.97
       axios:
         specifier: ^1.18.0
-        version: 1.19.0
+        version: 1.19.0(debug@4.4.3)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -208,16 +208,16 @@ importers:
     dependencies:
       '@jellyfin/sdk':
         specifier: ^1.0.0
-        version: 1.0.0(axios@1.19.0)
+        version: 1.0.0(axios@1.19.0(debug@4.4.3))
       '@pelagica/i18n':
-        specifier: ^1.0.7
-        version: 1.0.7
+        specifier: ^1.0.9
+        version: 1.0.9
       '@tanstack/react-query':
         specifier: ^5.101.0
         version: 5.101.4(react@19.2.8)
       axios:
         specifier: ^1.18.0
-        version: 1.19.0
+        version: 1.19.0(debug@4.4.3)
       country-flag-icons:
         specifier: ^1.6.19
         version: 1.6.20
@@ -251,7 +251,7 @@ importers:
         version: 5.3.0
       '@jellyfin/sdk':
         specifier: ^1.0.0
-        version: 1.0.0(axios@1.19.0)
+        version: 1.0.0(axios@1.19.0(debug@4.4.3))
       '@noriginmedia/norigin-spatial-navigation':
         specifier: ^3.3.0
         version: 3.3.0(react@19.2.8)
@@ -893,8 +893,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@pelagica/i18n@1.0.7':
-    resolution: {integrity: sha512-cMjLuiNrJ47IeViuzL+YHjlsr5SZLuaV6rrV0GWo9zSAyqPUYm0qbORtivSJNWVCcSqLLG/OBPrpvEXoiKxw0Q==}
+  '@pelagica/i18n@1.0.9':
+    resolution: {integrity: sha512-lAYj5+LD0B3TIHwLSEWS+j6xR8sP45hpf3RFX2cE4Qsdqjb1+n62F4vlONPBNdwE9yZ61T0/864n9xzaLBq/3Q==}
     engines: {node: '>=22.18'}
 
   '@radix-ui/number@1.1.3':
@@ -1945,19 +1945,9 @@ packages:
 
   ajv-formats@2.1.1:
     resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
-    peerDependencies:
-      ajv: ^8.0.0
-    peerDependenciesMeta:
-      ajv:
-        optional: true
 
   ajv-formats@3.0.1:
     resolution: {integrity: sha512-8iUql50EUR+uUcdRQ3HDqa6EVyo3docL8g5WJ3FNcWmu62IbkGUue/pEyLBW8VGKKucTPgqeks4fIU1DA4yowQ==}
-    peerDependencies:
-      ajv: ^8.0.0
-    peerDependenciesMeta:
-      ajv:
-        optional: true
 
   ajv@6.15.0:
     resolution: {integrity: sha512-fgFx7Hfoq60ytK2c7DhnF8jIvzYgOMxfugjLOSMHjLIPgenqa7S7oaagATUq99mV6IYvN2tRmC0wnTYX6iPbMw==}
@@ -4150,9 +4140,9 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.3': {}
 
-  '@jellyfin/sdk@1.0.0(axios@1.19.0)':
+  '@jellyfin/sdk@1.0.0(axios@1.19.0(debug@4.4.3))':
     dependencies:
-      axios: 1.19.0
+      axios: 1.19.0(debug@4.4.3)
 
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:
@@ -4177,7 +4167,7 @@ snapshots:
     dependencies:
       '@hono/node-server': 2.1.0(hono@4.13.7)
       ajv: 8.20.0
-      ajv-formats: 3.0.1(ajv@8.20.0)
+      ajv-formats: 3.0.1
       content-type: 1.0.5
       cors: 2.8.6
       cross-spawn: 7.0.6
@@ -4283,7 +4273,7 @@ snapshots:
   '@oxlint/binding-win32-x64-msvc@1.78.0':
     optional: true
 
-  '@pelagica/i18n@1.0.7': {}
+  '@pelagica/i18n@1.0.9': {}
 
   '@radix-ui/number@1.1.3': {}
 
@@ -5340,12 +5330,12 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  ajv-formats@2.1.1(ajv@8.20.0):
-    optionalDependencies:
+  ajv-formats@2.1.1:
+    dependencies:
       ajv: 8.20.0
 
-  ajv-formats@3.0.1(ajv@8.20.0):
-    optionalDependencies:
+  ajv-formats@3.0.1:
+    dependencies:
       ajv: 8.20.0
 
   ajv@6.15.0:
@@ -5382,9 +5372,9 @@ snapshots:
 
   atomically@1.7.0: {}
 
-  axios@1.19.0:
+  axios@1.19.0(debug@4.4.3):
     dependencies:
-      follow-redirects: 1.16.0
+      follow-redirects: 1.16.0(debug@4.4.3)
       form-data: 4.0.6
       https-proxy-agent: 5.0.1
       proxy-from-env: 2.1.0
@@ -5485,7 +5475,7 @@ snapshots:
   conf@10.2.0:
     dependencies:
       ajv: 8.20.0
-      ajv-formats: 2.1.1(ajv@8.20.0)
+      ajv-formats: 2.1.1
       atomically: 1.7.0
       debounce-fn: 4.0.0
       dot-prop: 6.0.1
@@ -5869,7 +5859,9 @@ snapshots:
 
   flatted@3.4.4: {}
 
-  follow-redirects@1.16.0: {}
+  follow-redirects@1.16.0(debug@4.4.3):
+    optionalDependencies:
+      debug: 4.4.3
 
   form-data@4.0.6:
     dependencies:
