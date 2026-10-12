@@ -37,7 +37,7 @@ export function EpisodeCard({ item, titleLine, detailLine, useSeriesImage }: Epi
 
     return (
         <GeneralItemContextMenu item={item} playLink={playLink}>
-            <Link to={`/item/${item.Id}`} className="group w-min min-w-48 lg:min-w-64 2xl:min-w-80">
+            <Link to={`/item/${item.Id}`} className="group shrink-0 w-48 lg:w-64 2xl:w-80">
                 <div className="relative w-full aspect-video rounded-md overflow-hidden">
                     {!imageSrc ? (
                         <div className="w-full h-full bg-muted flex items-center justify-center rounded-md">
