@@ -14,6 +14,7 @@ import {
     Globe,
     House,
     ImageIcon,
+    Info,
     Laptop,
     Library,
     LogIn,
@@ -89,6 +90,7 @@ import { useAuthorizeQuickConnect } from '@pelagica/core';
 import { useSeerrLoginStatus } from '@pelagica/core';
 import { useSeerrLogout } from '@pelagica/core';
 import { SeerrLoginDialog } from '@/components/SeerrLoginDialog';
+import { AboutDialog } from '@/components/AboutDialog';
 import { toast } from 'sonner';
 import { iso6392 } from 'iso-639-2';
 import { cn } from '@/lib/utils';
@@ -640,6 +642,16 @@ const UserMenu = () => {
                         </DropdownMenuItem>
                     </>
                 )}
+
+                <DropdownMenuSeparator />
+                <AboutDialog
+                    trigger={
+                        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                            <Info className="text-muted-foreground" />
+                            {t('about', { defaultValue: 'About Pelagica' })}
+                        </DropdownMenuItem>
+                    }
+                />
 
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
