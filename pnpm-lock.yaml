@@ -208,7 +208,7 @@ importers:
     dependencies:
       '@jellyfin/sdk':
         specifier: ^1.0.0
-        version: 1.0.0(axios@1.19.0(debug@4.4.3))
+        version: 1.0.0(axios@1.20.0(debug@4.4.3))
       '@pelagica/i18n':
         specifier: ^1.0.10
         version: 1.0.10
@@ -216,8 +216,8 @@ importers:
         specifier: ^5.101.0
         version: 5.101.4(react@19.2.8)
       axios:
-        specifier: ^1.18.0
-        version: 1.19.0(debug@4.4.3)
+        specifier: ^1.20.0
+        version: 1.20.0(debug@4.4.3)
       country-flag-icons:
         specifier: ^1.6.19
         version: 1.6.20
@@ -251,7 +251,7 @@ importers:
         version: 5.3.0
       '@jellyfin/sdk':
         specifier: ^1.0.0
-        version: 1.0.0(axios@1.19.0(debug@4.4.3))
+        version: 1.0.0(axios@1.20.0(debug@4.4.3))
       '@noriginmedia/norigin-spatial-navigation':
         specifier: ^3.3.0
         version: 3.3.0(react@19.2.8)
@@ -1987,6 +1987,9 @@ packages:
 
   axios@1.19.0:
     resolution: {integrity: sha512-ht/iuYZXEjFxLH/Hkezgd7m6JKlHHXEUSneaDz8uZe1Gj5QZtCnpyDsckvAiEnT89OEbCLmnte4R4sn7P0EKFw==}
+
+  axios@1.20.0:
+    resolution: {integrity: sha512-r8aOh8j9cGKpgQAqpzrUHnSIc6a59Y3Xf/cv8sy1DrHCkZHzQGEuoq1tARk6qSyDdtQGSDgpb9kFlruzPvrgwg==}
 
   balanced-match@4.0.4:
     resolution: {integrity: sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA==}
@@ -4144,6 +4147,10 @@ snapshots:
     dependencies:
       axios: 1.19.0(debug@4.4.3)
 
+  '@jellyfin/sdk@1.0.0(axios@1.20.0(debug@4.4.3))':
+    dependencies:
+      axios: 1.20.0(debug@4.4.3)
+
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
@@ -5373,6 +5380,16 @@ snapshots:
   atomically@1.7.0: {}
 
   axios@1.19.0(debug@4.4.3):
+    dependencies:
+      follow-redirects: 1.16.0(debug@4.4.3)
+      form-data: 4.0.6
+      https-proxy-agent: 5.0.1
+      proxy-from-env: 2.1.0
+    transitivePeerDependencies:
+      - debug
+      - supports-color
+
+  axios@1.20.0(debug@4.4.3):
     dependencies:
       follow-redirects: 1.16.0(debug@4.4.3)
       form-data: 4.0.6
