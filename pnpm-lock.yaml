@@ -116,8 +116,8 @@ importers:
         specifier: ^3.0.2
         version: 3.0.2
       jassub:
-        specifier: ^2.5.7
-        version: 2.5.14
+        specifier: ^2.5.21
+        version: 2.5.21
       lucide-react:
         specifier: ^1.18.0
         version: 1.31.0(react@19.2.8)
@@ -274,8 +274,8 @@ importers:
         specifier: ^26.3.1
         version: 26.3.6(typescript@5.9.3)
       jassub:
-        specifier: ^2.5.7
-        version: 2.5.14
+        specifier: ^2.5.21
+        version: 2.5.21
       lucide-react:
         specifier: ^1.31.0
         version: 1.31.0(react@19.2.8)
@@ -1919,8 +1919,8 @@ packages:
     resolution: {integrity: sha512-/5NV/vDALVFDXgLmfsy9TRCBlKwO2LNBFzpzvb9iIj+jR+eSc6DLYYvVOdivT/jm7MtU6TebYuRmzEOI7w40UA==}
     engines: {node: '>=10.0.0'}
 
-  abslink@1.2.2:
-    resolution: {integrity: sha512-HCOItvzORPjMzddCmEpbH8+W1VM3yjH+CR7DLtxlxFKX/jz5twJbm7KLfblO7eKLnXINLah8Hk2ZAJqxXeSkOg==}
+  abslink@1.3.1:
+    resolution: {integrity: sha512-ukFoU6q/RBMjoC7fu0Zx2+eVH2QFMfV+aJ2cI3Ypl0Shm0ikGjZ0T2VN0xvLl0a8imhWqvfVrqu2n2Ml3eSMyQ==}
 
   accepts@2.0.0:
     resolution: {integrity: sha512-5cvg6CtKwfgdmVqY1WIiXKc3Q1bkRqGLi+2W/6ao+6Y7gu/RCwRuAhGEzh5B4KlszSuTLgZYuqFqo5bImjNKng==}
@@ -2712,8 +2712,8 @@ packages:
   iso-639-2@3.0.2:
     resolution: {integrity: sha512-tna50aWwcGTIn81S9MzD1NSovHYTpFgmPVszHiLF5Vg/xmXAJ9XAkMOB9a8TH9Vi7qwf/x/8NJy2F+lM5OEwAw==}
 
-  jassub@2.5.14:
-    resolution: {integrity: sha512-r50p9+SwC+A/I5/5qWFpuo7mpY+b16SiUyykWwjTuiLqwuSiUds9HEFrBUE1a1VjidqS2XtHfUwhGJz3Zm7nYQ==}
+  jassub@2.5.21:
+    resolution: {integrity: sha512-ejG8oNWOV9iYLEAjPbYnZmjeCFwfuw67SWzJntWqQVPDqUtDVkt88ntSKNmqnRi9Yqbry0XmCb1YiTCiM9IQHQ==}
 
   jiti@2.7.0:
     resolution: {integrity: sha512-AC/7JofJvZGrrneWNaEnJeOLUx+JlGt7tNa0wZiRPT4MY1wmfKjt2+6O2p2uz2+skll8OZZmJMNqeke7kKbNgQ==}
@@ -5304,7 +5304,7 @@ snapshots:
 
   '@xmldom/xmldom@0.8.15': {}
 
-  abslink@1.2.2: {}
+  abslink@1.3.1: {}
 
   accepts@2.0.0:
     dependencies:
@@ -6071,9 +6071,9 @@ snapshots:
 
   iso-639-2@3.0.2: {}
 
-  jassub@2.5.14:
+  jassub@2.5.21:
     dependencies:
-      abslink: 1.2.2
+      abslink: 1.3.1
       lfa-ponyfill: 1.1.1
       rvfc-polyfill: 1.0.8
       throughput: 1.0.2
