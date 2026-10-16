@@ -27,7 +27,7 @@ importers:
         version: 3.2.2(react@19.2.8)
       '@jellyfin/sdk':
         specifier: ^1.0.0
-        version: 1.0.0(axios@1.19.0(debug@4.4.3))
+        version: 1.0.0(axios@1.20.0(debug@4.4.3))
       '@pelagica/core':
         specifier: workspace:*
         version: link:../packages/core
@@ -83,8 +83,8 @@ importers:
         specifier: 3.0.0-alpha.97
         version: 3.0.0-alpha.97
       axios:
-        specifier: ^1.18.0
-        version: 1.19.0(debug@4.4.3)
+        specifier: ^1.20.0
+        version: 1.20.0(debug@4.4.3)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -208,7 +208,7 @@ importers:
     dependencies:
       '@jellyfin/sdk':
         specifier: ^1.0.0
-        version: 1.0.0(axios@1.19.0(debug@4.4.3))
+        version: 1.0.0(axios@1.20.0(debug@4.4.3))
       '@pelagica/i18n':
         specifier: ^1.0.9
         version: 1.0.9
@@ -216,8 +216,8 @@ importers:
         specifier: ^5.101.0
         version: 5.101.4(react@19.2.8)
       axios:
-        specifier: ^1.18.0
-        version: 1.19.0(debug@4.4.3)
+        specifier: ^1.20.0
+        version: 1.20.0(debug@4.4.3)
       country-flag-icons:
         specifier: ^1.6.19
         version: 1.6.20
@@ -251,7 +251,7 @@ importers:
         version: 5.3.0
       '@jellyfin/sdk':
         specifier: ^1.0.0
-        version: 1.0.0(axios@1.19.0(debug@4.4.3))
+        version: 1.0.0(axios@1.20.0(debug@4.4.3))
       '@noriginmedia/norigin-spatial-navigation':
         specifier: ^3.3.0
         version: 3.3.0(react@19.2.8)
@@ -1985,8 +1985,8 @@ packages:
     resolution: {integrity: sha512-Xcz9l0z7y9yQ9rdDaxlmaI4uJHf/T8g9hOEzJcsEqX2SjCj4J20uK7+ldkDHMbpJDK76wF7xEIgxc/vSlsfw5w==}
     engines: {node: '>=10.12.0'}
 
-  axios@1.19.0:
-    resolution: {integrity: sha512-ht/iuYZXEjFxLH/Hkezgd7m6JKlHHXEUSneaDz8uZe1Gj5QZtCnpyDsckvAiEnT89OEbCLmnte4R4sn7P0EKFw==}
+  axios@1.20.0:
+    resolution: {integrity: sha512-r8aOh8j9cGKpgQAqpzrUHnSIc6a59Y3Xf/cv8sy1DrHCkZHzQGEuoq1tARk6qSyDdtQGSDgpb9kFlruzPvrgwg==}
 
   balanced-match@4.0.4:
     resolution: {integrity: sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA==}
@@ -4140,9 +4140,9 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.3': {}
 
-  '@jellyfin/sdk@1.0.0(axios@1.19.0(debug@4.4.3))':
+  '@jellyfin/sdk@1.0.0(axios@1.20.0(debug@4.4.3))':
     dependencies:
-      axios: 1.19.0(debug@4.4.3)
+      axios: 1.20.0(debug@4.4.3)
 
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:
@@ -5372,7 +5372,7 @@ snapshots:
 
   atomically@1.7.0: {}
 
-  axios@1.19.0(debug@4.4.3):
+  axios@1.20.0(debug@4.4.3):
     dependencies:
       follow-redirects: 1.16.0(debug@4.4.3)
       form-data: 4.0.6
