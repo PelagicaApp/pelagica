@@ -116,8 +116,8 @@ importers:
         specifier: ^3.0.2
         version: 3.0.2
       jassub:
-        specifier: ^2.5.7
-        version: 2.5.14
+        specifier: ^2.5.21
+        version: 2.5.21
       lucide-react:
         specifier: ^1.18.0
         version: 1.31.0(react@19.2.8)
@@ -210,8 +210,8 @@ importers:
         specifier: ^1.0.0
         version: 1.0.0(axios@1.20.0(debug@4.4.3))
       '@pelagica/i18n':
-        specifier: ^1.0.9
-        version: 1.0.9
+        specifier: ^1.0.10
+        version: 1.0.10
       '@tanstack/react-query':
         specifier: ^5.101.0
         version: 5.101.4(react@19.2.8)
@@ -274,8 +274,8 @@ importers:
         specifier: ^26.3.1
         version: 26.3.6(typescript@5.9.3)
       jassub:
-        specifier: ^2.5.7
-        version: 2.5.14
+        specifier: ^2.5.21
+        version: 2.5.21
       lucide-react:
         specifier: ^1.31.0
         version: 1.31.0(react@19.2.8)
@@ -893,8 +893,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@pelagica/i18n@1.0.9':
-    resolution: {integrity: sha512-lAYj5+LD0B3TIHwLSEWS+j6xR8sP45hpf3RFX2cE4Qsdqjb1+n62F4vlONPBNdwE9yZ61T0/864n9xzaLBq/3Q==}
+  '@pelagica/i18n@1.0.10':
+    resolution: {integrity: sha512-OITx/1/45CnVWFyhcjuJy5w7LZ4+zIKNozZ//ahbnSfdgAKFzm1jhGZ+GJHZaRZ9J6sDCm6pLK+kxZxDemWkTg==}
     engines: {node: '>=22.18'}
 
   '@radix-ui/number@1.1.3':
@@ -1919,8 +1919,8 @@ packages:
     resolution: {integrity: sha512-/5NV/vDALVFDXgLmfsy9TRCBlKwO2LNBFzpzvb9iIj+jR+eSc6DLYYvVOdivT/jm7MtU6TebYuRmzEOI7w40UA==}
     engines: {node: '>=10.0.0'}
 
-  abslink@1.2.2:
-    resolution: {integrity: sha512-HCOItvzORPjMzddCmEpbH8+W1VM3yjH+CR7DLtxlxFKX/jz5twJbm7KLfblO7eKLnXINLah8Hk2ZAJqxXeSkOg==}
+  abslink@1.3.1:
+    resolution: {integrity: sha512-ukFoU6q/RBMjoC7fu0Zx2+eVH2QFMfV+aJ2cI3Ypl0Shm0ikGjZ0T2VN0xvLl0a8imhWqvfVrqu2n2Ml3eSMyQ==}
 
   accepts@2.0.0:
     resolution: {integrity: sha512-5cvg6CtKwfgdmVqY1WIiXKc3Q1bkRqGLi+2W/6ao+6Y7gu/RCwRuAhGEzh5B4KlszSuTLgZYuqFqo5bImjNKng==}
@@ -1984,6 +1984,9 @@ packages:
   atomically@1.7.0:
     resolution: {integrity: sha512-Xcz9l0z7y9yQ9rdDaxlmaI4uJHf/T8g9hOEzJcsEqX2SjCj4J20uK7+ldkDHMbpJDK76wF7xEIgxc/vSlsfw5w==}
     engines: {node: '>=10.12.0'}
+
+  axios@1.20.0:
+    resolution: {integrity: sha512-r8aOh8j9cGKpgQAqpzrUHnSIc6a59Y3Xf/cv8sy1DrHCkZHzQGEuoq1tARk6qSyDdtQGSDgpb9kFlruzPvrgwg==}
 
   axios@1.20.0:
     resolution: {integrity: sha512-r8aOh8j9cGKpgQAqpzrUHnSIc6a59Y3Xf/cv8sy1DrHCkZHzQGEuoq1tARk6qSyDdtQGSDgpb9kFlruzPvrgwg==}
@@ -2712,8 +2715,8 @@ packages:
   iso-639-2@3.0.2:
     resolution: {integrity: sha512-tna50aWwcGTIn81S9MzD1NSovHYTpFgmPVszHiLF5Vg/xmXAJ9XAkMOB9a8TH9Vi7qwf/x/8NJy2F+lM5OEwAw==}
 
-  jassub@2.5.14:
-    resolution: {integrity: sha512-r50p9+SwC+A/I5/5qWFpuo7mpY+b16SiUyykWwjTuiLqwuSiUds9HEFrBUE1a1VjidqS2XtHfUwhGJz3Zm7nYQ==}
+  jassub@2.5.21:
+    resolution: {integrity: sha512-ejG8oNWOV9iYLEAjPbYnZmjeCFwfuw67SWzJntWqQVPDqUtDVkt88ntSKNmqnRi9Yqbry0XmCb1YiTCiM9IQHQ==}
 
   jiti@2.7.0:
     resolution: {integrity: sha512-AC/7JofJvZGrrneWNaEnJeOLUx+JlGt7tNa0wZiRPT4MY1wmfKjt2+6O2p2uz2+skll8OZZmJMNqeke7kKbNgQ==}
@@ -3244,8 +3247,8 @@ packages:
   prop-types@15.8.1:
     resolution: {integrity: sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==}
 
-  proxy-addr@2.0.7:
-    resolution: {integrity: sha512-llQsMLSUDUPT44jdrU/O37qlnifitDP+ZwrmmZcoSKyLKvtZxpyV0n2/bD/N4tBAAZ/gJEdZU7KMraoK1+XYAg==}
+  proxy-addr@2.0.8:
+    resolution: {integrity: sha512-5nnx0yGyVUcY6t9RnWcARWtwT9F1D8O9rt08htPvnd49W1IgZtmLkhu9WfMzQj1cFxjHIO6connUNVW5k7AVyQ==}
     engines: {node: '>= 0.10'}
 
   proxy-from-env@2.1.0:
@@ -4144,6 +4147,10 @@ snapshots:
     dependencies:
       axios: 1.20.0(debug@4.4.3)
 
+  '@jellyfin/sdk@1.0.0(axios@1.20.0(debug@4.4.3))':
+    dependencies:
+      axios: 1.20.0(debug@4.4.3)
+
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
@@ -4273,7 +4280,7 @@ snapshots:
   '@oxlint/binding-win32-x64-msvc@1.78.0':
     optional: true
 
-  '@pelagica/i18n@1.0.9': {}
+  '@pelagica/i18n@1.0.10': {}
 
   '@radix-ui/number@1.1.3': {}
 
@@ -5304,7 +5311,7 @@ snapshots:
 
   '@xmldom/xmldom@0.8.15': {}
 
-  abslink@1.2.2: {}
+  abslink@1.3.1: {}
 
   accepts@2.0.0:
     dependencies:
@@ -5371,6 +5378,16 @@ snapshots:
   asynckit@0.4.0: {}
 
   atomically@1.7.0: {}
+
+  axios@1.20.0(debug@4.4.3):
+    dependencies:
+      follow-redirects: 1.16.0(debug@4.4.3)
+      form-data: 4.0.6
+      https-proxy-agent: 5.0.1
+      proxy-from-env: 2.1.0
+    transitivePeerDependencies:
+      - debug
+      - supports-color
 
   axios@1.20.0(debug@4.4.3):
     dependencies:
@@ -5784,7 +5801,7 @@ snapshots:
       on-finished: 2.4.1
       once: 1.4.0
       parseurl: 1.3.3
-      proxy-addr: 2.0.7
+      proxy-addr: 2.0.8
       qs: 6.16.0
       range-parser: 1.3.0
       router: 2.2.0
@@ -6071,9 +6088,9 @@ snapshots:
 
   iso-639-2@3.0.2: {}
 
-  jassub@2.5.14:
+  jassub@2.5.21:
     dependencies:
-      abslink: 1.2.2
+      abslink: 1.3.1
       lfa-ponyfill: 1.1.1
       rvfc-polyfill: 1.0.8
       throughput: 1.0.2
@@ -6521,7 +6538,7 @@ snapshots:
       object-assign: 4.1.1
       react-is: 16.13.1
 
-  proxy-addr@2.0.7:
+  proxy-addr@2.0.8:
     dependencies:
       forwarded: 0.2.0
       ipaddr.js: 1.9.1

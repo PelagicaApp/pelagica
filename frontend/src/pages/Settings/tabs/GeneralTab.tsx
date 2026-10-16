@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
-import type { AppConfig } from '@pelagica/core';
-import { useStatsConsent } from '@pelagica/core';
+import type { AppConfig, PlayerControlsLogoSize } from '@pelagica/core';
+import { PLAYER_CONTROLS_LOGO_SIZES, useStatsConsent } from '@pelagica/core';
 import { useSetStatsConsent } from '@pelagica/core';
-import { StringInput, BooleanInput } from '../components/SettingsInputs';
+import { StringInput, BooleanInput, RadioInput } from '../components/SettingsInputs';
 import { isDesktopApp } from '../../../utils/desktopApp';
 
 const StatsConsentSetting = () => {
@@ -127,6 +127,22 @@ export const GeneralTab = ({
                     }))
                 }
             />
+            {config.showLogoInPlayerControls && (
+                <RadioInput
+                    label={t('player_controls_logo_size_label')}
+                    value={config.playerControlsLogoSize || ''}
+                    onChange={(value) =>
+                        saveConfig((prev) => ({
+                            ...prev,
+                            playerControlsLogoSize: value as PlayerControlsLogoSize,
+                        }))
+                    }
+                    options={PLAYER_CONTROLS_LOGO_SIZES.map((size) => ({
+                        value: size,
+                        label: t(`player_controls_logo_size_${size}`),
+                    }))}
+                />
+            )}
             <h2 className="mt-6 mb-2 text-xl font-semibold leading-none tracking-tight">
                 {t('login_page')}
             </h2>
