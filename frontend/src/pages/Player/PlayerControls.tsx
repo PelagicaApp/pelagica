@@ -49,6 +49,7 @@ import {
     setLastSubtitleLanguage,
 } from '@/utils/localstorageLastlanguage';
 import { useConfig } from '@pelagica/core';
+import { cn } from '../../lib/utils';
 
 function getPrimaryTrickplayInfo(trickplay?: BaseItemDto['Trickplay']) {
     if (!trickplay) return null;
@@ -462,8 +463,25 @@ const PlayerControls = ({
                     <h1>{title}</h1>
                 ) : (
                     <img
-                        className="h-9 object-contain"
-                        src={getLogoUrl(backButtonImageId!, { maxHeight: 40 }, backButtonImageTag)}
+                        className={cn('object-contain', {
+                            'h-16': config?.playerControlsLogoSize === 'large',
+                            'h-12': config?.playerControlsLogoSize === 'medium',
+                            'h-9':
+                                !config?.playerControlsLogoSize ||
+                                config?.playerControlsLogoSize === 'small',
+                        })}
+                        src={getLogoUrl(
+                            backButtonImageId!,
+                            {
+                                maxHeight:
+                                    config?.playerControlsLogoSize === 'large'
+                                        ? 160
+                                        : config?.playerControlsLogoSize === 'medium'
+                                          ? 120
+                                          : 90,
+                            },
+                            backButtonImageTag
+                        )}
                         onError={() => setBackButtonLogoFailed(true)}
                     />
                 )}
