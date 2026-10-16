@@ -256,6 +256,9 @@ export interface ConfigLink {
     icon: string;
 }
 
+export type PlayerControlsLogoSize = 'small' | 'medium' | 'large';
+export const PLAYER_CONTROLS_LOGO_SIZES: PlayerControlsLogoSize[] = ['small', 'medium', 'large'];
+
 export interface AppConfig {
     /** Optional URL for Streamystats integration */
     streamystatsUrl?: string;
@@ -291,6 +294,8 @@ export interface AppConfig {
     hideBackToServerButton?: boolean;
     /** Whether to show the logo of the item in the player controls */
     showLogoInPlayerControls?: boolean;
+    /** Size of the logo in the player controls */
+    playerControlsLogoSize?: PlayerControlsLogoSize;
 }
 
 const DEFAULT_ITEM_PAGE_SETTINGS: ItemPageSettings = {
@@ -317,6 +322,7 @@ const DEFAULT_CONFIG: AppConfig = {
     logoLightUrl: '',
     logoDarkUrl: '',
     showLogoInPlayerControls: true,
+    playerControlsLogoSize: 'medium',
     homeScreenSections: [
         {
             type: 'mediaBar',
