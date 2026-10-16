@@ -42,6 +42,6 @@
         "@types/react-dom": "^19.2.3",
         "oxlint": "^1.75.0",
         "prettier": "3.8.4",
-        "typescript": "~5.9.3"
+        "typescript": "~7.0.2"
     }
 }
