@@ -18,7 +18,7 @@ import FocusableButton from '@/components/FocusableButton';
 import FocusableField from '@/components/FocusableField';
 import { AlertTriangle, Loader2, Server } from 'lucide-react';
 import QRCode from 'react-qr-code';
-import { getQuickConnectUrl } from '@/utils/quickConnectUrl';
+import { getQuickConnectUrl } from '@pelagica/core';
 import { Card, CardContent } from '@/components/ui/card';
 
 type Step = 'server' | 'method' | 'quickconnect' | 'password';
