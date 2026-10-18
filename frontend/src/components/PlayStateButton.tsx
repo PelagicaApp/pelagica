@@ -10,14 +10,7 @@ interface PlayStateButtonProps {
     userId: string;
     size?: 'default' | 'sm' | 'lg' | 'icon' | 'icon-sm' | 'icon-lg' | null | undefined;
     variant?:
-        | 'default'
-        | 'link'
-        | 'destructive'
-        | 'outline'
-        | 'secondary'
-        | 'ghost'
-        | null
-        | undefined;
+        'default' | 'link' | 'destructive' | 'outline' | 'secondary' | 'ghost' | null | undefined;
 }
 
 const PlayStateButton = ({ itemId, userId, size, variant }: PlayStateButtonProps) => {

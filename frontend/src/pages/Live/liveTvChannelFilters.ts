@@ -1,13 +1,7 @@
 import type { UseLiveTvChannelsOptions } from '@pelagica/core';
 
 export type ChannelCategoryFilter =
-    | 'all'
-    | 'favorites'
-    | 'movies'
-    | 'series'
-    | 'news'
-    | 'kids'
-    | 'sports';
+    'all' | 'favorites' | 'movies' | 'series' | 'news' | 'kids' | 'sports';
 
 export const ALL_CATEGORY_FILTERS: ChannelCategoryFilter[] = [
     'all',
