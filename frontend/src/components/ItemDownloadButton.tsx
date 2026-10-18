@@ -8,14 +8,7 @@ interface ItemDownloadButtonProps {
     showDownloadButton?: boolean | undefined;
     size?: 'default' | 'sm' | 'lg' | 'icon' | 'icon-sm' | 'icon-lg' | null | undefined;
     variant?:
-        | 'default'
-        | 'link'
-        | 'destructive'
-        | 'outline'
-        | 'secondary'
-        | 'ghost'
-        | null
-        | undefined;
+        'default' | 'link' | 'destructive' | 'outline' | 'secondary' | 'ghost' | null | undefined;
 }
 
 const ItemDownloadButton = ({
