@@ -63,6 +63,13 @@ const GeneralItemContextMenu = ({ item, playLink, children }: GeneralItemContext
         Boolean(showWatchlistToggle) ||
         Boolean(showDownloadButton);
 
+    const hasAnyItems =
+        hasItemsAbove || Boolean(isAdmin && item.Type && isIdentifiable(item.Type)) || isAdmin;
+
+    if (!hasAnyItems) {
+        return <>{children}</>;
+    }
+
     return (
         <ContextMenu>
             <ContextMenuTrigger asChild>{children}</ContextMenuTrigger>
