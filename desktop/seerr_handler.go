@@ -222,15 +222,112 @@ func handleSeerLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	storeSeerSessionCookie(seerJellyfinURL(r), resp)
+
+	writeSeerJSON(w, http.StatusOK, respBody)
+}
+
+func storeSeerSessionCookie(jellyfinURL string, resp *http.Response) {
 	for _, cookie := range resp.Cookies() {
 		if cookie.Name != "connect.sid" {
 			continue
 		}
-		setSeerSession(seerJellyfinURL(r), cookie.Value)
-		break
+		setSeerSession(jellyfinURL, cookie.Value)
+		return
+	}
+}
+
+func handleSeerQuickConnectInitiate(w http.ResponseWriter, r *http.Request) {
+	seerURL, err := getSeerURL(seerJellyfinURL(r))
+	if err != nil {
+		writeJSONError(w, http.StatusBadGateway, "Seer not configured")
+		return
 	}
 
+	client := &http.Client{Timeout: seerRequestTimeout}
+	resp, err := client.Post(seerURL+"/api/v1/auth/jellyfin/quickconnect/initiate", "application/json", nil)
+	if err != nil {
+		log.Printf("seer quick connect: failed to reach seer: %v", err)
+		writeJSONError(w, http.StatusBadGateway, "Failed to reach Seer")
+		return
+	}
+	defer resp.Body.Close()
+
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		writeJSONError(w, http.StatusBadGateway, "Failed to read Seer response")
+		return
+	}
+
+	writeSeerJSON(w, resp.StatusCode, respBody)
+}
+
+// handleSeerQuickConnectAuthenticate exchanges a Quick Connect secret,
+// authorized through Jellyfin, for a Seer session.
+func handleSeerQuickConnectAuthenticate(w http.ResponseWriter, r *http.Request) {
+	var body struct {
+		Secret string `json:"secret"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil || body.Secret == "" {
+		writeJSONError(w, http.StatusBadRequest, "Secret is required")
+		return
+	}
+
+	seerURL, err := getSeerURL(seerJellyfinURL(r))
+	if err != nil {
+		writeJSONError(w, http.StatusBadGateway, "Seer not configured")
+		return
+	}
+
+	payload, err := json.Marshal(map[string]string{"secret": body.Secret})
+	if err != nil {
+		writeJSONError(w, http.StatusInternalServerError, "Failed to build Seer request")
+		return
+	}
+
+	client := &http.Client{Timeout: seerRequestTimeout}
+	resp, err := client.Post(seerURL+"/api/v1/auth/jellyfin/quickconnect/authenticate", "application/json", bytes.NewReader(payload))
+	if err != nil {
+		log.Printf("seer quick connect: failed to reach seer: %v", err)
+		writeJSONError(w, http.StatusBadGateway, "Failed to reach Seer")
+		return
+	}
+	defer resp.Body.Close()
+
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		writeJSONError(w, http.StatusBadGateway, "Failed to read Seer response")
+		return
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		writeSeerJSON(w, resp.StatusCode, respBody)
+		return
+	}
+
+	storeSeerSessionCookie(seerJellyfinURL(r), resp)
+
 	writeSeerJSON(w, http.StatusOK, respBody)
+}
+
+// handleSeerQuickConnectSupported probes Seer for Quick Connect support.
+// Versions with Quick Connect reject a malformed secret with 400, older ones
+// don't know the route.
+func handleSeerQuickConnectSupported(w http.ResponseWriter, r *http.Request) {
+	supported := false
+	if seerURL, err := getSeerURL(seerJellyfinURL(r)); err == nil {
+		client := &http.Client{Timeout: seerRequestTimeout}
+		if resp, err := client.Get(seerURL + "/api/v1/auth/jellyfin/quickconnect/check?secret=-"); err == nil {
+			_, _ = io.Copy(io.Discard, resp.Body)
+			resp.Body.Close()
+			supported = resp.StatusCode == http.StatusBadRequest
+		}
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	_ = json.NewEncoder(w).Encode(struct {
+		Supported bool `json:"supported"`
+	}{Supported: supported})
 }
 
 func handleSeerLogout(w http.ResponseWriter, r *http.Request) {
@@ -442,6 +539,9 @@ func handleSeerStatus(w http.ResponseWriter, r *http.Request) {
 func registerSeerRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("POST /api/seerr/login", handleSeerLogin)
 	mux.HandleFunc("POST /api/seerr/logout", handleSeerLogout)
+	mux.HandleFunc("POST /api/seerr/quickconnect/initiate", handleSeerQuickConnectInitiate)
+	mux.HandleFunc("POST /api/seerr/quickconnect/authenticate", handleSeerQuickConnectAuthenticate)
+	mux.HandleFunc("GET /api/seerr/quickconnect/supported", handleSeerQuickConnectSupported)
 	mux.HandleFunc("GET /api/seerr/movie/{tmdbId}/recommendations", handleSeerMovieRecommendations)
 	mux.HandleFunc("GET /api/seerr/tv/{tvId}/recommendations", handleSeerTvRecommendations)
 	mux.HandleFunc("GET /api/seerr/movie/{tmdbId}", handleSeerMovieDetails)

@@ -92,6 +92,12 @@ func SeerLogin(c fiber.Ctx) error {
 		return c.Status(resp.StatusCode).Type("json").Send(body)
 	}
 
+	setSeerSessionCookie(c, resp)
+
+	return c.Status(fiber.StatusOK).Type("json").Send(body)
+}
+
+func setSeerSessionCookie(c fiber.Ctx, resp *http.Response) {
 	for _, cookie := range resp.Cookies() {
 		if cookie.Name != "connect.sid" {
 			continue
@@ -104,10 +110,94 @@ func SeerLogin(c fiber.Ctx) error {
 			SameSite: "Lax",
 			Expires:  cookie.Expires,
 		})
-		break
+		return
+	}
+}
+
+func SeerQuickConnectInitiate(c fiber.Ctx) error {
+	seerURL, err := getSeerURL(c)
+	if err != nil {
+		return c.Status(fiber.StatusBadGateway).JSON(models.APIError{Error: "Seer not configured"})
 	}
 
+	resp, err := http.Post(seerURL+"/api/v1/auth/jellyfin/quickconnect/initiate", "application/json", nil)
+	if err != nil {
+		slog.Error("Seer quick connect initiate failed", "error", err)
+		return c.Status(fiber.StatusBadGateway).JSON(models.APIError{Error: "Failed to reach Seer"})
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return c.Status(fiber.StatusBadGateway).JSON(models.APIError{Error: "Failed to read Seer response"})
+	}
+
+	return c.Status(resp.StatusCode).Type("json").Send(body)
+}
+
+type seerQuickConnectAuthenticateRequest struct {
+	Secret string `json:"secret"`
+}
+
+// SeerQuickConnectAuthenticate exchanges a Quick Connect secret, authorized
+// through Jellyfin, for a Seer session.
+func SeerQuickConnectAuthenticate(c fiber.Ctx) error {
+	var req seerQuickConnectAuthenticateRequest
+	if err := c.Bind().Body(&req); err != nil || req.Secret == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(models.APIError{Error: "Secret is required"})
+	}
+
+	seerURL, err := getSeerURL(c)
+	if err != nil {
+		return c.Status(fiber.StatusBadGateway).JSON(models.APIError{Error: "Seer not configured"})
+	}
+
+	payload, err := json.Marshal(map[string]string{"secret": req.Secret})
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(models.APIError{Error: "Failed to build Seer request"})
+	}
+
+	resp, err := http.Post(seerURL+"/api/v1/auth/jellyfin/quickconnect/authenticate", "application/json", bytes.NewReader(payload))
+	if err != nil {
+		slog.Error("Seer quick connect authenticate failed", "error", err)
+		return c.Status(fiber.StatusBadGateway).JSON(models.APIError{Error: "Failed to reach Seer"})
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return c.Status(fiber.StatusBadGateway).JSON(models.APIError{Error: "Failed to read Seer response"})
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return c.Status(resp.StatusCode).Type("json").Send(body)
+	}
+
+	setSeerSessionCookie(c, resp)
+
 	return c.Status(fiber.StatusOK).Type("json").Send(body)
+}
+
+type seerQuickConnectSupportedResponse struct {
+	Supported bool `json:"supported"`
+}
+
+// GetSeerQuickConnectSupported probes Seer for Quick Connect support. Versions
+// with Quick Connect reject a malformed secret with 400, older ones don't know the route.
+func GetSeerQuickConnectSupported(c fiber.Ctx) error {
+	seerURL, err := getSeerURL(c)
+	if err != nil {
+		return c.JSON(seerQuickConnectSupportedResponse{Supported: false})
+	}
+
+	resp, err := http.Get(seerURL + "/api/v1/auth/jellyfin/quickconnect/check?secret=-")
+	if err != nil {
+		return c.JSON(seerQuickConnectSupportedResponse{Supported: false})
+	}
+	defer resp.Body.Close()
+	io.Copy(io.Discard, resp.Body)
+
+	return c.JSON(seerQuickConnectSupportedResponse{Supported: resp.StatusCode == http.StatusBadRequest})
 }
 
 func clearSeerSessionCookie(c fiber.Ctx) {

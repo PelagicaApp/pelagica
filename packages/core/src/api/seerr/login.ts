@@ -1,4 +1,5 @@
 import { withBasePath } from '../../utils/basePath';
+import { setSeerrAutoLoginDisabled } from './autoLogin';
 
 export async function loginToSeerr(
     server: string,
@@ -8,10 +9,12 @@ export async function loginToSeerr(
     const response = await fetch(
         withBasePath('/api/seerr/login?jellyfin_url=' + encodeURIComponent(server)),
         {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ username, password }),
-    });
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ username, password }),
+        }
+    );
+    if (response.ok) setSeerrAutoLoginDisabled(server, false);
     return response.ok;
 }
