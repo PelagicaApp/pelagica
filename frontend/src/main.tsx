@@ -1,6 +1,7 @@
 import { createRoot } from 'react-dom/client';
 import { setClientInfo } from '@pelagica/core';
 import App from './App.tsx';
+import { AutomaticUpdatesProvider } from './components/AutomaticUpdates';
 import { isDesktopBuild } from './utils/desktopApp.ts';
 import { VERSION } from './utils/version.ts';
 
@@ -14,4 +15,8 @@ if (isDesktopBuild) {
     setClientInfo({ name: 'Pelagica', version: VERSION });
 }
 
-createRoot(document.getElementById('root')!).render(<App />);
+createRoot(document.getElementById('root')!).render(
+    <AutomaticUpdatesProvider>
+        <App />
+    </AutomaticUpdatesProvider>
+);
