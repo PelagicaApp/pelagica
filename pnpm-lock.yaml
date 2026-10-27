@@ -80,8 +80,8 @@ importers:
         specifier: ^3.14.2
         version: 3.14.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@wailsio/runtime':
-        specifier: 3.0.0-alpha.97
-        version: 3.0.0-alpha.97
+        specifier: 3.0.0-beta.34
+        version: 3.0.0-beta.34
       axios:
         specifier: ^1.20.0
         version: 1.20.0(debug@4.4.3)
@@ -1923,8 +1923,8 @@ packages:
       babel-plugin-react-compiler:
         optional: true
 
-  '@wailsio/runtime@3.0.0-alpha.97':
-    resolution: {integrity: sha512-alvEG6B0YqW7AcBcNaUWNMD9q8JWqx5AO6BPOZpijBeq4ZjhQxSom3jvvq8Z1mWSMKPEjSvlFirKIh9NLI3ajA==}
+  '@wailsio/runtime@3.0.0-beta.34':
+    resolution: {integrity: sha512-uchPkqqbH+yAweQh4J0y0G1NRE6ILcas6huNTruTVU84aWqCFanlpdVM/KYJdcNzWKhdHGcGGBJYCUYn3ualoQ==}
 
   '@xmldom/xmldom@0.8.15':
     resolution: {integrity: sha512-/5NV/vDALVFDXgLmfsy9TRCBlKwO2LNBFzpzvb9iIj+jR+eSc6DLYYvVOdivT/jm7MtU6TebYuRmzEOI7w40UA==}
@@ -5302,7 +5302,7 @@ snapshots:
       '@rolldown/pluginutils': 1.0.1
       vite: 8.2.1(@types/node@24.13.3)(jiti@2.7.0)
 
-  '@wailsio/runtime@3.0.0-alpha.97': {}
+  '@wailsio/runtime@3.0.0-beta.34': {}
 
   '@xmldom/xmldom@0.8.15': {}
 
