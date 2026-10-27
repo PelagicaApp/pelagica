@@ -10,11 +10,11 @@
         "@pelagica/core": "workspace:*"
     },
     "peerDependencies": {
-        "video.js": "^8.23.7"
+        "video.js": "^10.1.0"
     },
     "devDependencies": {
         "@types/react": "^19.2.17",
         "typescript": "~5.9.3",
-        "video.js": "^8.23.7"
+        "video.js": "^10.1.0"
     }
 }
