@@ -168,7 +168,7 @@ jobs:
                   repo-token: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Install wails3 CLI
-              run: go install github.com/wailsapp/wails/v3/cmd/wails3@v3.0.0-alpha2.117
+              run: go install github.com/wailsapp/wails/v3/cmd/wails3@v3.1.0
 
             - name: Add Go bin to PATH
               shell: bash
@@ -232,7 +232,7 @@ jobs:
                   sudo apt-get install -y build-essential pkg-config libgtk-4-dev libwebkitgtk-6.0-dev
 
             - name: Install wails3 CLI
-              run: go install github.com/wailsapp/wails/v3/cmd/wails3@v3.0.0-alpha2.117
+              run: go install github.com/wailsapp/wails/v3/cmd/wails3@v3.1.0
 
             - name: Add Go bin to PATH
               run: echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
