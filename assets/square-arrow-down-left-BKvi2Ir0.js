@@ -1,0 +1,1 @@
+import{t as e}from"./createLucideIcon-CwF0J_5A.js";var t=[[`path`,{d:`M15 15H9l6-6`,key:`1w52wt`}],[`path`,{d:`M9 15V9`,key:`1kwqze`}],[`rect`,{x:`3`,y:`3`,width:`18`,height:`18`,rx:`2`,key:`h1oib`}]],n=e(`square-arrow-down-left`,t);export{t as __iconNode,n as default};

@@ -1,1 +1,0 @@
-import{t as e}from"./createLucideIcon-GMw4Kfwj.js";var t=[[`path`,{d:`M11.748 18H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4.875`,key:`t4e5a5`}],[`path`,{d:`m16 19 2 2 4-4`,key:`1b14m6`}],[`path`,{d:`M18 12h.01`,key:`yjnet6`}],[`path`,{d:`M6 12h.01`,key:`c2rlol`}],[`circle`,{cx:`12`,cy:`12`,r:`2`,key:`1c9p78`}]],n=e(`banknote-check`,t);export{t as __iconNode,n as default};

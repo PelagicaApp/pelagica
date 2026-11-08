@@ -1,1 +1,0 @@
-import{t as e}from"./createLucideIcon-GMw4Kfwj.js";var t=[[`path`,{d:`M2 20h.01`,key:`4haj6o`}],[`path`,{d:`M7 20v-4`,key:`j294jx`}]],n=e(`signal-low`,t);export{t as __iconNode,n as default};

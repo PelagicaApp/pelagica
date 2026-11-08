@@ -1,1 +1,0 @@
-import{a as e,t}from"./createLucideIcon-GMw4Kfwj.js";var n=e({__iconNode:()=>r,default:()=>i}),r=[[`path`,{d:`M21 12a9 9 0 1 1-6.219-8.56`,key:`13zald`}]],i=t(`loader-circle`,r);export{n,i as t};

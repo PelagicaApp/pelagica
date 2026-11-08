@@ -1,1 +1,0 @@
-import{a as e,t}from"./createLucideIcon-GMw4Kfwj.js";var n=e({__iconNode:()=>r,default:()=>i}),r=[[`path`,{d:`M8 2v3`,key:`1ioesn`}],[`path`,{d:`M16 2v3`,key:`otl347`}],[`rect`,{x:`3`,y:`3`,width:`18`,height:`18`,rx:`2`,key:`h1oib`}],[`path`,{d:`M3 9h18`,key:`1pudct`}]],i=t(`calendar`,r);export{n,i as t};

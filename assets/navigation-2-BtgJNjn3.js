@@ -1,1 +1,0 @@
-import{t as e}from"./createLucideIcon-GMw4Kfwj.js";var t=[[`polygon`,{points:`12 2 19 21 12 17 5 21 12 2`,key:`x8c0qg`}]],n=e(`navigation-2`,t);export{t as __iconNode,n as default};

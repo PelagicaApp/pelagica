@@ -1,0 +1,1 @@
+import{t as e}from"./createLucideIcon-CwF0J_5A.js";var t=[[`path`,{d:`M12 2v20`,key:`t6zp3m`}],[`circle`,{cx:`12`,cy:`12`,r:`7`,key:`fim9np`}]],n=e(`phi`,t);export{t as __iconNode,n as default};

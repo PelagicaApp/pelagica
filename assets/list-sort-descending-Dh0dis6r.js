@@ -1,1 +1,0 @@
-import{t as e}from"./createLucideIcon-GMw4Kfwj.js";var t=[[`path`,{d:`M15 12H3`,key:`6jk70r`}],[`path`,{d:`M3 5h18`,key:`1u36vt`}],[`path`,{d:`M9 19H3`,key:`s61nz1`}]],n=e(`list-sort-descending`,t);export{t as __iconNode,n as default};

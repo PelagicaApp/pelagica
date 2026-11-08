@@ -1,0 +1,1 @@
+import{t as e}from"./createLucideIcon-CwF0J_5A.js";var t=[[`path`,{d:`M21 15V5`,key:`1lbg5w`}],[`path`,{d:`M22 19h-6`,key:`vcuq98`}],[`path`,{d:`M3 12A9 3 0 0 0 21 12`,key:`mv7ke4`}],[`path`,{d:`M3 5V19A9 3 0 0 0 13.318 21.968`,key:`1lyu4j`}],[`ellipse`,{cx:`12`,cy:`5`,rx:`9`,ry:`3`,key:`msslwz`}]],n=e(`database-minus`,t);export{t as __iconNode,n as default};

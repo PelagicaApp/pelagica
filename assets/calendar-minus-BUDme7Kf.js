@@ -1,0 +1,1 @@
+import{t as e}from"./createLucideIcon-CwF0J_5A.js";var t=[[`path`,{d:`M16 18h6`,key:`987eiv`}],[`path`,{d:`M16 2v3`,key:`otl347`}],[`path`,{d:`M21 14V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h8.3`,key:`gcu0od`}],[`path`,{d:`M3 9h18`,key:`1pudct`}],[`path`,{d:`M8 2v3`,key:`1ioesn`}]],n=e(`calendar-minus`,t);export{t as __iconNode,n as default};

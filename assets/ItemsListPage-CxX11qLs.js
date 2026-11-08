@@ -1,0 +1,1 @@
+import{Fr as e}from"./useMusicPlayback-l1nHAh-Z.js";import{n as t,t as n}from"./useItemsGridState-BTOCW8sz.js";var r=e(),i=({item:e,useItems:i,itemAspectClass:a,listTitle:o,renderItemOverlay:s,getItemUrl:c})=>{let l=n(),u=i(e.Id,l.params);return(0,r.jsx)(t,{title:o??e.Name??void 0,state:l,result:u,itemAspectClass:a,renderItemOverlay:s,getItemUrl:c})};export{i as t};

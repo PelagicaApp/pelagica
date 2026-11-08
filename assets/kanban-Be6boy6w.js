@@ -1,1 +1,0 @@
-import{t as e}from"./createLucideIcon-GMw4Kfwj.js";var t=[[`path`,{d:`M5 3v14`,key:`9nsxs2`}],[`path`,{d:`M12 3v8`,key:`1h2ygw`}],[`path`,{d:`M19 3v18`,key:`1sk56x`}]],n=e(`kanban`,t);export{t as __iconNode,n as default};

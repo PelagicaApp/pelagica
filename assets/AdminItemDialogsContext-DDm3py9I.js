@@ -1,1 +1,0 @@
-import{o as e,r as t}from"./createLucideIcon-GMw4Kfwj.js";var n=e(t(),1),r=(0,n.createContext)(void 0),i=()=>{let e=(0,n.useContext)(r);if(!e)throw Error(`useAdminItemDialogs must be used within AdminItemDialogsProvider`);return e};export{i as n,r as t};

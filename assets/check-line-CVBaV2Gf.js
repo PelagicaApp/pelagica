@@ -1,1 +1,0 @@
-import{t as e}from"./createLucideIcon-GMw4Kfwj.js";var t=[[`path`,{d:`M20 4L9 15`,key:`1qkx8z`}],[`path`,{d:`M21 19L3 19`,key:`100sma`}],[`path`,{d:`M9 15L4 10`,key:`9zxff7`}]],n=e(`check-line`,t);export{t as __iconNode,n as default};
