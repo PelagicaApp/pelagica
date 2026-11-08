@@ -5,7 +5,7 @@ export function useSeerrLogout() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: logoutFromSeerr,
+        mutationFn: () => logoutFromSeerr(true),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['seerrLoginStatus'] });
         },

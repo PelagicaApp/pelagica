@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useConfig } from './useConfig';
-import { getServerUrl } from '../utils/localstorageCredentials';
+import { getAccessToken, getServerUrl, getUserId } from '../utils/localstorageCredentials';
 import { getSeerrLoginStatus } from '../api/seerr/status';
 
 export function useSeerrLoginStatus() {
@@ -8,9 +8,10 @@ export function useSeerrLoginStatus() {
     const seerrUrl = config?.seerrUrl;
 
     return useQuery({
-        queryKey: ['seerrLoginStatus', seerrUrl, getServerUrl()],
+        // keyed by user so a status fetched before signing in to Jellyfin isn't reused after
+        queryKey: ['seerrLoginStatus', seerrUrl, getServerUrl(), getUserId()],
         queryFn: getSeerrLoginStatus,
-        enabled: !!seerrUrl,
+        enabled: !!seerrUrl && !!getAccessToken(),
         staleTime: 60 * 1000,
     });
 }
