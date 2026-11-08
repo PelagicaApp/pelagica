@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, type CSSProperties } from 'react';
+import { useState, useRef, useEffect, type ChangeEvent, type CSSProperties } from 'react';
 import { Link, useNavigate } from 'react-router';
 import {
     ChartLine,
@@ -15,12 +15,14 @@ import {
     House,
     ImageIcon,
     Laptop,
+    KeyRound,
     Library,
     LogIn,
     LogOut,
     Minus,
     Moon,
     Music,
+    Pencil,
     Search,
     Settings,
     Settings2,
@@ -72,6 +74,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
+import { Spinner } from '@/components/ui/spinner';
 import { useCurrentUser } from '@pelagica/core';
 import { useUserViews } from '@pelagica/core';
 import { useConfig } from '@pelagica/core';
@@ -88,7 +91,10 @@ import { useUpdateUserConfiguration } from '@pelagica/core';
 import { useAuthorizeQuickConnect } from '@pelagica/core';
 import { useSeerrLoginStatus } from '@pelagica/core';
 import { useSeerrLogout } from '@pelagica/core';
+import { useUploadUserImage } from '@pelagica/core';
 import { SeerrLoginDialog } from '@/components/SeerrLoginDialog';
+import { ChangePasswordDialog } from '@/components/ChangePasswordDialog';
+import { AvatarCropDialog } from '@/components/AvatarCropDialog';
 import { toast } from 'sonner';
 import { iso6392 } from 'iso-639-2';
 import { cn } from '@/lib/utils';
@@ -324,6 +330,9 @@ const UserMenu = () => {
     const seerrLogout = useSeerrLogout();
     const [appIconOptions, setAppIconOptions] = useState<string[]>([]);
     const [selectedAppIcon, setSelectedAppIcon] = useState<string | null>(null);
+    const uploadUserImage = useUploadUserImage();
+    const avatarInputRef = useRef<HTMLInputElement>(null);
+    const [avatarCropFile, setAvatarCropFile] = useState<File | null>(null);
 
     useEffect(() => {
         if (!isDesktopApp()) return;
@@ -359,7 +368,7 @@ const UserMenu = () => {
 
     if (!user?.Id) return null;
 
-    const profileImageUrl = getUserProfileImageUrl(user.Id);
+    const profileImageUrl = getUserProfileImageUrl(user.Id, user.PrimaryImageTag);
     const userName = user?.Name || t('unknown_user');
     const isAdmin = user?.Policy?.IsAdministrator;
     const initials = userName
@@ -368,305 +377,384 @@ const UserMenu = () => {
         .join('')
         .toUpperCase();
 
-    return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="flex items-center gap-2 px-2">
-                    <Avatar className="h-6 w-6 rounded-lg">
-                        <AvatarImage src={profileImageUrl} alt={userName} />
-                        <AvatarFallback className="rounded-lg text-xs">{initials}</AvatarFallback>
-                    </Avatar>
-                    <span className="hidden sm:block text-sm font-medium max-w-32 truncate">
-                        {userName}
-                    </span>
-                    <ChevronDown className="h-3.5 w-3.5 opacity-50" />
-                </Button>
-            </DropdownMenuTrigger>
+    const onAvatarFileSelected = (e: ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        e.target.value = '';
+        if (!file || !user.Id) return;
+        if (!file.type.startsWith('image/')) {
+            toast.error(t('avatar_invalid_file'));
+            return;
+        }
+        setAvatarCropFile(file);
+    };
 
-            <DropdownMenuContent align="end" className="w-56 rounded-lg">
-                <DropdownMenuLabel className="p-0 font-normal">
-                    <div className="flex items-center gap-2 px-1 py-1.5">
-                        <Avatar className="h-8 w-8 rounded-lg">
+    const onAvatarCropped = (cropped: File) => {
+        if (!user.Id) return;
+        uploadUserImage.mutate(
+            { userId: user.Id, file: cropped },
+            {
+                onSuccess: () => {
+                    setAvatarCropFile(null);
+                    toast.success(t('avatar_updated'));
+                },
+                onError: () => toast.error(t('avatar_update_failed')),
+            }
+        );
+    };
+
+    return (
+        <>
+            <input
+                ref={avatarInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={onAvatarFileSelected}
+            />
+            <AvatarCropDialog
+                file={avatarCropFile}
+                userName={userName}
+                isUploading={uploadUserImage.isPending}
+                onCancel={() => setAvatarCropFile(null)}
+                onConfirm={onAvatarCropped}
+            />
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="flex items-center gap-2 px-2">
+                        <Avatar className="h-6 w-6 rounded-lg">
                             <AvatarImage src={profileImageUrl} alt={userName} />
                             <AvatarFallback className="rounded-lg text-xs">
                                 {initials}
                             </AvatarFallback>
                         </Avatar>
-                        <span className="truncate text-sm font-medium">{userName}</span>
-                    </div>
-                </DropdownMenuLabel>
+                        <span className="hidden sm:block text-sm font-medium max-w-32 truncate">
+                            {userName}
+                        </span>
+                        <ChevronDown className="h-3.5 w-3.5 opacity-50" />
+                    </Button>
+                </DropdownMenuTrigger>
 
-                <DropdownMenuSeparator />
-
-                {/* Theme */}
-                <DropdownMenuSub>
-                    <DropdownMenuSubTrigger>
-                        {theme === 'light' ? (
-                            <Sun className="text-muted-foreground" />
-                        ) : theme === 'dark' ? (
-                            <Moon className="text-muted-foreground" />
-                        ) : (
-                            <Laptop className="text-muted-foreground" />
-                        )}
-                        {t('theme')}
-                    </DropdownMenuSubTrigger>
-                    <DropdownMenuPortal>
-                        <DropdownMenuSubContent>
-                            <DropdownMenuItem onClick={() => setTheme('light')}>
-                                <Sun className="text-muted-foreground" />
-                                {t('light')}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => setTheme('dark')}>
-                                <Moon className="text-muted-foreground" />
-                                {t('dark')}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => setTheme('system')}>
-                                <Laptop className="text-muted-foreground" />
-                                {t('system')}
-                            </DropdownMenuItem>
-                        </DropdownMenuSubContent>
-                    </DropdownMenuPortal>
-                </DropdownMenuSub>
-
-                {/* Language */}
-                <DropdownMenuSub>
-                    <DropdownMenuSubTrigger>
-                        <Globe className="text-muted-foreground" />
-                        {t('language')}
-                    </DropdownMenuSubTrigger>
-                    <DropdownMenuPortal>
-                        <DropdownMenuSubContent>
-                            {SUPPORTED_LANGUAGES.map(({ code, Flag, label }) => (
-                                <DropdownMenuItem
-                                    key={code}
-                                    onClick={() => i18n.changeLanguage(code)}
+                <DropdownMenuContent align="end" className="w-56 rounded-lg">
+                    <DropdownMenuLabel className="p-0 font-normal">
+                        <div className="flex items-center gap-2 px-1 py-1.5">
+                            <button
+                                type="button"
+                                className="group relative shrink-0 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-wait"
+                                onClick={() => avatarInputRef.current?.click()}
+                                disabled={uploadUserImage.isPending}
+                                aria-label={t('change_avatar')}
+                                title={t('change_avatar')}
+                            >
+                                <Avatar className="h-8 w-8 rounded-lg">
+                                    <AvatarImage src={profileImageUrl} alt={userName} />
+                                    <AvatarFallback className="rounded-lg text-xs">
+                                        {initials}
+                                    </AvatarFallback>
+                                </Avatar>
+                                <span
+                                    className={cn(
+                                        'absolute inset-0 flex items-center justify-center rounded-lg bg-black/50 text-white transition-opacity',
+                                        uploadUserImage.isPending
+                                            ? 'opacity-100'
+                                            : 'opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100'
+                                    )}
                                 >
-                                    <span className="inline-block w-6 h-4 shrink-0 overflow-hidden">
-                                        <Flag style={{ width: '100%', height: '100%' }} />
-                                    </span>
-                                    {label}
-                                </DropdownMenuItem>
-                            ))}
-                        </DropdownMenuSubContent>
-                    </DropdownMenuPortal>
-                </DropdownMenuSub>
+                                    {uploadUserImage.isPending ? (
+                                        <Spinner className="size-3.5" />
+                                    ) : (
+                                        <Pencil className="size-3.5" />
+                                    )}
+                                </span>
+                            </button>
+                            <span className="truncate text-sm font-medium">{userName}</span>
+                        </div>
+                    </DropdownMenuLabel>
 
-                {/* App Icon (desktop app and macOS only) */}
-                {isDesktopApp() && isMacOS() && appIconOptions.length > 0 && (
+                    <DropdownMenuSeparator />
+
+                    {/* Theme */}
                     <DropdownMenuSub>
                         <DropdownMenuSubTrigger>
-                            <ImageIcon className="text-muted-foreground" />
-                            {t('app_icon')}
+                            {theme === 'light' ? (
+                                <Sun className="text-muted-foreground" />
+                            ) : theme === 'dark' ? (
+                                <Moon className="text-muted-foreground" />
+                            ) : (
+                                <Laptop className="text-muted-foreground" />
+                            )}
+                            {t('theme')}
                         </DropdownMenuSubTrigger>
                         <DropdownMenuPortal>
                             <DropdownMenuSubContent>
-                                {appIconOptions.map((name) => (
+                                <DropdownMenuItem onClick={() => setTheme('light')}>
+                                    <Sun className="text-muted-foreground" />
+                                    {t('light')}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => setTheme('dark')}>
+                                    <Moon className="text-muted-foreground" />
+                                    {t('dark')}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => setTheme('system')}>
+                                    <Laptop className="text-muted-foreground" />
+                                    {t('system')}
+                                </DropdownMenuItem>
+                            </DropdownMenuSubContent>
+                        </DropdownMenuPortal>
+                    </DropdownMenuSub>
+
+                    {/* Language */}
+                    <DropdownMenuSub>
+                        <DropdownMenuSubTrigger>
+                            <Globe className="text-muted-foreground" />
+                            {t('language')}
+                        </DropdownMenuSubTrigger>
+                        <DropdownMenuPortal>
+                            <DropdownMenuSubContent>
+                                {SUPPORTED_LANGUAGES.map(({ code, Flag, label }) => (
                                     <DropdownMenuItem
-                                        key={name}
-                                        onClick={() => handleSelectAppIcon(name)}
+                                        key={code}
+                                        onClick={() => i18n.changeLanguage(code)}
                                     >
-                                        <img
-                                            src={`appicons/${name}.png`}
-                                            alt={t(`app_icon_${name}`)}
-                                            height={32}
-                                            width={32}
-                                        />
-                                        {t(`app_icon_${name}`)}
-                                        {selectedAppIcon === name && (
-                                            <Check className="ml-auto h-4 w-4" />
-                                        )}
+                                        <span className="inline-block w-6 h-4 shrink-0 overflow-hidden">
+                                            <Flag style={{ width: '100%', height: '100%' }} />
+                                        </span>
+                                        {label}
                                     </DropdownMenuItem>
                                 ))}
                             </DropdownMenuSubContent>
                         </DropdownMenuPortal>
                     </DropdownMenuSub>
-                )}
 
-                {/* Preferences */}
-                <Dialog>
-                    <DialogTrigger asChild>
-                        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                            <Settings2 className="text-muted-foreground" />
-                            {t('preferences')}
-                        </DropdownMenuItem>
-                    </DialogTrigger>
-                    <DialogContent className="max-h-[80vh] overflow-y-auto">
-                        <DialogHeader>
-                            <DialogTitle>{t('preferences')}</DialogTitle>
-                        </DialogHeader>
-                        <div>
-                            <Label className="mb-2 text-sm font-medium">
-                                {t('audio_language_preference')}
-                            </Label>
-                            <LanguageCombobox
-                                selected={user.Configuration?.AudioLanguagePreference || ''}
-                                onSelect={(code) => {
-                                    updateUserConfiguration.mutate({
-                                        userId: user.Id!,
-                                        playbackPreferences: { AudioLanguagePreference: code },
-                                    });
-                                    setAudioLanguageOpen(false);
-                                }}
-                                open={audioLanguageOpen}
-                                onOpenChange={setAudioLanguageOpen}
-                            />
-                        </div>
-                        <div>
-                            <Label className="mb-2 text-sm font-medium">
-                                {t('subtitle_language_preference')}
-                            </Label>
-                            <LanguageCombobox
-                                selected={user.Configuration?.SubtitleLanguagePreference || ''}
-                                onSelect={(code) => {
-                                    updateUserConfiguration.mutate({
-                                        userId: user.Id!,
-                                        playbackPreferences: { SubtitleLanguagePreference: code },
-                                    });
-                                    setSubtitleLanguageOpen(false);
-                                }}
-                                open={subtitleLanguageOpen}
-                                onOpenChange={setSubtitleLanguageOpen}
-                            />
-                        </div>
-                        <div>
-                            <Label className="mb-2 text-sm font-medium">
-                                {t('theme_preference')}
-                            </Label>
-                            <Select
-                                value={localTheme || undefined}
-                                onValueChange={(val) => {
-                                    if (val === LOCAL_THEME_SERVER_DEFAULT) clearLocalTheme();
-                                    else saveLocalTheme(val);
-                                    setLocalTheme(val);
-                                }}
-                            >
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder={t('select_theme')} />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        <SelectItem value={LOCAL_THEME_SERVER_DEFAULT}>
-                                            {t('server_default')}
-                                        </SelectItem>
-                                        <SelectItem value={LOCAL_THEME_PELAGICA_DEFAULT}>
-                                            {t('pelagica_default')}
-                                        </SelectItem>
-                                    </SelectGroup>
-                                    {!isLoadingThemes && themes && (
-                                        <SelectGroup>
-                                            <SelectLabel>Custom Themes</SelectLabel>
-                                            {themes.map((th) => (
-                                                <SelectItem key={th.id} value={th.id}>
-                                                    {th.name}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectGroup>
-                                    )}
-                                </SelectContent>
-                            </Select>
-                        </div>
-                    </DialogContent>
-                </Dialog>
-
-                <DropdownMenuSeparator />
-
-                {config?.seerrUrl && (
-                    <>
+                    {/* App Icon (desktop app and macOS only) */}
+                    {isDesktopApp() && isMacOS() && appIconOptions.length > 0 && (
                         <DropdownMenuSub>
-                            <DropdownMenuSubTrigger
-                                className={
-                                    isSeerrLoggedIn === false
-                                        ? 'text-amber-500 focus:text-amber-500 data-[state=open]:text-amber-500'
-                                        : undefined
-                                }
-                            >
-                                {isSeerrLoggedIn === false ? (
-                                    <TriangleAlert className="text-amber-500" />
-                                ) : (
-                                    <Telescope className="text-muted-foreground" />
-                                )}
-                                {isSeerrLoggedIn === false
-                                    ? t('seerr_not_connected')
-                                    : t('seerr_connected')}
+                            <DropdownMenuSubTrigger>
+                                <ImageIcon className="text-muted-foreground" />
+                                {t('app_icon')}
                             </DropdownMenuSubTrigger>
                             <DropdownMenuPortal>
                                 <DropdownMenuSubContent>
-                                    <DropdownMenuItem asChild>
-                                        <ExternalAnchor
-                                            href={config.seerrUrl}
-                                            className="flex items-center gap-2"
-                                        >
-                                            <ExternalLink />
-                                            {t('seerr_open')}
-                                        </ExternalAnchor>
-                                    </DropdownMenuItem>
-                                    {isSeerrLoggedIn === false ? (
-                                        <SeerrLoginDialog
-                                            trigger={
-                                                <DropdownMenuItem
-                                                    onSelect={(e) => e.preventDefault()}
-                                                >
-                                                    <LogIn className="text-muted-foreground" />
-                                                    {t('seerr_login_action')}
-                                                </DropdownMenuItem>
-                                            }
-                                        />
-                                    ) : (
+                                    {appIconOptions.map((name) => (
                                         <DropdownMenuItem
-                                            onClick={() =>
-                                                seerrLogout.mutate(undefined, {
-                                                    onSuccess: () =>
-                                                        toast.success(t('seerr_logout_success')),
-                                                })
-                                            }
+                                            key={name}
+                                            onClick={() => handleSelectAppIcon(name)}
                                         >
-                                            <LogOut className="text-muted-foreground" />
-                                            {t('seerr_logout_action')}
+                                            <img
+                                                src={`appicons/${name}.png`}
+                                                alt={t(`app_icon_${name}`)}
+                                                height={32}
+                                                width={32}
+                                            />
+                                            {t(`app_icon_${name}`)}
+                                            {selectedAppIcon === name && (
+                                                <Check className="ml-auto h-4 w-4" />
+                                            )}
                                         </DropdownMenuItem>
-                                    )}
+                                    ))}
                                 </DropdownMenuSubContent>
                             </DropdownMenuPortal>
                         </DropdownMenuSub>
-                    </>
-                )}
+                    )}
 
-                <AuthorizeQuickConnectDialog
-                    onAuthorize={onAuthorizeQuickConnect}
-                    isLoading={quickConnectLoading}
-                    hasSuccess={quickConnectSuccess}
-                    hasError={quickConnectError}
-                    onReset={() => {
-                        setQuickConnectLoading(false);
-                        setQuickConnectSuccess(false);
-                        setQuickConnectError(false);
-                    }}
-                />
+                    {/* Preferences */}
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                <Settings2 className="text-muted-foreground" />
+                                {t('preferences')}
+                            </DropdownMenuItem>
+                        </DialogTrigger>
+                        <DialogContent className="max-h-[80vh] overflow-y-auto">
+                            <DialogHeader>
+                                <DialogTitle>{t('preferences')}</DialogTitle>
+                            </DialogHeader>
+                            <div>
+                                <Label className="mb-2 text-sm font-medium">
+                                    {t('audio_language_preference')}
+                                </Label>
+                                <LanguageCombobox
+                                    selected={user.Configuration?.AudioLanguagePreference || ''}
+                                    onSelect={(code) => {
+                                        updateUserConfiguration.mutate({
+                                            userId: user.Id!,
+                                            playbackPreferences: { AudioLanguagePreference: code },
+                                        });
+                                        setAudioLanguageOpen(false);
+                                    }}
+                                    open={audioLanguageOpen}
+                                    onOpenChange={setAudioLanguageOpen}
+                                />
+                            </div>
+                            <div>
+                                <Label className="mb-2 text-sm font-medium">
+                                    {t('subtitle_language_preference')}
+                                </Label>
+                                <LanguageCombobox
+                                    selected={user.Configuration?.SubtitleLanguagePreference || ''}
+                                    onSelect={(code) => {
+                                        updateUserConfiguration.mutate({
+                                            userId: user.Id!,
+                                            playbackPreferences: {
+                                                SubtitleLanguagePreference: code,
+                                            },
+                                        });
+                                        setSubtitleLanguageOpen(false);
+                                    }}
+                                    open={subtitleLanguageOpen}
+                                    onOpenChange={setSubtitleLanguageOpen}
+                                />
+                            </div>
+                            <div>
+                                <Label className="mb-2 text-sm font-medium">
+                                    {t('theme_preference')}
+                                </Label>
+                                <Select
+                                    value={localTheme || undefined}
+                                    onValueChange={(val) => {
+                                        if (val === LOCAL_THEME_SERVER_DEFAULT) clearLocalTheme();
+                                        else saveLocalTheme(val);
+                                        setLocalTheme(val);
+                                    }}
+                                >
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder={t('select_theme')} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectItem value={LOCAL_THEME_SERVER_DEFAULT}>
+                                                {t('server_default')}
+                                            </SelectItem>
+                                            <SelectItem value={LOCAL_THEME_PELAGICA_DEFAULT}>
+                                                {t('pelagica_default')}
+                                            </SelectItem>
+                                        </SelectGroup>
+                                        {!isLoadingThemes && themes && (
+                                            <SelectGroup>
+                                                <SelectLabel>Custom Themes</SelectLabel>
+                                                {themes.map((th) => (
+                                                    <SelectItem key={th.id} value={th.id}>
+                                                        {th.name}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectGroup>
+                                        )}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </DialogContent>
+                    </Dialog>
 
-                {isAdmin && (
-                    <>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem asChild>
-                            <Link to="/settings">
-                                <Settings className="text-muted-foreground" />
-                                {t('pelagica_config')}
-                            </Link>
-                        </DropdownMenuItem>
-                    </>
-                )}
+                    <DropdownMenuSeparator />
 
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                    onClick={() => {
-                        logout(queryClient).then(() => {
-                            navigate('/login', { replace: true });
-                        });
-                    }}
-                >
-                    <LogOut />
-                    {t('logout')}
-                </DropdownMenuItem>
-            </DropdownMenuContent>
-        </DropdownMenu>
+                    {config?.seerrUrl && (
+                        <>
+                            <DropdownMenuSub>
+                                <DropdownMenuSubTrigger
+                                    className={
+                                        isSeerrLoggedIn === false
+                                            ? 'text-amber-500 focus:text-amber-500 data-[state=open]:text-amber-500'
+                                            : undefined
+                                    }
+                                >
+                                    {isSeerrLoggedIn === false ? (
+                                        <TriangleAlert className="text-amber-500" />
+                                    ) : (
+                                        <Telescope className="text-muted-foreground" />
+                                    )}
+                                    {isSeerrLoggedIn === false
+                                        ? t('seerr_not_connected')
+                                        : t('seerr_connected')}
+                                </DropdownMenuSubTrigger>
+                                <DropdownMenuPortal>
+                                    <DropdownMenuSubContent>
+                                        <DropdownMenuItem asChild>
+                                            <ExternalAnchor
+                                                href={config.seerrUrl}
+                                                className="flex items-center gap-2"
+                                            >
+                                                <ExternalLink />
+                                                {t('seerr_open')}
+                                            </ExternalAnchor>
+                                        </DropdownMenuItem>
+                                        {isSeerrLoggedIn === false ? (
+                                            <SeerrLoginDialog
+                                                trigger={
+                                                    <DropdownMenuItem
+                                                        onSelect={(e) => e.preventDefault()}
+                                                    >
+                                                        <LogIn className="text-muted-foreground" />
+                                                        {t('seerr_login_action')}
+                                                    </DropdownMenuItem>
+                                                }
+                                            />
+                                        ) : (
+                                            <DropdownMenuItem
+                                                onClick={() =>
+                                                    seerrLogout.mutate(undefined, {
+                                                        onSuccess: () =>
+                                                            toast.success(
+                                                                t('seerr_logout_success')
+                                                            ),
+                                                    })
+                                                }
+                                            >
+                                                <LogOut className="text-muted-foreground" />
+                                                {t('seerr_logout_action')}
+                                            </DropdownMenuItem>
+                                        )}
+                                    </DropdownMenuSubContent>
+                                </DropdownMenuPortal>
+                            </DropdownMenuSub>
+                        </>
+                    )}
+
+                    <ChangePasswordDialog
+                        trigger={
+                            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                <KeyRound className="text-muted-foreground" />
+                                {t('change_password')}
+                            </DropdownMenuItem>
+                        }
+                    />
+
+                    <AuthorizeQuickConnectDialog
+                        onAuthorize={onAuthorizeQuickConnect}
+                        isLoading={quickConnectLoading}
+                        hasSuccess={quickConnectSuccess}
+                        hasError={quickConnectError}
+                        onReset={() => {
+                            setQuickConnectLoading(false);
+                            setQuickConnectSuccess(false);
+                            setQuickConnectError(false);
+                        }}
+                    />
+
+                    {isAdmin && (
+                        <>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem asChild>
+                                <Link to="/settings">
+                                    <Settings className="text-muted-foreground" />
+                                    {t('pelagica_config')}
+                                </Link>
+                            </DropdownMenuItem>
+                        </>
+                    )}
+
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                        onClick={() => {
+                            logout(queryClient).then(() => {
+                                navigate('/login', { replace: true });
+                            });
+                        }}
+                    >
+                        <LogOut />
+                        {t('logout')}
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </>
     );
 };
 

@@ -1,9 +1,11 @@
 import { withBasePath } from '../../utils/basePath';
 import { getServerUrl } from '../../utils/localstorageCredentials';
+import { setSeerrAutoLoginDisabled } from './autoLogin';
 
-export async function logoutFromSeerr(): Promise<void> {
+export async function logoutFromSeerr(disableAutoLogin = false): Promise<void> {
+    const server = getServerUrl();
+    if (server) setSeerrAutoLoginDisabled(server, disableAutoLogin);
     try {
-        const server = getServerUrl();
         await fetch(
             withBasePath(
                 '/api/seerr/logout' + (server ? '?jellyfin_url=' + encodeURIComponent(server) : '')
