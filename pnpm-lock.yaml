@@ -213,8 +213,8 @@ importers:
         specifier: ^1.0.0
         version: 1.0.0(axios@1.20.0(debug@4.4.3))
       '@pelagica/i18n':
-        specifier: ^1.0.13
-        version: 1.0.13
+        specifier: ^1.0.14
+        version: 1.0.14
       '@tanstack/react-query':
         specifier: ^5.101.0
         version: 5.104.5(@types/react@19.2.18)(react@19.2.8)
@@ -896,8 +896,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@pelagica/i18n@1.0.13':
-    resolution: {integrity: sha512-Znoa2EzpytesoLNq0O51fLWqLkNWjR4tdbdVt5ef6qe/vOtCWJBUawReUbKYkqhb0lAVZYlk82DBmZ/H+4CSWg==}
+  '@pelagica/i18n@1.0.14':
+    resolution: {integrity: sha512-V4BD5XohPghwb1r48yNsLF36BUA1m2h9ZilJ6e6c5vkZGn4X4iawJXf3kb9RGLZWcA0xeS+lf97CA7YwFLw4MA==}
     engines: {node: '>=22.18'}
 
   '@radix-ui/number@1.1.3':
@@ -4245,7 +4245,7 @@ snapshots:
   '@oxlint/binding-win32-x64-msvc@1.78.0':
     optional: true
 
-  '@pelagica/i18n@1.0.13': {}
+  '@pelagica/i18n@1.0.14': {}
 
   '@radix-ui/number@1.1.3': {}
 

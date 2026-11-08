@@ -416,7 +416,7 @@ export function getTrickplayImageUrl(itemId: string, width: number, imageIndex: 
     }
 }
 
-export function getUserProfileImageUrl(userId: string): string {
+export function getUserProfileImageUrl(userId: string, imageTag?: string | null): string {
     try {
         const creds = resolveCredentials();
         if (!creds) return '';
@@ -424,6 +424,8 @@ export function getUserProfileImageUrl(userId: string): string {
         const url = new URL(creds.server);
         url.pathname = appendPath(url.pathname, 'Users', userId, 'Images', 'Primary');
         url.searchParams.append('quality', '90');
+        // The tag changes whenever the image does, so it doubles as a cache buster.
+        if (imageTag) url.searchParams.append('tag', imageTag);
 
         return url.toString();
     } catch {

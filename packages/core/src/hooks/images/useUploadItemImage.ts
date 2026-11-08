@@ -2,18 +2,7 @@ import { getApi } from '../../api/getApi';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { getImageApi } from '@jellyfin/sdk/lib/utils/api';
 import type { ImageType } from '@jellyfin/sdk/lib/generated-client/models';
-
-function fileToBase64(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-            const result = reader.result as string;
-            resolve(result.split(',')[1]);
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-    });
-}
+import { fileToBase64 } from '../../utils/fileToBase64';
 
 export interface UploadItemImageParams {
     itemId: string;

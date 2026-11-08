@@ -29,6 +29,7 @@ export * from './hooks/images/useDownloadRemoteImage';
 export * from './hooks/images/useItemImages';
 export * from './hooks/images/useSearchRemoteImages';
 export * from './hooks/images/useUploadItemImage';
+export * from './hooks/images/useUploadUserImage';
 export * from './hooks/playState/useItemPlayState';
 export * from './hooks/playState/useMarkItemPlayed';
 export * from './hooks/playState/useMarkItemUnplayed';
