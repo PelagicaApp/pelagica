@@ -15,6 +15,7 @@ import {
     House,
     ImageIcon,
     Laptop,
+    KeyRound,
     Library,
     LogIn,
     LogOut,
@@ -89,6 +90,7 @@ import { useAuthorizeQuickConnect } from '@pelagica/core';
 import { useSeerrLoginStatus } from '@pelagica/core';
 import { useSeerrLogout } from '@pelagica/core';
 import { SeerrLoginDialog } from '@/components/SeerrLoginDialog';
+import { ChangePasswordDialog } from '@/components/ChangePasswordDialog';
 import { toast } from 'sonner';
 import { iso6392 } from 'iso-639-2';
 import { cn } from '@/lib/utils';
@@ -629,6 +631,15 @@ const UserMenu = () => {
                         </DropdownMenuSub>
                     </>
                 )}
+
+                <ChangePasswordDialog
+                    trigger={
+                        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                            <KeyRound className="text-muted-foreground" />
+                            {t('change_password')}
+                        </DropdownMenuItem>
+                    }
+                />
 
                 <AuthorizeQuickConnectDialog
                     onAuthorize={onAuthorizeQuickConnect}

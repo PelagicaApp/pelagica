@@ -72,6 +72,7 @@ export * from './hooks/useLogin';
 export * from './hooks/useMediaBarItems';
 export * from './hooks/useMediaSegments';
 export * from './hooks/useMusicItems';
+export * from './hooks/useChangePassword';
 export * from './hooks/usePerson';
 export * from './hooks/usePersonFilmography';
 export * from './hooks/usePlaybackInfo';
