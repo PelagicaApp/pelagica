@@ -94,6 +94,7 @@ import { useSeerrLogout } from '@pelagica/core';
 import { useUploadUserImage } from '@pelagica/core';
 import { SeerrLoginDialog } from '@/components/SeerrLoginDialog';
 import { ChangePasswordDialog } from '@/components/ChangePasswordDialog';
+import { AvatarCropDialog } from '@/components/AvatarCropDialog';
 import { toast } from 'sonner';
 import { iso6392 } from 'iso-639-2';
 import { cn } from '@/lib/utils';
@@ -331,6 +332,7 @@ const UserMenu = () => {
     const [selectedAppIcon, setSelectedAppIcon] = useState<string | null>(null);
     const uploadUserImage = useUploadUserImage();
     const avatarInputRef = useRef<HTMLInputElement>(null);
+    const [avatarCropFile, setAvatarCropFile] = useState<File | null>(null);
 
     useEffect(() => {
         if (!isDesktopApp()) return;
@@ -383,10 +385,18 @@ const UserMenu = () => {
             toast.error(t('avatar_invalid_file'));
             return;
         }
+        setAvatarCropFile(file);
+    };
+
+    const onAvatarCropped = (cropped: File) => {
+        if (!user.Id) return;
         uploadUserImage.mutate(
-            { userId: user.Id, file },
+            { userId: user.Id, file: cropped },
             {
-                onSuccess: () => toast.success(t('avatar_updated')),
+                onSuccess: () => {
+                    setAvatarCropFile(null);
+                    toast.success(t('avatar_updated'));
+                },
                 onError: () => toast.error(t('avatar_update_failed')),
             }
         );
@@ -400,6 +410,13 @@ const UserMenu = () => {
                 accept="image/*"
                 className="hidden"
                 onChange={onAvatarFileSelected}
+            />
+            <AvatarCropDialog
+                file={avatarCropFile}
+                userName={userName}
+                isUploading={uploadUserImage.isPending}
+                onCancel={() => setAvatarCropFile(null)}
+                onConfirm={onAvatarCropped}
             />
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
