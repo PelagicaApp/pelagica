@@ -8,7 +8,7 @@
         "./i18n": "./src/i18n/index.ts"
     },
     "dependencies": {
-        "@jellyfin/sdk": "^1.0.0",
+        "@jellyfin/sdk": "^1.0.2",
         "@pelagica/i18n": "^1.0.15",
         "axios": "^1.20.0",
         "country-flag-icons": "^1.6.19",
