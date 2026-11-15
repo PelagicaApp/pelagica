@@ -1,9 +1,12 @@
 import type { AppConfig } from '@pelagica/core';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { getPrimaryImageUrl, getUserId, usePlaylistItems } from '@pelagica/core';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ImageOff } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router';
+import { ImageOff, Play, Shuffle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { buildPlayerUrl } from '@/utils/playerUrl';
 import BaseMediaPage from './BaseMediaPage';
 import DetailBadges from './DetailBadges';
 import Overview from './Overview';
@@ -30,11 +33,28 @@ function getPlaylistEntryDetail(entry: BaseItemDto): string | undefined {
     return undefined;
 }
 
+function isPlayableEntry(entry: BaseItemDto): boolean {
+    return !!entry.Id && entry.Type !== 'Photo';
+}
+
 const PlaylistPage = ({ item, config }: PlaylistPageProps) => {
     const { t } = useTranslation('item');
     const [primaryImageError, setPrimaryImageError] = useState(false);
     const [isPosterLoaded, setIsPosterLoaded] = useState(false);
     const { data: entries, isLoading } = usePlaylistItems(item.Id, getUserId());
+    const location = useLocation();
+    const navigate = useNavigate();
+    const backUrl = location.pathname + location.search;
+
+    const playableEntries = useMemo(() => entries?.filter(isPlayableEntry) ?? [], [entries]);
+    const nextEntry =
+        playableEntries.find((entry) => !entry.UserData?.Played) ?? playableEntries[0];
+
+    const handleShuffle = () => {
+        if (!playableEntries.length) return;
+        const randomEntry = playableEntries[Math.floor(Math.random() * playableEntries.length)];
+        navigate(buildPlayerUrl(randomEntry.Id!, backUrl));
+    };
 
     return (
         <BaseMediaPage
@@ -84,6 +104,31 @@ const PlaylistPage = ({ item, config }: PlaylistPageProps) => {
                         <DetailBadges item={item} appConfig={config} />
 
                         <div className="flex flex-wrap gap-2.5 items-center mt-2">
+                            {nextEntry ? (
+                                <Button
+                                    className="w-fit bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-4 py-2 shadow-lg hover:scale-105 active:scale-95 transition-transform duration-200 ease-out"
+                                    asChild
+                                >
+                                    <Link to={buildPlayerUrl(nextEntry.Id!, backUrl)}>
+                                        <Play />
+                                        {t('play')}
+                                    </Link>
+                                </Button>
+                            ) : (
+                                <Button className="w-fit" disabled>
+                                    <Play />
+                                    {isLoading ? t('loading') : t('play')}
+                                </Button>
+                            )}
+                            <Button
+                                variant="secondary"
+                                className="w-fit"
+                                onClick={handleShuffle}
+                                disabled={!playableEntries.length}
+                            >
+                                <Shuffle />
+                                {t('shuffle')}
+                            </Button>
                             <ItemAdminButton item={item} />
                         </div>
 
