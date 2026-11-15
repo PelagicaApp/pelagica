@@ -48,7 +48,15 @@ const PlayerPage = () => {
     const hasUserSelectedSubtitleRef = useRef(false);
     const hasUserSelectedAudioRef = useRef(false);
     const hasAttemptedTranscodeFallbackRef = useRef(false);
-    const [player, setPlayer] = useState<VideoJsPlayer | null>(null);
+    const [playerState, setPlayerState] = useState<{
+        itemId: string | undefined;
+        player: VideoJsPlayer;
+    } | null>(null);
+    const player = playerState && playerState.itemId === itemId ? playerState.player : null;
+    const handlePlayerReady = useCallback(
+        (readyPlayer: VideoJsPlayer) => setPlayerState({ itemId, player: readyPlayer }),
+        [itemId]
+    );
     const [forceTranscode, setForceTranscode] = useState(false);
     const {
         data: userConfiguration,
@@ -182,7 +190,7 @@ const PlayerPage = () => {
             pendingAudioSwitchSeekRef.current = null;
             hasAttemptedTranscodeFallbackRef.current = false;
 
-            setPlayer(null);
+            setPlayerState(null);
             setForceTranscode(false);
             setAudioTrackIndex(resolvedAudio.index);
             setSubtitleTrackIndex(resolvedSubtitleTrackIndex);
@@ -247,6 +255,9 @@ const PlayerPage = () => {
         // Clear any music playback when starting video
         clearPlayback();
 
+        // The position must always belong to the current item, never to the previous one
+        lastPositionRef.current = startTicks;
+
         // Report playback start
         startPlayback({ itemId, positionTicks: startTicks, playSessionId });
 
@@ -308,10 +319,6 @@ const PlayerPage = () => {
         closeLiveStream,
         clearPlayback,
     ]);
-
-    useEffect(() => {
-        lastPositionRef.current = startTicks;
-    }, [startTicks]);
 
     const handlePlaybackError = useCallback(
         (mediaError: MediaError | null) => {
@@ -419,7 +426,7 @@ const PlayerPage = () => {
                 src={streamResult.url}
                 srcType={streamResult.mimeType}
                 poster={posterUrl}
-                onReady={setPlayer}
+                onReady={handlePlayerReady}
                 onPlaybackError={handlePlaybackError}
                 startTicks={startTicks}
                 subtitles={subtitleTracks}
