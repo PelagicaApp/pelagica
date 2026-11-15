@@ -26,8 +26,8 @@ importers:
         specifier: ^3.2.2
         version: 3.2.2(react@19.2.8)
       '@jellyfin/sdk':
-        specifier: ^1.0.0
-        version: 1.0.0(axios@1.20.0(debug@4.4.3))
+        specifier: ^1.0.2
+        version: 1.0.2(axios@1.20.0(debug@4.4.3))
       '@pelagica/core':
         specifier: workspace:*
         version: link:../packages/core
@@ -262,8 +262,8 @@ importers:
         specifier: ^5.3.0
         version: 5.3.0
       '@jellyfin/sdk':
-        specifier: ^1.0.0
-        version: 1.0.0(axios@1.20.0(debug@4.4.3))
+        specifier: ^1.0.2
+        version: 1.0.2(axios@1.20.0(debug@4.4.3))
       '@noriginmedia/norigin-spatial-navigation':
         specifier: ^3.3.0
         version: 3.3.0(react@19.2.8)
@@ -728,11 +728,6 @@ packages:
   '@humanwhocodes/retry@0.4.3':
     resolution: {integrity: sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==}
     engines: {node: '>=18.18'}
-
-  '@jellyfin/sdk@1.0.0':
-    resolution: {integrity: sha512-bu7EbMxEz+mH2N/v8Oj/dDCQQvTmEVTZBzKhYgwpKrL9l63LMZvjY2gvnU4imMi9389kzh0LQD75MzMtcoDJtA==}
-    peerDependencies:
-      axios: ^1.12.0
 
   '@jellyfin/sdk@1.0.2':
     resolution: {integrity: sha512-aO++9TsHIhtHFuK3c+kewt/7iFJKGgZ1080Vp1VwSFZsRvKDdr/UhQo4g7ZIKrZMCYWzvcD+2vKuC2ZZkcb+Wg==}
@@ -4170,10 +4165,6 @@ snapshots:
   '@humanwhocodes/module-importer@1.0.1': {}
 
   '@humanwhocodes/retry@0.4.3': {}
-
-  '@jellyfin/sdk@1.0.0(axios@1.20.0(debug@4.4.3))':
-    dependencies:
-      axios: 1.20.0(debug@4.4.3)
 
   '@jellyfin/sdk@1.0.2(axios@1.20.0(debug@4.4.3))':
     dependencies:
