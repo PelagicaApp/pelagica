@@ -54,7 +54,8 @@ const ItemDisplay = ({ item, aspectClass, overlay, linkUrl }: ItemDisplayProps) 
               };
 
     const posterUrl = getPrimaryImageUrl(item.Id!, imageSize, item.ImageTags?.Primary);
-    const resolvedLinkUrl = linkUrl ?? getItemUrl(item.Type, item.Id, item.MediaType) ?? `/item/${item.Id}`;
+    const resolvedLinkUrl =
+        linkUrl ?? getItemUrl(item.Type, item.Id, item.MediaType) ?? `/item/${item.Id}`;
 
     return (
         <MusicItemContextMenu item={item}>
