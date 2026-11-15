@@ -87,7 +87,7 @@ const ScrollableSectionPoster = forwardRef<HTMLAnchorElement, ScrollableSectionP
               : { width: 300, height: 450 };
 
         const id = itemId || item?.Id;
-        const linkTo = getItemUrl(item?.Type, id);
+        const linkTo = getItemUrl(item?.Type, id, item?.MediaType);
 
         const watched = item?.UserData?.PlaybackPositionTicks ?? 0;
         const runtime = item?.RunTimeTicks ?? 0;

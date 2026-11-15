@@ -262,7 +262,7 @@ export const SearchCommand = () => {
                                             );
                                             closeSearch();
                                         } else {
-                                            navigate(getItemUrl(item.Type, item.Id));
+                                            navigate(getItemUrl(item.Type, item.Id, item.MediaType));
                                             closeSearch();
                                         }
                                     }}

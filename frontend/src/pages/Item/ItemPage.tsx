@@ -12,6 +12,8 @@ import EpisodePage from './EpisodePage';
 import SeasonPage from './SeasonPage';
 import { getUserId } from '@pelagica/core';
 import BoxSetPage from './BoxSetPage';
+import PlaylistPage from './PlaylistPage';
+import { isMusicPlaylist } from '@/utils/itemUrl';
 import type { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models';
 
 const ItemPageSkeleton = memo(() => {
@@ -82,13 +84,19 @@ const ItemPageSkeleton = memo(() => {
 
 ItemPageSkeleton.displayName = 'ItemPageSkeleton';
 
-const FULL_PAGE_ITEM_TYPES: BaseItemKind[] = ['Movie', 'Series', 'Episode', 'Season', 'BoxSet'];
+const FULL_PAGE_ITEM_TYPES: BaseItemKind[] = [
+    'Movie',
+    'Series',
+    'Episode',
+    'Season',
+    'BoxSet',
+    'Playlist',
+];
 
 const REDIRECT_ITEM_TYPES: Partial<Record<BaseItemKind, string>> = {
     Person: '/person',
     MusicAlbum: '/music/album',
     MusicArtist: '/music/artist',
-    Playlist: '/music/playlist',
     Genre: '/genre',
     Studio: '/studio',
 };
@@ -107,9 +115,11 @@ const ItemPage = () => {
     const { isLoading: collectionsLoading } = useItemCollections(itemId, collectionsEnabled);
 
     const redirectPath =
-        item?.Type && REDIRECT_ITEM_TYPES[item.Type]
-            ? `${REDIRECT_ITEM_TYPES[item.Type]}/${item.Id}`
-            : null;
+        item?.Type === 'Playlist' && isMusicPlaylist(item.MediaType)
+            ? `/music/playlist/${item.Id}`
+            : item?.Type && REDIRECT_ITEM_TYPES[item.Type]
+              ? `${REDIRECT_ITEM_TYPES[item.Type]}/${item.Id}`
+              : null;
     if (redirectPath) return <Navigate to={redirectPath} replace />;
 
     const isFullPageItem = item && FULL_PAGE_ITEM_TYPES.includes(item.Type as BaseItemKind);
@@ -137,6 +147,8 @@ const ItemPage = () => {
                             return <SeasonPage item={item} config={config} />;
                         case 'BoxSet':
                             return <BoxSetPage item={item} config={config} />;
+                        case 'Playlist':
+                            return <PlaylistPage item={item} config={config} />;
                         default:
                             return (
                                 <p>
