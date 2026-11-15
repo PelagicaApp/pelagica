@@ -96,7 +96,9 @@ const FavoriteSongItem = ({ song }: { song: BaseItemDto }) => {
 const MusicLeftSidebar = () => {
     const { t } = useTranslation('music');
     const { data: currentUser } = useCurrentUser();
-    const { data: playlists, isLoading: isLoadingPlaylists } = usePlaylists(currentUser?.Id);
+    const { data: playlists, isLoading: isLoadingPlaylists } = usePlaylists(currentUser?.Id, {
+        mediaTypes: ['Audio'],
+    });
     const { data: favoriteArtists, isLoading: isLoadingArtists } = useFavoriteArtists();
     const { data: favoriteAlbums, isLoading: isLoadingAlbums } = useFavoriteAlbums();
     const { data: favoriteSongs, isLoading: isLoadingSongs } = useFavoriteSongs();
@@ -111,22 +113,25 @@ const MusicLeftSidebar = () => {
                         ))}
                     </div>
                 ) : playlists && playlists.length > 0 ? (
-                    playlists.map((playlist) => (
-                        <SidebarItem
-                            key={playlist.Id}
-                            to={`/music/playlist/${playlist.Id}`}
-                            imageUrl={getPrimaryImageUrl(playlist.Id || '', {
-                                width: 64,
-                                height: 64,
-                            })}
-                            name={playlist.Name || t('untitled')}
-                            subtitle={
-                                playlist.ChildCount !== undefined
-                                    ? t('tracks_count', { count: playlist.ChildCount ?? 0 })
-                                    : undefined
-                            }
-                        />
-                    ))
+                    playlists.map((playlist) => {
+                        if (!playlist.ChildCount) return null;
+                        return (
+                            <SidebarItem
+                                key={playlist.Id}
+                                to={`/music/playlist/${playlist.Id}`}
+                                imageUrl={getPrimaryImageUrl(playlist.Id || '', {
+                                    width: 64,
+                                    height: 64,
+                                })}
+                                name={playlist.Name || t('untitled')}
+                                subtitle={
+                                    playlist.ChildCount !== undefined
+                                        ? t('tracks_count', { count: playlist.ChildCount ?? 0 })
+                                        : undefined
+                                }
+                            />
+                        );
+                    })
                 ) : (
                     <span className="text-xs text-muted-foreground px-3">{t('no_playlists')}</span>
                 )}
