@@ -38,6 +38,7 @@ import { buildPlayerUrl } from '@/utils/playerUrl';
 import { isDesktopApp } from '@/utils/desktopApp';
 import { useTranslation } from 'react-i18next';
 import { usePlayerKeyboardControls } from '@/hooks/usePlayerKeyboardControls';
+import { useVideoRemoteController } from '@/features/remoteControl/videoRemoteController';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getLogoUrl, getPrimaryImageUrl, getTrickplayImageUrl } from '@pelagica/core';
 import { useReportPlaybackProgress } from '@pelagica/core';
@@ -400,6 +401,37 @@ const PlayerControls = ({
         togglePiP,
         handleSeekBackward,
         handleSeekForward,
+    });
+
+    useVideoRemoteController({
+        play: () => player?.play(),
+        pause: () => player?.pause(),
+        togglePlayPause: togglePlay,
+        stop: handleBack,
+        seek: (ticks) => player?.currentTime(ticksToSeconds(ticks)),
+        seekBy: (seconds) => {
+            if (!player) return;
+            const target = (player.currentTime() || 0) + seconds;
+            player.currentTime(Math.min(Math.max(0, target), duration || target));
+        },
+        next: () => {
+            if (nextItem?.Id) navigate(buildPlayerUrl(nextItem.Id, backUrl ?? undefined));
+        },
+        previous: () => {
+            if (previousItem?.Id) navigate(buildPlayerUrl(previousItem.Id, backUrl ?? undefined));
+        },
+        getVolume: () => (isMuted ? 0 : Math.round(volume * 100)),
+        setVolume: (value) => handleVolumeChange([Math.min(Math.max(value, 0), 100) / 100]),
+        setMuted: (muted) => player?.muted(muted === 'toggle' ? !isMuted : muted),
+        setAudioStreamIndex: (index) => handleAudioTrackChange(String(index)),
+        setSubtitleStreamIndex: (index) => {
+            const position =
+                item.MediaStreams?.filter((s) => s.Type === 'Subtitle').findIndex(
+                    (s) => s.Index === index
+                ) ?? -1;
+            handleSubtitleTrackChange(index < 0 || position < 0 ? 'off' : String(position));
+        },
+        toggleFullscreen,
     });
 
     const introSegment = getMediaSegment('Intro');

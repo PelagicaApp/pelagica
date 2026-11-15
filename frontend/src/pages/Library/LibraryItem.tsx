@@ -37,7 +37,7 @@ const LibraryItem = ({
     const playUrl = buildPlayerUrl(item.Id!, location.pathname + location.search);
     const itemPath =
         itemLink ||
-        (isDirectPlay ? playUrl : getItemUrl(item.Type, item.Id) ?? `/item/${item.Id}`);
+        (isDirectPlay ? playUrl : getItemUrl(item.Type, item.Id, item.MediaType) ?? `/item/${item.Id}`);
 
     const watched = item.UserData?.PlaybackPositionTicks ?? 0;
     const runtime = item.RunTimeTicks ?? 0;

@@ -1,6 +1,8 @@
-export function buildPlayerUrl(itemId: string, backUrl?: string): string {
-    if (backUrl) {
-        return `/play/${itemId}?backUrl=${encodeURIComponent(backUrl)}`;
-    }
-    return `/play/${itemId}`;
+export function buildPlayerUrl(itemId: string, backUrl?: string, startTicks?: number): string {
+    const params = new URLSearchParams();
+    if (backUrl) params.set('backUrl', backUrl);
+    if (startTicks && startTicks > 0) params.set('startTicks', String(Math.floor(startTicks)));
+
+    const query = params.toString();
+    return query ? `/play/${itemId}?${query}` : `/play/${itemId}`;
 }

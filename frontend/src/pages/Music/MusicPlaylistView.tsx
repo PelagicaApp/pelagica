@@ -1,4 +1,4 @@
-import { useParams } from 'react-router';
+import { Navigate, useParams } from 'react-router';
 import { useItem } from '@pelagica/core';
 import { useConfig } from '@pelagica/core';
 import { useTranslation } from 'react-i18next';
@@ -6,6 +6,7 @@ import { getUserId } from '@pelagica/core';
 import BaseMusicListPage from '@/pages/Item/BaseMusicListPage';
 import { Skeleton } from '@/components/ui/skeleton';
 import MusicBackButton from './MusicBackButton';
+import { isMusicPlaylist } from '@/utils/itemUrl';
 
 const MusicPlaylistView = () => {
     const { t } = useTranslation('item');
@@ -36,6 +37,10 @@ const MusicPlaylistView = () => {
 
     if (error || !item) {
         return <p className="text-muted-foreground p-4">{t('item_not_found')}</p>;
+    }
+
+    if (item.Type === 'Playlist' && item.MediaType && !isMusicPlaylist(item.MediaType)) {
+        return <Navigate to={`/item/${item.Id}`} replace />;
     }
 
     return (

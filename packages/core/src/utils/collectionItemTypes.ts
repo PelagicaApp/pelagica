@@ -7,4 +7,5 @@ export const COLLECTION_ITEM_TYPES: Partial<Record<CollectionType, BaseItemKind[
     music: ['MusicAlbum'],
     musicvideos: ['MusicVideo'],
     homevideos: ['Video', 'Photo'],
+    playlists: ['Playlist'],
 };

@@ -2,6 +2,7 @@ export * from './api/getApi';
 export * from './api/jellyfinClient';
 export * from './api/logout';
 export * from './api/pelagicaPlugin';
+export * from './api/remoteControl';
 export * from './api/repositoryThemes';
 export * from './api/seerr/autoLogin';
 export * from './api/seerr/details';

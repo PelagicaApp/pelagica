@@ -47,6 +47,7 @@ const DEFAULT_POSTER_SIZE = { width: 416, height: 640 };
 const ITEM_POSTER_SIZES: Partial<Record<CollectionType, ImageSize>> = {
     music: { width: 416, height: 416 },
     musicvideos: { width: 700, height: 394 },
+    playlists: { width: 416, height: 416 },
 };
 
 const DEFAULT_POSTER_ASPECT_RATIO = '2/3';
@@ -54,6 +55,7 @@ const DEFAULT_POSTER_ASPECT_RATIO = '2/3';
 const ITEM_POSTER_ASPECT_RATIOS: Partial<Record<CollectionType, string>> = {
     music: 'square',
     musicvideos: 'video',
+    playlists: 'square',
 };
 
 type GridConfig = { cols: string; breakpoints: [number, number][] };

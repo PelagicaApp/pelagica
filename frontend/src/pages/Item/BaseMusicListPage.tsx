@@ -78,7 +78,9 @@ const BaseMusicListPage = ({
         isLoading: isLoadingPlaylistTracksData,
         error: playlistTracksDataError,
     } = usePlaylistItems(isPlaylist ? item.Id : undefined, userId);
-    const albumTracks = isPlaylist ? playlistTracksData : albumTracksData;
+    const albumTracks = isPlaylist
+        ? playlistTracksData?.filter((track) => track.Type === 'Audio')
+        : albumTracksData;
     const isLoadingAlbumTracks = isPlaylist
         ? isLoadingPlaylistTracksData
         : isLoadingAlbumTracksData;

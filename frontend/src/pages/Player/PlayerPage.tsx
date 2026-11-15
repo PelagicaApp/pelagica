@@ -3,7 +3,7 @@ import { useReportPlaybackProgress } from '@pelagica/core';
 import { usePlaybackStart } from '@pelagica/core';
 import { usePlaybackStop } from '@pelagica/core';
 import { useCloseLiveStream } from '@pelagica/core';
-import { useParams } from 'react-router';
+import { useParams, useSearchParams } from 'react-router';
 import VideoPlayer, { type SubtitleTrack } from '@/pages/Player/VideoPlayer';
 import PlayerControls from '@/pages/Player/PlayerControls';
 import PlayerLoading from '@/pages/Player/PlayerLoading';
@@ -43,10 +43,20 @@ const PlayerPage = () => {
     const { t } = useTranslation('player');
     const params = useParams<{ itemId: string }>();
     const itemId = params.itemId;
+    const [searchParams] = useSearchParams();
+    const startTicksParam = Number(searchParams.get('startTicks'));
     const hasUserSelectedSubtitleRef = useRef(false);
     const hasUserSelectedAudioRef = useRef(false);
     const hasAttemptedTranscodeFallbackRef = useRef(false);
-    const [player, setPlayer] = useState<VideoJsPlayer | null>(null);
+    const [playerState, setPlayerState] = useState<{
+        itemId: string | undefined;
+        player: VideoJsPlayer;
+    } | null>(null);
+    const player = playerState && playerState.itemId === itemId ? playerState.player : null;
+    const handlePlayerReady = useCallback(
+        (readyPlayer: VideoJsPlayer) => setPlayerState({ itemId, player: readyPlayer }),
+        [itemId]
+    );
     const [forceTranscode, setForceTranscode] = useState(false);
     const {
         data: userConfiguration,
@@ -180,7 +190,7 @@ const PlayerPage = () => {
             pendingAudioSwitchSeekRef.current = null;
             hasAttemptedTranscodeFallbackRef.current = false;
 
-            setPlayer(null);
+            setPlayerState(null);
             setForceTranscode(false);
             setAudioTrackIndex(resolvedAudio.index);
             setSubtitleTrackIndex(resolvedSubtitleTrackIndex);
@@ -211,7 +221,10 @@ const PlayerPage = () => {
         return getPrimaryImageUrl(item?.Id);
     }, [item?.Id]);
 
-    const startTicks = item?.UserData?.PlaybackPositionTicks || 0;
+    const startTicks =
+        Number.isFinite(startTicksParam) && startTicksParam > 0
+            ? startTicksParam
+            : item?.UserData?.PlaybackPositionTicks || 0;
 
     const handleToggleFullscreen = () => {
         if (!containerRef.current) return;
@@ -241,6 +254,9 @@ const PlayerPage = () => {
 
         // Clear any music playback when starting video
         clearPlayback();
+
+        // The position must always belong to the current item, never to the previous one
+        lastPositionRef.current = startTicks;
 
         // Report playback start
         startPlayback({ itemId, positionTicks: startTicks, playSessionId });
@@ -303,10 +319,6 @@ const PlayerPage = () => {
         closeLiveStream,
         clearPlayback,
     ]);
-
-    useEffect(() => {
-        lastPositionRef.current = startTicks;
-    }, [startTicks]);
 
     const handlePlaybackError = useCallback(
         (mediaError: MediaError | null) => {
@@ -414,9 +426,9 @@ const PlayerPage = () => {
                 src={streamResult.url}
                 srcType={streamResult.mimeType}
                 poster={posterUrl}
-                onReady={setPlayer}
+                onReady={handlePlayerReady}
                 onPlaybackError={handlePlaybackError}
-                startTicks={item.UserData?.PlaybackPositionTicks || 0}
+                startTicks={startTicks}
                 subtitles={subtitleTracks}
                 subtitleFonts={subtitleFonts}
                 pendingAudioSwitchSeekRef={pendingAudioSwitchSeekRef}

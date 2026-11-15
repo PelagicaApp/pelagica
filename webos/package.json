@@ -1,7 +1,7 @@
 {
     "name": "@pelagica/webos",
     "private": true,
-    "version": "4.15.0",
+    "version": "4.16.0",
     "type": "module",
     "scripts": {
         "dev": "vite",
@@ -27,9 +27,9 @@
         "@types/react": "^19.2.17",
         "@types/react-dom": "^19.2.3",
         "@vitejs/plugin-react": "^6.0.4",
-        "oxlint": "^1.75.0",
+        "oxlint": "^1.93.0",
         "prettier": "3.9.10",
         "typescript": "~6.0.2",
-        "vite": "^8.2.4"
+        "vite": "^8.3.8"
     }
 }

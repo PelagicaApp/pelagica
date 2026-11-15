@@ -360,7 +360,9 @@ const MusicMainContent = () => {
     const { data: allAlbumsData, isLoading: isLoadingAllAlbums } = useAllAlbums(100);
     const { data: allArtistsData, isLoading: isLoadingAllArtists } = useAllArtists(100);
     const { data: currentUser } = useCurrentUser();
-    const { data: playlists, isLoading: isLoadingPlaylists } = usePlaylists(currentUser?.Id);
+    const { data: playlists, isLoading: isLoadingPlaylists } = usePlaylists(currentUser?.Id, {
+        mediaTypes: ['Audio'],
+    });
 
     const isSearching = searchTerm.trim().length > 0;
 
