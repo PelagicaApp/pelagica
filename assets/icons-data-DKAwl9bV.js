@@ -1,0 +1,1 @@
+export{t as iconsData}from"./SettingsPage-FDxQ-mfi.js";

@@ -1,1 +1,0 @@
-var e={MusicVideo:`/play`,Video:`/play`,Photo:`/photo`,TvChannel:`/play`},t={MusicAlbum:`/music/album`,MusicArtist:`/music/artist`,Playlist:`/music/playlist`},n={Person:`/person`,Genre:`/genre`,MusicGenre:`/genre`,Studio:`/studio`};function r(r,i){return i?r&&e[r]?`${e[r]}/${i}`:r&&t[r]?`${t[r]}/${i}`:r&&n[r]?`${n[r]}/${i}`:`/item/${i}`:`/`}export{r as t};
