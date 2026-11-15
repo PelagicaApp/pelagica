@@ -3,7 +3,7 @@ import { useReportPlaybackProgress } from '@pelagica/core';
 import { usePlaybackStart } from '@pelagica/core';
 import { usePlaybackStop } from '@pelagica/core';
 import { useCloseLiveStream } from '@pelagica/core';
-import { useParams } from 'react-router';
+import { useParams, useSearchParams } from 'react-router';
 import VideoPlayer, { type SubtitleTrack } from '@/pages/Player/VideoPlayer';
 import PlayerControls from '@/pages/Player/PlayerControls';
 import PlayerLoading from '@/pages/Player/PlayerLoading';
@@ -43,6 +43,8 @@ const PlayerPage = () => {
     const { t } = useTranslation('player');
     const params = useParams<{ itemId: string }>();
     const itemId = params.itemId;
+    const [searchParams] = useSearchParams();
+    const startTicksParam = Number(searchParams.get('startTicks'));
     const hasUserSelectedSubtitleRef = useRef(false);
     const hasUserSelectedAudioRef = useRef(false);
     const hasAttemptedTranscodeFallbackRef = useRef(false);
@@ -211,7 +213,10 @@ const PlayerPage = () => {
         return getPrimaryImageUrl(item?.Id);
     }, [item?.Id]);
 
-    const startTicks = item?.UserData?.PlaybackPositionTicks || 0;
+    const startTicks =
+        Number.isFinite(startTicksParam) && startTicksParam > 0
+            ? startTicksParam
+            : item?.UserData?.PlaybackPositionTicks || 0;
 
     const handleToggleFullscreen = () => {
         if (!containerRef.current) return;
@@ -416,7 +421,7 @@ const PlayerPage = () => {
                 poster={posterUrl}
                 onReady={setPlayer}
                 onPlaybackError={handlePlaybackError}
-                startTicks={item.UserData?.PlaybackPositionTicks || 0}
+                startTicks={startTicks}
                 subtitles={subtitleTracks}
                 subtitleFonts={subtitleFonts}
                 pendingAudioSwitchSeekRef={pendingAudioSwitchSeekRef}

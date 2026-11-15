@@ -5,6 +5,7 @@ import { AdminItemDialogsProvider } from './context/AdminItemDialogsProvider.tsx
 import { SeerrItemDialogProvider } from './context/SeerrItemDialogProvider.tsx';
 import { SearchCommand } from './components/SearchCommand.tsx';
 import { KeyboardShortcuts } from './components/KeyboardShortcuts.tsx';
+import { RemoteControlManager } from './features/remoteControl/RemoteControlManager.tsx';
 import { MusicPlaybackProvider } from './context/MusicPlaybackProvider.tsx';
 import PelagicaThemeLoader from './components/PelagicaThemeProvider.tsx';
 import { Toaster } from './components/ui/sonner.tsx';
@@ -51,6 +52,7 @@ export default function App() {
                                     <ScrollToTop />
                                     <DesktopDragRegion />
                                     <KeyboardShortcuts />
+                                    <RemoteControlManager />
                                     <SearchCommand />
                                     <PelagicaThemeLoader />
                                     <Toaster />
