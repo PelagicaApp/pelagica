@@ -1,0 +1,1 @@
+export{t as iconsData}from"./SettingsPage-KO5DWKsB.js";

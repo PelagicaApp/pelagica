@@ -1,0 +1,1 @@
+import{n as e,t}from"./useItemsGridState-sa63uorX.js";import{Br as n}from"./useMusicPlayback-DN12tO-k.js";var r=n(),i=({item:n,useItems:i,itemAspectClass:a,listTitle:o,renderItemOverlay:s,getItemUrl:c})=>{let l=t(),u=i(n.Id,l.params);return(0,r.jsx)(e,{title:o??n.Name??void 0,state:l,result:u,itemAspectClass:a,renderItemOverlay:s,getItemUrl:c})};export{i as t};
