@@ -8,10 +8,18 @@ import {
     ContextMenuTrigger,
 } from './ui/context-menu';
 import { useAdminItemDialogs } from '../context/AdminItemDialogsContext';
-import { useCurrentUser } from '@pelagica/core';
+import {
+    getUserId,
+    useCurrentUser,
+    useItemPlayState,
+    useMarkItemPlayed,
+    useMarkItemUnplayed,
+} from '@pelagica/core';
 import { useTranslation } from 'react-i18next';
 import {
     Bookmark,
+    Circle,
+    CircleCheck,
     Download,
     Heart,
     Image,
@@ -28,6 +36,7 @@ import { Link } from 'react-router';
 import { useLike } from '@pelagica/core';
 import { WATCHLISTABLE_ITEM_TYPES } from '../utils/watchlistableItems';
 import { DOWNLOADABLE_ITEM_TYPES } from '../utils/downloadableItems';
+import { PLAY_STATE_ITEM_TYPES } from '../utils/playStateItems';
 import { getDownloadurl } from '@pelagica/core';
 import { isIdentifiable } from '../utils/identifiableTypes';
 import { useRemoveFromPlaylist } from '@pelagica/core';
@@ -63,6 +72,29 @@ const GeneralItemContextMenu = ({
         WATCHLISTABLE_ITEM_TYPES.includes(item.Type) &&
         config?.itemPage?.showWatchlistButton;
 
+    const userId = getUserId() ?? undefined;
+    const showPlayStateToggle =
+        Boolean(item.Id && userId) &&
+        Boolean(item.Type && PLAY_STATE_ITEM_TYPES.includes(item.Type));
+    const { data: playState, isLoading: isPlayStateLoading } = useItemPlayState(
+        showPlayStateToggle ? item.Id : undefined,
+        userId
+    );
+    const isPlayed = playState?.played ?? item.UserData?.Played ?? false;
+    const markItemPlayed = useMarkItemPlayed();
+    const markItemUnplayed = useMarkItemUnplayed();
+    const isPlayStatePending =
+        isPlayStateLoading || markItemPlayed.isPending || markItemUnplayed.isPending;
+
+    const togglePlayState = () => {
+        if (!item.Id || !userId) return;
+        if (isPlayed) {
+            markItemUnplayed.mutate({ itemId: item.Id, userId });
+        } else {
+            markItemPlayed.mutate({ itemId: item.Id, userId });
+        }
+    };
+
     const showDownloadButton =
         item.Type &&
         DOWNLOADABLE_ITEM_TYPES.includes(item.Type) &&
@@ -89,6 +121,7 @@ const GeneralItemContextMenu = ({
         Boolean(playLink) ||
         Boolean(showFavoriteToggle) ||
         Boolean(showWatchlistToggle) ||
+        showPlayStateToggle ||
         Boolean(showDownloadButton) ||
         canAddToPlaylist ||
         Boolean(playlistEntryId);
@@ -126,6 +159,12 @@ const GeneralItemContextMenu = ({
                         <ContextMenuItem onClick={() => toggleLike(!isLiked)} disabled={isLoading}>
                             <Bookmark fill={isLiked ? 'currentColor' : 'none'} />
                             {isLiked ? t('remove_from_watchlist') : t('add_to_watchlist')}
+                        </ContextMenuItem>
+                    )}
+                    {showPlayStateToggle && (
+                        <ContextMenuItem onClick={togglePlayState} disabled={isPlayStatePending}>
+                            {isPlayed ? <Circle /> : <CircleCheck />}
+                            {isPlayed ? t('mark_as_unplayed') : t('mark_as_played')}
                         </ContextMenuItem>
                     )}
                     {showDownloadButton && (

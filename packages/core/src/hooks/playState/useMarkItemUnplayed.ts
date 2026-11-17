@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { getUserDataApi } from '@jellyfin/sdk/lib/utils/api/user-data-api';
 import { getApi } from '../../api/getApi';
+import { invalidatePlayStateQueries } from './invalidatePlayStateQueries';
 
 interface MarkUnplayedInput {
     itemId: string;
@@ -23,15 +24,7 @@ export function useMarkItemUnplayed() {
             });
         },
         onSuccess: (_, { itemId, userId }) => {
-            queryClient.invalidateQueries({
-                queryKey: ['userLibraryItem', itemId, userId],
-            });
-            queryClient.invalidateQueries({
-                queryKey: ['item', itemId],
-            });
-            queryClient.invalidateQueries({
-                queryKey: ['episodes', itemId],
-            });
+            invalidatePlayStateQueries(queryClient, itemId, userId);
         },
     });
 }
