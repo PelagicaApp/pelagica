@@ -12,7 +12,7 @@ import DetailBadges from './DetailBadges';
 import Overview from './Overview';
 import ItemMetadataBadges from './ItemMetadataBadges';
 import { Skeleton } from '@/components/ui/skeleton';
-import ScrollableSectionPoster from '@/components/ScrollableSectionPoster';
+import PlaylistEntryRow, { PlaylistEntryRowSkeleton } from './PlaylistEntryRow';
 import ItemAdminButton from '@/components/ItemAdminButton';
 
 interface PlaylistPageProps {
@@ -37,11 +37,19 @@ function isPlayableEntry(entry: BaseItemDto): boolean {
     return !!entry.Id && entry.Type !== 'Photo';
 }
 
+function isDisplyableEntry(entry: BaseItemDto): boolean {
+    return !!entry.Id && entry.Type !== 'Audio';
+}
+
 const PlaylistPage = ({ item, config }: PlaylistPageProps) => {
     const { t } = useTranslation('item');
     const [primaryImageError, setPrimaryImageError] = useState(false);
     const [isPosterLoaded, setIsPosterLoaded] = useState(false);
-    const { data: entries, isLoading } = usePlaylistItems(item.Id, getUserId());
+    const { data: playlistEntries, isLoading } = usePlaylistItems(item.Id, getUserId());
+    const entries = useMemo(
+        () => playlistEntries?.filter(isDisplyableEntry) ?? [],
+        [playlistEntries]
+    );
     const location = useLocation();
     const navigate = useNavigate();
     const backUrl = location.pathname + location.search;
@@ -138,32 +146,23 @@ const PlaylistPage = ({ item, config }: PlaylistPageProps) => {
                     </div>
                 </div>
 
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-3">
                     <h3 className="text-3xl font-bold">{t('playlist_items')}</h3>
-                    <div className="flex flex-wrap items-start gap-4">
+                    <div className="flex flex-col gap-1">
                         {isLoading
-                            ? Array.from({ length: 10 }, (_, i) => (
-                                  <div key={i} className="w-36 lg:w-44 2xl:w-52 animate-pulse">
-                                      <Skeleton className="w-full aspect-2/3 rounded-md" />
-                                      <Skeleton className="mt-2 h-4 w-3/4 rounded-md" />
-                                  </div>
+                            ? Array.from({ length: 6 }, (_, i) => (
+                                  <PlaylistEntryRowSkeleton key={i} />
                               ))
-                            : entries?.map((entry) => {
-                                  const detail = getPlaylistEntryDetail(entry);
-                                  return (
-                                      <ScrollableSectionPoster
-                                          key={entry.PlaylistItemId || entry.Id}
-                                          item={entry}
-                                          forceLandscape={entry.Type === 'Episode'}
-                                      >
-                                          {detail && (
-                                              <span className="text-xs text-muted-foreground mt-1 line-clamp-1">
-                                                  {detail}
-                                              </span>
-                                          )}
-                                      </ScrollableSectionPoster>
-                                  );
-                              })}
+                            : entries?.map((entry, index) => (
+                                  <PlaylistEntryRow
+                                      key={entry.PlaylistItemId || entry.Id}
+                                      entry={entry}
+                                      index={index}
+                                      detail={getPlaylistEntryDetail(entry)}
+                                      backUrl={backUrl}
+                                      playable={isPlayableEntry(entry)}
+                                  />
+                              ))}
                     </div>
                 </div>
             </div>
