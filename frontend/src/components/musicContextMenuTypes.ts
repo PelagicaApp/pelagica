@@ -32,6 +32,8 @@ export interface MusicItemContextMenuProps {
     startIndex?: number;
     /** Toggle individual menu actions. Defaults to all enabled. */
     actions?: MusicContextMenuActions;
+    /** Playlist containing `item`. Enables "Remove from playlist" (uses `item.PlaylistItemId`). */
+    playlistId?: string;
 }
 
 export function resolveMusicContextMenuActions(

@@ -26,6 +26,8 @@ export function useAddToPlaylist() {
             queryClient.invalidateQueries({
                 queryKey: ['playlistItems', playlistId],
             });
+            queryClient.invalidateQueries({ queryKey: ['playlists'] });
+            queryClient.invalidateQueries({ queryKey: ['playlistPresence'] });
         },
     });
 }

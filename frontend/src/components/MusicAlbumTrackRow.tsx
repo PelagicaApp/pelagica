@@ -12,11 +12,13 @@ export interface MusicAlbumTrackRowProps {
     onPlay: () => void;
     trailing?: ReactNode;
     displayIndex?: number;
+    playlistId?: string;
 }
 
 const MusicAlbumTrackRowTrigger = forwardRef<
     HTMLDivElement,
-    Omit<MusicAlbumTrackRowProps, 'contextTracks' | 'index'> & ComponentPropsWithoutRef<'div'>
+    Omit<MusicAlbumTrackRowProps, 'contextTracks' | 'index' | 'playlistId'> &
+        ComponentPropsWithoutRef<'div'>
 >(({ track, onPlay, trailing, displayIndex, className, ...props }, ref) => (
     <div
         ref={ref}
@@ -62,10 +64,16 @@ const MusicAlbumTrackRow = ({
     onPlay,
     trailing,
     displayIndex,
+    playlistId,
     className,
     ...props
 }: MusicAlbumTrackRowProps & ComponentPropsWithoutRef<'div'>) => (
-    <MusicItemContextMenu item={track} contextTracks={contextTracks} startIndex={index}>
+    <MusicItemContextMenu
+        item={track}
+        contextTracks={contextTracks}
+        startIndex={index}
+        playlistId={playlistId}
+    >
         <MusicAlbumTrackRowTrigger
             track={track}
             onPlay={onPlay}

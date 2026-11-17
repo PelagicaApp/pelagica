@@ -1,17 +1,19 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { getPlaylistApi } from '@jellyfin/sdk/lib/utils/api/playlist-api';
+import type { MediaType } from '@jellyfin/sdk/lib/generated-client/models';
 import { getApi } from '../../api/getApi';
 
 interface CreatePlaylistInput {
     name: string;
     userId?: string;
+    mediaType?: MediaType;
 }
 
 export function useCreatePlaylist() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async ({ name, userId }: CreatePlaylistInput) => {
+        mutationFn: async ({ name, userId, mediaType }: CreatePlaylistInput) => {
             const api = getApi();
             const playlistsApi = getPlaylistApi(api);
 
@@ -19,6 +21,7 @@ export function useCreatePlaylist() {
                 createPlaylistDto: {
                     Name: name,
                     UserId: userId,
+                    MediaType: mediaType,
                 },
             });
 

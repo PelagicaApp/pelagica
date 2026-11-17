@@ -1,5 +1,5 @@
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
-import { type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import {
     ContextMenu,
     ContextMenuContent,
@@ -8,13 +8,22 @@ import {
     ContextMenuTrigger,
 } from './ui/context-menu';
 import { useAdminItemDialogs } from '../context/AdminItemDialogsContext';
-import { useCurrentUser } from '@pelagica/core';
+import {
+    getUserId,
+    useCurrentUser,
+    useItemPlayState,
+    useMarkItemPlayed,
+    useMarkItemUnplayed,
+} from '@pelagica/core';
 import { useTranslation } from 'react-i18next';
 import {
     Bookmark,
+    Circle,
+    CircleCheck,
     Download,
     Heart,
     Image,
+    ListMinus,
     PencilLine,
     Play,
     RotateCcw,
@@ -27,16 +36,28 @@ import { Link } from 'react-router';
 import { useLike } from '@pelagica/core';
 import { WATCHLISTABLE_ITEM_TYPES } from '../utils/watchlistableItems';
 import { DOWNLOADABLE_ITEM_TYPES } from '../utils/downloadableItems';
+import { PLAY_STATE_ITEM_TYPES } from '../utils/playStateItems';
 import { getDownloadurl } from '@pelagica/core';
 import { isIdentifiable } from '../utils/identifiableTypes';
+import { useRemoveFromPlaylist } from '@pelagica/core';
+import { PlaylistToggleSubMenu } from './PlaylistToggleSubMenu';
+import { NewPlaylistDialog } from './NewPlaylistDialog';
+import { getPlaylistMediaType } from '../utils/playlistMediaType';
 
 interface GeneralItemContextMenuProps {
     item: BaseItemDto;
     playLink?: string;
+    /** Playlist containing `item`; enables "Remove from playlist" (uses `item.PlaylistItemId`). */
+    playlistId?: string;
     children: ReactNode;
 }
 
-const GeneralItemContextMenu = ({ item, playLink, children }: GeneralItemContextMenuProps) => {
+const GeneralItemContextMenu = ({
+    item,
+    playLink,
+    playlistId,
+    children,
+}: GeneralItemContextMenuProps) => {
     const { t } = useTranslation('item');
     const { config } = useConfig();
     const { data: currentUser } = useCurrentUser();
@@ -51,17 +72,59 @@ const GeneralItemContextMenu = ({ item, playLink, children }: GeneralItemContext
         WATCHLISTABLE_ITEM_TYPES.includes(item.Type) &&
         config?.itemPage?.showWatchlistButton;
 
+    const userId = getUserId() ?? undefined;
+    const showPlayStateToggle =
+        Boolean(item.Id && userId) &&
+        Boolean(item.Type && PLAY_STATE_ITEM_TYPES.includes(item.Type));
+    const { data: playState, isLoading: isPlayStateLoading } = useItemPlayState(
+        showPlayStateToggle ? item.Id : undefined,
+        userId
+    );
+    const isPlayed = playState?.played ?? item.UserData?.Played ?? false;
+    const markItemPlayed = useMarkItemPlayed();
+    const markItemUnplayed = useMarkItemUnplayed();
+    const isPlayStatePending =
+        isPlayStateLoading || markItemPlayed.isPending || markItemUnplayed.isPending;
+
+    const togglePlayState = () => {
+        if (!item.Id || !userId) return;
+        if (isPlayed) {
+            markItemUnplayed.mutate({ itemId: item.Id, userId });
+        } else {
+            markItemPlayed.mutate({ itemId: item.Id, userId });
+        }
+    };
+
     const showDownloadButton =
         item.Type &&
         DOWNLOADABLE_ITEM_TYPES.includes(item.Type) &&
         config?.itemPage?.showDownloadButton;
+
+    const [contextMenuOpen, setContextMenuOpen] = useState(false);
+    const [playlistDialogOpen, setPlaylistDialogOpen] = useState(false);
+    const removeFromPlaylist = useRemoveFromPlaylist();
+    const canAddToPlaylist = Boolean(item.Id) && getPlaylistMediaType(item) === 'Video';
+    const playlistEntryId = playlistId ? item.PlaylistItemId : undefined;
+
+    const handleCreatePlaylist = () => {
+        setContextMenuOpen(false);
+        setPlaylistDialogOpen(true);
+    };
+
+    const handleRemoveFromPlaylist = () => {
+        if (!playlistId || !playlistEntryId) return;
+        removeFromPlaylist.mutate({ playlistId, entryIds: [playlistEntryId] });
+    };
 
     const isAdmin = currentUser?.Policy?.IsAdministrator ?? false;
     const hasItemsAbove =
         Boolean(playLink) ||
         Boolean(showFavoriteToggle) ||
         Boolean(showWatchlistToggle) ||
-        Boolean(showDownloadButton);
+        showPlayStateToggle ||
+        Boolean(showDownloadButton) ||
+        canAddToPlaylist ||
+        Boolean(playlistEntryId);
 
     const hasAnyItems =
         hasItemsAbove || Boolean(isAdmin && item.Type && isIdentifiable(item.Type)) || isAdmin;
@@ -71,73 +134,107 @@ const GeneralItemContextMenu = ({ item, playLink, children }: GeneralItemContext
     }
 
     return (
-        <ContextMenu>
-            <ContextMenuTrigger asChild>{children}</ContextMenuTrigger>
-            <ContextMenuContent className="w-52">
-                {playLink && (
-                    <ContextMenuItem asChild>
-                        <Link to={playLink}>
-                            <Play />
-                            {t('play')}
-                        </Link>
-                    </ContextMenuItem>
-                )}
-                {showFavoriteToggle && (
-                    <ContextMenuItem
-                        onClick={() => toggleFavorite(!isFavorite)}
-                        disabled={isFavoriteLoading}
-                    >
-                        <Heart fill={isFavorite ? 'currentColor' : 'none'} />
-                        {isFavorite ? t('unfavorite') : t('favorite')}
-                    </ContextMenuItem>
-                )}
-                {showWatchlistToggle && (
-                    <ContextMenuItem onClick={() => toggleLike(!isLiked)} disabled={isLoading}>
-                        <Bookmark fill={isLiked ? 'currentColor' : 'none'} />
-                        {isLiked ? t('remove_from_watchlist') : t('add_to_watchlist')}
-                    </ContextMenuItem>
-                )}
-                {showDownloadButton && (
-                    <ContextMenuItem asChild>
-                        <a
-                            href={getDownloadurl(item.Id || '')}
-                            target="_blank"
-                            rel="noopener noreferrer"
+        <>
+            <ContextMenu open={contextMenuOpen} onOpenChange={setContextMenuOpen}>
+                <ContextMenuTrigger asChild>{children}</ContextMenuTrigger>
+                <ContextMenuContent className="w-52">
+                    {playLink && (
+                        <ContextMenuItem asChild>
+                            <Link to={playLink}>
+                                <Play />
+                                {t('play')}
+                            </Link>
+                        </ContextMenuItem>
+                    )}
+                    {showFavoriteToggle && (
+                        <ContextMenuItem
+                            onClick={() => toggleFavorite(!isFavorite)}
+                            disabled={isFavoriteLoading}
                         >
-                            <Download />
-                            {t('download')}
-                        </a>
-                    </ContextMenuItem>
-                )}
-                {isAdmin && (
-                    <>
-                        {hasItemsAbove && <ContextMenuSeparator />}
-                        <ContextMenuItem onClick={() => openDialog(item, 'manageImages')}>
-                            <Image />
-                            {t('manage_images')}
+                            <Heart fill={isFavorite ? 'currentColor' : 'none'} />
+                            {isFavorite ? t('unfavorite') : t('favorite')}
                         </ContextMenuItem>
-                        <ContextMenuItem onClick={() => openDialog(item, 'refreshMetadata')}>
-                            <RotateCcw />
-                            {t('refreshMetadata')}
+                    )}
+                    {showWatchlistToggle && (
+                        <ContextMenuItem onClick={() => toggleLike(!isLiked)} disabled={isLoading}>
+                            <Bookmark fill={isLiked ? 'currentColor' : 'none'} />
+                            {isLiked ? t('remove_from_watchlist') : t('add_to_watchlist')}
                         </ContextMenuItem>
-                        <ContextMenuItem onClick={() => openDialog(item, 'editMetadata')}>
-                            <PencilLine />
-                            {t('editMetadata')}
+                    )}
+                    {showPlayStateToggle && (
+                        <ContextMenuItem onClick={togglePlayState} disabled={isPlayStatePending}>
+                            {isPlayed ? <Circle /> : <CircleCheck />}
+                            {isPlayed ? t('mark_as_unplayed') : t('mark_as_played')}
                         </ContextMenuItem>
-                        {item.Type && isIdentifiable(item.Type) && (
-                            <ContextMenuItem onClick={() => openDialog(item, 'identify')}>
-                                <ScanSearch />
-                                {t('identify')}
+                    )}
+                    {showDownloadButton && (
+                        <ContextMenuItem asChild>
+                            <a
+                                href={getDownloadurl(item.Id || '')}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <Download />
+                                {t('download')}
+                            </a>
+                        </ContextMenuItem>
+                    )}
+                    {canAddToPlaylist && (
+                        <PlaylistToggleSubMenu
+                            item={item}
+                            mediaType="Video"
+                            onCreatePlaylist={handleCreatePlaylist}
+                        />
+                    )}
+                    {playlistEntryId && (
+                        <ContextMenuItem
+                            variant="destructive"
+                            disabled={removeFromPlaylist.isPending}
+                            onSelect={handleRemoveFromPlaylist}
+                        >
+                            <ListMinus />
+                            {t('remove_from_playlist', 'Remove from Playlist')}
+                        </ContextMenuItem>
+                    )}
+                    {isAdmin && (
+                        <>
+                            {hasItemsAbove && <ContextMenuSeparator />}
+                            <ContextMenuItem onClick={() => openDialog(item, 'manageImages')}>
+                                <Image />
+                                {t('manage_images')}
                             </ContextMenuItem>
-                        )}
-                        <ContextMenuItem onClick={() => openDialog(item, 'delete')}>
-                            <Trash2 />
-                            {t('deleteItem')}
-                        </ContextMenuItem>
-                    </>
-                )}
-            </ContextMenuContent>
-        </ContextMenu>
+                            <ContextMenuItem onClick={() => openDialog(item, 'refreshMetadata')}>
+                                <RotateCcw />
+                                {t('refreshMetadata')}
+                            </ContextMenuItem>
+                            <ContextMenuItem onClick={() => openDialog(item, 'editMetadata')}>
+                                <PencilLine />
+                                {t('editMetadata')}
+                            </ContextMenuItem>
+                            {item.Type && isIdentifiable(item.Type) && (
+                                <ContextMenuItem onClick={() => openDialog(item, 'identify')}>
+                                    <ScanSearch />
+                                    {t('identify')}
+                                </ContextMenuItem>
+                            )}
+                            <ContextMenuItem onClick={() => openDialog(item, 'delete')}>
+                                <Trash2 />
+                                {t('deleteItem')}
+                            </ContextMenuItem>
+                        </>
+                    )}
+                </ContextMenuContent>
+            </ContextMenu>
+
+            {canAddToPlaylist && (
+                <NewPlaylistDialog
+                    open={playlistDialogOpen}
+                    onOpenChange={setPlaylistDialogOpen}
+                    itemIds={[item.Id!]}
+                    mediaType="Video"
+                />
+            )}
+        </>
     );
 };
 
