@@ -42,6 +42,7 @@ export * from './hooks/playlist/usePlaylistItems';
 export * from './hooks/playlist/usePlaylistPresence';
 export * from './hooks/playlist/usePlaylists';
 export * from './hooks/playlist/useRemoveFromPlaylist';
+export * from './hooks/playlist/useMovePlaylistItem';
 export * from './hooks/statsConsent/useSetStatsConsent';
 export * from './hooks/statsConsent/useStatsConsent';
 export * from './hooks/themes/useCreateTheme';

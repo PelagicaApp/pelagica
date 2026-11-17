@@ -14,6 +14,8 @@ import ItemMetadataBadges from './ItemMetadataBadges';
 import { Skeleton } from '@/components/ui/skeleton';
 import PlaylistEntryRow, { PlaylistEntryRowSkeleton } from './PlaylistEntryRow';
 import ItemAdminButton from '@/components/ItemAdminButton';
+import { SortablePlaylist, SortablePlaylistRow } from '@/components/SortablePlaylist';
+import { usePlaylistRows } from '@/hooks/usePlaylistRows';
 
 interface PlaylistPageProps {
     item: BaseItemDto;
@@ -46,10 +48,8 @@ const PlaylistPage = ({ item, config }: PlaylistPageProps) => {
     const [primaryImageError, setPrimaryImageError] = useState(false);
     const [isPosterLoaded, setIsPosterLoaded] = useState(false);
     const { data: playlistEntries, isLoading } = usePlaylistItems(item.Id, getUserId());
-    const entries = useMemo(
-        () => playlistEntries?.filter(isDisplyableEntry) ?? [],
-        [playlistEntries]
-    );
+    const rows = usePlaylistRows(playlistEntries, isDisplyableEntry);
+    const entries = useMemo(() => rows.map((row) => row.entry), [rows]);
     const location = useLocation();
     const navigate = useNavigate();
     const backUrl = location.pathname + location.search;
@@ -148,23 +148,34 @@ const PlaylistPage = ({ item, config }: PlaylistPageProps) => {
 
                 <div className="flex flex-col gap-3">
                     <h3 className="text-3xl font-bold">{t('playlist_items')}</h3>
-                    <div className="flex flex-col gap-1">
-                        {isLoading
-                            ? Array.from({ length: 6 }, (_, i) => (
-                                  <PlaylistEntryRowSkeleton key={i} />
-                              ))
-                            : entries?.map((entry, index) => (
-                                  <PlaylistEntryRow
-                                      key={`${entry.PlaylistItemId || entry.Id}-${index}`}
-                                      entry={entry}
-                                      index={index}
-                                      detail={getPlaylistEntryDetail(entry)}
-                                      backUrl={backUrl}
-                                      playable={isPlayableEntry(entry)}
-                                      playlistId={item.Id}
-                                  />
-                              ))}
-                    </div>
+                    {isLoading ? (
+                        <div className="flex flex-col gap-1">
+                            {Array.from({ length: 6 }, (_, i) => (
+                                <PlaylistEntryRowSkeleton key={i} />
+                            ))}
+                        </div>
+                    ) : (
+                        <SortablePlaylist playlistId={item.Id} rows={rows}>
+                            <div className="flex flex-col gap-1">
+                                {rows.map((row, index) => (
+                                    <SortablePlaylistRow
+                                        key={row.sortId}
+                                        row={row}
+                                        handleClassName="absolute inset-y-0 left-0 sm:-left-6 z-10"
+                                    >
+                                        <PlaylistEntryRow
+                                            entry={row.entry}
+                                            index={index}
+                                            detail={getPlaylistEntryDetail(row.entry)}
+                                            backUrl={backUrl}
+                                            playable={isPlayableEntry(row.entry)}
+                                            playlistId={item.Id}
+                                        />
+                                    </SortablePlaylistRow>
+                                ))}
+                            </div>
+                        </SortablePlaylist>
+                    )}
                 </div>
             </div>
         </BaseMediaPage>

@@ -26,6 +26,10 @@ import ItemAdminButton from '@/components/ItemAdminButton';
 import MusicAlbumTrackRow from '@/components/MusicAlbumTrackRow';
 import MusicItemContextMenu from '@/components/MusicItemContextMenu';
 import { toPlaybackTracks } from '@/utils/musicPlaybackTrack';
+import { SortablePlaylist, SortablePlaylistRow } from '@/components/SortablePlaylist';
+import { usePlaylistRows } from '@/hooks/usePlaylistRows';
+
+const isAudioTrack = (track: BaseItemDto) => track.Type === 'Audio';
 
 const MAX_ARTISTS_DISPLAYED = 5;
 
@@ -78,8 +82,12 @@ const BaseMusicListPage = ({
         isLoading: isLoadingPlaylistTracksData,
         error: playlistTracksDataError,
     } = usePlaylistItems(isPlaylist ? item.Id : undefined, userId);
+    const playlistRows = usePlaylistRows(isPlaylist ? playlistTracksData : undefined, isAudioTrack);
+    const playlistTracks = useMemo(() => playlistRows.map((row) => row.entry), [playlistRows]);
     const albumTracks = isPlaylist
-        ? playlistTracksData?.filter((track) => track.Type === 'Audio')
+        ? playlistTracksData
+            ? playlistTracks
+            : undefined
         : albumTracksData;
     const isLoadingAlbumTracks = isPlaylist
         ? isLoadingPlaylistTracksData
@@ -238,24 +246,53 @@ const BaseMusicListPage = ({
                                 </Button>
                             </div>
                             <div className="border-b border-border mb-4" />
-                            <div className="flex flex-col gap-1">
-                                {albumTracks.map((track, index) => {
-                                    if (!isPlaylist && !track.IndexNumber) return null;
+                            {isPlaylist ? (
+                                <SortablePlaylist playlistId={item.Id} rows={playlistRows}>
+                                    <div className="flex flex-col gap-1">
+                                        {playlistRows.map((row, index) => (
+                                            <SortablePlaylistRow
+                                                key={row.sortId}
+                                                row={row}
+                                                handleClassName="absolute inset-y-0 left-1 z-10"
+                                            >
+                                                <MusicAlbumTrackRow
+                                                    track={row.entry}
+                                                    index={index}
+                                                    displayIndex={index + 1}
+                                                    playlistId={item.Id}
+                                                    contextTracks={playbackTracks}
+                                                    onPlay={() => handleTrackPlay(index)}
+                                                    trailing={
+                                                        <TrackMediaInfoButton
+                                                            track={row.entry}
+                                                            t={t}
+                                                        />
+                                                    }
+                                                />
+                                            </SortablePlaylistRow>
+                                        ))}
+                                    </div>
+                                </SortablePlaylist>
+                            ) : (
+                                <div className="flex flex-col gap-1">
+                                    {albumTracks.map((track, index) => {
+                                        if (!track.IndexNumber) return null;
 
-                                    return (
-                                        <MusicAlbumTrackRow
-                                            key={`${track.PlaylistItemId || track.Id}-${index}`}
-                                            track={track}
-                                            index={index}
-                                            displayIndex={isPlaylist ? index + 1 : undefined}
-                                            playlistId={isPlaylist ? item.Id : undefined}
-                                            contextTracks={playbackTracks}
-                                            onPlay={() => handleTrackPlay(index)}
-                                            trailing={<TrackMediaInfoButton track={track} t={t} />}
-                                        />
-                                    );
-                                })}
-                            </div>
+                                        return (
+                                            <MusicAlbumTrackRow
+                                                key={track.Id}
+                                                track={track}
+                                                index={index}
+                                                contextTracks={playbackTracks}
+                                                onPlay={() => handleTrackPlay(index)}
+                                                trailing={
+                                                    <TrackMediaInfoButton track={track} t={t} />
+                                                }
+                                            />
+                                        );
+                                    })}
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>

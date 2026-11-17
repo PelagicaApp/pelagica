@@ -36,9 +36,9 @@ const PlaylistEntryRow = memo(
             <GeneralItemContextMenu item={entry} playLink={playLink} playlistId={playlistId}>
                 <Link
                     to={getItemUrl(entry.Type, entry.Id, entry.MediaType)}
-                    className="group flex items-center gap-3 sm:gap-4 rounded-lg p-2 -mx-2 hover:bg-white/5 transition-colors"
+                    className="group flex items-center gap-3 sm:gap-4 rounded-lg p-2 pl-8 -mx-2 sm:pl-2 sm:-ml-7 hover:bg-white/5 transition-colors"
                 >
-                    <span className="hidden sm:block w-6 shrink-0 text-right text-sm tabular-nums text-muted-foreground">
+                    <span className="hidden sm:block ml-2 w-6 shrink-0 text-right text-sm tabular-nums text-muted-foreground">
                         {index + 1}
                     </span>
 
