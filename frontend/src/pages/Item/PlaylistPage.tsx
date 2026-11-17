@@ -155,12 +155,13 @@ const PlaylistPage = ({ item, config }: PlaylistPageProps) => {
                               ))
                             : entries?.map((entry, index) => (
                                   <PlaylistEntryRow
-                                      key={entry.PlaylistItemId || entry.Id}
+                                      key={`${entry.PlaylistItemId || entry.Id}-${index}`}
                                       entry={entry}
                                       index={index}
                                       detail={getPlaylistEntryDetail(entry)}
                                       backUrl={backUrl}
                                       playable={isPlayableEntry(entry)}
+                                      playlistId={item.Id}
                                   />
                               ))}
                     </div>

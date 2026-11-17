@@ -4,15 +4,25 @@ import {
     ContextMenu,
     ContextMenuContent,
     ContextMenuItem,
+    ContextMenuSeparator,
     ContextMenuSub,
     ContextMenuSubContent,
     ContextMenuSubTrigger,
     ContextMenuTrigger,
 } from '@/components/ui/context-menu';
-import { Heart, ListEnd, ListMusic, ListPlus, ListStart, Play, Shuffle } from 'lucide-react';
+import {
+    Heart,
+    ListEnd,
+    ListMinus,
+    ListMusic,
+    ListPlus,
+    ListStart,
+    Play,
+    Shuffle,
+} from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useMusicPlayback } from '@/hooks/useMusicPlayback';
-import { useFavorite } from '@pelagica/core';
+import { useFavorite, useRemoveFromPlaylist } from '@pelagica/core';
 import { useAlbumTracks } from '@pelagica/core';
 import { AddToPlaylistDialog } from '@/components/AddToPlaylistDialog';
 import type { MusicPlaybackTrack } from '@/context/MusicPlaybackContext';
@@ -37,6 +47,7 @@ const MusicItemContextMenu = ({
     contextTracks,
     startIndex = 0,
     actions,
+    playlistId,
 }: MusicItemContextMenuProps) => {
     const resolvedScope = scope ?? getMusicContextKind(item.Type);
     const resolvedActions = resolveMusicContextMenuActions(actions);
@@ -52,6 +63,7 @@ const MusicItemContextMenu = ({
             contextTracks={contextTracks}
             startIndex={startIndex}
             actions={resolvedActions}
+            playlistId={playlistId}
         >
             {children}
         </MusicItemContextMenuContent>
@@ -64,6 +76,7 @@ interface MusicItemContextMenuContentProps {
     contextTracks?: MusicPlaybackTrack[];
     startIndex: number;
     actions: Required<MusicContextMenuActions>;
+    playlistId?: string;
     children: ReactNode;
 }
 
@@ -73,6 +86,7 @@ const MusicItemContextMenuContent = ({
     contextTracks,
     startIndex,
     actions,
+    playlistId,
     children,
 }: MusicItemContextMenuContentProps) => {
     const { t } = useTranslation('music');
@@ -82,6 +96,8 @@ const MusicItemContextMenuContent = ({
     const [playlistDialogOpen, setPlaylistDialogOpen] = useState(false);
     const [playlistDialogItemIds, setPlaylistDialogItemIds] = useState<string[]>([]);
     const [contextMenuOpen, setContextMenuOpen] = useState(false);
+    const removeFromPlaylist = useRemoveFromPlaylist();
+    const playlistEntryId = playlistId ? item.PlaylistItemId : undefined;
 
     const isSong = scope === 'song';
     const isCollection = isCollectionScope(scope);
@@ -147,6 +163,11 @@ const MusicItemContextMenuContent = ({
         setContextMenuOpen(false);
         setPlaylistDialogItemIds(playlistItemIds);
         setPlaylistDialogOpen(true);
+    };
+
+    const handleRemoveFromPlaylist = () => {
+        if (!playlistId || !playlistEntryId) return;
+        removeFromPlaylist.mutate({ playlistId, entryIds: [playlistEntryId] });
     };
 
     const handlePlaylistDialogOpenChange = (open: boolean) => {
@@ -218,6 +239,19 @@ const MusicItemContextMenuContent = ({
                             {isFavorite ? tItem('unfavorite') : tItem('favorite')}
                         </ContextMenuItem>
                     )}
+                    {playlistEntryId && (
+                        <>
+                            <ContextMenuSeparator />
+                            <ContextMenuItem
+                                variant="destructive"
+                                disabled={removeFromPlaylist.isPending}
+                                onSelect={handleRemoveFromPlaylist}
+                            >
+                                <ListMinus />
+                                {tItem('remove_from_playlist', 'Remove from Playlist')}
+                            </ContextMenuItem>
+                        </>
+                    )}
                 </ContextMenuContent>
             </ContextMenu>
 
@@ -226,6 +260,7 @@ const MusicItemContextMenuContent = ({
                     open={playlistDialogOpen}
                     onOpenChange={handlePlaylistDialogOpenChange}
                     itemIds={playlistDialogItemIds}
+                    mediaType="Audio"
                 />
             )}
         </>

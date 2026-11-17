@@ -3,6 +3,7 @@ import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import MusicItemContextMenu from './MusicItemContextMenu';
 import GeneralItemContextMenu from './GeneraItemContextMenu';
 import { getMusicContextKind } from '@/utils/musicPlaybackTrack';
+import { isMusicPlaylist } from '@/utils/itemUrl';
 
 interface ItemContextMenuProps {
     item: BaseItemDto;
@@ -11,7 +12,8 @@ interface ItemContextMenuProps {
 }
 
 const ItemContextMenu = ({ item, children, playLink }: ItemContextMenuProps) => {
-    if (getMusicContextKind(item.Type)) {
+    const isVideoPlaylist = item.Type === 'Playlist' && !isMusicPlaylist(item.MediaType);
+    if (getMusicContextKind(item.Type) && !isVideoPlaylist) {
         return <MusicItemContextMenu item={item}>{children}</MusicItemContextMenu>;
     }
 

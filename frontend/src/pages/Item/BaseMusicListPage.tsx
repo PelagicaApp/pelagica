@@ -244,10 +244,11 @@ const BaseMusicListPage = ({
 
                                     return (
                                         <MusicAlbumTrackRow
-                                            key={track.Id}
+                                            key={`${track.PlaylistItemId || track.Id}-${index}`}
                                             track={track}
                                             index={index}
                                             displayIndex={isPlaylist ? index + 1 : undefined}
+                                            playlistId={isPlaylist ? item.Id : undefined}
                                             contextTracks={playbackTracks}
                                             onPlay={() => handleTrackPlay(index)}
                                             trailing={<TrackMediaInfoButton track={track} t={t} />}

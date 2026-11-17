@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Check, ListMusic, Loader2, Plus } from 'lucide-react';
+import { Check, ListMusic, ListVideo, Loader2, Plus } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,14 +16,21 @@ import { useCurrentUser } from '@pelagica/core';
 import { usePlaylists } from '@pelagica/core';
 import { useAddToPlaylist } from '@pelagica/core';
 import { useCreatePlaylist } from '@pelagica/core';
+import type { PlaylistMediaType } from '@/utils/playlistMediaType';
 
 interface AddToPlaylistDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     itemIds: string[];
+    mediaType: PlaylistMediaType;
 }
 
-export function AddToPlaylistDialog({ open, onOpenChange, itemIds }: AddToPlaylistDialogProps) {
+export function AddToPlaylistDialog({
+    open,
+    onOpenChange,
+    itemIds,
+    mediaType,
+}: AddToPlaylistDialogProps) {
     const { t } = useTranslation('item');
     const { t: tMusic } = useTranslation('music');
     const { data: currentUser } = useCurrentUser();
@@ -31,7 +38,8 @@ export function AddToPlaylistDialog({ open, onOpenChange, itemIds }: AddToPlayli
         data: playlists,
         isLoading: isLoadingPlaylists,
         refetch,
-    } = usePlaylists(currentUser?.Id);
+    } = usePlaylists(currentUser?.Id, { mediaTypes: [mediaType] });
+    const PlaylistIcon = mediaType === 'Audio' ? ListMusic : ListVideo;
     const addToPlaylist = useAddToPlaylist();
     const createPlaylist = useCreatePlaylist();
 
@@ -81,6 +89,7 @@ export function AddToPlaylistDialog({ open, onOpenChange, itemIds }: AddToPlayli
             const created = await createPlaylist.mutateAsync({
                 name,
                 userId: currentUser?.Id,
+                mediaType,
             });
             if (created.Id) {
                 await addToPlaylist.mutateAsync({
@@ -138,17 +147,18 @@ export function AddToPlaylistDialog({ open, onOpenChange, itemIds }: AddToPlayli
                                             onSelect={() => handleAddToPlaylist(id)}
                                             className="gap-3"
                                         >
-                                            <ListMusic className="size-4 shrink-0 text-muted-foreground" />
+                                            <PlaylistIcon className="size-4 shrink-0 text-muted-foreground" />
                                             <span className="flex-1 truncate">
                                                 {playlist.Name || tMusic('untitled')}
                                             </span>
-                                            {playlist.ChildCount !== undefined && (
-                                                <span className="text-xs text-muted-foreground shrink-0">
-                                                    {tMusic('tracks_count', {
-                                                        count: playlist.ChildCount,
-                                                    })}
-                                                </span>
-                                            )}
+                                            {mediaType === 'Audio' &&
+                                                playlist.ChildCount != null && (
+                                                    <span className="text-xs text-muted-foreground shrink-0">
+                                                        {tMusic('tracks_count', {
+                                                            count: playlist.ChildCount,
+                                                        })}
+                                                    </span>
+                                                )}
                                             {isAdding && (
                                                 <Loader2 className="size-4 shrink-0 animate-spin" />
                                             )}

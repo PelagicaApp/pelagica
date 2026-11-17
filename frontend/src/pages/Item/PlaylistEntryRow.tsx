@@ -15,10 +15,11 @@ interface PlaylistEntryRowProps {
     detail?: string;
     backUrl: string;
     playable: boolean;
+    playlistId?: string;
 }
 
 const PlaylistEntryRow = memo(
-    ({ entry, index, detail, backUrl, playable }: PlaylistEntryRowProps) => {
+    ({ entry, index, detail, backUrl, playable, playlistId }: PlaylistEntryRowProps) => {
         const { t } = useTranslation('item');
         const navigate = useNavigate();
         const [imageIndex, setImageIndex] = useState(0);
@@ -32,7 +33,7 @@ const PlaylistEntryRow = memo(
         const playLink = playable ? buildPlayerUrl(entry.Id!, backUrl) : undefined;
 
         return (
-            <GeneralItemContextMenu item={entry} playLink={playLink}>
+            <GeneralItemContextMenu item={entry} playLink={playLink} playlistId={playlistId}>
                 <Link
                     to={getItemUrl(entry.Type, entry.Id, entry.MediaType)}
                     className="group flex items-center gap-3 sm:gap-4 rounded-lg p-2 -mx-2 hover:bg-white/5 transition-colors"
