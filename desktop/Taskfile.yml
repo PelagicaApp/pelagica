@@ -104,9 +104,10 @@ tasks:
             CGO_ENABLED: 1
 
     installer:linux:
-        desc: Build the .deb, .pkg.tar.zst, and AppImage installers for the desktop app
+        desc: Build the .deb, .rpm, .pkg.tar.zst, and AppImage installers for the desktop app
         cmds:
             - task: installer:linux:deb
+            - task: installer:linux:rpm
             - task: installer:linux:pkg
             - task: installer:linux:appimage
 
@@ -119,6 +120,19 @@ tasks:
               msg: desktop:installer:linux:deb only supports Linux
         cmds:
             - wails3 tool package -name pelagica -format deb -config build/linux/nfpm/nfpm.yaml -out bin
+        env:
+            GOARCH:
+                sh: go env GOARCH
+
+    installer:linux:rpm:
+        desc: Build an .rpm package for the desktop app
+        deps:
+            - package:linux
+        preconditions:
+            - sh: '[ "{{OS}}" = "linux" ]'
+              msg: desktop:installer:linux:rpm only supports Linux
+        cmds:
+            - wails3 tool package -name pelagica -format rpm -config build/linux/nfpm/nfpm.yaml -out bin
         env:
             GOARCH:
                 sh: go env GOARCH

@@ -244,6 +244,7 @@ jobs:
               working-directory: desktop/bin
               run: |
                   mv pelagica.deb "pelagica-linux-amd64-${TAG}.deb"
+                  mv pelagica.rpm "pelagica-linux-amd64-${TAG}.rpm"
                   mv pelagica.pkg.tar.zst "pelagica-linux-amd64-${TAG}.pkg.tar.zst"
                   mv pelagica-x86_64.AppImage "pelagica-linux-amd64-${TAG}.AppImage"
 
@@ -253,6 +254,7 @@ jobs:
               run: |
                   gh release upload "$TAG" \
                     "desktop/bin/pelagica-linux-amd64-${TAG}.deb" \
+                    "desktop/bin/pelagica-linux-amd64-${TAG}.rpm" \
                     "desktop/bin/pelagica-linux-amd64-${TAG}.pkg.tar.zst" \
                     "desktop/bin/pelagica-linux-amd64-${TAG}.AppImage" \
                     --clobber
