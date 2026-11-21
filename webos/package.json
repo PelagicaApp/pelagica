@@ -13,7 +13,7 @@
         "webos:package": "ares-package www -o . --no-minify"
     },
     "dependencies": {
-        "@noriginmedia/norigin-spatial-navigation": "^3.3.0",
+        "@noriginmedia/norigin-spatial-navigation": "^3.4.0",
         "@pelagica/core": "workspace:*",
         "@pelagica/tv-frontend": "workspace:*",
         "@pelagica/tv-platform": "workspace:*",
