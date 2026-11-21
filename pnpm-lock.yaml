@@ -164,8 +164,8 @@ importers:
         specifier: ^3.1.1
         version: 3.1.1(react@19.2.8)
       video.js:
-        specifier: ^8.23.7
-        version: 8.24.0
+        specifier: ^10.5.0
+        version: 10.5.0
     devDependencies:
       '@eslint/js':
         specifier: ^10.0.1
@@ -345,8 +345,8 @@ importers:
         specifier: ~5.9.3
         version: 5.9.3
       video.js:
-        specifier: ^8.23.7
-        version: 8.24.0
+        specifier: ^10.5.0
+        version: 10.5.0
 
   tizen:
     dependencies:
@@ -3722,6 +3722,9 @@ packages:
     resolution: {integrity: sha512-hVDIBwsRruT73PbK7uP5ebUt+ezEtCmzZz3F59BSr2F6OVFnJ/6h8liuvdLrQ88Xmnk6/+xGGuq+pG9WwTuy3A==}
     engines: {node: ^20.17.0 || >=22.9.0}
 
+  video.js@10.5.0:
+    resolution: {integrity: sha512-QWNQ8MgF5C1T4E1D3zyhnC/9ouA7XmEkjqUH7LI59w24SUoeKBB/P+Fva413DO0N1RKxIJxwxBOsFYiRTnJKtw==}
+
   video.js@8.24.0:
     resolution: {integrity: sha512-ZUuxTlDRkEWhpp2mvGCSFzI0Tc3zcC6IUZbIhBcZ3QW0Ms+IRp/tzYkhqexcMYwrcukRFiWWJmRANsLKvv8Vsg==}
 
@@ -7010,6 +7013,8 @@ snapshots:
   util-deprecate@1.0.2: {}
 
   validate-npm-package-name@7.0.2: {}
+
+  video.js@10.5.0: {}
 
   video.js@8.24.0:
     dependencies:
